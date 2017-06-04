@@ -6,5 +6,5 @@
 
 # 목록
 
-- [[도서] 엔터프라이즈 애플리케이션 아키텍처 패턴](https://github.com/codehumane/read-record/blob/master/poeaa.md)
-- [[도서] 알고리즘](https://github.com/codehumane/read-record/blob/master/algorithm.md)
+- [[도서] 엔터프라이즈 애플리케이션 아키텍처 패턴](https://github.com/codehumane/read-record/blob/master/poeaa/poeaa.md)
+- [[도서] 알고리즘](https://github.com/codehumane/read-record/blob/master/algorithm/algorithm.md)
