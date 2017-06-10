@@ -2,7 +2,7 @@
 
 - [알고리즘 : 컴퓨터 과학의 기본, 숫자 알고리즘에서 양자 알고리즘까지](http://www.yes24.com/24/goods/24937708?scode=032&OzSrank=8)
 - 산죠이 다스굽타,크리스토스 파파디미트리우,우메쉬 바지라니 공저
-- 알고리즘 단순 풀이보다는 알고리즘을 작동시키는 수학적 지식을 전달하고 있어, 재밌게 읽을 수 있음
+- 알고리즘 단순 풀이보다는 알고리즘을 작동시키는 수학적 지식을 전달하고 있음.
 
 # 프롤로그
 
@@ -180,7 +180,7 @@ end
 return (q, x)
 ```
 
-또 다른 방법은 뭐가 있나 찾아보면 [여러가지가 있음을 확인](https://en.wikipedia.org/wiki/Division_algorithm#Newton.E2.80.93Raphson_division)할 수 있다.
+이를 간단히 구현해 본 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/Division.java), 테스트 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/test/java/math/DivisionTest.java)를 참고. 이 외에도 여러가지 방법들이 있음을 [여기](https://en.wikipedia.org/wiki/Division_algorithm#Newton.E2.80.93Raphson_division)서 확인 가능함.
 
 ## 모듈러 연산
 
@@ -219,4 +219,68 @@ return (q, x)
 - 결합법칙: `x + (y + z) ≡ (x + y) + z (mod N)`
 - 교환법칙: `xy ≡ yx (mod N)`
 - 분배법칙: `x(y + z) ≡ xy + yz (mod N)`
+
+
+### 모듈러 지수 연산
+
+`x^y mod N`을 구해야 하는데, `x^y`의 결과가 계산기나 컴퓨터가 다룰 수 없는 크기의 수라면? 한 가지 방법은 대체 규칙을 이용해,  `x mod N`을 지수 만큼 반복하는 것이다.  `5^3 mod 3`을 예로 들면 다음과 같다.
+
+```
+5^5 mod 3
+= (5 * 5 * 5 * 5 * 5) mod 3
+= ((5 mod 3) * 5 * 5 * 5 * 5) mod 3
+= ((10 mod 3) * 5 * 5 * 5) mod 3
+= ((5 mod 3) * 5 * 5) mod 3
+= ((10 mod 3) * 5) mod 3
+= 5 mod 3
+= 2
+```
+
+이를 구현한 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/ModularExponentiation.java), 테스트 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/test/java/math/ModularExponentiationTest.java)에 기록했다. 코드를 보면 알겠지만 알고리즘의 수행시간은 `y`의 크기에 비례한다. 정확히는 `y + 1`만큼 함수가 호출된다. 즉, O(y) 이다. 좀 더 빠른 알고리즘은 제곱을 이용하는 것이다. 아래와 같이 말이다.
+
+```
+5^5 mod 3
+= (5 * 5 * 5 * 5 * 5) mod 3
+= ((5 mod 3) * (5 mod 3) * 5 * 5 * 5) mod 3
+= ((4 mod 3) * (4 mod 3) * 5) mod 3
+= 5 mod 3
+= 2
+```
+
+이를 구현한 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/ModularExponentiation.java)에 기록함. 코드를 보면 알겠지만 함수의 호출 횟수는 최대  `ln(y) + y/2 - 1`로 줄어들었다. Big O 표기법으로는 O(ln(y))이다. [Khan Academy의 Fast modular exponentiation](https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/fast-modular-exponentiation)에 따르면, 책에는 언급되지 않는 조금 더 빠른 방법을 제시하고 있다.
+
+- 지수를 바이너리(2진수)로 변환한다.
+- 가장 오른쪽 숫자부터 순서를 매기고 이를 k라고 부르자. 이 때 시작 값은 0이다.
+- 숫자가 1이면 2^k로 변환하고, 그렇지 않으면 0으로 바꾸자.
+- 이렇게 하면 지수가 2의 배수로 이뤄진 덧셈이 된다.
+- 이제 오로지 제곱 알고리즘만을 이용하여 모듈러 연산을 구할 수 있다.
+- `5^117 mod 19`를 예로 들어 설명하면 다음과 같다.
+
+```
+5^117 mod 19
+
+// 변환
+= 5^(1 + 4 + 16 + 32 + 64) mod 19
+= (5^1 * 5^4 * 5^16 * 5^32 * 5^64) mod 19
+
+// 첫번째 계산
+= ((5 mod 19) * 5^4 * 5^16 * 5^32 * 5^64) mod 19
+= (5 * 5^4 * 5^16 * 5^32 * 5^64) mod 19
+
+// 두번째 계산
+= (5 * ((5^2 mod 19) * (5^2 mod 19))) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * (((5^1 mod 19) * (5^1 mod 19)) * (5^2 mod 19)) ) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * ((5 * 5) * (5^2 mod 19)) ) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * ((25 mod 19) * (5^2 mod 19)) ) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * (6 * 6) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * (36 mod 19) * 5^16 * 5^32 * 5^64) mod 19
+= (5 * 17 * 5^16 * 5^32 * 5^64) mod 19
+
+// 다섯번째까지 반복하면..
+= (5 * 17 * 16 * 9 * 5) mod 19
+= 61200 mod 19
+= 1
+```
+
+이를 구현한 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/ModularExponentiation.java), 테스트 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/test/java/math/ModularExponentiationTest.java)에 기록했다. 시간 복잡도를 분석해보면 최대 `⎡ln(y)⎤ + ⎡ln(⎡ln(y)⎤)⎤ + ⎡ln(⎡ln(y) - 1⎤)⎤+⎡ln(⎡ln(y) - 2⎤)⎤+ … +  1`가 될 것 같다(?).
 
