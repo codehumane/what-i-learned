@@ -194,8 +194,7 @@ return (q, x)
 
 모듈러를 이용한 새로운 동치 개념도 생각해볼 수 있다.
 
-- `x ≡ y (mod N)` ⇔ `(x - y)가 N으로 떨어진다`
-- `x mod N = y mod N`이라고도 볼 수 있음.
+- `x ≡ y (mod N)` ⇔ `x mod N = y mod N` ⇔  `(x - y)가 N으로 나누어 떨어진다`
 
 동치 개념을 이용해서, 각 정수를 N개의 동치 집합으로 나눠볼 수도 있다.
 
@@ -284,3 +283,43 @@ return (q, x)
 
 이를 구현한 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/ModularExponentiation.java), 테스트 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/test/java/math/ModularExponentiationTest.java)에 기록했다. 시간 복잡도를 분석해보면 최대 `⎡ln(y)⎤ + ⎡ln(⎡ln(y)⎤)⎤ + ⎡ln(⎡ln(y) - 1⎤)⎤+⎡ln(⎡ln(y) - 2⎤)⎤+ … +  1`가 될 것 같다(?).
 
+### 유클리드의 최대 공약수 알고리즘
+
+최대 공약수<sup>gcd, greatest common divisor</sup>를 찾기 위해 사용되는 유클리드의 법칙은 아래와 같다.
+
+> 유클리드 법칙 1: `x`와 `y`가 양의 정수이고 `x ≥ y`를 만족하면, 최대 공약수 `gcd(x, y) = gcd(x mod y, y)` 이다.
+
+이를 증명하는 과정도 소개하고 있는데, 앞에서 언급했던 모듈러를 이용한 동치 개념으로부터 출발한다.
+
+> `x ≡ y (mod N)` 이면, `(x - y)`가 `N`으로 나누어 떨어진다.
+
+증명 과정은 다음과 같다.
+
+1. `x`와 `y`를 나누어 떨어지게 하는 수는, `x-y`도 나누어 떨어지게 한다. (이는 동치개념의 특수화이긴 하지만, 그래도 증명이 궁금하다면 [칸아카데미 - 유클리드 호제법](https://ko.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm)을 참고)
+2. 즉, `gcd(x, y) ≤ gcd(x-y, y)`가 성립한다.
+3. `x-y`와 `y`를 동시에 나누어 떨어지게 하는 수는 `x`와 `y`도 나누어 떨어지게 한다.
+4. 즉, `gcd(x, y) ≥ gcd(x-y, y)`가 성립한다.
+5. 결과적으로, `gcd(x, y) = gcd(x-y, y)`가 성립한다.
+6. 이를 `gcd(x-2y, y)`, `gcd(x-3y, y)`, … 으로 반복하면 `gcd(x mod y, y)`가 됨을 알 수 있다.
+
+그 외에 (책에는 언급되지 않는) 두 가지 법칙이 더 필요한데, 다음과 같다.
+
+> 유클리드 법칙 2: `gcd(x, 0) = x`
+>
+> 유클리드 법칙 3: `gcd(y, 0) = y`
+
+유클리드 법칙 1로 값을 줄여나가다 보면, 법칙 2 또는 3을 만나게 되며, 이 때의 값이 바로 최대공약수가 된다. 간단히 코드로 표현하면 다음과 같다. 전체 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/GCD.java)를 참고.
+
+```java
+// x >= y
+int gcd(int x, int y) {
+  if (y == 0) return x;
+  return gcd(x, x%y);
+}
+```
+
+이제 이 알고리즘의 수행시간을 생각해보자. 한 번의 함수 호출 시, x는 x/2 이하로 줄어든다. 이는 책에서 나온 아래 그림을 통해 쉽게 유추할 수 있다.
+
+![x mod y의 최대 크기](./euclid-time-complexity.jpg)
+
+그리고 그 다음 재귀호출 시에는 x와 y가 서로 바뀌므로, 이번에는 y가 y/2 이하로 줄어든다. 이를 반복해가면, 결국 함수의 호출이 최대 `⎡ln(x) + ln(y)⎤`만큼 일어남을 알 수 있다.
