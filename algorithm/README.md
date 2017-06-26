@@ -196,6 +196,12 @@ return (q, x)
 
 - `x ≡ y (mod N)` ⇔ `x mod N = y mod N` ⇔  `(x - y)가 N으로 나누어 떨어진다`
 
+이는 아래 그림을 통해 좀 더 쉽게 이해할 수 있다.
+
+![모듈러 동치 집합](modulo-congruence.png)
+
+*출처: https://en.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/congruence-modulo
+
 동치 개념을 이용해서, 각 정수를 N개의 동치 집합으로 나눠볼 수도 있다.
 
 - 이 동치 집합은 `{i + kN : k ∈ ℤ}`이고, i는 0에서 N-1 사이가 됨.
@@ -289,20 +295,7 @@ return (q, x)
 
 > 유클리드 법칙 1: x와 y가 양의 정수이고 x ≥ y를 만족하면, 최대 공약수 gcd(x, y) = gcd(x mod y, y) 이다.
 
-이를 증명하는 과정도 소개하고 있는데, 앞에서 언급했던 모듈러를 이용한 동치 개념으로부터 출발한다.
-
-> `x ≡ y (mod N)` 이면, `(x - y)`가 `N`으로 나누어 떨어진다.
-
-증명 과정은 다음과 같다.
-
-1. `x`와 `y`를 나누어 떨어지게 하는 수는, `x-y`도 나누어 떨어지게 한다. (이는 동치개념의 특수화이긴 하지만, 그래도 증명이 궁금하다면 [칸아카데미 - 유클리드 호제법](https://ko.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm)을 참고)
-2. 즉, `gcd(x, y) ≤ gcd(x-y, y)`가 성립한다.
-3. `x-y`와 `y`를 동시에 나누어 떨어지게 하는 수는 `x`와 `y`도 나누어 떨어지게 한다.
-4. 즉, `gcd(x, y) ≥ gcd(x-y, y)`가 성립한다.
-5. 결과적으로, `gcd(x, y) = gcd(x-y, y)`가 성립한다.
-6. 이를 `gcd(x-2y, y)`, `gcd(x-3y, y)`, … 으로 반복하면 `gcd(x mod y, y)`가 됨을 알 수 있다.
-
-그 외에 (책에는 언급되지 않는) 두 가지 법칙이 더 필요한데, 다음과 같다.
+이 법칙의 증명 과정은 [칸아카데미 - 유클리드 호제법](https://ko.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm)이 좀 더 잘 설명하고 있다. 혹은 간단히 `x ≡ y (mod N) 이면, (x - y)가 N으로 나누어 떨어진다`는 개념을 반복하면, 위 법칙을 쉽게 이해할 수 있다. 그 외에 책에는 언급되지 않는 두 가지 법칙이 더 필요한데, 이들은 다음과 같다.
 
 > 유클리드 법칙 2: gcd(x, 0) = x
 >
@@ -354,6 +347,16 @@ int gcd(int x, int y) {
 
 이제 이 정리를 이용해서 알고리즘을 작성해 볼 수 있다. 아래는 두 개의 양의 정수 a, b(a ≥ b ≥ 0)가 주어졌을 때, d = gcd(a, b) 이면서 ax + by = d를 만족하는 정수 x, y, d를 구하는 코드이다.
 
+```java
+static Result get(int a, int b) {
+    if (b == 0) return Result.of(1, 0, a);
+    final Result r = get(b, a % b);
+    return Result.of(r.y, r.x - a / b * r.y, r.d);
+}
+```
+
+전체 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/EuclidExtended.java)에 기록함.
+
 ### 모듈러 역수
 
 책은 모듈러 나눗셈을 소제목으로 사용하고 있지만, 실제로는 모듈러 역수<sup>modular inverse</sup>를 다루고 있다. 또한 [이 문서](https://ko.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/modular-inverses)에 설명하는 바와 같이 모듈러 연산에는 나눗셈이 없기도 하다. 어쨌든, 0이 아닌 모든 실수 a에 대해 곱셈의 결과가 1이 되는 수를 가리켜 a의 역수라고 부른다. `1/a`를 생각하면 된다. 표기는 `a^-1`로 한다. 모듈러 연산에서도 아래와 같이 역수를 정의할 수 있다.
@@ -364,14 +367,25 @@ int gcd(int x, int y) {
 
 > x modulo N의 역은 최대 하나 밖에 없고, … (중략) … 이 역은 항상 존재하지는 않습니다.
 
-- `ax mod N`은 `ax + kN` 형태로 나타낼 수 있음 (`k`가 음수라고 생각하면 이해하기 쉽다)
-- 따라서, `ax mod N`은 `gcd(a, N)`으로 나누어 떨어짐 (당연한 이야기)
-- `gcd(a, N) > 1`이면, 어떤 `x`에 대해서도 `ax ≡ 1 mod N`을 만족할 수 없음
-- 따라서, `gcd(a, N) > 1`이면, `a`는 `mod N` 에 대한 역수를 가질 수 없음
+1. `ax mod N`은 `ax + kN` 형태로 나타낼 수 있음 (`k`가 음수라고 생각하면 이해하기 쉽다)
+2. 따라서, `ax mod N`은 `gcd(a, N)`으로 나누어 떨어짐 (당연한 이야기)
+3. `gcd(a, N) > 1`이면, 어떤 `x`에 대해서도 `ax ≡ 1 mod N`을 만족할 수 없음
+4. 따라서, `gcd(a, N) > 1`이면, `a`는 `mod N` 에 대한 역수를 가질 수 없음
 
-여기서 3번째 문장이 이해되지 않는다. 하지만, 이렇게 바꿔서 이야기하면 이해하기 쉽다. `ax mod N = 1`을 만족해야 하는데, 만약 a와 N이 2 이상의 공약수를 가진다면, a가 N으로 나누어떨어진다는 이야기다. 즉, 나머지가 1이 될 수 없다. 따라서, a가 mod N에 대한 역수를 가질 수 없다고 할 수 있다.
+여기서 3번째 문장이 이해되지 않는다. 하지만, 이렇게 이야기하면 이해하기 쉽다. `ax mod N = 1`을 만족해야 하는데, 만약 a와 N이 2 이상의 공약수를 가진다면, a가 N으로 나누어떨어진다는 이야기다. 즉, 나머지가 1이 될 수 없다. 따라서, a가 mod N에 대한 역수를 가질 수 없다고 할 수 있다.
 
-이번에는 유클리드 규칙을 이용하여 좀 더 효율적인 알고리즘을 작성해 보려 한다.
+이제는 책에서 소개되는 유클리드 규칙을 이용한 알고리즘을 살펴보자.
 
-TBD
+1. `gcd(a, N) = 1`이면, `ax + Ny = 1`을 만족하는 `x`와 `y`를 찾을 수 있다.
+2. `ax ≡ 1 (mod N)`이므로 `x`는 `a`의 역수가 된다.
+
+전체 코드는 [여기](https://github.com/codehumane/learn-algorithm-in-java/blob/master/src/main/java/math/ModularInverse.java)를 참고하고, 간단히 기록하면 아래와 같다.
+
+```java
+static int get(int a, int N) {
+    final Result result = EuclidExtended.get(a, N);
+    if (result.getD() > 1) return -1;
+    return result.getX();
+}
+```
 
