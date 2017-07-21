@@ -71,6 +71,42 @@ reverse(0, 9); // 전체 라인 반전
 >
 > 우리는 John Roebling과 같은 엔지니어일까요? 저는 궁금합니다.
 
-# 알고리즘 디자인 기법
+# 힙<sup>Heaps</sup>
 
-TBD
+힙<sup>Heaps</sup>에 대해 설명함. 그리고 힙을 이용해 정렬과 우선순위 큐를 구현함. 이들 오퍼레이션은 힙의 특성으로 인해 O(n log n) 시간 복잡도를 가짐.
+
+개인적으로는 <[알고리즘 문제해결전략](http://book.algospot.com/)>의 23장에 나온 힙 설명이 더 좋았음.
+
+## 2가지 속성
+
+1. 순서: 모든 노드의 값은 그 자식 노드의 값보다 작거나 같다.
+2. 모양: 마지막 레이어를 제외한 모든 레이어는 완전하다. 그리고 마지막 레이어는 왼쪽부터 채워진다.
+
+![heap-shape-feature](heap-shape.png)
+
+출처: [Algorithms and Data Structures Vassilis Athitosos, University of Texas at Arlington](http://slideplayer.com/slide/10453907/)
+
+위 그림이 힙의 두 번째 속성(구멍도 없고, 마지막 레이어는 왼쪽부터 채워짐)을 잘 설명하고 있음. 이로 인해, 모든 노드는 루트로부터의 거리가 ln(n) 이내가 됨.
+
+## Heapify
+
+책에서는 "두 가지 중요한 함수"라는 이름을 사용함. 이 함수들은 주어진 배열이 힙 속성을 만족시키도록 원소들의 순서를 조정함. `Heapify` 용어가 이 동작을 잘 나타낸다고 생각하여 제목으로 사용함. 어쨋든 이를 위해 2가지 함수를 소개하고 있는데, 하나는 상향식이고 나머지 하나는 하향식 구현임. 방법의 차이일 뿐 효율성은 동일함. 상향식 구현은 아래와 같음.
+
+```
+void siftup(n)
+    pre n > 0 && heap(1, n-1)
+    post heap(1, n)
+  i = n
+  loop
+    if i == 1
+      break
+    p = i / 2
+    if x[p] <= x[i]
+      break
+    swap(p, i)
+    i = p
+```
+
+## 우선순위 큐와 정렬
+
+이제 O(n log n) 시간복잡도를 가지는 우선순위 큐와 정렬 구현이 가능함. 따로 기록하지는 않음. 생각해 볼 것.
