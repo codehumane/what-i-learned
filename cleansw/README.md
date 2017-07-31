@@ -83,3 +83,29 @@ class WakeupCommand implements Command {
 - 다중 제어 스레드 구현을 위한 오래된 기법.
 - 스레드가 블록되지 않음.
 - RTC<sup>run-to-complete</sup>라고 불림. 다음 작업이 시작되기 전에 현재 작업이 완료됨.
+
+# TEMPLATE METHOD & STRATEGY
+
+개념 자체에 대한 설명과 코드는 생략. 둘의 비교만 정리함. [Abstract Methods and Classes](http://docs.oracle.com/javase/tutorial/java/IandI/abstract.html)의 "Abstract Classes Compared to Interface"을 함께 보는 것도 괜찮아 보임.
+
+1. 두 방식 모두 구체적 내용으로부터 일반적 알고리즘을 분리(일종의 특화)함.
+2. 템플릿 메소드는 상속을, 스트래터지는 위임을 사용함.
+3. 참고로 위임<sup>delegation</sup>, 구성<sup>composition</sup>, 상속<sup>inheritance</sup>의 개념을 서로 구분하여 사용하고 있음.
+4. 스트래터지는 약간의 복잡성(클래스 수가 늘어나는 것을 이야기)을 유발함.
+5. 더불어, 메모리 및 실행 시간 비용을 수반(유의미한 차이인지는 의문).
+5. 한편, 템플릿 메소드는 부분적으로 [DIP](https://en.wikipedia.org/wiki/Dependency_inversion_principle)를 위반함.
+6. 아래 코드처럼 `IntSorter`가 버블 정렬이 아닌 다른 정렬을 사용하고 싶을 때 내부를 수정할 수 밖에 없음.
+7. (책에 언급되지는 않았지만) 특화의 결정 시점이 템플릿은 컴파일 타임, 스트래터지는 런타임.
+
+```java
+abstract class BubbleSorter {
+  protected int sort() { // 생략 }
+  protected abstract void swap(int index);
+}
+
+class IntSorter extends BubbleSorter {
+  int sort(int[] ary) { return sort(); }
+  protected void swap(int index) { // 생략 }
+}
+```
+
