@@ -84,7 +84,7 @@ class WakeupCommand implements Command {
 - 스레드가 블록되지 않음.
 - RTC<sup>run-to-complete</sup>라고 불림. 다음 작업이 시작되기 전에 현재 작업이 완료됨.
 
-# TEMPLATE METHOD & STRATEGY
+# TEMPLATE METHOD, STRATEGY
 
 개념 자체에 대한 설명과 코드는 생략. 둘의 비교만 정리함. [Abstract Methods and Classes](http://docs.oracle.com/javase/tutorial/java/IandI/abstract.html)의 "Abstract Classes Compared to Interface"을 함께 보는 것도 괜찮아 보임.
 
@@ -93,9 +93,9 @@ class WakeupCommand implements Command {
 3. 참고로 위임<sup>delegation</sup>, 구성<sup>composition</sup>, 상속<sup>inheritance</sup>의 개념을 서로 구분하여 사용하고 있음.
 4. 스트래터지는 약간의 복잡성(클래스 수가 늘어나는 것을 이야기)을 유발함.
 5. 더불어, 메모리 및 실행 시간 비용을 수반(유의미한 차이인지는 의문).
-5. 한편, 템플릿 메소드는 부분적으로 [DIP](https://en.wikipedia.org/wiki/Dependency_inversion_principle)를 위반함.
-6. 아래 코드처럼 `IntSorter`가 버블 정렬이 아닌 다른 정렬을 사용하고 싶을 때 내부를 수정할 수 밖에 없음.
-7. (책에 언급되지는 않았지만) 특화의 결정 시점이 템플릿은 컴파일 타임, 스트래터지는 런타임.
+6. 한편, 템플릿 메소드는 부분적으로 [DIP](https://en.wikipedia.org/wiki/Dependency_inversion_principle)를 위반함.
+7. 아래 코드처럼 `IntSorter`가 버블 정렬이 아닌 다른 정렬을 사용하고 싶을 때 내부를 수정할 수 밖에 없음.
+8. (책에 언급되지는 않았지만) 특화의 결정 시점이 템플릿은 컴파일 타임, 스트래터지는 런타임.
 
 ```java
 abstract class BubbleSorter {
@@ -109,3 +109,23 @@ class IntSorter extends BubbleSorter {
 }
 ```
 
+# FACADE, MEDIATOR
+
+둘을 비교해가며 각각을 설명함. 먼저, 퍼사드.
+
+- 복잡하고 일반적인 인터페이스를 가진 객체 그룹에 **간단하고 구체적인** 인터페이스를 제공함.
+- 아래 그림에서 `ProductData`는 범용적 목적으로 제공되는 `java.sql`을 모두 알 필요 없음.
+- 어플리케이션 혹은 적어도 `ProductData`의 특수한 목적을 만족시키는 `DB` 클래스만 알면 됨.
+- 게다가 `DB`의 인터페이스는 훨씬 간단함. 또한 추상화 됨.
+
+![facade](facade.jpeg)
+
+다음으로 미디에이터.
+
+- 퍼사드와 마찬가지로 정책을 적용함.
+- 하지만 객체의 **사용자가 인지하지 못한채** 정책이 적용됨.
+- 책에서는 아래 그림으로 설명함.
+- 이 때의 사용자는 `JList`와 `JTextField`의 호출부이며, `QuickEntryMediator`에 대해 알지 못함.
+- 그런데, 어떻게 사용자가 미디에이터의 존재를 모르게 할 수 있는가? 궁금하다면 [여기](https://en.wikipedia.org/wiki/Mediator_pattern)코드를 참고.
+
+![mediator](mediator.jpeg)
