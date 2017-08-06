@@ -537,5 +537,58 @@ RSA의 안정성은 아래 가정에 달렸다고 함.
 4. 각 데이터 항목은 mod n인 정수 k개의 순서쌍임.
 5. 유니버설 해시 함수의 집합은 H = {h<sub>a</sub> : a ∈ {0, …, n - 1}^k }
 
+# 분할 정복법 알고리즘
 
+## 곱셈
 
+먼저, 두 복소수의 곱이 4개의 곱셈이 아닌 3개의 곱셈으로 줄어드는 과정을 소개함.
+
+1. 두 복소수의 곱은 i^2은 -1이라는 특성을 이용하여, 다음과 같이 표기 가능함.
+2. (a + bi)(c + di) = ac - bd + (bc + ad)i
+3. 칼 프리드리히 가우스는 허수 부분<sup>imaginary part</sup>을 다음과 같이 표기함.
+4. bc + ad = (a + b)(c + d) - ac - bd
+5. 실수 부분<sup>real part</sup>과 함께 전체 식을 살펴보면 다음과 같음.
+6. (a + bi)(c + di) = ac - bd + ((a + b)(c + d) - ac - bd)i
+
+덧셈은 총 5번으로 늘어났지만, 곱셈(상대적으로 연산 비용이 더 큰)의 횟수는 4번에서 3번으로 줄어듦. 곱셈의 갯수가 4에서 3으로 줄어든 것이 의미가 없어 보일 수 있으나, 곱셈을 재귀적으로 해결할 때는 이 작은 차이가 모여 유의미한 결과를 가져옴.
+
+이제 이 아이디어를 일반적인 곱셈에 적용함.
+
+1. 먼저, 두 수 x와 y를 n 비트의 정수라고 가정함.
+2. 두 수를 n/2 비트로 쪼갬. 아래 그림 참고
+3. (예시) x = 10110110₂ = 1011₂ * 2^4 + 0110₂
+4. 일반화하면 다음과 같음.
+5. xy = (2<sup>n/2</sup>x<sub>L</sub> + x<sub>R</sub>)(2<sup>n/2</sup>y<sub>L</sub> + y<sub>R</sub>) = 2<sup>n</sup>x<sub>L</sub>y<sub>L</sub> + (2<sup>n/2</sup>(x<sub>L</sub>y<sub>R</sub> + x<sub>R</sub>y<sub>L</sub>) + x<sub>R</sub>y<sub>R</sub>
+6. 가우스의 비결을 적용하면 다음과 같음.
+7. x<sub>L</sub>y<sub>R</sub> + x<sub>R</sub>y<sub>R</sub> = (x<sub>L</sub> + x<sub>R</sub>)(y<sub>L</sub> + y<sub>R</sub>) - x<sub>L</sub>y<sub>L</sub> - x<sub>R</sub>y<sub>R</sub>
+
+![multiplication-gauss](multiplication-gauss.png)
+
+코드로 표현하면 다음과 같음.
+
+```
+function multiply(x, y)
+
+if n = 1: return xy
+xL, xR = leftmost [n/2], rightmost [n/2] bits of x
+yL, yR = leftmost [n/2], rightmost [n/2] bits of y
+
+P1 = multiply(xL, yL)
+P2 = multiply(xR, yR)
+P3 = multiply(xL + xR, yL + yR)
+
+return p1 * 2^(2[n/2]) + (P3 - P1 - P2) * 2([n/2]) + P2
+```
+
+시간 복잡도는 O(n^2)에서 O(n^1.59)로 줄어듦. 이 문제의 재귀 트리 그림은 생략하고 설명만 간단히 기록.
+
+1. 재귀 트리의 높이는 ln(n)이 됨.
+2. 분기계수<sup>Branching Factor</sup>는 3.
+3. 트리 깊이가 k이면, 크기가 n/2^k인 부분 문제가 3^k만큼 있음.
+4. 따라서, 깊이 k인 트리의 전체 시간은 3^k * O(n/2^k) = (3/2)^k * O(n).
+
+참고로, 1비트가 될 때까지 재귀 호출하는 것은 비합리적. 대부분 프로세서에서 16비트나 32비트 곱셈은 하나의 연산이므로, 숫자가 이 범위 이내로 줄어 드는지를 기저 조건<sup>base condition</sup>에서 확인하는 게 효율적임.
+
+## 점화식
+
+TBD
