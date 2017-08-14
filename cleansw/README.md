@@ -129,3 +129,67 @@ class IntSorter extends BubbleSorter {
 - 그런데, 어떻게 사용자가 미디에이터의 존재를 모르게 할 수 있는가? 궁금하다면 [여기](https://en.wikipedia.org/wiki/Mediator_pattern)코드를 참고.
 
 ![mediator](mediator.jpeg)
+
+# NULL OBJECT
+
+```java
+Employee e = DB.getEmployee("Bob");
+if (e != null && e.isTimeToPay(today))
+  e.pay()
+```
+
+- 이런 식의 관용적인 표현은 흔히 볼 수 있음. 하지만 보기 싫고 에러가 발생하기 쉬움.
+- null 반환 대신, 예외를 발생시킬 수도 있음. 에러가 발생할 위험은 줄어들 수 있으나, try/catch 블록이 더 보기 싫을 수도 있음.
+- 널 오브젝트를 적용하면, 위 코드를 아래와 같이 바꿀 수 있음.
+
+```java
+Employee e = DB.getEmployee("Bob");
+if (e.isTimeToPay(today))
+  e.pay()
+```
+
+- 널 오브젝트는 메소드 내부에서 아무런 행위도 하지 않도록 구현됨.
+- 만약, 오직 하나의 인스턴스만 가지도록 하면, `e == Employee.NULL` 같은 비교도 가능해짐.
+- 구현은 아래 코드 참고.
+
+```java
+public interface Employee {
+  
+  public boolean isTimeToPay(Date payDate);
+  public void pay();
+  
+  public static final Employee NULL = new Employee() {
+    public boolean isTimeToPay(Date payDate) {
+      return false;
+    }
+    public void pay() {
+    }
+  }
+}
+```
+
+- 최근에 살펴봤던 Spring Cloud Hystrix의 [AbstractCommand](https://github.com/Netflix/Hystrix/blob/master/hystrix-core/src/main/java/com/netflix/hystrix/AbstractCommand.java)에서도 볼 수 있는 방식임.
+- [Semaphore](https://github.com/Netflix/Hystrix/wiki/configuration#thread-or-semaphore) 방식인 경우는 의미있는 인스턴스가 사용되고, 그렇지 않은 경우는 아래의 `TryableSemaphoreNoOp.DEFAULT` 인스턴스가 반복적으로 사용되고 있음.
+
+```java
+static class TryableSemaphoreNoOp implements TryableSemaphore {
+
+  public static final TryableSemaphore DEFAULT = new TryableSemaphoreNoOp();
+
+  @Override
+  public boolean tryAcquire() {
+    return true;
+  }
+
+  @Override
+  public void release() {
+  }
+
+  @Override
+  public int getNumberOfPermitsUsed() {
+    return 0;
+  }
+}
+```
+
+
