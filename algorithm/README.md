@@ -631,4 +631,40 @@ d < logb(a) 일 때, O(n^(logb(a)))
 
 ## 병합 정렬
 
+```
+function mergesort(a[1 ... n])
+
+if n > 1:
+  return merge(
+      mergesort(a[1 ... ⎣n/2⎦]),
+      mergesort(a[⎣n/2⎦+1 ... n])
+  )
+else:
+  return a
+```
+
+알고리즘이 올바른지 여부는 `merge`에 달려 있음.
+
+```
+function merge(x[1 ... k], y[1 ... l])
+
+if k = 0: return y[1 ... l]
+if l = 0: return x[1 ... k]
+
+if x[1] ≤ y[1]:
+  return x[1] ∘ merge(x[2 ... k], y[1 ... l])
+else:
+  return y[1] ∘ merge(x[1 ... k], y[2 ... l])
+```
+
+**∘ 기호는 연결<sup>concatenation</sup>을 나타냄.*
+
+`merge`의 수행 시간은 선형이며, `mergesort`의 전체 수행 시간은 다음과 같음.
+
+```T(n) = 2T(n/2) + O(n)```
+
+앞서 소개한 점화식을 통해,`O(n log(n))` 임을 알 수 있음.
+
+## 중앙값
+
 TBD
