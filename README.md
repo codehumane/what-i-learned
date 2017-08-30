@@ -10,3 +10,7 @@
 - [[도서] 생각하는 프로그래밍](https://github.com/codehumane/read-record/blob/master/pp/README.md)
 - [[도서] 엔터프라이즈 애플리케이션 아키텍처 패턴](https://github.com/codehumane/read-record/blob/master/poeaa/README.md)
 - [[도서] 클린 소프트웨어](https://github.com/codehumane/read-record/blob/master/cleansw/README.md)
+
+# TID
+
+[TID](TID.md)도 꼽사리로 시작함.
