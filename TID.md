@@ -26,3 +26,11 @@
 
 ## Java 8 Optional map Performance
 - [forEach](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html)가 특정 경우에 performance 저하(상황에 따라 유의미하기도 함)를 가져왔던 것과 다르게, [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html)의 map은 유의미한 차이를 가져오지는 않음. 코드 배포함. 덕분에 간결하고 읽기 쉬움. (나만?)
+
+# 09/02
+
+## Trivial Java Tip
+- selection을 통해 median을 찾는 알고리즘 작성하다가 실수한 것들.
+- `int ary = new int[3];`을 하면 `ary`의 원소들은 0으로 채워짐.
+- `new Random().nextInt()`은 음수가 반환될 수 있음.
+- `new Random().nextInt(bound)`로 하면, 0~bound 사이의 값을 반환해 줌. 그래서인지 0 이하를 지정하는 경우 예외를 던지는 코드가 내부에 존재함.
