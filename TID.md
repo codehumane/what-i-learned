@@ -41,4 +41,25 @@
 - TC를 얼마나 작성해야 하느냐? 사례가 일반화 된 수 만큼. FizzBuzz의 경우는 8개 정도. 그런 면에서, TDD가 도움이 됨.
 - FizzBuzz 구현을 TDD로 아주 세밀한 단계까지 나누어 수행. 이 정도까지 나눌 필요는 없지만, 이 정도까지 나눌 수 있다는 게 중요해 보임. 문제의 난이도에 따라 도움이 됨. Baby Step 이라고도 부름. 라이브 코딩 면접 시 안정감을 주기도 함.
 - 요구사항이 추가되거나 수정되는 것은 별로 문제가 되지 않음. 이보다는 인터페이스가 바뀌는 경우가 어려움. 예컨대, 문자열이 아닌 다른 자료구조를 반환해야 한다면, TC에서 전체를 바꿔야 함. 한 가지 해결책은 헬퍼 메소드. 의존 라이브러리를 래퍼<sup>wrapper</sup> 객체를 두어 사용하는 느낌. 결국은 의존성을 한 곳으로 모는 것.
-- TDD & PP를 하면서 코드를 연구한다는 느낌을 받음. 중요 부분에는 TDD & PP를 고려.
+- TDD & PP를 하면서 코드를 **연구**한다는 느낌을 받음. 중요 부분에는 TDD & PP를 고려.
+
+# 09/05
+
+## Spring Boot Externalized Configuration
+- [@ConfigurationProperties vs. @Value](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-vs-value) 문서에 따르면, `@Value`는 [Relaxed binding](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-relaxed-binding)을 지원하지 않는다고 나옴. 삽질한 적 있음. 주의.
+- `@ConfigurationProperties` 사용시에는 주로 `@EnableConfigurationProperties` 함께 사용됨.
+
+## AWS Beanstalk Deploy
+- `Failed to deploy application.` 외에 별다른 메시지도 없이 deploy 실패함.
+- `/var/log/` 파일들에 특별히 남겨지는 로그도 없음.
+- 이전에는 Rebuild Environment를 했었음. 만약, Live 장비라면?
+- Auto Scaling Group에서 특정 EC Instance를 제거함과 동시에 투입하는 방법을 사용.
+
+## AWS Beanstalk Auto Scaling Group Termination Policy
+- 기본으로 설정된 값은 `Default`임.
+- 기존에는 `Default` == `OldestInstance`라고 오해했음.
+- `Default`에 대한 동작 방식은 [Controlling Which Instances Auto Scaling Terminates During Scale In - Auto Scaling](http://docs.aws.amazon.com/autoscaling/latest/userguide/as-instance-termination.html) 문서에 잘 나와 있음.
+
+## ETC
+- BFF 용도로 사용하고 있는 API Gateway의 Aggregate 필요성에 대해 다시 한번 고민하게 됨. 조심.
+
