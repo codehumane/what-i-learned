@@ -75,3 +75,25 @@
 
 ## ETC
 - 단순화. Queue를 사용하지 않고, 동기적 호출에서 발생할 수 있는 문제를 극복하는 것을 봄. 이런 저런 생각을 하게 됨.
+
+# 09/13
+
+## Ribbon (Client Side Load Balancer)
+
+- Discovery를 사용하지 않는다면, [@LoadBalanced](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer/LoadBalanced.java) 보다 [LoadBalancerClient](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer/LoadBalancerClient.java)를 더 선호. 더 명시적이고, 단순함의 수준은 비슷.
+- [AbstractRibbonCommand](https://github.com/spring-cloud/spring-cloud-netflix/blob/master/spring-cloud-netflix-core/src/main/java/org/springframework/cloud/netflix/zuul/filters/route/support/AbstractRibbonCommand.java#L90)는 [HystrixCommand](https://github.com/Netflix/Hystrix/blob/master/hystrix-core/src/main/java/com/netflix/hystrix/HystrixCommand.java)의 [HystrixCommandGroupKey](https://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommandGroupKey.html) 값으로 "RibbonCommand"를 명시.
+- 결국, Ribbon을 통한 Hystrix는 기본적으로 격리 X. 반대로, 스레드 풀 등을 공유해서 사용.
+- 한편, Ribbon에서의 [HystrixCommandKey](https://netflix.github.io/Hystrix/javadoc/com/netflix/hystrix/HystrixCommandKey.html)는 의존 서비스 아이디를 값으로 함.
+- 그룹과 커맨드의 단위가 이게 좋은가에 대해서는 의문.
+
+## Java
+
+- [Consumer](https://docs.oracle.com/javase/8/docs/api/java/util/function/Consumer.html), [Supplier](https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html), [Function](https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html)에 대해 다시 한 번 살펴봄.
+
+## Non-Blocking, Asynchronous
+
+- Blocking/NonBlocking: 호출/응답 사이에 다른 일을 할 수 있는지 여부
+- Synchronous/Asynchronous: 호출/응답의 시작/종료 시간이 동일한지 여부
+- 참고 자료
+    - [Blocking-NonBlocking-Synchronous-Asynchronous](http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/).
+    - [Async & Spring](https://docs.com/toby-lee/6428)
