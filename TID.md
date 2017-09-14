@@ -97,3 +97,12 @@
 - 참고 자료
     - [Blocking-NonBlocking-Synchronous-Asynchronous](http://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/).
     - [Async & Spring](https://docs.com/toby-lee/6428)
+
+
+# 09/14
+
+## Git Merge Commit Revert
+
+- `git revert`의 `-n(--no-commit)`: revert 시 자동 수행되는 commit을 하지 않음.
+- `git revert`의 `-m(--mainline)`: merge commit revert 시 mainline을 지정함.
+- Revert of Revert (참고: [Undoing Merges](https://git-scm.com/blog/2010/03/02/undoing-merges.html))
