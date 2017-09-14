@@ -106,3 +106,9 @@
 - `git revert`의 `-n(--no-commit)`: revert 시 자동 수행되는 commit을 하지 않음.
 - `git revert`의 `-m(--mainline)`: merge commit revert 시 mainline을 지정함.
 - Revert of Revert (참고: [Undoing Merges](https://git-scm.com/blog/2010/03/02/undoing-merges.html))
+
+## Back to the Basic
+
+- 문제 생겼을 때 빠르게 확인할 수 있는 TC 혹은 replay의 필요성에 대해 다시 한번 절실히 느낌.
+- 얽히고 섥혀 있는 시스템을 보며, 기본적인 OCP도 지키지 못하는 시스템의 고달픔을 다시 한번 절실히 느낌.
+- `getXXX`류의 함수를 열었는데, 내부에서 몰래 값을 할당하고 있는 시스템에 당혹감을 느끼며, SCP가 이렇게 중요하구나를 또다시 체감함.
