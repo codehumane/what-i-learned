@@ -16,8 +16,8 @@
 - 평소 관리하는 성능 테스트 지표가 도움이 됨
 - `Measurement period`,  `Breach duration`, `Upper threshold`, `Lower threshold`의 의미와 관계 이해 및 값 변경
 - 참고
-	- [AWS Developer Forums: Autoscaling Configuration in Elastic ...](https://forums.aws.amazon.com/thread.jspa?threadID=61883)
-	- [Configuring Auto Scaling with Elastic Beanstalk - AWS Elastic Beanstalk](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.as.html)
+  - [AWS Developer Forums: Autoscaling Configuration in Elastic ...](https://forums.aws.amazon.com/thread.jspa?threadID=61883)
+  - [Configuring Auto Scaling with Elastic Beanstalk - AWS Elastic Beanstalk](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.as.html)
 
 ## AWS RDS Configuration
 - RDS의 높은 CPU Utilization의 원인을 추정함. 실험 후 결과 궁금.
@@ -112,3 +112,21 @@
 - 문제 생겼을 때 빠르게 확인할 수 있는 TC 혹은 replay의 필요성에 대해 다시 한번 절실히 느낌.
 - 얽히고 섥혀 있는 시스템을 보며, 기본적인 OCP도 지키지 못하는 시스템의 고달픔을 다시 한번 절실히 느낌.
 - `getXXX`류의 함수를 열었는데, 내부에서 몰래 값을 할당하고 있는 시스템에 당혹감을 느끼며, SCP가 이렇게 중요하구나를 또다시 체감함.
+
+# 09/15
+
+## Hystrix Thread Timeout
+
+- 다수의 Hystrix 비동기/병렬 호출 시, 별도의 스레드를 사용하는데, 분리된 스레드에서의 타임아웃은?
+- Hystrix에 의해 감싸진 녀석이 `InteruptedException`을 해석하지 않으면 멈추지 않음.
+- 출처: https://github.com/Netflix/Hystrix/wiki/How-it-Works#6-hystrixobservablecommandconstruct-or-hystrixcommandrun
+
+> Please note that there's no way to force the latent thread to stop work - the  best Hystrix can do on the JVM is to throw it an InterruptedException. If the work wrapped by Hystrix does not respect InterruptedExceptions, the thread in the Hystrix thread pool will continue its work, though the client already received a TimeoutException. This behavior can saturate the Hystrix thread pool, though the load is 'correctly shed'. Most Java HTTP client libraries do not interpret InterruptedExceptions. So make sure to correctly configure connection and read/write timeouts on the HTTP clients.
+
+## RestTemplate
+
+- [RestTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html)의 기본 타임아웃은 무려 `0`(무한).
+- `setErrorHandler`, `setInterceptor`  등의 인터페이스가 존재함.
+- `HttpComponentsClientHttpRequestFactory`를 통해 Pooling, Timeout 등의 설정 가능
+- 호스트 별로 여러개의 `RestTemplate` 인스턴스를 두어 사용할수도.
+
