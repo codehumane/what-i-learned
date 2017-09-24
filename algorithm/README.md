@@ -712,3 +712,34 @@ else:
 - T(n) = T(3n/4) + O(n)
 - 이를 반복하면, T(n) = O(n)으로, 평균적으로 O(n)의 효율성을 가진다고 말할 수 있음.
 
+
+#### 행렬 곱셈
+
+두 개의 n x n 행렬 A와 B의 곱에서, (i, j)번째 항목을 표현하면 다음과 같음. (AB)ij는 X의 i번째 행과 Y의 j번째 열의 내적(Scalar Product 혹은 Dot Product)임.
+
+![matrix-expression](matrix-expression.svg)
+
+위 공식은 행렬 곱셈에 대한 O(n^3) 알고리즘임. 이것이 한동안 가장 좋은 수행 시간이었지만, 독일의 수학자 폴커 스트라센(Volker Strassen)은 분할 정복법에 기반을 둔 좀 더 효율적 알고리즘을 발표함.
+
+- A와 B를 각각 네 개의 n/2 x n/2 블록으로 나눔.
+- 각 블록을 마치 하나의 원소인 것처럼 취급하여 내적을 수행함.
+- 내적의 각 결과에 대해 재귀적으로 위 작업을 반복함.
+- 그리고 O(n^2) 시간의 덧셈을 수행함.
+- 점화식으로 나타내면, `T(n) = 8T(n/2) + O(n^2)`임.
+
+하지만, 이는 여전히 O(n^3) 임. 여기서 선형 대수를 이용하여, AB를 단지 7개의 n/2 x n/2 부분 문제로 구할 수 있음. 스트라센은 분해(Decomposition)을 통해 이 방법을 발견했다고 함. 정리하면 다음과 같음.
+
+![matrix-multiplication-by-decomposition](matrix-multiplication-by-decomposition.jpg)
+
+정리는 A와 B로 했는데, 책에서는 X와 Y를 사용하고 있음. 이 때의 각 P는 다음과 같음.
+
+1. P1 = A(F - H)
+2. P2 = (A + B)H
+3. P3 = (C + D)E
+4. P4 = D(G - E)
+5. P5 = (A + D)(E + H)
+6. P6 = (B - D)(G + H)
+7. P7 = (A - C)(E + F)
+
+
+
