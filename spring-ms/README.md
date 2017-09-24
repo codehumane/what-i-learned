@@ -33,7 +33,9 @@
 
 # Applying Microservices Concepts
 
-## Establishing appropriate boundaries
+## Patterns and common design decisions
+
+### Establishing appropriate boundaries
 
 > 많은 조직에서는 비즈니스 본연의 성격보다는 서비스 제공 채널에 바탕을 두고 조직을 구성한다. 이런 경우라면 조직도는 서비스 경계에 대한 정확한 정보를 제공해 주지 못한다.
 
@@ -52,9 +54,9 @@
   - 가장 중요한 요소.
   - 기능 분해도나 의존 관계 트리가 도움이 됨.
 
-## Designing communication styles
+### Designing communication styles
 
-### Synchronous
+#### Synchronous
 
 - 공유 메시지 서버 같은 인프라 관리 비용이 없음.
 - 어떤 단계에서 에러가 발생해도 데이터 일관성 보장.
@@ -63,7 +65,7 @@
 - 하나의 서비스 체인 문제가 전체로 이어지기도 함.
 - 실패 시나리오의 많은 부분은 타임아웃 및 이벤트 루프로 해결 가능.
 
-### Asynchronous
+#### Asynchronous
 
 - 동기 방식에 비해 더 고수준의 확장성 제공.
 - 특정 서비스의 문제가 전체로 이어질 가능성 낮아짐(비동기 방식에서도 [Catastrophical Failover](https://martinfowler.com/bliki/CatastrophicFailover.html)는 발생함).
@@ -78,7 +80,7 @@
 
 여기서 `요청을 처리하는 스레드를 내부적으로 재생산해서 부하의 증가를 처리`의 의미는 Non-Blocking을 의미하는가 싶다.
 
-### Which style to choose
+#### Which style to choose
 
 아래 문장이 내용을 대표한다고 생각함.
 
@@ -88,7 +90,7 @@
 - 방식은 비동기지만 사용자에게 결과를 보여주기 전까지는 결국 블럭되어 대기하게 됨.
 - 참고로, 리액티브 프로그래밍은 비동기 방식의 복잡성을 다룰 수 있도록 도와줌.
 
-## Orchestration
+### Orchestration
 
 - **Composability** ∈ { **Orchestration**, **Choreography** }
 - 마이크로서비스는 자율적. 기능이 실행되는 데 필요한 모든 컴포넌트가 서비스 내에 존재.
@@ -109,7 +111,7 @@
 5. 고객 설정 정보 복사본을 예약 MS에 두기. 빈틈없는 분석 선행되야 하고, 결국 복잡도가 높아짐.
 
 
-## Data stores share
+### Data stores share
 
 > 처음에는 좋을 수도 있지만, 복잡한 마이크로서비스를 개발하다 보면 데이터 모델 사이에 계속 관계를 추가하고, 조인 쿼리를 만들어내게 된다. 이는 단단하게 결합된 물리 데이터 모델이 될 수도 있다.
 
@@ -117,7 +119,7 @@
 
 > 서비스가 많지 않은 수의 테이블만 갖고 있다면 오라클 데이터베이스 인스턴스와 같은 전체 DB 인스턴스를 사용하는 것은 낭비에 가깝다. 그런 경우에는 스키마 수준의 분리만으로도 시작하기에는 충분하다.
 
-## Transaction boundaries
+### Transaction boundaries
 
 Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경우 문제될 수 있는 부분과 각각의 해결책 언급.
 
@@ -132,7 +134,7 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
    - 가능한 휠체어 예약 메시지 전송을 뒤로 미룸.
    - 그럼에도 불구하고 비행기 예약이 실패하는 경우는, 휠체어 예약을 취소해 달라는 후처리 필요함.
 
-## Endpoint design
+### Endpoint design
 
 다른 내용이 아닌, 계약 설계<sup>Contract Design</sup> 내용만을 정리함.
 
@@ -142,7 +144,7 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
   - 프로바이더들은 계약이 변경될 때 마다 이 테스트 케이스를 수행하여 영향 범위를 확인함.
 - **Postel's Law**도 언급되지만, KISS와 YAGNI 뒤에 언급되고 있음에 유의.
 
-## Shared libraries
+### Shared libraries
 
 - 서비스 간에 중복된 기능이 존재할 수 있음.
 - 여기서는 적격성 검사 규칙(Eligibility Rules)을 사례로 들고 있음.
@@ -151,7 +153,7 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
 - 한 가지 대안은 라이브러리를 복제하는 것.
 - 요소 기술을 다루는 라이브러리나 기능 컴포넌트로 한정하고 있음에 유의.
 
-## Versioning
+### Versioning
 
 - 서비스 진화를 돕는 요소로써, 미리 고려해야 하는 사항.
 - 시맨틱 버전이 널리 사용됨.
@@ -165,7 +167,7 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
 
 그런데, 어떤 면에서 관리하기 좋다고 하는 것인지 궁금. 하나의 기능 변화로 버전 전체를 올려야 한다면, 그 만큼 코드 작업을 해줘야 함. 이 비용을 넘어서는 이점이 무엇일까?
 
-## Shared reference data
+### Shared reference data
 
 여러 마이크로서비스에서 공유하는 레퍼런스(혹은 마스터) 데이터를 어떻게 관리할 것인가?
 
@@ -180,7 +182,7 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
    - 코드 베이스와 데이터가 단순하거나, 데이터가 비교적 정적인 경우에 적합.
 4. **cache locally**: 로컬에 캐시하여 소유. 마스터 데이터를 많은 수의 서비스가 의존하는 경우 많이 사용됨.
 
-## Bulk operation
+### Bulk operation
 
 서로 다른 서비스의 데이터 스토어에서 조인 SQL을 사용할 수 없음. 대신, 다른 마이크로서비스로의 요청이 너무 많아짐.
 
