@@ -130,3 +130,11 @@
 - `HttpComponentsClientHttpRequestFactory`를 통해 Pooling, Timeout 등의 설정 가능
 - 호스트 별로 여러개의 `RestTemplate` 인스턴스를 두어 사용할수도.
 
+
+# 09/25
+
+## Endpoint Version Design
+
+- 서비스 엔드포인트의 versioning은 불변 서비스<sup>immutable service</sup>의 의미
+- 서비스 내의 단위 기능 수준보다, 서비스 수준에서 버전을 적용하는 것이 언제나 더 간단하다는 이야기에 여러 가지 생각.
+
