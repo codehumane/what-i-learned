@@ -15,4 +15,4 @@
 
 # TID
 
-[TID](TID.md) 시도.
+[TID](tid/README.md) 시도.

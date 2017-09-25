@@ -144,3 +144,14 @@
 - 집에 오는 길에 읽고 있던 <호모데우스, 유발하라리> 내용 중 아래 문구가 눈에 들어옴.
 
 > 당신이 추구하는 어떤 이상이 애초에 결함을 품고 있다면, 대게 그 이상의 실현 단계에 와서야 그러한 결함을 알게 된다.
+
+## Run TID like a Machine
+
+- 성장하기 위해, 단순히 어떤 일을 반복하기보다는 [의도적 수련<sup>deliberate practice</sup>](https://en.wikipedia.org/wiki/Practice_(learning_method)#Deliberate_practice)이 필요.
+- (매일 같이 하지는 못하지만, 그리고 이제 막 시작했지만) TID는 스스로 얼마나 나아가는지를 돌아보는 피드백이 됨.
+- 아래는 이와 관련하여 떠오른 [Management Priciples, Ray Dailo](http://www.businessinsider.com/ray-dalios-bridgewater-management-principles-2014-11)의 그림과 내용 일부.
+
+> 1) understanding how well your people and designs are operating to achieve your goals, and 2) constantly improving them.
+
+![improvement-machine](improvement-machine.jpg)
+
