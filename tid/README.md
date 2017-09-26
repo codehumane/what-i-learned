@@ -155,3 +155,8 @@
 
 ![improvement-machine](improvement-machine.jpg)
 
+# 09/26
+
+## API Endpoint Design
+
+- API 설계에 있어서도 [Uniform Access Design](https://martinfowler.com/bliki/UniformAccessPrinciple.html)은  마찬가지 아닐까.
