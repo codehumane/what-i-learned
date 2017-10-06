@@ -160,3 +160,13 @@
 ## API Endpoint Design
 
 - API 설계에 있어서도 [Uniform Access Design](https://martinfowler.com/bliki/UniformAccessPrinciple.html)은  마찬가지 아닐까.
+
+# 10/05
+
+## Maven BOM
+
+- Maven을 안 쓴지 꽤 되었지만, BOM(Bill Of Material)에 대해서 이제야 알게 됨.
+- [Introduction to the Depedency Mechanism 문서](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)의 ["Importing Depdencies"]() 항목에 잘 설명됨.
+- [spring-boot-starter-parent](https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-parent/1.2.5.RELEASE/spring-boot-starter-parent-1.2.5.RELEASE.pom)는 일종의 BOM.
+- gradle에서는 `spring-boot` 플러그인으로 이런 역할을 수행. [여기](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html#build-tool-plugins-gradle-dependency-management)를 참고.
+
