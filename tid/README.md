@@ -170,3 +170,15 @@
 - [spring-boot-starter-parent](https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-starter-parent/1.2.5.RELEASE/spring-boot-starter-parent-1.2.5.RELEASE.pom)는 일종의 BOM.
 - gradle에서는 `spring-boot` 플러그인으로 이런 역할을 수행. [여기](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html#build-tool-plugins-gradle-dependency-management)를 참고.
 
+
+# 10/06
+
+## Spring Context
+
+- [@Lazy](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Lazy.html)라는 녀석이 존재함. 얼마나 유용할지는 모르겠음.
+
+## Gradle Multi Module Project
+
+- 오랜만에 다시 한 번 Multi Module 관련 문서를 읽음.
+- [Gradle User Guide > Multi Project Build](https://docs.gradle.org/current/userguide/multi_project_builds.html)
+- [Srping Getting Started > Multi Module](https://spring.io/guides/gs/multi-module/)
