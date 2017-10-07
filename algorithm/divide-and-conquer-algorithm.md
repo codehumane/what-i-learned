@@ -19,9 +19,18 @@
 2. 두 수를 n/2 비트로 쪼갬. 아래 그림 참고
 3. (예시) x = 10110110₂ = 1011₂ * 2^4 + 0110₂
 4. 일반화하면 다음과 같음.
-5. xy = (2<sup>n/2</sup>x<sub>L</sub> + x<sub>R</sub>)(2<sup>n/2</sup>y<sub>L</sub> + y<sub>R</sub>) = 2<sup>n</sup>x<sub>L</sub>y<sub>L</sub> + (2<sup>n/2</sup>(x<sub>L</sub>y<sub>R</sub> + x<sub>R</sub>y<sub>L</sub>) + x<sub>R</sub>y<sub>R</sub>
-6. 가우스의 비결을 적용하면 다음과 같음.
-7. x<sub>L</sub>y<sub>R</sub> + x<sub>R</sub>y<sub>R</sub> = (x<sub>L</sub> + x<sub>R</sub>)(y<sub>L</sub> + y<sub>R</sub>) - x<sub>L</sub>y<sub>L</sub> - x<sub>R</sub>y<sub>R</sub>
+
+```latex
+xy = (2^{n/2}·x_L + x_R)(2^{n/2}·y_L + y_R) = 2^n·x_L·y_L + 2^{n/2}·(x_L·y_R + x_R·y_L) + x_R·y_R
+```
+
+5. 가우스의 비결을 적용하면 다음과 같음.
+
+```latex
+x_L·y_R + x_R·y_R = (x_L + x_R)(y_L + y_R) - x_L·y_L - x_R·y_R
+```
+
+
 
 ![multiplication-gauss](multiplication-gauss.png)
 
@@ -220,11 +229,54 @@ c_k를 계산하는 데 O(k) 단계가 걸리고, 2d+1개의 모든 계수를 �
 
 잠깐 용어 정리.
 
-- [차수<sup>degree</sup>](https://ko.wikipedia.org/wiki/%EC%B0%A8_(%EC%88%98%ED%95%99)): 다항식의 종류나 확대체의 종류를 나타냄. x^2 * y^3 + x^3 + y^4 + 1의 차수는 5가 됨.
-- [다항식<sup>polynomial</sup>](https://ko.wikipedia.org/wiki/%EB%8B%A4%ED%95%AD%EC%8B%9D): 문자의 거듭제곱의 상수 배 여럿의 합을 표현하는 수식. ax^2 + b = 0이 하나의 다항식.
-- [계수<sup>coefficient</sup>](https://ko.wikipedia.org/wiki/%EA%B3%84%EC%88%98): 어느 변수에 일정하게 곱해진 상수 인자. ax^2 + b에서 계수는 a가 됨.
+- [차수<sup>degree</sup>](https://ko.wikipedia.org/wiki/%EC%B0%A8_(%EC%88%98%ED%95%99)): 다항식의 종류나 확대체의 종류를 나타냄. x^2 · y^3 + x^3 + y^4 + 1의 차수는 5가 됨.
+- [다항식<sup>polynomial</sup>](https://ko.wikipedia.org/wiki/%EB%8B%A4%ED%95%AD%EC%8B%9D): 문자의 거듭제곱의 상수 배 여럿의 합을 표현하는 수식. a·x^2 + b = 0이 하나의 다항식.
+- [계수<sup>coefficient</sup>](https://ko.wikipedia.org/wiki/%EA%B3%84%EC%88%98): 상수와 변수로 이루어진 단항식 또는 다항식에서 지목된 변수 이외의 부분(나머지 인수 전체).
+- [보간<sup>Interpolation<sup>](http://terms.naver.com/entry.nhn?docId=3405107&cid=47324&categoryId=47324): 알고 있는 데이터 값들을 이용하여 모르는 값을 추정하는 방법의 한 종류.
 
 ### 다항식의 다른 표현
 
-TBD
+다항식들의 중요한 특성들을 살펴봄. 고속 푸리에 변환을 좀 더 잘 이해하기 위함.
+
+> 서로 다른 d+1개의 점들로 고유의 d차 다항식을 특정할 수 있다.
+
+간단한 예시로 "임의의 두 점이 직선을 결정한다"가 있음. 만약, x\_0, …, x\_d를 고정한다면, d차 다항식 `A(x) = a_0 + a_1·x + … + a_d·x^d`는 다음 중 하나로 표현 가능함.
+
+```latex
+1. 다항식의 계수 a_0, a_1, …, a_d
+2. 값 A(x_0), A(x_1), …, A(x_d)
+```
+
+두 번째 표현을 이용하면, 곱셈 수행 시간이 선형이 됨. 단지 a\_0 · b\_0 + a\_1 · b\_1 + … + a\_d · b\_d를 구하면 되기 때문임. 처음에 언뜻 이해 안되서 아래처럼 표를 작성해 봄. 생각해보니 당연한 것.
+
+| 다항식                                      | 1    | 2    | 3    | 4    | 5    |
+| ---------------------------------------- | ---- | ---- | ---- | ---- | ---- |
+| A(x) = x                                 | 1    | 2    | 3    | 4    | 5    |
+| B(x) = 2x + 1                            | 3    | 5    | 7    | 9    | 11   |
+| C(x) = 2x^2 + x                          | 3    | 10   | 21   | 36   | 55   |
+| A(x) · B(x) = A\_1 · B\_1 + A\_2 · B\_2 + ... | 3    | 10   | 21   | 36   | 55   |
+
+하지만 우리는 다항식의 곱을 계수로 표현하고 싶다. 그래서 다음과 같이 함.
+
+1. 계수를 값으로 변환함.
+2. 값 표현에서 곱셈을 함.
+3. 보간<sup>Interpolation</sup>을 통해 다시 계수로 변환함.
+
+이를 코드로 표현하면 다음과 같음.
+
+```latex
+입력: d차 다항식 A(x)와 B(x)의 계수
+출력: 다항식의 곱 C = A·B
+
+Selection
+  Pick some points x_0, x_1, ..., x_{n-1}, where n ≥ 2d+1
+Evaluation
+  Compute A(x_0), A(x_1), ..., A(X_{n-1}) and B(x_0), B(x_1), ..., B(x_{n-1})
+Multiplication
+  Compute C(x_k) = A(x_k)B(x_k) for all k = 0, ..., n-1
+Interpolition
+  Recover C(x) = c_0 + c_1·x + ... + c_{2d}·x^{2d}
+```
+
+다른 것은 별 것 없어 보임. 보간을 어떻게 하는지가 중요. 이 때의 시간복잡도는, 보간 절차는 무시하더라도 Θ(n^2)이 됨. d차 다항식을 계산<sup>evaluation</sup>하는 것이 각 점마다 O(n)이 걸리고, 이를 곱하는 절차가 n번 수행되기 때문임. 고속 푸리에 변환<sup>FFT</sup>을 이용하면 O(n·log(n))으로 줄일 수 있음.
 
