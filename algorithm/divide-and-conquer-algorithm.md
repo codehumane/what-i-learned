@@ -174,11 +174,11 @@ else:
 
 #### 행렬 곱셈
 
-두 개의 n x n 행렬 A와 B의 곱에서, (i, j)번째 항목을 표현하면 다음과 같음. (AB)ij는 X의 i번째 행과 Y의 j번째 열의 내적(Scalar Product 혹은 Dot Product)임.
+두 개의 n x n 행렬 A와 B의 곱에서, (i, j)번째 항목을 표현하면 다음과 같음. (AB)ij는 X의 i번째 행과 Y의 j번째 열의 내적<sup>Scalar Product 혹은 Dot Product</sup>임.
 
 ![matrix-expression](matrix-expression.svg)
 
-위 공식은 행렬 곱셈에 대한 O(n^3) 알고리즘임. 이것이 한동안 가장 좋은 수행 시간이었지만, 독일의 수학자 폴커 스트라센(Volker Strassen)은 분할 정복법에 기반을 둔 좀 더 효율적 알고리즘을 발표함.
+위 공식은 행렬 곱셈에 대한 O(n^3) 알고리즘임. 이것이 한동안 가장 좋은 수행 시간이었지만, 독일의 수학자 폴커 스트라센<sup>Volker Strassen</sup>은 분할 정복법에 기반을 둔 좀 더 효율적 알고리즘을 발표함.
 
 - A와 B를 각각 네 개의 n/2 x n/2 블록으로 나눔.
 - 각 블록을 마치 하나의 원소인 것처럼 취급하여 내적을 수행함.
@@ -186,7 +186,7 @@ else:
 - 그리고 O(n^2) 시간의 덧셈을 수행함.
 - 점화식으로 나타내면, `T(n) = 8T(n/2) + O(n^2)`임.
 
-하지만, 이는 여전히 O(n^3) 임. 여기서 선형 대수를 이용하여, AB를 단지 7개의 n/2 x n/2 부분 문제로 구할 수 있음. 스트라센은 분해(Decomposition)을 통해 이 방법을 발견했다고 함. 정리하면 다음과 같음.
+하지만, 이는 여전히 O(n^3) 임. 여기서 선형 대수를 이용하여, AB를 단지 7개의 n/2 x n/2 부분 문제로 구할 수 있음. 스트라센은 분해<sup>Decomposition</sup>을 통해 이 방법을 발견했다고 함. 정리하면 다음과 같음.
 
 ![matrix-multiplication-by-decomposition](matrix-multiplication-by-decomposition.jpg)
 
@@ -202,25 +202,27 @@ else:
 
 ## 고속 푸리에 변환
 
-이번에는 정수 곱셈과 행렬 곱셈이 아닌, 다항식(Polynomial)에 분할 정복법을 적용함. 먼저, 두 개의 d차 다항식 곱은 차수가 2d인 다항식임. 식으로 표현하면 아래와 같음.
-$$
-A(x) = a_0 + a_1x + \cdots + a_dx^d\\
-B(x) = b_0 + b_1x + \cdots + b_dx^d\\
+이번에는 정수 곱셈과 행렬 곱셈이 아닌, 다항식<sup>Polynomial</sup>에 분할 정복법을 적용함. 먼저, 두 개의 d차 다항식 곱은 차수가 2d인 다항식임. 식으로 표현하면 아래와 같음.
+
+```latex
+A(x) = a_0 + a_1x + \cdots + a_dx^d
+B(x) = b_0 + b_1x + \cdots + b_dx^d
 C(x) = A(x) \cdot B(x) = c_0 + c_1x + \cdots + c_{2d}x^{2d}
-$$
+```
+
 C(x)를 좀 더 일반화하면 다음과 같음.
-$$
+
+```latex
 c_k = a_0b_k + a_1b_{k-1} + \cdots + a_kb_0 = \sum_{i=0}^ka_ib_{k-1}
-$$
-c_k를 계산하는 데 O(k) 단계가 걸리고, 2d+1개의 모든 계수를 찾는데는 Θ(d^2) 시간이 걸림. 더 빠르게 다항식을 곱할 수 있는 방법으로, 고속 푸리에 변환(Fast Fourier Transform)이 소개됨. 궁금함.
+```
+
+c_k를 계산하는 데 O(k) 단계가 걸리고, 2d+1개의 모든 계수를 찾는데는 Θ(d^2) 시간이 걸림. 더 빠르게 다항식을 곱할 수 있는 방법으로, 고속 푸리에 변환<sup>Fast Fourier Transform</sup>이 소개됨. 궁금함.
 
 잠깐 용어 정리.
 
-```
-*차수(degree): 다항식의 종류나 확대체의 종류를 나타냄. x^2 * y^3 + x^3 + y^4 + 1의 차수는 5가 됨.
-*다항식(polynomial): 문자의 거듭제곱의 상수 배 여럿의 합을 표현하는 수식. ax^2 + b = 0이 하나의 다항식.
-*계수(coefficient): 어느 변수에 일정하게 곱해진 상수 인자. ax^2 + b에서 계수는 a가 됨.
-```
+- [차수<sup>degree</sup>](https://ko.wikipedia.org/wiki/%EC%B0%A8_(%EC%88%98%ED%95%99)): 다항식의 종류나 확대체의 종류를 나타냄. x^2 * y^3 + x^3 + y^4 + 1의 차수는 5가 됨.
+- [다항식<sup>polynomial</sup>](https://ko.wikipedia.org/wiki/%EB%8B%A4%ED%95%AD%EC%8B%9D): 문자의 거듭제곱의 상수 배 여럿의 합을 표현하는 수식. ax^2 + b = 0이 하나의 다항식.
+- [계수<sup>coefficient</sup>](https://ko.wikipedia.org/wiki/%EA%B3%84%EC%88%98): 어느 변수에 일정하게 곱해진 상수 인자. ax^2 + b에서 계수는 a가 됨.
 
 ### 다항식의 다른 표현
 
