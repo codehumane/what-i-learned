@@ -218,3 +218,26 @@ Eventual Consistency를 적용하여 오버헤드를 줄이곤 한다. 이 경�
 - 서비스 사용자 주도 계약<sup>consumer driven contract</sup>가 하나의 대안.
 - 그 외 테스트 자동화, 성능 테스팅, A/B 테스팅 미래 깃발<sup>future flag</sup>, 카나리아 테스팅, 블루/그린 배포, 레드/블랙 배포를 언급.
 
+
+# Microservices Evolution – A Case Study
+
+여기서부터는 번역서 내려 두고, 원서만 읽음. 잘못된 정리 가능성에 유의.
+
+3장에서 언급됐던, 마이크로서비스가 갖추어야 하는 기능<sup>capabilities</sup> 모델 그림이 다시 소개됨. 여기서 기능들은 크게 4가지(Core, Supporting, Process & Governance, Infrastructure)로 구분됨. 이 4가지 분류도 흥미롭고, 각각의 항목들을 현재 담당하는 서비스와 비교하는 것도 재미있음. 글로 간단히 정리.
+
+**Core Capabilities**
+
+User Interfaces, API Gateway, Service Endpoints & Communication Protocols, Business Capability Definitions, Event Source, Storage Capabilities: Physical / In-Memory, Service Listener: HTTP / Message
+
+**Supporting Capabilities**
+
+Software Defined Loadbalancer, Central Log Management, Service Registry, Monitoring & Dashboards, Security Service, Dependency Management, Configuration Service, Data Lake, Testing Tools, Reliable Messaging
+
+**Infrastructure Capabilities**
+
+Private/Public Cloud (IaaS), Container/Virtual Machine, Cluster Control & Provisioning, Application Lifecycle Management
+
+**Process & Governance Capailities**
+
+DevOps, DevOps Tools, Microservices Repository, Reference Architecture & Libraries
+
