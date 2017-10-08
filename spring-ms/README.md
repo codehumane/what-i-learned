@@ -241,3 +241,16 @@ Private/Public Cloud (IaaS), Container/Virtual Machine, Cluster Control & Provis
 
 DevOps, DevOps Tools, Microservices Repository, Reference Architecture & Libraries
 
+## Unerstanding the PSS application
+
+PSS라는 가상의 항공편 제공 시스템을 사례로 들고 있음. 가장 먼저, 이 시스템을 기능적 측면과 아키텍처 측면으로 간략히 소개하고 있는데, 그 중에서 기능적 측면을 관심있게 살펴봄. IT 서적들에서는 주로 기술적 어려움만을 다루기 때문임. 비록 아주 간단하게 설명하고 있지만, 이 마저도 반가움.
+
+1. **Search**: Search, Flight, Fare
+2. **Reservation**: Book, Inventory, Payment
+3. **Check-in**: Check-in, Boarding, Seating, Baggage, Loyalty
+4. **Back Office**: CRM, Data Analysis, Revenue Management(Fare calculation based on forecasts), Accounting (Invocing and Billing)
+5. **Data Management**: Reference Data, Customer
+6. **Cross Cutting**: User Management, Notification
+
+개인적으로는 Data Management, Reference Data의 명칭과 분류가 아쉬움.
+
