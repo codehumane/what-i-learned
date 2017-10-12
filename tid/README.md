@@ -161,6 +161,46 @@
 
 - API 설계에 있어서도 [Uniform Access Design](https://martinfowler.com/bliki/UniformAccessPrinciple.html)은  마찬가지 아닐까.
 
+# 09/27
+
+## Code Smell (Vulnerability)
+
+- 아래 코드는 여러 가지 문제점을 가짐.
+- 그 중의 한 가지는, 주로 값객체로 사용되는 mutable 객체를 그대로 반환한다는 것.
+
+```
+@Data
+public class Hello {
+  private Date date;
+}
+```
+
+## Gradle FindBugs
+
+- [Gradle의 FindBugsExtension 문서](https://docs.gradle.org/4.1/dsl/org.gradle.api.plugins.quality.FindBugsExtension.html)가 도움이 됨.
+
+# 09/28
+
+## try-with-resource
+
+- 이미 예전부터 제공되던 기능
+- [The try-with-resource Statement](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html)
+
+```java
+final FileOutputStream outputStream = new FileOutputStream(file);
+try {
+    workbook.write(outputStream);
+} finally {
+    outputStream.close();
+}
+```
+
+```
+try (FileOutputStream outputStream = new FileOutputStream(file)) {
+    workbook.write(outputStream);
+}
+```
+
 # 10/05
 
 ## Maven BOM
