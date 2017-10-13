@@ -222,3 +222,25 @@ try (FileOutputStream outputStream = new FileOutputStream(file)) {
 - 오랜만에 다시 한 번 Multi Module 관련 문서를 읽음.
 - [Gradle User Guide > Multi Project Build](https://docs.gradle.org/current/userguide/multi_project_builds.html)
 - [Srping Getting Started > Multi Module](https://spring.io/guides/gs/multi-module/)
+
+
+# 10/12
+
+## Spring ObjectProvider
+
+- Spring에서 제공되는 [ObjectProvider](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/ObjectProvider.html)라는 것이 있음.
+- `getIfAvailable`이나 `getIfUnique` 등의 편의 기능들이 제공됨. 코딩량을 꽤나 줄이는데 도움이 됨.
+- 아주 오래된 기능인 줄 알았으나, [Spring Framework 4.3이 되어서야 도입된 것이라고 함](https://spring.io/blog/2016/03/04/core-container-refinements-in-spring-framework-4-3).
+- [Implicit constructor injection for single-constructor scenarios](https://spring.io/blog/2016/03/04/core-container-refinements-in-spring-framework-4-3#implicit-constructor-injection-for-single-constructor-scenarios)도 이때 생긴 것.
+
+## Spring Database Popluation
+
+- [ResourceDatabasePopulation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/datasource/init/ResourceDatabasePopulator.html)과 [DatabasePopulatorUtils](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/init/DatabasePopulatorUtils.html)를 이용하면, 좀 더 자유로운 DB 준비 작업(DDL, DML 등)이 가능함.
+- Auto Configuration의 하나인 [DataSourceInitializer](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/init/DataSourceInitializer.html)는 좋은 예시가 됨.
+
+## Meta-Annotation Support for Testing
+
+- 중복된 테스팅 환경 설정 선언들을, 커스텀 애노테이션을 생성하여 재사용 할 수 있음.
+- 반드시 인과관계가 있는 것도 아니고 부산물이긴 하지만, 테스트 컨텍스트 캐시에도 유리해 보임.
+- 내용은 [여기](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#integration-testing-annotations-meta)를 참고.
+
