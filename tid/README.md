@@ -244,3 +244,17 @@ try (FileOutputStream outputStream = new FileOutputStream(file)) {
 - 반드시 인과관계가 있는 것도 아니고 부산물이긴 하지만, 테스트 컨텍스트 캐시에도 유리해 보임.
 - 내용은 [여기](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#integration-testing-annotations-meta)를 참고.
 
+
+# 10/15
+
+## Complex Number
+
+- 켤레 복소수, 복소수의 절대값, 복소평면(가우스 평면)의 개념.
+- 복소수의 극형식(극좌표 표시) `z = r(cosθ + i·sinθ)`
+- 편각 `θ = arg(z)`
+- 복소수의 곱과 나눗셈. 극형식과 [삼각함수의 덧셈정리](https://ko.wikipedia.org/wiki/%EC%82%BC%EA%B0%81%ED%95%A8%EC%88%98%EC%9D%98_%EB%8D%A7%EC%85%88%EC%A0%95%EB%A6%AC)를 활용.
+- 예컨대, i의 극형식은 `cos(\frac{\pi}{2}) + i \cdot sin(\frac{\pi}{2})`이므로,
+- '복소수 z에 i를 곱한다'는 것은 90˚ 회전시킨다는 것과 같음.
+- [드무아브르의 공식](https://ko.wikipedia.org/wiki/%EB%93%9C%EB%AC%B4%EC%95%84%EB%B8%8C%EB%A5%B4%EC%9D%98_%EA%B3%B5%EC%8B%9D)은 수학적 귀납법을 이용.
+- 이 때, `cos2θ = cos^2θ - sin^2θ`와 `sin2θ = 2sinθcosθ`  성질을 이용함.
+
