@@ -13,6 +13,7 @@
 - [[도서] 클린 소프트웨어](cleansw/README.md)
 - [[도서] 스프링 마이크로서비스](spring-ms/README.md)
 - [[도서] 수학사전](mathdict/README.md)
+- [[도서] 생각한다면 과학자처럼](sientific-habits-of-mind/README.md)
 
 # TID
 
