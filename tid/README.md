@@ -274,3 +274,30 @@ try (FileOutputStream outputStream = new FileOutputStream(file)) {
 | complement              | [removeAll](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#removeAll-java.util.Collection-) |
 | cartesian product       | 없는 것 같다.                                 |
 
+## Java HTTP Connection Close
+
+- HTTP 응답을 처리하는 데 있어, `close`가 명시적으로 필요할 수 있음.
+- 예컨대, [Ribbon RestClient의 618라인](https://github.com/Netflix/ribbon/blob/master/ribbon-httpclient/src/main/java/com/netflix/niws/client/http/RestClient.java#L618)에서는,
+- 결국 아래의 [Jersey WebResource](http://javadox.com/com.sun.jersey/jersey-bundle/1.18/com/sun/jersey/api/client/WebResource.html) 코드를 호출하게 되는데,
+- 이 때 class type이 `ClientResponse`이므로 `close`되지 않고 그대로 반환됨.
+
+```java
+private <T> T handle(Class<T> c, ClientRequest ro) throws UniformInterfaceException, ClientHandlerException {
+    setProperties(ro);
+    ClientResponse r = getHeadHandler().handle(ro);
+    if (c == ClientResponse.class) return c.cast(r);
+    if (r.getStatus() < 300) return r.getEntity(c);
+    throw new UniformInterfaceException(r,
+            ro.getPropertyAsFeature(ClientConfig.PROPERTY_BUFFER_RESPONSE_ENTITY_ON_EXCEPTION, true));
+}
+```
+
+- 참고로, 위 코드에서 `r.getEntity(c)` 내부에서는 알아서 `close`가 호출됨.
+- Jersey의 `ClientResponse` 코드를 보다보면, `Closeable` 녀석들은 close가 필요하다고 함.
+- 다른 문서나 코드에서도 비슷한 내용들을 찾을 수 있음.
+
+> ```
+> If the entity is not an instance of Closeable then this response
+> * is closed (you cannot read it more than once, any subsequent
+> * call will produce {@link ClientHandlerException}).
+> ```
