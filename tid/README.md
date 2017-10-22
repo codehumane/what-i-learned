@@ -258,3 +258,19 @@ try (FileOutputStream outputStream = new FileOutputStream(file)) {
 - [드무아브르의 공식](https://ko.wikipedia.org/wiki/%EB%93%9C%EB%AC%B4%EC%95%84%EB%B8%8C%EB%A5%B4%EC%9D%98_%EA%B3%B5%EC%8B%9D)은 수학적 귀납법을 이용.
 - 이 때, `cos2θ = cos^2θ - sin^2θ`와 `sin2θ = 2sinθcosθ`  성질을 이용함.
 
+# 10/22
+
+## Java Set Interface Bulk Operations
+
+- [Set Interface](https://docs.oracle.com/javase/7/docs/api/java/util/Set.html)를 살펴보니, 교집합, 부분집합, 합집합, 여집합에 대한 처리가 잘 되어 있음.
+- [Oracle Tutorior](https://docs.oracle.com/javase/tutorial/collections/interfaces/set.html)에서도 이들이 집합 대수<sup>set-algebraic</sup> 연산을 잘 수행한다고 명시되어 있음.
+- 처음에 사용하려 했던 비트 연산보다, 여러모로 좋은 선택으로 보임.
+
+| Set-algebraic Operation | Set Interface                            |
+| ----------------------- | ---------------------------------------- |
+| subset                  | [containsAll](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#containsAll-java.util.Collection-) |
+| union                   | [addAll](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#addAll-java.util.Collection-) |
+| intersection            | [retainAll](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#retainAll-java.util.Collection-) |
+| complement              | [removeAll](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html#removeAll-java.util.Collection-) |
+| cartesian product       | 없는 것 같다.                                 |
+
