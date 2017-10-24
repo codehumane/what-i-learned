@@ -319,3 +319,25 @@ PSS라는 가상의 항공편 제공 시스템을 사례로 들고 있음. 사�
 3. **선택적 확장**: Y-scale 접근법에 비해 좀 더 cost-effective scaling 가능함.
 4. **기술 노후화**: 기술 전환의 단위가 작아짐. 좀 더 쉽고 빠르게 전환 가능함.
 
+
+## Plan the evolution
+
+### Evolutionary approach
+
+- 점진적인 접근 방식을 사용하자는 이야기.
+- [Strangler Application](https://www.martinfowler.com/bliki/StranglerApplication.html)이 생각남.
+
+### Identification of microservices boundaries
+
+#### ANALYZE DEPENDENCIES
+
+- 여러가지 툴을 이용해 의존성 그래프를 그려낼 수 있음.
+- 이벤트 방식이 일반적으로 약결합이고, 유연하며, 스케일링에 유리.
+- 의존 방식: 이벤트 vs. 쿼리
+  - 쿼리 방식은 이벤트 방식으로 변경이 가능함.
+  - 하지만, 실제로 필요한 데이터에 비해 너무 많은 데이터가 구독되는 것은 낭비.
+  - 마찬가지로, 아주 가끔 필요한 데이터인데, 상시로 구독되는 것 또한 낭비.
+  - 두 방식의 혼용도 가능함. 예컨대, 24시간 동안 이뤄지는 `Check-In` 모듈은 체크인이 열릴 때, `Booking`으로부터 관련된 정보를 가져오고, 이후에는 변경된 내용만을 `Booking`으로부터 구독.
+- 의존 방식: 이벤트 vs. 동기적 업데이트
+  - 동기적 업데이트 방식 또한 이벤트로 변경 가능.
+
