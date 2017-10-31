@@ -331,7 +331,44 @@ PSS라는 가상의 항공편 제공 시스템을 사례로 들고 있음. 사�
 
 #### ANALYZE DEPENDENCIES
 
-TBD
+여러가지 툴을 이용해 기존 시스템의 의존성 그래프를 그려낸 후, 불필요한 의존성을 줄이고, 좀 더 리액티브한 방식으로 바꿔나감.
+
+1. **Events as opposed to query**
+
+   - 일반적으로 이벤트 방식이 일반적으로 약결합이고, 유연하며, 스케일링에 유리.
+   - 쿼리 방식은 이벤트 방식으로 변경이 가능.
+   - 하지만, 실제로 필요한 데이터에 비해 너무 많은 데이터가 구독되는 것은 낭비.
+   - 마찬가지로, 아주 가끔 필요한 데이터인데, 상시로 구독되는 것 또한 낭비.
+   - 두 방식의 혼용도 가능함. 예컨대, 24시간 동안 이뤄지는 `Check-In` 모듈은 체크인이 열릴 때, `Booking`으로부터 관련된 정보를 가져오고, 이후에는 변경된 내용만을 `Booking`으로부터 구독.
+
+2. **Events as opposed to synchronous updates**
+
+   - 동기적 업데이트 방식 또한 이벤트로 변경 가능.
+
+3. **Challenge requirements**
+
+   - `Flight`에 대한 `Book`과 `Search`의 의존성을 사례로 들고 있음.
+   - 사용자들이 항공편을 예약하거나 검색하려고 할 때, 특정 항공편이 유효한지를 검사해야 함.
+   - 매번 `Flight`에게 비행기가 유효한지, 해당 날짜에는 이용 가능한지 등을 물어볼 수도 있음.
+   - 반면, `Flight` 서비스에서 유효성 여부에 따라 재고<sup>inventory</sup>를 0으로 만들 수도 있음.
+   - `Book`과 `Search`는 이 재고만 보면 됨.
+
+4. **Challenge service boundaries**
+
+   - `Book`, `Search`, `Inventory`에 대한 얘기만 기록함.
+   - `Inventory`와 `Search`는 `Booking`만을 지원하는 서비스.
+   - business capability만 보면 `Booking` 내부로 이동하는 것이 이상적으로 보임.
+   - 이 3개의 서비스를 합쳐서 `Reservation`이라는 서비스를 만듦.
+   - 하지만 어플리케이션의 통계를 보면, 검색 트랜잭션이 예약의 그것에 비해 10배가 넘음.
+   - 이런 이유로 서로 다른 스케일링 모델이 필요.
+   - 또한, 검색은 안되더라도 예약은 되야 함. 검색의 트랜잭션 증대가 예약에 영향을 미치면 안됨.
+   - 이것이 폴리글랏 요구사항의 한 사례.
+   - 따라서, `Search`는 `Booking`으로부터 분리.
+   - 하지만 이렇게 되면, `Search`는 다시 재고 조회를 위해 `Inventory` 즉, `Reservation`에 의존.
+   - 이는 예약 트랜잭션에 영향을 미칠 수 있다는 이야기.
+   - 저자가 제시하는 방법은 Inventory slave copy (read-only)를 Search 내부에 두는 것.
+
+   ![inventory slave copy to search](04-inventory-slave-copy-to-search.png)
 
 ### Prioritizing microservices for migration
 
@@ -353,11 +390,3 @@ TBD
 -  또한, backdoor entry 허용시, 외부에 내부 데이터 소스가 노출됨.
 -  다른 방법으로, 레거시 시스템에서 데이터 변경이 발생하면 이를 신규 시스템에 이벤트로 전파. 그리고 동기화.
 -  좀 복잡한 케이스 설명도 하고 있음. 하지만 특별해 보이지는 않음. 상황에 맞게 여러 방안이 필요하다는 이야기.
-
-
-
-
-
-
-
-
