@@ -323,5 +323,23 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 
 ![novice-to-expert](novice-to-expert.jpeg)
 
+# 11/01
 
+## Java Access Modifier
+
+| Modifier    | Class | Package | Subclass | World |
+| ----------- | ----- | ------- | -------- | ----- |
+| public      | Y     | Y       | Y        | Y     |
+| protected   | Y     | Y       | Y        | N     |
+| no modifier | Y     | Y       | N        | N     |
+| private     | Y     | N       | N        | N     |
+
+-  출처는 오라클의 [Controlling Access to Members of a Class](https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html) 문서.
+-  default 접근자를 진짜 많이 사용하는데, 참 모르고 (혹은 까먹고) 쓰고 있었구나를 느낌.
+-  `protecetd`가 `no modifier`보다 더 개방적.
+
+## Java NavigableMap
+
+-  https://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html
+-  [SortedMap](https://docs.oracle.com/javase/7/docs/api/java/util/SortedMap.html)의 확장 인터페이스이며, [navigableKeySet](https://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html#navigableKeySet()) 등의 편의 API들을 상당수 제공함.
 
