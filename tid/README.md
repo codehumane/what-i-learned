@@ -310,11 +310,12 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 
 -  함수 파라미터로 객체를 넘겨주고, 함수는 이 객체에게 질의도 하고 값 설정도 하게 만듦.
 -  효율성을 이유로 이렇게 만들었으나, 아무래도 다른 사람이 보기에 좀 더 쉽게 작성할 수는 없을지 고민하게 됨.
--  마침 "Move accumulation to Collecting Parameter"가 생각남.
+-  마침 "[Move accumulation to Collecting Parameter](https://www.industriallogic.com/xp/refactoring/accumulationToCollection.html)"가 생각남.
 -  [리팩토링](http://www.yes24.co.kr/24/goods/267290) 책에 나왔던 것 같음. 출처는 확인 필요.
--  좀 더 찾아봄. [여기](http://wiki.c2.com/?CollectingParameter)를 보면 어떤 상황에서는 효율적이긴 하나, 일반적으로는 안티패턴이라고 설명함.
 -  옆 동료와 한참을 이야기 함. 그리고 파라미터로 넘어온 객체의 상태를 바꾸는 것을 허용하기로 함.
--  차후에 코드를 다시 봐야하거나 변경해야 할 때 어떤 느낌일지 궁금.
+-  참고로 [여기](http://wiki.c2.com/?CollectingParameter)서는 이것이 일반적으로는 안티 패턴이라고 소개함.
+
+>  A variation on this pattern occurs when the [CollectingParameter](http://wiki.c2.com/?CollectingParameter) is not a collection, but is an object with various properties. As the object is passed around, various actors get and set properties on the [ParameterObject](http://wiki.c2.com/?ParameterObject). I think this version of the pattern is generally an [AntiPattern](http://wiki.c2.com/?AntiPattern), but may be useful when refactoring from the use of globals.
 
 ## The Expert Beginner
 
