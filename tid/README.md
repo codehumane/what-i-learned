@@ -369,6 +369,26 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 -  물론, GW 자체의 문제라기보다 공유 라이브러리에 의한 것. 재미있음.
 -  여러 서비스 간의 공유 라이브러리에 대한 실제 문제 사례가 이런저런 생각을 하게 만듦.
 
+# 11/02
+
+## MSA, Divide-and-Conquer
+
+-  짧지 않은 기간 동안 레거시 시스템을 몇 개의 쪼개진 서비스로 분리해 나감.
+-  아직도 주요하다고 느끼는 교훈은, 배포의 단위를 얼마나 잘게 쪼갤 수 있느냐.
+-  다시 말하면, 얼마나 리스크를 분산시킬 수 있느냐. 일종의 분할 정복<sup>Divide-and-Conquer</sup>
+-  마차의 바퀴를 몽땅 갈아치우고 싶은 욕심에, 달리는 마차를 멈출 수는 없는 노릇.
+-  그런 의미에서 [Strangler Application Pattern](https://www.martinfowler.com/bliki/StranglerApplication.html)은 단순하지만 강력한 접근법. ([Big-Bang](https://en.wikipedia.org/wiki/Big_bang_adoption)은 노노)
+-  [Feature Toggle](https://martinfowler.com/articles/feature-toggles.html)이나, 데이터 이중화 등이 도움이 됨.
+-  하지만 차후 사용되지 Feature들의 정리는 또다른 부담. 역시나 좋은 습관의 중요성.
+
+>  "Leave the campground cleaner than you found it." - Clean Code
+
+## Value
+
+-  이런 저런 이유로 떠올랐던 오늘의 문장. 출처는 [이 곳](http://pragmaticstory.com/attachment/cfile25.uf@1654D0124BCFBE0C2F6182.pdf).
+
+>  "수술은 성공했습니다. 하지만 환자는 죽었습니다. 무엇이 성공한 것입니까"
+
 # 11/03
 
 ## Depedencies - Ordering, Filtering
@@ -412,11 +432,10 @@ class DeliveryCalendarService {
 
 # 11/04
 
-- [I interviewed at five top companies in Silicon Valley in five days, and luckily got five job offers](http://www.looah.com/article/view/2070)
-- 위 글에서 아래 두 문장이 마음 깊은 곳을 찌름.
-- 꿈보다 해몽인가. 참으로 평범한 문장들임에도 불구하고 말이다.
+-  [I interviewed at five top companies in Silicon Valley in five days, and luckily got five job offers](http://www.looah.com/article/view/2070)
+-  위 글에서 아래 두 문장이 마음 깊은 곳을 찌름.
+-  꿈보다 해몽인가. 참으로 평범한 문장들임에도 불구하고 말이다.
 
-> Understand the requirements first, then lay out the high-level design, and finally drill down to the implementation details. Don’t jump to the details right away without figuring out what the requirements are.
+>  Understand the requirements first, then lay out the high-level design, and finally drill down to the implementation details. Don’t jump to the details right away without figuring out what the requirements are.
 
-> There are no perfect system designs. Make the right trade-off for what is needed.
-
+>  There are no perfect system designs. Make the right trade-off for what is needed.
