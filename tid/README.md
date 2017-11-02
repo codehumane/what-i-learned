@@ -344,3 +344,19 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 -  https://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html
 -  [SortedMap](https://docs.oracle.com/javase/7/docs/api/java/util/SortedMap.html)의 확장 인터페이스이며, [navigableKeySet](https://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html#navigableKeySet()) 등의 편의 API들을 상당수 제공함.
 
+## API Endpoint Versioning
+
+-  1개의 서비스에서 20개의 API 엔드포인트를 제공한다고 가정.
+-  이 엔드포인트들은 여러 서비스에서 사용됨.
+-  그런데, 특정 엔드포인트가 변경되야 한다고 하자.
+-  이 엔드포인트의 버전만 올려야 할까, 아니면 전체 엔드포인트의 버전을 함께 올려야 할까?
+-  혹은, 얼마만큼의 변경이 있을때 버전을 올리는가?
+-  그러니까, 버전이 뭔가? 왜 하는가?
+-  많은 접근법들이 있구나 알게 됨.
+
+## API GW, Shared Client Library
+
+-  [Mastering Chaos, A Netflix Guide to Microservices](https://www.youtube.com/watch?v=OczG5FQIcXw&feature=youtu.be)
+-  위 영상의 20분 즈음에는 GW가 또 다른 레거시가 되는 이야기가 나옴.
+-  물론, GW 자체의 문제라기보다 공유 라이브러리에 의한 것. 재미있음.
+-  여러 서비스 간의 공유 라이브러리에 대한 실제 문제 사례가 이런저런 생각을 하게 만듦.
