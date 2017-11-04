@@ -360,3 +360,44 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 -  위 영상의 20분 즈음에는 GW가 또 다른 레거시가 되는 이야기가 나옴.
 -  물론, GW 자체의 문제라기보다 공유 라이브러리에 의한 것. 재미있음.
 -  여러 서비스 간의 공유 라이브러리에 대한 실제 문제 사례가 이런저런 생각을 하게 만듦.
+
+# 11/03
+
+## Depedencies - Ordering, Filtering
+
+사용자가 상품들을 장바구니에 담았음. 그리고 이제 배송일자를 골라야 함. 이 때, 각종 정책에 의해 불가능한 날짜를 제거하고, 가능한 날짜들만 사용자에게 알려줘야 함.
+
+그래서 만든 것들 중 주요한 것은 아래 2개
+
+- `DeliveryDateChecker` : 불가능한 날짜 제거하는 인터페이스. 그리고 이들의 구현체가 10개 정도 존재.
+- `DeliveryCalendarService` : 배송 가능한 날짜들로 캘린더 만들어 주는 녀석. 구현은 아래와 같음.
+
+```java
+@Serivce
+class DeliveryCalendarService {
+
+  private final List<DeliveryDateChecker> checkers;
+
+  DevlieryCalendarService(List<DeliveryDateChecker> checkers) {
+    this.checkers = checkers;
+  }
+  
+  DeliveryCalendar get(Set<Product> products, LocalDate startDate) {
+    return checkers
+      .stream()
+      .map(c -> c.check(products, startDate))
+      .reduce(toCalendar());
+  }
+}
+```
+
+그런데, `OrderConfirmationService` 라는 녀석을 만들어야 함. 사용자가 선택한 날짜들로, 다시 한 번 배송 가능한 지 확인하는 녀석. 그런데, `DeliveryCalendarService`와 "**의존성**" 관련 요구사항이 조금 다름.
+
+1. 모든 `DeliveryAvailabilityChecker` 구현체가 아닌, 2개의 구현체만 필요함.
+2. `DeliveryAvailabilityChecker`를 호출하는 순서가 달라야 함.
+
+조금 더 풀어서 설명하면, 다음과 같다.
+
+> `DeliveryCalendarService`에서는 `DeliveryAvailabilityChecker`의 구현체인 A, B, C, D를 차례로 호출한 반면, `OrderConfirmationService`에서는 D, C를 차례로 호출해야 함.
+
+여러 방법들이 있음. 그러나, 어떻게 하는 게 가장 좋을까?
