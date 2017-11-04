@@ -442,4 +442,55 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
 
 ## Target architecture
 
+**Orchestrating microservices**와 **Handling exception** 내용만 기록.
+
+### Orchestrating mircorservices
+
+![04-orchestrating-booking-service](04-orchestrating-booking-service.png)
+
+- 예약을 위한 오케스트레이션과 룰 실행은 예약 서비스에 위치
+- 기본적으로 내부의 비즈니스 컴포넌트들이 사용. 필요에 따라 외부의 서비스도 호출.
+- 위 그림에서는 운임 서비스에 요금을 질의, 재고 서비스에 재고 갱신을 명령함.
+- 요구사항의 복잡성에 따라, 자바 병렬 API나 리액티브 라이브러리를 사용.
+- 더 복잡한 경우에는 [Spring Integration](http://projects.spring.io/spring-integration/)이나 [Apache Camel](http://camel.apache.org/) 등의 통합 프레임웍 사용.
+
+사실 특별한 내용이 아닐 수도 있으나, 최근의 고민과 맞물리면서 잠시 이런 저런 생각을 하게 만듦. 그래서 기록함.
+
+### Handling exception
+
+![04-orchestration-handling-exception](04-orchestration-handling-exception.png)
+
+위 그림은 예외가 발생할 수 있는 지점들을 표기한 것. 각 지점 별로 예외가 발생하면 어떻게 해야 할까?
+
+1. `checkFares` 실패
+   - 1안: 더 이상의 프로세스를 중지하고 사용자에게 예외 반환
+   - 2안: `book` 요청에 함께 담긴 운임 정보를 신뢰
+     - 예약에 앞서 비행 정보들을 사용자가 검색하게 됨.
+     - 이 검색 결과에 운임 정보를 담고, 예약 서비스는 이를 신뢰.
+   - 3안: 1안, 2안을 조합
+     - 기본적으로는 `checkFares`를 호출함.
+     - 예약 서비스가 장애인 경우, `book` 요청에 담긴 운임 정보 신뢰.
+     - 하지만, 예약 상태를 특수한 값으로 설정하고, 큐에 담아둔 뒤, 예약 서비스가 정상화 되면 운임 정보를 다시 한 번 검사.
+2. `Create Booking` 실패
+   - 사용자에게 에러를 반환.
+   - 대안을 고려할 수 있긴 하나 시스템 복잡성 높아짐.
+3. `UpdateInventory` 실패
+   - 재고는 중요하기 때문에, 예약과 재고 갱신은 로컬 트랜잭션에 두는 것이 좋음.
+   - 두 컴포넌트가 동일한 서브시스템에 있다면 가능함.
+4. `sendBookingEvent` 실패
+   - 일단 `book`이 실패하는 경우도 당연히 대비.
+     - 따라서, `sendBookingEvent`는 가장 마지막에 수행.
+     - 그럼에도 실패할 수 있음. `sendRevertBookingEvent`를 보내는 처리 등이 필요.
+   - 그런데, `book`은 성공했는데 `sendBookingEvent`가 실패한다면?
+   - 1안: 어떻게든 극복
+     - 폴백 서비스를 호출해서 실패 내역을 로컬에 저장.
+     - 그리고 sweep-and-scan 등으로 차후에 이벤트를 재전송. 여러 번 재시도 가능.
+   - 2안: 사용자에게 에러를 반환.
+     - 그리고 사용자에게 재시도를 유도.
+     - 고객에게 좋은 경험은 아님. 하지만 1안에 비해서 간단함.
+
+
+## Target implementation view
+
 TBD
+
