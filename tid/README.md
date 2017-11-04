@@ -189,15 +189,23 @@ public class Hello {
 ```java
 final FileOutputStream outputStream = new FileOutputStream(file);
 try {
-    workbook.write(outputStream);
+  workbook.write(outputStream);
 } finally {
-    outputStream.close();
+  outputStream.close();
 }
 ```
 
-```
+```java
 try (FileOutputStream outputStream = new FileOutputStream(file)) {
-    workbook.write(outputStream);
+  workbook.write(outputStream);
+}
+```
+
+- Java9에서는 더 나아진다(고 생각됨).
+
+```
+try {
+  workbook.write(outputStream);
 }
 ```
 
