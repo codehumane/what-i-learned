@@ -490,7 +490,6 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
      - 고객에게 좋은 경험은 아님. 하지만 1안에 비해서 간단함.
 
 
-## Target implementation view
+## Scaling Microservices with Spring Cloud
 
 TBD
-
