@@ -29,5 +29,58 @@
 
 ## 규칙. ID로 다른 AGGREGATE을 참조하라
 
+- 아래 코드에서는 `BacklogItem`이라는 AGGREGATE 루트가 다른 AGGREGATE 루트인 `Product`를 참조.
+- 하나의 AGGREGATE는 참조된 AGGREGATE을 같은 트랜잭션에서 수정하면 X.
+- 단지 조회만을 위해 참조를 할 수 있음. 그러나 언제든 수정하고픈 유혹이 생길 수 있음.
+- 객체 참조가 아닌, 전역 고유 식별자 즉, ID 참조가 한 가지 방법이 됨.
+- 추론 객체 참조<sup>inferred object reference</sup>라고도 부름.
+- 결과적으로 AGGREGATE는 작아짐. 성능과 리소스 측면에서 효율적.
+
+```java
+public class BacklogItem extends ConcurrencySafeEntity {
+  private Product product; // 객체 참조
+  private ProductId productId; // ID(전역 고유 식별자) 참조.
+}
+```
+
+- 한편, ID를 참조하는 경우 모델 탐색은 어떻게 하는가?
+- 첫 번째 방법은 단절된 도메인 모델<sup>Diconnected Domain Model</sup>. AGGREGATE 내부에서 REPOSITORY를 사용. 일종의 지연 로딩.
+- 두 번째 방법. AGGREGATE 호출에 앞서 DOMAIN SERVICE를 통해 의존 관계 주입.
+
+```java
+public class ProductBacklogItemService ... {
+  
+  @Transactional
+  public void assingTeamMemberToTask(
+      String aTenantId,
+      String aBacklogItemId,
+      String aTaskId,
+      String aTeamMemberId) {
+    
+    val backlogItem = backlogItemRepository.backlogItemOfId(
+      new TenantId(aTenantId),
+      new BacklogItemItd(aBacklogItemId)
+    );
+    
+    val ofTeam = teamRepository.teamOfId(
+      backlogItem.tenantId(),
+      backlogItem.teamId()
+    );
+    
+    backlogItem.assignTeamMemberToTask(
+      new TeamMemberId(aTeamMemberId),
+      ofTeam,
+      new TaskId(aTaskId)
+    );
+  }
+}
+```
+
+- 세 번째 방법. 복잡한 도메인 별 의존성을 해결하기 위해서는, DOMAIN SERVICE를 AGGREGATE의 커맨드 메소드로 전달.
+- AGGREGATE는 참조를 엮어주기 위해 [이중 디스패치<sup>double dispatch</sup>](https://en.wikipedia.org/wiki/Double_dispatch)를 수행할 수 있음.
+- 책에서 언급되지는 않았지만, 캐싱 메커니즘에 대한 고려까지 함께 필요.
+
+## 규칙. 경계의 밖에선 결과적 일관성을 사용하라
+
 TBD
 
