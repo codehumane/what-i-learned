@@ -82,5 +82,27 @@ public class ProductBacklogItemService ... {
 
 ## 규칙. 경계의 밖에선 결과적 일관성을 사용하라
 
+- 2개 이상의 AGGREGATE에서 함께 비즈니스 규칙이 수행되야 한다면 결과적 일관성을 사용하라는 이야기.
+- 트랜잭션 일관성과 결과적 일관성 중 어느 것을 선택해야 하는가? 에릭 에반스의 기준을 제시하고 있음.
+- 데이터 일관성 보장 주체가 유스케이스를 수행하는 사용자인가?
+- 아니면 다른 사용자나 시스템이 해야 하는 일인가?
+- 전자는 트랜잭션, 후자는 결과적 일관성을 사용.
+- DDD에서 결과적 일관성을 위해 비동기 구독자에게 도메인 이벤트를 발행함.
+
+```java
+public class BacklogItem extends ConcurrencySafeEntity {
+  
+  DomainEventPublisher
+    .instance()
+    .publish(new BacklogItemCommitted(
+      this.tenantId(),
+      this.backlogItemId(),
+      this.sprintId()
+    ));
+}
+```
+
+## 규칙을 어겨야 하는 이유
+
 TBD
 
