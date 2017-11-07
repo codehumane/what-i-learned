@@ -409,3 +409,14 @@ class DeliveryCalendarService {
 > `DeliveryCalendarService`에서는 `DeliveryAvailabilityChecker`의 구현체인 A, B, C, D를 차례로 호출한 반면, `OrderConfirmationService`에서는 D, C를 차례로 호출해야 함.
 
 여러 방법들이 있음. 그러나, 어떻게 하는 게 가장 좋을까?
+
+# 11/04
+
+- [I interviewed at five top companies in Silicon Valley in five days, and luckily got five job offers](http://www.looah.com/article/view/2070)
+- 위 글에서 아래 두 문장이 마음 깊은 곳을 찌름.
+- 꿈보다 해몽인가. 참으로 평범한 문장들임에도 불구하고 말이다.
+
+> Understand the requirements first, then lay out the high-level design, and finally drill down to the implementation details. Don’t jump to the details right away without figuring out what the requirements are.
+
+> There are no perfect system designs. Make the right trade-off for what is needed.
+
