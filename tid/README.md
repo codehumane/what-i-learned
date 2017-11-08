@@ -430,7 +430,7 @@ class DeliveryCalendarService {
 
 여러 방법들이 있음. 그러나, 어떻게 하는 게 가장 좋을까?
 
-# 11/04
+# 11/07
 
 -  [I interviewed at five top companies in Silicon Valley in five days, and luckily got five job offers](http://www.looah.com/article/view/2070)
 -  위 글에서 아래 두 문장이 마음 깊은 곳을 찌름.
@@ -439,3 +439,12 @@ class DeliveryCalendarService {
 >  Understand the requirements first, then lay out the high-level design, and finally drill down to the implementation details. Don’t jump to the details right away without figuring out what the requirements are.
 
 >  There are no perfect system designs. Make the right trade-off for what is needed.
+
+# 11/08
+
+-  [통계적 유의성](https://ko.wikipedia.org/wiki/%ED%86%B5%EA%B3%84%EC%A0%81_%EC%9C%A0%EC%9D%98%EC%84%B1)의 표준은 관행상 p값([유의 수준](https://ko.wikipedia.org/wiki/%EC%9C%A0%EC%9D%98_%EC%88%98%EC%A4%80))을 0.05로 잡는다고 함.
+-  [틀리지 않는 법 (수학적 사고의 힘)](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=74921141)에서는 이를 비판하는 내용이 상당히 많이 나옴.
+-  아래는 책에서 인용된 [xkcd](https://xkcd.com/882/)의 한 그림.
+
+![green-jelly-beans-linked-to-acne](green-jelly-beans-linked-to-acne.png)
+
