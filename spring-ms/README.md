@@ -490,6 +490,25 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
      - 고객에게 좋은 경험은 아님. 하지만 1안에 비해서 간단함.
 
 
-## Scaling Microservices with Spring Cloud
+# Scaling Microservices with Spring Cloud
 
-TBD
+[Spring Cloud](http://projects.spring.io/spring-cloud/)의 컴포넌트들을 활용한 스케일링을 소개함. 활용되는 컴포넌트로는 아래와 같은 것들이 있음. 참고로, **Reviewing microservices capabilities**, 그리고 **Reviewing BrownField's PSS implementation** 챕터는 정리 생략함. 단순히 문맥을 잃지 말라는 차원에서 앞서 언급한 내용들을 정리해 둔 것.
+
+1. Software Defined Load Balancer
+2. Service Registry
+3. Configuration Service
+4. Reliable Cloud Messaging
+5. API Gateways
+
+## What is Spring Cloud?
+
+-  간단히 스프링 클라우드를 설명하고 있음.
+-  개인적으로 프로젝트 네이밍이 참 아쉬움.
+-  어쨌든, Twelve-Factor 원칙 아래, 클라우드 환경에서 동작하는 어플리케이션을 만들도록 도와줌.
+-  그러면서도 특정 클라우드 환경에 종속되지 않도록 함.
+-  개발자들은 기능적 역량에만 집중할 수 있도록,
+-  비기능적 역량(distributed, fault-tolerant, self-healing 등)을 위한 보일러플레이트 코드를 제공함.
+-  아래 그림에서 회색 박스는  분산 시스템 역량을, 하얀색 박스는 이를 지원하는 각 스프링 클라우드 컴포넌트를 나타냄.
+
+![Components of Spring Cloud](05-components-of-spring-cloud.png)
+
