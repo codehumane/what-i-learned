@@ -106,3 +106,66 @@ public class BacklogItem extends ConcurrencySafeEntity {
 
 TBD
 
+# 애그리게잇과 이벤트 소싱(A+ES)
+
+## 어플리케이션의 내부
+
+>  일단 변경하는 행동이 완료된 후에는 반드시 `Changes` 컬렉션을 이벤트 저장소로 커밋해야 한다. 쓰기 스레드와 동시성 충돌이 발생하지 않음을 보장하는 가운데, 새로운 변경을 모두 추가한다. `Load()`에서 `Append()` 메소드로 동시성 버전 변수를 넘겨주기 때문에 이를 보장할 수 있다.
+
+-  **690p**에 보면 위와 같이 이벤트 저장소와 동시성 이야기가 언급됨.
+-  하지만, "쓰기 스레드와 동시성 충돌이 발생하지 않음을 보장"한다는 말이 무슨 말일까?
+-  동일한 객체를 수정하는 둘 이상의 스레드가 동시에 존재하지 않는다는 말로 이해되는데,
+-  정말 그렇다면, 이것이 굳이 언급해야 할 만한 장점일까?
+-  "동시성 버전"이라는 용어가 사용된 것을 보니, 여전히 낙관적 잠금을 사용하고 있기도 하고.
+
+## 커맨드 핸들러
+
+>  커맨드 객체는 직렬화할 수 있기 때문에 해당하는 텍스트나 바이너리 표현을 메세지 큐를 통해 메시지로 보낼 수 있다. (중략) 어쨌든 클라이언트와 서비스 사이의 결합을 분리하면 로드밸런싱을 개선하고 경쟁적 컨슈머를 사용하고 시스템 파티셔닝을 지원할 수 있다.
+
+-  **693p**의 내용. 애그리게잇에 커맨드와 커맨드 핸들러를 적용할 때의 장점인데,
+-  가독성이나 유연성 같은 코드 상의 이점이 아니라, 시스템 상의 이점을 언급하는 것이 흥미로움.
+-  요약하면, 쓰기 작업의 로드밸런싱, 경쟁적 컨슈머, 시스템 파티셔닝.
+-  또한, 아래 그림처럼 시간 분리<sup>temporal decoupling</sup>도 가능.
+-  그리고 짤막하게 소개되었지만, 기존 코드의 영향을 최소화하며, 관점(감사, 로깅, 인증, 유효성 검증 등)을 추가할 수 있다는 것도 와닿는 장점.
+
+![temporal-decoupling](appendix-temporal-decoupling.jpg)
+
+## 동시성 제어
+
+![thread-race-to-event-stream](appendix-thread-race-to-event-stream.jpg)
+
+-  위 그림은 둘 이상의 스레드가 이벤트 스트림에 접근하면서 발생할 수 있는 경합 문제를 설명함.
+-  가장 쉬운 접근법은 예외를 던지고 사용자에게 재시도를 가이드.
+-  두 번째 접근법은 시스템 상에서 충돌 감지 후 재시도.
+-  그리고 아래는 충돌 발생 시 재시도를 하는 코드.
+
+```c#
+try {
+  _eventStore.AppendToStream(
+    id, eventStream.Version, customer.Changes);
+  return;
+}
+catch (EventStoreConcurrencyException ex) {
+  foreach (var failedEvent in customer.Changes) {
+    foreach (var succededEvent in ex.ActualEvents) {
+      if (ConflictsWith(failedEvent, succededEvent)) {
+        var msg = string.format("Conflict between {0} and {1}",
+          failedEvent, succededEvent);
+        throw new RealConcurrencyException(msg, ex);
+      }
+    }
+  }
+  // 충돌 없으면 추가
+  _eventStore.AppendToStream(
+    id, eventStream.Version, customer.Changes);
+}
+```
+
+-  이 때의 충돌은 보통 같은 타입의 이벤트에 대해서만 발생하므로 `ConflictsWith`의 내부는 아래와 같음.
+
+```c#
+bool ConflictsWith(IEvent event1, IEvent event2) {
+  return event1.GetType() == event2.GetType();
+}
+```
+
