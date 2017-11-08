@@ -371,11 +371,11 @@ TID인데, 1주일 간격으로 작성 중. 반성.
 
 # 11/02
 
-## MSA, Divide-and-Conquer
+## Divide-and-Conquer
 
--  짧지 않은 기간 동안 레거시 시스템을 몇 개의 쪼개진 서비스로 분리해 나감.
--  아직도 주요하다고 느끼는 교훈은, 배포의 단위를 얼마나 잘게 쪼갤 수 있느냐.
--  다시 말하면, 얼마나 리스크를 분산시킬 수 있느냐. 일종의 분할 정복<sup>Divide-and-Conquer</sup>
+-  짧지 않은 시간 동안 레거시를 몇 개의 서비스로 나누어 감. 주요했던 교훈은, 배포의 단위를 얼마나 잘게 쪼갤 수 있느냐.
+-  다시 말하면, 얼마나 리스크를 분산시킬 수 있느냐. 잘못된 상태로 너무 많이 나아가지 않을 수 있는가(혹은 다시 돌아올 수 있는가).
+-  일종의 분할 정복<sup>Divide-and-Conquer</sup>? 돌다리?
 -  마차의 바퀴를 몽땅 갈아치우고 싶은 욕심에, 달리는 마차를 멈출 수는 없는 노릇.
 -  그런 의미에서 [Strangler Application Pattern](https://www.martinfowler.com/bliki/StranglerApplication.html)은 단순하지만 강력한 접근법. ([Big-Bang](https://en.wikipedia.org/wiki/Big_bang_adoption)은 노노)
 -  [Feature Toggle](https://martinfowler.com/articles/feature-toggles.html)이나, 데이터 이중화 등이 도움이 됨.
