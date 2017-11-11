@@ -492,13 +492,25 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
 
 # Scaling Microservices with Spring Cloud
 
-[Spring Cloud](http://projects.spring.io/spring-cloud/)의 컴포넌트들을 활용한 스케일링을 소개함. 활용되는 컴포넌트로는 아래와 같은 것들이 있음. 참고로, **Reviewing microservices capabilities**, 그리고 **Reviewing BrownField's PSS implementation** 챕터는 정리 생략함. 단순히 문맥을 잃지 말라는 차원에서 앞서 언급한 내용들을 정리해 둔 것.
+[Spring Cloud](http://projects.spring.io/spring-cloud/)의 컴포넌트들을 활용한 스케일링을 소개함. 활용되는 컴포넌트로는 아래와 같은 것들이 있음.
 
 1. Software Defined Load Balancer
 2. Service Registry
 3. Configuration Service
 4. Reliable Cloud Messaging
 5. API Gateways
+
+참고로, 아래 챕터들은 기록 생략함. 단순히 앞서 언급된 내용 리마인드이거나, 스프링 클라우드 컴포넌트들에 대한 아주 간단한 설명에 그치고 말기 때문임.
+
+- Reviewing microservices capabilities
+- Reviewing BrownField's PSS implementation
+- Setting up the environment for BrownField PSS
+- Spring Cloud Config
+- Feign as a declarative REST client
+- Ribbon for load balancing
+- Eureka for registration and discovery
+- Zuul proxy as the API gateway
+- Summarizing the BrownField PSS architecture
 
 ## What is Spring Cloud?
 
@@ -512,3 +524,12 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
 
 ![Components of Spring Cloud](05-components-of-spring-cloud.png)
 
+## Streams for reactive microservices
+
+- Spring Cloud Stream는 선언적 방식으로 메시지를 주고 받을 수 있게 해줌.
+- source와 sink 컨셉으로 동작. source는 발신자의 관점을, sink는 수신자의 관점을 표현함.
+- 설정하는 코드들을 보여주는데, 아주 간단한 것들 만을 설명함. 기록은 생략.
+
+# Autoscaling Microservices
+
+TBD
