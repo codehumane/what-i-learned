@@ -448,3 +448,33 @@ class DeliveryCalendarService {
 
 ![green-jelly-beans-linked-to-acne](green-jelly-beans-linked-to-acne.png)
 
+# 11/11
+
+## Merge Sort
+
+- 오랜만에 작성해 본 [병합정렬](https://en.wikipedia.org/wiki/Merge_sort).
+- 생각보다 오래 걸렸고, 시간 복잡도도 높게 나옴.
+- 약간의 공간복잡도를 포기하면 될 것을, 무의식적으로 모 아니면 도라고 생각한 듯.
+- 잘못된 구현은 [여기](https://github.com/codehumane/learn-algorithm-in-java/commit/5db9aacaf333996c1379a0673ba23c815f689065)에 기록함.
+- 약간의 공간 복잡도 포기한, 하지만 시간 복잡도는 O(n · ln(n)) 혹은 Θ(n · ln(n))을 달성한 구현. 여기에 병렬 처리까지 추가한 코드는 [이 곳](https://github.com/codehumane/learn-algorithm-in-java/commit/b498cac6b324a25d6707bb94035a541ddb5682f6)을 참고.
+
+## Merge Sort Time Complexity
+
+- 병합정렬의 내부는 분할, 정복, 병합으로 이루어짐.
+- 여기서 분할, 병합의 실행 시간은 n + 1이며, cn으로 표기 가능함(c는 상수).
+- 그리고 아래와 같이 트리 그림으로 표현하면, 모든 트리의 깊이에서 n의 실행시간을 가진다는 것을 알 수 있음.
+- 자꾸 잊어버려서, [블로그에 기록](http://codehumane.github.io/2017/11/11/%EB%B3%91%ED%95%A9%EC%A0%95%EB%A0%AC-%EC%8B%9C%EA%B0%84%EB%B3%B5%EC%9E%A1%EB%8F%84-%EA%B5%AC%ED%95%98%EA%B8%B0/)함.
+
+![merge-sort-complexity-tree](merge-sort-complexity-tree.png)
+
+# 11/12
+
+## Median Find
+
+- 오늘은 [중위수 찾기 알고리즘을 구현함](https://github.com/codehumane/learn-algorithm-in-java/commit/fba07a0bedac08998ee62d77885ce7ddfdd249f8).
+- 쉽게 생각하면, 병합 정렬로 숫자를 정렬한 뒤, 가운데 값을 추출하면 됨.
+- 이 때의 시간 복잡도는 당연히 O(n · ln(n))가 됨.
+- 하지만, 선택<sup>selection</sup>을 사용하면 좀 더 쉽고 빠르다.
+- [여기](https://brilliant.org/wiki/median-finding-algorithm/)에 설명이 잘 나와 있다고 생각함.
+- 수행 시간에 대한 기댓값은 T(n) ≤ T(3n/4) + O(n).
+- 따라서, 평균적으로 O(n)의 수행시간을 가짐.
