@@ -478,3 +478,19 @@ class DeliveryCalendarService {
 - [여기](https://brilliant.org/wiki/median-finding-algorithm/)에 설명이 잘 나와 있다고 생각함.
 - 수행 시간에 대한 기댓값은 T(n) ≤ T(3n/4) + O(n).
 - 따라서, 평균적으로 O(n)의 수행시간을 가짐.
+
+# 11/13
+
+## Spring Cloud Stream & AWS
+
+-  스프링에서 [SQS](https://aws.amazon.com/ko/sqs/), [SNS](https://aws.amazon.com/ko/sns/)를 사용할 일이 있어 [Spring Cloud Stream](https://cloud.spring.io/spring-cloud-stream/)을 떠올렸으나,
+-  [Binder Implementation](https://github.com/spring-cloud/spring-cloud-stream#binder-implementations)을 살펴보니 아직까지는 [Kafaka](https://github.com/spring-cloud/spring-cloud-stream-binder-kafka)와 [RabbitMQ](https://github.com/spring-cloud/spring-cloud-stream-binder-rabbit)만을 지원함.
+-  대신, [Spring Cloud AWS](https://cloud.spring.io/spring-cloud-aws/)가 존재함.
+-  SQS, ElastiCache, SNS, CloudFormation, RDS, S3를 위한 편의 기능들을 제공.
+-  레퍼런스는 [여기](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/)를 참고.
+
+## When the Optimizer Considers a Full Table Scan
+
+-  index가 걸려 있는 컬럼이라고 하더라도, SELECT 범위가 크다면 Sequential(Full) Scan이 발생할 수 있음.
+-  [Full table scan](https://en.wikipedia.org/wiki/Full_table_scan), [Why does PostgreSQL perform sequential scan on indexed column?](https://stackoverflow.com/questions/5203755/why-does-postgresql-perform-sequential-scan-on-indexed-column) 문서 참고.
+
