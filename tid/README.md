@@ -494,3 +494,39 @@ class DeliveryCalendarService {
 -  index가 걸려 있는 컬럼이라고 하더라도, SELECT 범위가 크다면 Sequential(Full) Scan이 발생할 수 있음.
 -  [Full table scan](https://en.wikipedia.org/wiki/Full_table_scan), [Why does PostgreSQL perform sequential scan on indexed column?](https://stackoverflow.com/questions/5203755/why-does-postgresql-perform-sequential-scan-on-indexed-column) 문서 참고.
 
+# 11/14
+
+## Spring Cloud AWS Messaging
+
+>  ... enables developers to receive and send messages with the [Simple Queueing Service](https://aws.amazon.com/sqs/) for point-to-point communication. Publish-subscribe messaging is supported with the integration of the [Simple Notification Service](https://aws.amazon.com/sns/).
+
+\- [Spring Cloud AWS Reference](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/)
+
+## AWS SQS, SNS
+
+-  [SQS](https://aws.amazon.com/ko/sqs/)는 대기열 서비스. 메시지 전달 안정성(fault tolerant). 2가지 대기열 (표준, FIFO)
+-  [SNS](https://aws.amazon.com/sns/?nc1=h_ls)는 [토픽](http://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html) 사용. 발신자 수신자 간의 결합도 낮춤. [Fanout](https://en.wikipedia.org/wiki/Fan-out_(software)). 폴링 처리 제거. ([Pub/Sub Messaging Basics](https://aws.amazon.com/pub-sub-messaging/))
+-  [Common Amazon SNS Scenarios](http://docs.aws.amazon.com/sns/latest/dg/SNS_Scenarios.html)에 보면 Fanout을 개발 환경에서 프로덕션 환경의 데이터를 받는 용도로도 사용함.
+-  [What is the difference between Amazon SNS and Amazon SQS?](https://stackoverflow.com/questions/13681213/what-is-the-difference-between-amazon-sns-and-amazon-sqs)
+
+| SQS                              | SNS                                   |
+| -------------------------------- | ------------------------------------- |
+| queueing system                  | pub/sub system (topic)                |
+| polling (+ process, delete)      | push                                  |
+| some latency                     | send time-critical (immediate)        |
+| point-to-point (one receiver)    | fanout (multiple reciever)            |
+| concurrency decoupling (persist) | publisher decoupling from subscribers |
+
+-  [SQS Queues and SNS Notification - Now Best Friends](https://aws.amazon.com/blogs/aws/queues-and-notifications-now-best-friends/) 문서에서는 이 둘을 "glue" 컴포넌트라고 표현.
+
+## Deployment
+
+-  Snowflake vs. [Phoenix Server](https://www.thoughtworks.com/insights/blog/moving-to-phoenix-server-pattern-introduction), [Immutable Server](https://martinfowler.com/bliki/ImmutableServer.html)
+-  [Blue/Green Deployment](https://martinfowler.com/bliki/BlueGreenDeployment.html), [Canary Release](https://martinfowler.com/bliki/CanaryRelease.html), [A/B Testing](https://en.wikipedia.org/wiki/A/B_testing)
+
+## AWS SDK Credentials Configuration
+
+-  [Simple credentials configuration](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_simple_credentials_configuration)
+-  [Instance profile configuration](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_instance_profile_configuration) with [Using Instance Profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)
+-  [결합된 방식](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_mixing_both_security_configurations)을 권장하기도.
+
