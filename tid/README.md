@@ -530,3 +530,41 @@ class DeliveryCalendarService {
 -  [Instance profile configuration](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_instance_profile_configuration) with [Using Instance Profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)
 -  [결합된 방식](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_mixing_both_security_configurations)을 권장하기도.
 
+
+# 11/15
+
+##  AWS Instance Metadata
+
+-  [EC2 Instance Metadata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html)
+-  [Instance Metadata Categories](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories)
+
+### Spring Cloud AWS Region Configuration
+
+-  [Automatic Region Configuration](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_automatic_region_configuration)
+-  EC2 instance에서는 Automatic Configuration을 **사용할 수 있다**가 아니라, **사용해야 한다**구나.
+
+>  "If the application context is started inside an EC2 instance, then the region can automatically be fetched from the [instance metadata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html) and therefore must not be configured statically."
+
+## Spring Cloud Instance Metadata Retrieve
+
+-  [Retrieving Instance Metadata](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_retrieving_instance_metadata)
+-  property placeholder 등을 통한 인스턴스 메타데이터 접근 가능. HTTP Service 호출 X
+-  EC2에서 동작하는 부트의 경우에는 자동으로 사용 가능함.
+-  [Tags](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_using_instance_tags), [User Data](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_using_instance_user_data)에도 접근 가능.
+
+## Spring Cloud Messaging
+
+- SQS의 몇 가지 제약사항. [SQS Support](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_sqs_support) 참고.
+  - String payload only.
+  - No transaction support. 메시지는 두 번 폴링 될 수 있음.
+  - 256kb 크기 제한.
+- SQS에 대한 [Message Reply](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.2.1.RELEASE/#_message_reply) 기능도 제공.
+
+```java
+@SqsListener("treeQueue")
+@SendTo("leafsQueue")
+public List<Leaf> extractLeafs(Tree tree) {
+	// ...
+}
+```
+
