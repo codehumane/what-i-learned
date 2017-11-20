@@ -578,3 +578,16 @@ public List<Leaf> extractLeafs(Tree tree) {
 - [백분율, 백분율점, 백분위수](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#백분율-백분율점-백분위수)
 
 
+# 11/19
+
+## Workflow Subscriptions & Event Broker Terminology
+
+[여기](https://docs.vmware.com/en/vRealize-Automation/7.0/com.vmware.vra.extensibility.doc/GUID-594E5327-E3B4-467A-AFB8-839450798161.html)서 설명하는 토픽과 이벤트의 관계, 그리고 메시지/페이로드/이벤트의 구분이 기억에 남음.
+
+| 용어          | 설명                                       |
+| ----------- | ---------------------------------------- |
+| Event Topic | 이벤트 집합. 모든 이벤트는 이벤트 토픽의 한 인스턴스.          |
+| Event       | 상태의 변화. 이벤트 발생에 대한 정보를 기록하고 있는 엔티티.      |
+| Payload     | 이벤트 데이터.                                 |
+| Message     | 관련자들끼리 주고받는, 이벤트에 대한 운송 정보.              |
+| 그 외         | Event Broker Service, Subscription, Subscriber, Provider, Producer |
