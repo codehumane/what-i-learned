@@ -568,3 +568,13 @@ public List<Leaf> extractLeafs(Tree tree) {
 }
 ```
 
+# 11/16
+
+- [새빨간 거짓말, 통계 (책)](https://github.com/codehumane/what-i-learned/blob/master/how-to-lie-with-statistics/README.md)
+- [언제나 의심스러운 여론조사](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#언제나-의심스러운-여론조사)
+- [평균은 하나가 아니다](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#평균은-하나가-아니다)
+- [통계도 논리이다](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#숫자로-장난치기)
+- [백분율 더하기](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#백분율-더하기)
+- [백분율, 백분율점, 백분위수](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#백분율-백분율점-백분위수)
+
+
