@@ -578,7 +578,7 @@ public List<Leaf> extractLeafs(Tree tree) {
 - [백분율, 백분율점, 백분위수](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#백분율-백분율점-백분위수)
 
 
-# 11/19
+# 11/20g
 
 ## Workflow Subscriptions & Event Broker Terminology
 
