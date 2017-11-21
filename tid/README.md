@@ -591,3 +591,49 @@ public List<Leaf> extractLeafs(Tree tree) {
 | Payload     | 이벤트 데이터.                                 |
 | Message     | 관련자들끼리 주고받는, 이벤트에 대한 운송 정보.              |
 | 그 외         | Event Broker Service, Subscription, Subscriber, Provider, Producer |
+
+## AWS SNS Protocol - Application
+
+-  [SNS Topic Subscription](http://docs.aws.amazon.com/ko_kr/sns/latest/dg/SubscribeTopic.html)의 가능한 프로토콜 중에 `Application`이라는 것이 있음.
+-  이게 뭔가 했는데, [여기](https://stackoverflow.com/questions/33488224/what-is-application-protocol-of-sns-subscription)를 보니, 모바일 앱과 디바이스를 위한 것.
+
+>  delivery of JSON-encoded message to an EndpointArn for a mobile app and device.
+
+## AWS SNS Retry Policy
+
+-  http://docs.aws.amazon.com/ko_kr/sns/latest/dg/DeliveryPolicies.html
+-  다른 프로토콜과 다르게, HTTP와 HTTPS는 전송 정책을 제공함.
+-  먼저, 전송 실패에 대한 기본적인 정의가 있음.
+-  재시도는 최대 100회, 최대 1시간 이내에만 허용됨.
+-  단계는 총 4가지
+   -  Retries with no delay, Pre-Backoff Phase, Backoff Phase, Post-Backoff Phase
+-  최대 수신 속도 또한 지정 가능함.
+
+## Spring Composite Injection
+
+-  Bean 주입에 Composite을 적용.
+-  [Spring: Injecting Lists, Maps, Optionals and getBeansOfType() Pitfalls](https://dzone.com/articles/spring-injecting-lists-maps) 참고함.
+
+```java
+@Component
+@Primary
+public class CompositeRunner implements Runnable {
+  
+  private final List<Runnable> runnables;  
+  CompositeRunner(List<Runnable> runnables) {
+    this.runnables = runnables;
+  }
+ 
+  @Override
+  public void run() {
+    return runnables
+      .forEach(Runnable::run);
+    }
+}
+```
+
+## Articles
+
+-  [내 멋대로 구현한 이벤트 드리븐](http://www.popit.kr/%EB%82%B4-%EB%A9%8B%EB%8C%80%EB%A1%9C-%EA%B5%AC%ED%98%84%ED%95%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%93%9C%EB%A6%AC%EB%B8%90/)
+-  [[MySQL] 인덱스 정리 및 팁](http://jojoldu.tistory.com/243)
+
