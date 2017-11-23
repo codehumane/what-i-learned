@@ -559,3 +559,21 @@ MSA 전환 기간 동안, 이전의 사용자 인터페이스와 새로운 것�
 - 인프라스트럭처 또한 자동으로 프로비저닝 됨.
 - 매번 VM을 생성하고 폐기.
 
+
+## Autoscaling Approaches
+
+스케일 인/아웃을 언제 어떤 기준으로 해야 하는가에 대한 이야기.
+
+### Scaling with resource constraints
+
+- 머신의 CPU, 메모리, 디스크 수치를 기반으로 함.
+- 전형적인 정책 중의 하나는 CPU가 60%가 넘을 때 스케일 아웃.
+- 임계치에 바로 도달했다고 스케일링이 시작되는 것은 아님.
+- sliding window 혹은 wating period를 함께 설정.
+
+### 그 외
+
+- **Scaling during specific time periods**: 새벽에는 사용자가 없음.
+- **Scaling based on the message queue length**: 큐의 크기가 임계치를 넘음.
+- **Scaling based on business parameters**: 주문 마감시간 이전 1시간 동안.
+- **Predictive autoscaling**: 하드 코딩된 규칙이나 시간으로 대응 할 수 없는 부분들을 보완. 트렌드나 기존 패턴 등을 파악하여 예측. Netflix Scryer가 한 예.
