@@ -102,7 +102,41 @@ public class BacklogItem extends ConcurrencySafeEntity {
 }
 ```
 
-## 규칙을 어겨야 하는 이유
+# 11장. 팩토리
+
+-  복잡한 생성 로직을 숨길 수 있음.
+-  일관성을 보장할 수도 있음. 예컨대, AGGREGATE 생성 시 일부 세부 사항은 잘못된 상태를 갖지 않도록 보호.
+-  생성자만으로는 표현할 수 없는 유비쿼터스 언어를 나타낼 수도 있음.
+-  예제 코드 하나만 기록.
+
+```java
+public class Forum extends Entity {
+  public Discussion startDiscussion(
+      DiscussionId aDiscussionId,
+      Author anAuthor,
+      String aSubject) {
+    
+    if (this.isClosed())
+      throw new IllegalStateException("Forum is closed");
+    
+    Discussion discussion = new Discussion(
+      this.tenant(),
+      this.forumId(),
+      aDiscussionId,
+      anAuthor,
+      aSubject);
+    );
+    
+    DomainEventPublisher
+      .instance()
+      .publish(new DiscussionStarted(...));
+    
+    return discussion;
+  }
+}
+```
+
+# 12장. 리포지토리
 
 TBD
 
