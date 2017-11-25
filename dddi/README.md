@@ -16,7 +16,31 @@
 - 시스템 배치는 트랜잭션이 커서 주로 사용량이 적은 시간대에 수행됨. 도메인 이벤트를 활용하면 이로부터 해방.
 - 하지만 모든 상황에 가능한 것은 아님. [여기](https://github.com/codehumane/what-i-learned/blob/master/spring-ms/README.md#analyze-dependencies)의 "Events as opposed to query" 내용 참고.
 
+## 이벤트 모델링
 
+- 이름: 도메인 이벤트의 발생 원인이 된 커맨드 오퍼레이션을 표현.
+- 속성: 이벤트가 발생한 시간, 이벤트를 발생시킨 인스턴스와 그 식별자, 그 외 유용한 속성들.
+- 행동: 이벤트는 보통 불변으로 설계됨. 따라서 행동 설계는 간단. 이벤트가 전달되는 동안 상태가 바뀐다고 생각해보면 아 끔찍하다.
+
+```java
+@Value
+public class BacklogItemCommitted implements DomainEvent {
+  private Date occurredOn;
+  private BacklogItemId backlogItemId;
+  private SprintId committedToSprintId;
+  private TenantId tenantId;
+  ...
+}
+```
+
+- 때로는 클라이언트가 직접 요청한 내용이 이벤트가 되기도 함.
+  - 이런 이벤트들은 고유한 리포지토리를 가질 수 있음.
+  - 과거에 일어난 사건을 나타내기 때문에 삭제는 비허용.
+- 고유 식별자를 부여하기도 함.
+  - 일반적으로는 구별의 필요성도 없으며,
+  - 발생시간을 포함한 값객체이기 때문에 대부분 식별이 가능.
+  - 하지만 메시지 재발송에 대비하기 위해서는 식별자가 필요할 수도 있음.
+  - 일부 메시징 인프라는 헤더/인벨롭<sup>envelope</sup>의 일부로 메시지 식별자를 제공.
 
 # 10장. AGGREGATE
 
