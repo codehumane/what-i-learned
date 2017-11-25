@@ -3,6 +3,21 @@
 - [도메인 주도 설계 구현](http://www.acornpub.co.kr/book/implement-ddd)<sup>Implementing Domain-Driven Design</sup>
 - 반 버논<sup>Vaughn Vernon</sup>
 
+# 8장. 도메인 이벤트
+
+## 언제 그리고 왜 도메인 이벤트를 사용할까
+
+> 도메인 전문가가 관심을 갖고 있는 어떤 사건이 발생했다.
+>
+> 연속된 개별 이벤트를 묶어서 도메인에서 일어나는 활동의 정보를 모델링하자. 각 이벤트를 도메인 객체로 표현하자···. 도메인 이벤트는 도메인 모델을 완벽히 지원하며 도메인에서 일어난 어떤 사건을 나타낸다. [Evans, Ref. 20쪽]
+
+- 도메인 전문가로부터 "**…하면 저에게 알려주세요.**" 혹은 "**그런 일이 일어나면…**"와 같은 말이 언급된다면, 이벤트를 모델링 해야 할 여지가 큼.
+- 도메인 이벤트는 결합 분리를 가져옴. 글로벌 트랜잭션 대신, 결과적 일관성. 그리고 높은 확장성과 성능. 하지만 지연 시간을 감안.
+- 시스템 배치는 트랜잭션이 커서 주로 사용량이 적은 시간대에 수행됨. 도메인 이벤트를 활용하면 이로부터 해방.
+- 하지만 모든 상황에 가능한 것은 아님. [여기](https://github.com/codehumane/what-i-learned/blob/master/spring-ms/README.md#analyze-dependencies)의 "Events as opposed to query" 내용 참고.
+
+
+
 # 10장. AGGREGATE
 
 ## 규칙. 진짜 고정자를 일관성 경계 안에 모델링하라.
