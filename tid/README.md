@@ -578,7 +578,7 @@ public List<Leaf> extractLeafs(Tree tree) {
 - [백분율, 백분율점, 백분위수](https://github.com/codehumane/what-i-learned/tree/master/how-to-lie-with-statistics#백분율-백분율점-백분위수)
 
 
-# 11/20g
+# 11/20
 
 ## Workflow Subscriptions & Event Broker Terminology
 
@@ -636,4 +636,15 @@ public class CompositeRunner implements Runnable {
 
 -  [내 멋대로 구현한 이벤트 드리븐](http://www.popit.kr/%EB%82%B4-%EB%A9%8B%EB%8C%80%EB%A1%9C-%EA%B5%AC%ED%98%84%ED%95%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%93%9C%EB%A6%AC%EB%B8%90/)
 -  [[MySQL] 인덱스 정리 및 팁](http://jojoldu.tistory.com/243)
+
+
+# 11/23
+
+## Book
+
+- Spring Microservices, [Autoscaling Microservices](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#autoscaling-microservices)
+  - [Spring Microservices with Spring Cloud](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#scaling-microservices-with-spring-cloud-1)
+  - [Understanding the concept of autoscaling](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#understanding-the-concept-of-autoscaling)
+  - [Autoscaling Approaches](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#autoscaling-approaches)
+- Domain Driven Design Implementation, [11장. 팩토리](https://github.com/codehumane/what-i-learned/tree/master/dddi#11장-팩토리)
 
