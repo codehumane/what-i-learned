@@ -42,6 +42,83 @@ public class BacklogItemCommitted implements DomainEvent {
   - 하지만 메시지 재발송에 대비하기 위해서는 식별자가 필요할 수도 있음.
   - 일부 메시징 인프라는 헤더/인벨롭<sup>envelope</sup>의 일부로 메시지 식별자를 제공.
 
+## 도메인 모델에서 이벤트를 발행하기
+
+중요하기 보다는 재미있게 읽은 부분. 아래는 발행자 코드.
+
+```java
+public class DomainEventPublisher {
+  
+  @SuppressWarnings("unchecked")
+  private static final ThreadLocal<List> subscribers = new ThreadLocal<List>();
+  
+  private static final ThreadLocal<Boolean> publishing = new ThreadLocal<Boolean>() {
+    protected Boolean initialValue() {
+      return Boolean.FALSE;
+    }
+  }
+  
+  public static DomainEventPublisher instance() {
+    return new DomainEventPublisher();
+  }
+  
+  public DomainEventPublisher() {
+    super();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public <T> void publish(final T aDomainEvent) {
+    if (publishing.get()) return;
+
+    try {
+      publishing.set(Boolean.TRUE);
+      List<DomainEventSubscriber<T>> registeredSubscribers =
+        subscribers.get();
+      
+      if (registeredSubscribers != null) {
+        Class<?> eventType = aDomainEvent.getClass();
+        for (DomainEventSubscriber<T> subscriber : registeredSubscribers) {
+          Class<?> subscribedTo = subscriber
+            .subscribedToEventType();
+          
+          if (subscribedTo == eventType ||
+              subscribedTo == DomainEvent.class) {
+            subscriber.handleEvent(aDomainEvent);
+          }
+        }
+      }
+    } finally {
+      publishing.set(Boolean.FALSE);
+    }
+  }
+  
+  //...
+  
+  @SuppressWarnings("unchecked")
+  public <T> void subscribe(DomainEventSubscriber<T> aSubscriber) {
+    
+    if (publishing.get()) return;
+    List<DomainEventSubscriber<T>> registeredSubscribers =
+      subscribers.get();
+
+    if (registeredSubscribers == null) {
+      registeredSubscribers = new ArrayList<DomainEventSbuscrbier<T>>();
+      subscribers.set(registeredSubscribers);
+    }
+    
+    registeredSubscribers.add(aSubscriber);
+  }
+}
+```
+
+그리고 아래 그림을 보면 어떻게 사용하는지를 알 수 있음.
+
+![domain-event-publisher-sequence](domain-event-publisher-sequence.PNG)
+
+
+
+
+
 # 10장. AGGREGATE
 
 ## 규칙. 진짜 고정자를 일관성 경계 안에 모델링하라.
