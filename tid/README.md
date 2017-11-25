@@ -642,9 +642,24 @@ public class CompositeRunner implements Runnable {
 
 ## Book
 
-- Spring Microservices, [Autoscaling Microservices](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#autoscaling-microservices)
+- Spring Microservices
+  - [Autoscaling Microservices](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#autoscaling-microservices)
   - [Spring Microservices with Spring Cloud](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#scaling-microservices-with-spring-cloud-1)
   - [Understanding the concept of autoscaling](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#understanding-the-concept-of-autoscaling)
   - [Autoscaling Approaches](https://github.com/codehumane/what-i-learned/tree/master/spring-ms#autoscaling-approaches)
-- Domain Driven Design Implementation, [11장. 팩토리](https://github.com/codehumane/what-i-learned/tree/master/dddi#11장-팩토리)
+- 도메인 주도 설계 구현
+  - [11장. 팩토리](https://github.com/codehumane/what-i-learned/tree/master/dddi#11장-팩토리)
+
+
+# 11/25
+
+## Book
+
+- 도메인 주도 설계 구현
+  - [도메인 이벤트](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#8장-도메인-이벤트)
+  - [언제 그리고 왜 도메인 이벤트를 사용할까](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#언제-그리고-왜-도메인-이벤트를-사용할까)
+  - [이벤트 모델링](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#이벤트-모델링)
+  - [도메인 모델에서 이벤트를 발행하기](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#도메인-모델에서-이벤트를-발행하기)
+  - [원격 바운디드 컨텍스트로 이벤트 전파하기](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#뉴스를-원격-바운디드-컨텍스트로-전파하기)
+  - [이벤트 저장소](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#이벤트-저장소)
 
