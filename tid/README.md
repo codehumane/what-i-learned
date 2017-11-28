@@ -663,3 +663,16 @@ public class CompositeRunner implements Runnable {
   - [원격 바운디드 컨텍스트로 이벤트 전파하기](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#뉴스를-원격-바운디드-컨텍스트로-전파하기)
   - [이벤트 저장소](https://github.com/codehumane/what-i-learned/blob/master/dddi/README.md#이벤트-저장소)
 
+# 11/28
+
+## AWS SNS, SQS
+
+- AWS JDK로 큐 메시지 수신하는 방법에 대해서는 [여기](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/examples-sqs-messages.html) 참고.
+- Spring의 [@SqsListener](https://github.com/spring-cloud/spring-cloud-aws/blob/master/spring-cloud-aws-messaging/src/main/java/org/springframework/cloud/aws/messaging/listener/annotation/SqsListener.java)로 수신하는 방법에 대해서는 [여기](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.1.0.RELEASE/#_annotation_driven_listener_endpoints) 참고.
+- 이 녀석의 동작 방식을 이해하는 데는 [SimpleMessageListenerContainer](https://github.com/spring-cloud/spring-cloud-aws/blob/master/spring-cloud-aws-messaging/src/main/java/org/springframework/cloud/aws/messaging/listener/SimpleMessageListenerContainer.java), [SimpleMessageListenerContainerFactory](https://github.com/spring-cloud/spring-cloud-aws/blob/master/spring-cloud-aws-messaging/src/main/java/org/springframework/cloud/aws/messaging/config/SimpleMessageListenerContainerFactory.java) 코드와 [Spring Cloud AWS 문서](http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.1.0.RELEASE/#_annotation_driven_listener_endpoints)가 도움이 됨. 한 예로, 아래의 문장.
+
+> By default the `SimpleMessageListenerContainer` creates a `ThreadPoolTaskExecutor` with computed values for the core and max pool sizes. The core pool size is set to twice the number of queues and the max pool size is obtained by multiplying the number of queues by the value of the `maxNumberOfMessages` field. If these default values do not meet the need of the application, a custom task executor can be set with the `task-executor` attribute (see example below).
+
+- SNS에서 SQS로 전송 시, 메시지 유실 가능성은 존재하는 것으로 보임. [여기](https://stackoverflow.com/questions/30750033/amazon-sns-delivery-retry-policies-for-sqs) 참고.
+- [SNS Monitor](http://docs.aws.amazon.com/ko_kr/sns/latest/dg/MonitorSNSwithCloudWatch.html) 등을 통한 유실 모니터링 필요.
+
