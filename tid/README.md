@@ -695,6 +695,19 @@ SNS, SQS로 메시징 인프라 구축 시, 메시지가 유실될 수 있는 �
 4. 메시지 유실 시, 영속된 메시지를 다시 SNS로 전달(replay).
 5. 단, 모든 수신 애플리케이션은 멱등성을 보장.
 
+# 12/01
+
+## JOOQ Record to POJO Mapping
+
+- Type-Safe SQL 작성에 JOOQ를 사용 중.
+- JOOQ의 select로 얻어낸 데이터를 POJO(도메인 모델)로 변환해서 사용하는데,
+- JOOQ 또는 써드 파티들이 제공하는 것들이 많은 한계를 가짐.
+- (가능한 피하는 방식이긴 하지만) 결국 직접 매핑 라이브러리를 작성.
+- 잘 사용하고 있었으나, 성능 문제로 Performance Critical 부분에는 적용 X.
+- 적용이 필요한 시점이 되어, 결국 성능 개선 작업을 진행. 약 2배 정도의 TPS 향상.
+- 배포는 하되 [Feature Toggle](https://martinfowler.com/articles/feature-toggles.html)을 적용. 언제든 기존 알고리즘이 새로운 알고리즘을 대체할 수 있도록 함.
+- [관련된 내용은 블로그에 정리](http://codehumane.github.io/2017/12/04/JOOQ-to-POJO-Mapping/).
+
 # 12/04
 
 ## Book
