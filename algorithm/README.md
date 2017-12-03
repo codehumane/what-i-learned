@@ -13,4 +13,6 @@
 1. [프롤로그](prologue.md)
 2. [숫자 알고리즘](number-algorithm.md)
 3. [분할정복 알고리즘](divide-and-conquer-algorithm.md)
+4. [그래프의 분할](decompositions-of-graph.md)
+
 
