@@ -676,9 +676,28 @@ public class CompositeRunner implements Runnable {
 - SNS에서 SQS로 전송 시, 메시지 유실 가능성은 존재하는 것으로 보임. [여기](https://stackoverflow.com/questions/30750033/amazon-sns-delivery-retry-policies-for-sqs) 참고.
 - [SNS Monitor](http://docs.aws.amazon.com/ko_kr/sns/latest/dg/MonitorSNSwithCloudWatch.html) 등을 통한 유실 모니터링 필요.
 
+# 11/30
+
+## AWS SNS, SQS Message Loss
+
+SNS, SQS로 메시징 인프라 구축 시, 메시지가 유실될 수 있는 구간은 총 3개.
+1. Application to SNS
+2. SNS to SQS
+3. SQS to Application
+
+가장 쉽게 떠올랐고 일단 실행하고 있는 유실 대응 방안은 다음과 같음.
+
+1. 일단, 1번 구간은 애플리케이션이 보장.
+   - SNS 호출 실패 시 트랜잭션 전체를 롤백하거나,
+   - retry를 위해 Queue를 이용해서 잠시 후 다시 시도 등
+2. SNS로 전달된 모든 메시지는 영속화.
+3. 2번 구간과 3번 구간은 메시지 유실을 모니터링.
+4. 메시지 유실 시, 영속된 메시지를 다시 SNS로 전달(replay).
+5. 단, 모든 수신 애플리케이션은 멱등성을 보장.
+
 # 12/04
 
 ## Book
 
 - 알고리즘
-  - 그래프의 분할(decompositions of graph), [왜 그래프인가](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md)
+  - 그래프의 분할(decompositions of graph), [왜 그래프인가](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md)
