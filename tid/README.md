@@ -676,3 +676,9 @@ public class CompositeRunner implements Runnable {
 - SNS에서 SQS로 전송 시, 메시지 유실 가능성은 존재하는 것으로 보임. [여기](https://stackoverflow.com/questions/30750033/amazon-sns-delivery-retry-policies-for-sqs) 참고.
 - [SNS Monitor](http://docs.aws.amazon.com/ko_kr/sns/latest/dg/MonitorSNSwithCloudWatch.html) 등을 통한 유실 모니터링 필요.
 
+# 12/04
+
+## Book
+
+- 알고리즘
+  - 그래프의 분할(decompositions of graph), [왜 그래프인가](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md)
