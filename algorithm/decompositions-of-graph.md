@@ -41,9 +41,87 @@ a_{ij} = \begin{cases} 1  & v_{i}\text{에서 }v_j\text{까지 간선이 있다�
 - 다만, 간선(u, v)를 조사하는 것은 더 이상 상수 시간이 아님.
 - u의 인접 리스트를 통해 알아내야 하기 때문임.
 
+## 무방향 그래프에서의 깊이 우선 탐색
 
+### 미로 찾기
 
+아래 질문은 깊이 우선 탐색은 해결하려는 근본적 문제. 이는 미로 찾기와 비유됨.
 
+> "주어진 하나의 정점으로부터 그래프의 어떤 부분에 도달할 수 있는가?"
 
+- 미로 탐색에 필요한 것은 실 꾸러미와 분필.
+- 분필로 이미 방문한 교차로를 표시. 같은 곳을 순환하지 않음.
+- 실 꾸러미는 언제든 출발점으로 되돌아 올 수 있게 함.
+- 미분필 표시는 부울 변수. 실 꾸러미는 스택 혹은 재귀.
+- 코드는 아래와 같음. 참고로, `previsit`, `postvisit`이 뭔가 싶었는데, 이 작업의 활용을 뒤에서 소개함.
 
+```
+procedure explore(G, v)
+Input: G = (V, E) is a graph; v ∈ V
+Output: visited(u) is set to true for all nodes u reachable from v
 
+visited(v) = true
+previsit(v)
+for each edge (v, u) ∈ E :
+  if not visited(u): explore(G, u)
+postvisit(v)
+```
+
+- 아래 그림은 그래프에 대한 `explore`를 표현한 것.
+- 실선으로 된 간선들이 트리를 형성. 트리 간선<sup>tree edge</sup>이라 불림.
+- 점선으로 된 간선들은 되돌아 옴(스택에서 정점을 꺼냄)을 표현. 역방향 간선<sup>back edge</sup>이라 불림.
+
+![graph-explore](graph-explore.png)
+
+### 깊이 우선 탐색
+
+- 깊이 우선 탐색<sup>DFS, Depth-first search</sup>의 정점에서 일어나는 작업은 크게 2가지.
+  - 방문한 지점을 표시하고, pre/postvisit으로 표시.
+  - 다른 곳에 새로운 루프가 있는지 살피고자 인접 간선에 있는 루프 찾기.
+- 첫 번째 작업의 전체 수행 시간은 O(|V|)
+- 두 번째 작업의 전체 수행 시간은 O(|E|)
+- 따라서, 입력에 대해 선행인 O(|V| + |E|)의 수행시간.
+- 단지 인접 리스트를 읽기만 할 때와 동일함.
+
+### 무방향 그래프에서의 연결성
+
+- 만약 모든 정점 쌍에 대한 경로가 있다면 **무방향 그래프는 연결되어 있다**고 표현.
+- 아래와 같이 세 개의 연결 영역이 있는 경우, 이들 영역을 **연결된 성분<sup>connected component</sup>**라고 표현.
+- 혹은 **부분 그래프<sup>subgraph</sup>**.
+
+```
+{ A, B, E, I, J }    { C, D, G, H, K, L}    { F }
+```
+
+- 특정 노드가 속한 연결된 성분이 있는지는 다음과 같은 방법을 통해 가능.
+- cc는 0으로 초기화. explore 프로시저 호출 시 마다 증가.
+
+```
+procedure previsit(v)
+ccnum[v] = cc
+```
+
+### previsit과 postvisit의 순서화
+
+- 각 노드 별로 첫 발견의 순간(previsit)과 마지막 출발의 순간(postvisit)이 존재.
+- 아래의 경우는 이런 이벤트가 총 24개가 존재함.
+
+![dfs-search-forest](dfs-search-forest.png)
+
+- 이 숫자들로 `pre`, `post` 배열을 생성하는 한가지 방법은 아래와 같음.
+- 이 때의 clock 초기값은 1로 설정.
+
+```
+procedure previsit(v)
+pre[v] = clock
+clock = clock + 1
+
+procedure postvisit(v)
+post[v] = clock
+clock = clock + 1
+```
+
+- 그리고 아래의 특성을 발견할 수 있음.
+- 간격은 정점 u가 스택에 있는 동안의 시간이기 때문이고, 스택의 후입 선출 동작 때문임.
+
+> 임의의 노드 u와 v에 대해 두 간격 [pre(u), post(u)]와 [pre(v), post(v)]는 서로 떨어져 있거나, 하나가 다른 하나 안에 포함된다.
