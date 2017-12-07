@@ -736,3 +736,19 @@ public void uri() throws Exception {
 }
 ```
 
+# 12/07
+
+## Zuul-Ribbon ReadTimeout
+
+-  오늘 A라는 서비스를 배포함.
+-  이 배포에는 새로 추가된 API 엔드포인트가 있었는데, 기존의 것들에 비해 느렸음. 
+-  부하 테스트를 통해 인지하고 있었지만, 영향범위 분석해서 감안하고 배포한 것.
+-  하지만 API Gateway(Zuul)의 A 서비스에 대한 `ReadTimeout`을 고려하지 못함.
+-  이따금 이 임계치를 넘는 요청 지연이 있었고, 이로 인해 `503(Service Unavailable)`이 발생.
+-  즉시 대응으로, 새로운 기능에 대해 Feature Toggle을 Off 시킴.
+-  그리고 `ReadTimeout` 늘린 후, 다시 Feature Toggle On.
+-  향후 대응으로, 배포를 준비하고 있던 성능 개선 작업을 가능한 빠르게 배포할 예정.
+-  그럼에도 불구하고 기존 엔드포인트만큼의 성능을 보장하지 못한다면, A 서비스에 대한 Zuul의 논리적 의존성을 분리.
+-  이런 저런 것들을 많이 느낀 배포였음.
+
+
