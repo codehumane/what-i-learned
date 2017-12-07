@@ -714,3 +714,25 @@ SNS, SQS로 메시징 인프라 구축 시, 메시지가 유실될 수 있는 �
 
 - 알고리즘
   - 그래프의 분할(decompositions of graph), [왜 그래프인가](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md)
+
+# 12/05
+
+## URI, URL, URN
+
+-  매번 헷갈리는 대상. 설명은 [여기](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn) 잘 나와 있음.
+-  더불어, URI의 구성요소도 궁금했고, 간단히 아래처럼 코드로 확인.
+
+```java
+@Test
+public void uri() throws Exception {
+    final URI uri = URI.create("https://www.aaa.com:8080/bbb?ccc=ddd#eee");
+    log.info(uri.getAuthority()); // www.aaa.com:8080
+    log.info(uri.getFragment()); // eee
+    log.info(uri.getHost()); // www.aaa.com
+    log.info(uri.getPath()); // /bbb
+    log.info(uri.getQuery()); // ccc=ddd
+    log.info(uri.getScheme()); // https
+    log.info(uri.getPort()); // 8080
+}
+```
+
