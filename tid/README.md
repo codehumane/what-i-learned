@@ -752,3 +752,25 @@ public void uri() throws Exception {
 -  이런 저런 것들을 많이 느낀 배포였음.
 
 
+# 12/10
+
+## Graph Depth-First Search
+
+- [오랜만에 다시 구현](https://github.com/codehumane/learn-algorithm-in-java/commit/584463868529cde41f8001f7096b2aba2a124c80). 그리고 기본적인 것 이외에 여러 가지 활용이 있다는 것을 알게 됨.
+- 각 활용들을 하나씩 적용해 볼 예정.
+- 그리고 [이건](https://github.com/codehumane/learn-algorithm-in-javascript/blob/master/test/algorithm/graph.spec.js) 예전에 작성해 본 JavaScript 버전.
+
+## Java Map Interfaces
+
+- [putIfAbsent](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html#putIfAbsent-K-V-), [computeIfAbsent](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html#computeIfAbsent-K-java.util.function.Function-), [computeIfPresent](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html#computeIfPresent-K-java.util.function.BiFunction-) 인터페이스를 오랜만에 다시 살펴봄.
+- 키와 값의 매핑을 `associated`라고 표현하는 것이 재미있음.
+- `Map`의 값 초기화+추가에 사용하던 `if`를 제거할 수 있어 좋음.
+
+```java
+edges.computeIfAbsent(from, k -> new LinkedHashSet<>()).add(to);
+```
+
+- 그리고 아래 내용도 문서를 통해 쉽게 확인이 가능한 거였구나를 알게 됨. Collection 인터페이스가 문서에 굉장히 잘 설명돼 있었던 것을 볼 때와 같은 느낌.
+
+> The default implementation makes no guarantees about synchronization or atomicity properties of this method. Any implementation providing atomicity guarantees must override this method and document its concurrency properties. In particular, all implementations of subinterface [`ConcurrentMap`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentMap.html) must document whether the function is applied once atomically only if the value is not present.
+
