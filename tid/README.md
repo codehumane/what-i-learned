@@ -776,3 +776,9 @@ edges.computeIfAbsent(from, k -> new LinkedHashSet<>()).add(to);
 
 > The default implementation makes no guarantees about synchronization or atomicity properties of this method. Any implementation providing atomicity guarantees must override this method and document its concurrency properties. In particular, all implementations of subinterface [`ConcurrentMap`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentMap.html) must document whether the function is applied once atomically only if the value is not present.
 
+# 12/11
+
+## Cyclic Directed Graph Detection
+
+- [유향 그래프에서의 순환<sup>Cycilc</sup>이 있는지 여부 감지하기](https://github.com/codehumane/learn-algorithm-in-java/commit/3c5ea76f0aad303a87c61f05263c1bd0e3b867de)
+
