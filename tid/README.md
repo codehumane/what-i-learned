@@ -756,9 +756,11 @@ public void uri() throws Exception {
 
 ## Graph Depth-First Search
 
-- [오랜만에 다시 구현](https://github.com/codehumane/learn-algorithm-in-java/commit/584463868529cde41f8001f7096b2aba2a124c80). 그리고 기본적인 것 이외에 여러 가지 활용이 있다는 것을 알게 됨.
-- 각 활용들을 하나씩 적용해 볼 예정.
+- [오랜만에 다시 구현](https://github.com/codehumane/learn-algorithm-in-java/commit/584463868529cde41f8001f7096b2aba2a124c80).
+- 그리고 기본적인 것 이외에 여러 가지 활용이 있다는 것을 알게 됨.
+- 그 활용은 [여기 작성](https://github.com/codehumane/learn-algorithm-in-java/commit/5d495acaa75c0f6baa460d973321f40533141975)한 `previsit`, `postvisit` 처리로 가능함.
 - 그리고 [이건](https://github.com/codehumane/learn-algorithm-in-javascript/blob/master/test/algorithm/graph.spec.js) 예전에 작성해 본 JavaScript 버전.
+- [유향 그래프<sup>Directed Graph</sup>에 대한 깊이 우선 탐색도 작성](https://github.com/codehumane/learn-algorithm-in-java/commit/940fde15d8b475a99bd8c0de10315bcd2c2038ea)해 봄.
 
 ## Java Map Interfaces
 
