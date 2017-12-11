@@ -778,7 +778,8 @@ edges.computeIfAbsent(from, k -> new LinkedHashSet<>()).add(to);
 
 # 12/11
 
-## Cyclic Directed Graph Detection
+## Directed Graph
 
-- [유향 그래프에서의 순환<sup>Cycilc</sup>이 있는지 여부 감지하기](https://github.com/codehumane/learn-algorithm-in-java/commit/3c5ea76f0aad303a87c61f05263c1bd0e3b867de)
+- [유향 그래프에서의 순환<sup>cycle</sup>이 있는지 여부 감지하기](https://github.com/codehumane/learn-algorithm-in-java/commit/3c5ea76f0aad303a87c61f05263c1bd0e3b867de)
+- [유향 비순환 그래프(DAG<sup>Directed Acyclic Graph</sup>)에서의 위상 정렬<sup>topological sort</sup>](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md#위상-정렬)
 
