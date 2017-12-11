@@ -128,3 +128,33 @@ clock = clock + 1
 - 간격은 정점 u가 스택에 있는 동안의 시간이기 때문이고, 스택의 후입 선출 동작 때문임.
 
 > 임의의 노드 u와 v에 대해 두 간격 [pre(u), post(u)]와 [pre(v), post(v)]는 서로 떨어져 있거나, 하나가 다른 하나 안에 포함된다.
+
+## 유향 그래프에서의 깊이 우선 탐색
+
+### 간선의 유형
+
+유향 그래프에서의 주요 용어들을 설명.
+
+![DFS in directed graph](dfs-in-directed.png)
+
+
+
+- 루트<sup>root</sup>: A 노드
+- 자손<sup>descendant</sup>: 자신의 하위 노드
+- 조상<sup>ancestor</sup>: 자신의 상위 노드
+- 부모<sup>parent</sup>: 단계가 하나인 조상
+- 자식<sup>child</sup>: 단계가 하나인 자손
+- 트리 간선<sup>Tree edge</sup>: 무방향 그래프에서의 그것과 같다.
+- 순방향 간선<sup>Forwared edge</sup>: 자식이 아닌 자손으로의 연결. (예: AF)
+- 역방향 간선<sup>Back edge</sup>: 부모가 아닌 조상으로의 연결. (예: FB)
+- 교차 간선<sup>Cross edge</sup>: 자손이나 조상에게 연결되지 않음. 이미 완전히 탐색된 노드로 연결. (예: DH)
+
+pre, post 숫자로부터 간선의 유형을 알 수 있음. 또한, 조상과 자손 관계도 알 수 있음. 예컨대, 정점 u가 먼저 발견되고 정점 v가 explore(u) 동안 발견된다면, 정점 u는 정점 v의 조상.
+
+### 유향 비순환 그래프
+
+- 순환<sup>Cycle</sup>이란 순환하는 경로를 가리킴.
+- 위 그림에서의 순환은 BEFB.
+- 순환이 없는 그래프는 비순환<sup>Acyclic</sup>이라 함.
+- 유향 그래프가 순환이라면, 우선 탐색에 역방향 간선이 있다는 것과 같음.
+
