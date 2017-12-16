@@ -783,3 +783,29 @@ edges.computeIfAbsent(from, k -> new LinkedHashSet<>()).add(to);
 - [유향 그래프에서의 순환<sup>cycle</sup>이 있는지 여부 감지하기](https://github.com/codehumane/learn-algorithm-in-java/commit/3c5ea76f0aad303a87c61f05263c1bd0e3b867de)
 - [유향 비순환 그래프(DAG<sup>Directed Acyclic Graph</sup>)에서의 위상 정렬<sup>topological sort</sup>](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md#위상-정렬)
 
+# 12/15
+
+> *If* I *have seen* further, it is by standing on the *shoulders* of giants. \- Isaac Newton
+
+## Synchronization
+
+```java
+return cache.get(key).orElseGet(() -> {
+  val generated = generateMappings();
+  cache.put(key, generated);
+  return generated;
+});
+```
+
+- 위와 같은 코드를 작성하고, 리뷰를 받으며 잠시 동시성에 대해 이야기 나눔.
+- `cache#get`과 `cache#put` 사이의 코드가 얼마든지 여러 스레드에서 동시에 실행될 수 있음.
+- 이로 인해 불필요한 `generateMappings`와 `cache#put`이 발생할 수 있음.
+- 지금은 불필요한 수준에서 그치지만, 추후 코드 변경하는 사람이 동시성을 고려 못하면, 버그가 만들어지지 않을까 고민.
+- 어디까지를 보호해 줄 것인가 한참 논의. 결론은 보호하지 않기로 함.
+- 연산을 캐시(memoize)한다는 것은 연산이 멱등성을 보장한다는 얘기고,
+- 멱등성을 더 이상 보장하지 못하는 변경이 아닌 한, 버그 수반 가능성은 낮다고 판단함.
+- 혹여나, 멱등성을 더 이상 보장하지 못하는 변경이라고 하더라도, 이는 캐시 사용도 어려운 경우임.
+- 따라서, 동시성 문제의 배경이 된 데이터 자체가 사라질 것.
+- 부담스러운 `synchronized` 사용도 하지 말고, 코드도 간결하게 유지하기로 함.
+- 불필요한 연산이 발생 가능한 것도, 캐싱이 수행되는 최초 한 번에 한해서일 뿐.
+
