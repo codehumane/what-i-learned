@@ -18,6 +18,10 @@
 - [클린 소프트웨어](cleansw/README.md)
 - [수학사전](mathdict/README.md)
 
-# TID
+# TIL
 
-[TID](tid/README.md) 시도.
+- [2017. 09](til/2017-09.md)
+- [2017. 10](til/2017-10.md)
+- [2017. 11](til/2017-11.md)
+- [2017. 12](til/2017-12.md)
+
