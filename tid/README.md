@@ -809,3 +809,9 @@ return cache.get(key).orElseGet(() -> {
 - 부담스러운 `synchronized` 사용도 하지 말고, 코드도 간결하게 유지하기로 함.
 - 불필요한 연산이 발생 가능한 것도, 캐싱이 수행되는 최초 한 번에 한해서일 뿐.
 
+# 12/17
+
+## Book
+
+- [[알고리즘] 그래프의 순환 - 유향 그래프의 강한 연결 성분](https://github.com/codehumane/what-i-learned/blob/master/algorithm/decompositions-of-graph.md)
+
