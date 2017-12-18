@@ -3,6 +3,153 @@
 - [도메인 주도 설계 구현](http://www.acornpub.co.kr/book/implement-ddd)<sup>Implementing Domain-Driven Design</sup>
 - 반 버논<sup>Vaughn Vernon</sup>
 
+# 2장. 도메인, 서브도메인, 바운디드 컨텍스트
+
+하나의 도메인을 모두 포괄하는 모델을 만드는 것이 왜 문제인지를 책의 생명주기에 빗대어 설명.
+
+-  아래는 책의 생명주기를 다양한 단계로 나눈 것.
+
+```
+1. 책을 개념화하고 제안
+2. 저자와 계약
+3. 책의 저작권 및 편집 프로세스 관리
+4. 그림 등 책의 레이아웃 디자인
+5. ... 중략
+6. 대리점과 소비자들에게 실제 책을 배송
+```
+
+-  그리고 아래는 각 단계별로 책이 다뤄지는 방식을 설명.
+
+```
+- 책은 계약 시점에 이르러서야 책 제목을 가질 수 있으며, 이 마저도 임시일 가능성이 높음.
+- 저술과 편집 과정에서 책의 내용이 채워지며, 코멘트와 많은 수정이 오고감.
+- 인쇄 팀은 레이아웃, 인쇄 이미지를 위한 청사진 등에만 관심 있음. 
+- 배송에는 책의 식별자, 재고, 위치, 사이즈, 무게와 같은 정보만이 필요함.
+```
+
+-  이 모든 아우르는 단일 모델을 만들기에는 혼란, 의견 불일치, 변경의 어려움 등이 따름.
+-  대신, 각 수명주기마다 개별적인 바운디드 컨텍스트를 사용.
+-  책 객체는 거의 혹은 모든 컨텍스트에서 식별자만을 공유.
+-  그리고 각 컨텍스트 마다 책의 모델은 서로 다름.
+
+단일 모델을 피하기 위해 도메인, 서브 도메인, 바운디드 컨텍스트가 필요. 각각의 개념을 간단히 정리하면 다음과 같음.
+
+-  **도메인**: 넓은 의미에서, 한 조직이 행하는 일과 그 조직 안의 세계.
+-  **서브 도메인**: 온라인 소매상의 도메인은 상품 카탈로그, 주문, 송장, 배송 등의 주요 서브 도메인으로 이루어짐.
+-  **바운디드 컨텍스트**: 그 안에 도메인 모델이 존재하는 명시적 경계. 이 경계 안에서 모든 유비쿼터스 언어의 용어와 구문이 구체적인 의미를 갖게 되고, 정확성을 보장하며 언어를 반영.
+
+그리고 마지막으로 간단한 코드로 이해를 돕고 있음. 아래는 나쁜 설계의 코드.
+
+```java
+public class Forum extends Entity {
+
+  public Discussion startDiscussion(String aUsername, String aSubject) {
+    if (this.isClosed()) {
+      throw new IllegalStateException("Forum is closed.");
+    }
+    
+    User user = userRepository.userFor(this.tenantId(), aUsername);
+    if (!user.hasPermissionTo(Permission.Forum.StartDiscussion)) {
+      throw new IllegalStateException("User may not start forum discussion.");
+    }
+    
+    String authorUser = user.username();
+    String authorName = user.person().name().asFormattedName();
+    String authorEmailAddress = user.person().emailAddress();
+    
+    Discussion discussion = new Discussion(
+      this.tenant(),
+      this.forumId(),
+      DomainRegistry.discussionRepository().nextIdentity(),
+      authorUser,
+      authorName,
+      authorEmailAddress,
+      aSubject
+    );
+    
+    return discussion;
+  }
+}
+```
+
+무엇이 나쁜 설계일까?
+
+-  `UserRepository` 뿐만 아니라, `User`를 참조하고 있음.
+-  심지어 `Permission`과의 결합도 존재.
+-  `Author`와 같은 개념의 모델링 부재.
+-  연관된 세 가지 특성(`authorUser`, `authorName`, `authorEmailAddress`)을 명시적인 값 객체로 모으지 않음.
+
+수정된 코드는 아래와 같음.
+
+```java
+public class Forum extends Entity {
+  
+  public Discussion startDiscussionFor(
+      ForumNavigationService aForumNavigationService,
+      Author anAuthor,
+      String aSubject) {
+    
+    if (this.isClosed()) {
+      throw new IllegalStateException("Forum is closed.");
+    }
+    
+    Discussion discussion = new Discussion(
+      this.tenant(),
+      this.forumId(),
+      aForumNavigationService.nextDiscussionId(),
+      anAuthor,
+      aSujbect
+    );
+    
+    DomainEventPublisher
+      .instance()
+      .publish(new DiscussionStarted(
+        discussion.tenant(),
+        discussion.forumId(),
+        discussion.discussionId(),
+        discussion.subject()
+      ));
+    
+    return discussion;
+  }
+}
+
+public class ForumApplicationService ... {
+  
+  @Transactional
+  public Discussion startDiscussion(
+      String aTenantId, String aUsername,
+      String aForumId, String aSubject) {
+    
+    Tenant tenant = new Tenant(aTenantId);
+    ForumId forumId = new ForumId(aForumId);
+    Forum forum = this.forum(tenant, forumId);
+    
+    if (forum == null) {
+      throw new IllegalStateException("Forum does not exist.");
+    }
+    
+    Author author = this.collaboratorService
+      .authorFrom(tenant, anAuthorId);
+    
+    Discussion newDiscussion = 
+      forum.startDiscussion(
+        this.forumNavigationService(),
+        author,
+        aSubject);
+    
+    this.discussionRepository.add(newDiscussion);
+    return newDiscussion;
+  }
+}
+```
+
+참고로, 보안과 권한을 중앙집중화하라는 이야기도. 이를 **식별자와 액세스 컨텍스트**라고 부름. 여러 다른 바운디드 컨텍스트에서 사용되므로, 이 컨텍스트는 범용 서브 도메인이기도 함.
+
+![식별자와 액세스 컨텍스트](02-identifier-and-access-context.png)
+
+
+
 # 8장. 도메인 이벤트
 
 ## 언제 그리고 왜 도메인 이벤트를 사용할까
