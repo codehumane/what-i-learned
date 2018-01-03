@@ -29,6 +29,48 @@
 9. 이런 구분이 없다면 모델 내의 언어는 모호해짐. 혼란은 물론 확장, 테스트 등의 어려움이 따름.
 10. 반대로 말하면, 각 사업 기능이 같은 단어에 대해 서로 다른 정의를 가질 수 있는 경우 *BC*가 필요할 수 있음.
 
+# 컨텍스트 매핑과 전략적 설계
+
+## 정의
+
+- 서로 다른 BC의 **통합**.
+- 서로 다른 BC에 존재하는 각 보편언어 사이의 **통역**.
+- 또한, 각 언어를 사용하는 팀간의 **관계**이기도.
+
+### 종류
+
+- **Partnership**: Each team is responsible for one *BC*.
+- **Shared Kernel**
+  - Intersection of the two *BC*.
+  - A small but common model share.
+  - 한 팀에서 코드를 유지, 테스트, 빌드하는 것도 가능.
+- **Customer-Supplier**
+  - Supplier-Upstream. Customer-Downstream.
+  - 소비자가 필요한 것을 요청하고, 제공자가 언제 무엇을 제공할지 결정.
+  - Typical and practical relationship.
+- **Conformist**
+  - Upstream team has no motivation to support the specific needs of the downstream team.
+  - 제휴 판매자가 아마존의 모델을 따르는 것이 한 예.
+- **Anticorruption Layer**
+  - Downstream에서 Upstream의 보편 언어를 번역하는 계층을 생성.
+  - 가능한 이 계층을 생성하기를 저자는 권장함.
+  - 필요에 맞는 모델 생성하고 외부 개념으로부터 독립성을 유지할 수 있기 때문.
+  - 한편, 비용이 높아질 수 있음.
+- **Open Host Service**
+  - BC에 접근할 수 있도록 공개된 프로토콜 또는 인터페이스를 제공. 
+  - 왜 갑자기 논리적인 관계를 이야기하다가, 기술적인 관계를 이야기하는지는 의문.
+- **Published Language**: Open Host Service에서 주고 받는 데이터를 가리키는 것으로 보임.
+- **Seperate Ways**: 통합이 이뤄지지 않고 각자 해결.
+- **Big Ball of Mud**: 이런 통합이 필요 없는 모든 것이 한 곳에 있는 것을 이야기 함. 문제점 강조를 목적으로 함께 언급됨.
+
+현실 세계에서는 Big Ball of Mud가 그 크기에 상관 없이 존재할 가능성이 높고, 이 경우에 대한 접근으로 다음을 이야기.
+
+> If you must integrate with one or more, try to create an *Anticorruption Layer*against each legacy system in order to protect your own model from the cruft that would otherwise pollute your model with the incomprehensible morass. Whatever you do, *don’t speak that language!*
+
+## 방법과 사례
+
+매핑의 기술적 측면으로 RPC, HTTP, 이벤트 메시지를 소개함. 사례도 함께 다룸. 특별한 내용 아님. 기록 생략.
+
 # 도메인 이벤트와 전술적 설계
 
 ## 도메인 이벤트
