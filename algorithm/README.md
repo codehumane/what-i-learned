@@ -14,5 +14,6 @@
 2. [숫자 알고리즘](number-algorithm.md)
 3. [분할정복 알고리즘](divide-and-conquer-algorithm.md)
 4. [그래프의 분할](decompositions-of-graph.md)
+5. [그래프의 경로](paths-in-graph.md)
 
 
