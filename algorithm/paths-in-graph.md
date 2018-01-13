@@ -37,5 +37,10 @@ while Q is not empty:
 
 구현은 [여기](https://github.com/codehumane/learn-algorithm-in-java/commit/3f5fa5d702adc5b46820e705f387598d5219a54e)를 참고.
 
-- 물론 탐색 방향이 다름.
-- 깊이 우선은 
+## 간선의 길이
+
+- 응용 프로그램에서의 최단 경로를 발견할 때는 각 간선의 길이가 대부분 다름.
+- 모든 간선 e ∈ E의 길이는 책에서 l<sub>e</sub>로 표기하기로 약속.
+- 만약, e = (u, v)이면 때로는 l(u, v) 또는 l<sub>uv</sub>로 표기.
+- 참고로, l<sub>e</sub>는 꼭 물리적 길이만을 의미하지는 않음. 시간이나 돈 등의 어떤 양을 나타낼 수도. 때로는 음수 길이도 사용됨.
+
