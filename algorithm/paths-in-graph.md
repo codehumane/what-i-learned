@@ -122,6 +122,7 @@ while H is not empty:
 - 원소의 키 값을 **순서가 없는** 배열<sup>unsorted list</sup>로 구현하는 것.
 - `insert`와 `decreasekey`는 빠름.
 - 하지만, `deletemin`에는 리스트의 선형 시간 탐색이 필요.
+- 간단히 구현해 본 내용은 [여기](https://github.com/codehumane/learn-algorithm-in-java/commit/36cdd89ffef6f27d0d375e15990ed4dd9b3943f9) 참고.
 
 ### 이진 히프
 
