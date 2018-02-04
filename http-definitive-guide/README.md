@@ -309,3 +309,73 @@ Context-length: 0
 
 - 지원하지 않는 버전의 프로토콜 요청을 받음.
 
+## 헤더
+
+### 일반헤더
+
+- 클라이언트와 서버 모두에서 사용되는 일반적인 헤더.
+- `Date`: 메시지가 만들어진 날짜와 시간.
+- `Connection`: 현재 전송이 완료된 후의 네트워크 접속 유지 여부. 예컨대, `keep-alive`, `close`.
+- `Transfer-Encoding`: 수신자에게 엔티티에 어떤 인코딩이 적용되었는지 알림. `chunked`, `deflate`, `gzip` 등. 1개 이상 나열할 때는 쉼표로 구분. [여기](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Transfer-Encoding) 자세히 설명됨.
+- `Via`: 메시지가 어떤 중개자(프록시, 게이트웨이)를 거쳐 왔는지 보여줌.
+- `Cache-Control`: 캐시 지시자<sup>directive</sup>를 지정하기 위한 메커니즘. 단방향성. 즉, 요청의 지시자와 응답의 그것이 같음을 보장하지 않음. HTTP/1.1에서 정의됨.
+  - `public`, `private`
+    - 단일 사용자를 위한 캐시인지 여부.
+    - 단일 사용자를 위한 것이 아니라면, 브라우저가 아닌 프록시나 CDN 등에서 캐시 가능함.
+    - 아래 그림이 이해에 도움됨.
+  - `no-cache`, `no-store`
+    - `no-store`는 항상 원 서버에서 리소스를 다운로드 함.
+    - `no-cache`는 복사된 사본을 보여주기 전에, 유효성 검사 토큰(ETag)을 이용해 원 서버로 재검증 요청을 보냄.
+  - `max-age=<second>`
+    - 리소스를 요청한 시간으로부터 최대 몇 초까지 재활용할 수 있는지를 명시.
+  - `must-revalidate`
+    - 캐시 사용에 앞서 리소스의 신선 여부를 검증할 것.
+
+
+![http vary](03-http-vary.png)
+
+*그림 출처: https://mdn.mozillademos.org/files/13769/HTTPVary.png
+
+### 요청헤더
+
+- `Host`, `Client-IP`, `Referer`, `User-Agent` 등.
+- Accept 관련 헤더
+  - 서버에게 자신의 선호와 능력을 알림.
+  - 서버는 좀 더 똑똑한 대응 가능하며 양측 모두에 이익.
+  - `Accept`: 서버가 보내도 되는 미디어 종류를 알려줌.
+  - 그 외 `Accept-Charset`, `Accept-Encoding`, `Accept-Language` 등.
+- 조건부 요청 헤더
+  - 요청에 제약을 명시. 예컨대, 자신이 가진 리소스와 달라진 경우에만 응답을 달라고 명시하기도.
+  - `If-Match`: 문서의 엔티티 태그가 주어진 엔티티 태그와 일치하는 경우에만 문서 가져옴.
+  - `If-Modified-Since`: 주어진 날짜 이후 리소스가 변경된 경우만 문서 가져옴.
+  - `If-None-Match`: 문서의 엔티티 태그가 주어진 그것과 일치하지 않는 경우에만 문서 가져옴.
+  - `If-Range`: 문서의 특정 범위에 대한 요청.
+  - `Range`: 서버가 범위 요청을 지원한다면, 리소스의 특정 범위를 요청.
+- 요청 보안 헤더
+  - HTTP가 자체적으로 가진 인증요구/응답 체계를 활용.
+  - `Authorization`: 클라이언트가 서버에게 제공하는 인증 그 자체의 정보를 담음.
+  - `Cookie`: 클라이언트가 서버에게 토큰 전달 시 사용. 진짜 보안 헤더는 아님. 하지만 보안에 영향.
+  - `Cookie2`: 요청자가 지원하는 쿠키의 버전 명시.
+  - 아래는 `github.com`에 요청 날린 경우의 요청 헤더 `Cookie` 값.
+
+```http
+Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA1.2.169219981.1500787962; user_session=XXX; __Host-user_session_same_site=XXX; tz=Asia%2FSeoul; _gh_sess=XXX
+```
+
+### 응답 헤더
+
+- 클라이언트에게 부가 정보를 제공. 누가 보낸 응답인지, 능력은 어떻게 되는지 등.
+- `Age`: 응답이 얼마나 오래되었는가.
+- `Retry-After`: 현재 리소스가 사용 불가이며, 언제 가능한지를 명시하는 날짜 혹은 시각.
+- `Server`: 서버 어플리케이션의 이름과 버전.
+- `Vary`: 서버가 확인해 봐야 하는, 그렇기 때문에 응답에 영향을 줄 수 있는 헤더들의 목록.
+  - `github.com` 응답 헤더에는 `Vary:X-PJAX Vary:Accept-Encoding`가 포함됨.
+- `Proxy-Authenticate`: 프록시에서 클라이언트로 보낸 인증요구 목록.
+- `Set-Cookie`, `Set-Cookie2`
+- `Allow`: 현재 엔티티에 대해 수행될 수 있는 요청 메소드 나열.
+- `Location`: 엔티티가 실제로 위치한 URL 등의 정보.
+- `Content-Type`, `Content-Encoding`, `Content-Language`, `Content-Length`, `Content-Location`, `Content-MD5`, `Content-Range`
+- `ETag`: 엔티티 태그
+- `Expires`: 이 엔티티가 더 이상 유효치 않아 원본을 다시 받아와야 하는 일시.
+- `Last-Modified`: 엔티티가 변경된 가장 최근 일시.
+
