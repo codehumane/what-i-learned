@@ -379,3 +379,42 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 - `Expires`: 이 엔티티가 더 이상 유효치 않아 원본을 다시 받아와야 하는 일시.
 - `Last-Modified`: 엔티티가 변경된 가장 최근 일시.
 
+
+# 커넥션 관리
+
+## TCP 커넥션
+
+-  몇몇 사용 규칙을 제외하곤 HTTP 커넥션은 TCP 커넥션에 불과.
+-  프로토콜 계층은 HTTP/TCP/IP/Network Interface로 이루어짐.
+-  TLS 또는 SSL은 HTTP와 TCP 사이에 있는 암호화<sup>cryptographic encryption</sup> 계층.
+-  TCP는 HTTP에게 신뢰할 만한(한쪽의 바이트들을 반대쪽으로 순서에 맞게 정확히 전달) 통신 방식 제공.
+-  TCP는 데이터 스트림을 세그먼트라는 단위로 나눔.
+-  이를 IP 패킷(또는 IP 데이터그램)이라는 봉투에 담아 인터넷을 통해 데이터 전달.
+-  다르게 표현하면, 각 TCP 세그먼트는 하나의 IP 주소에서 다른 IP 주소로 IP 패킷에 담겨 전달.
+-  IP 패킷의 구성은 다음과 같음.
+   -  IP 패킷 헤더: 보통 20바이트. 발신자와 목적지 IP 주소, 크기, 기타 플래그를 가짐.
+   -  TCP 세그먼트: 보통 20바이트. TCP 포트 번호, TCP 제어 플래그, 데이터의 순서와 무결성 검사 목적의 숫자 값 포함.
+   -  TCP 데이터 조각: 0 이상의 바이트. 말 그대로 데이터.
+-  TCP 커넥션의 식별: `<발신지 IP 주소, 발신지 포트, 수신지 IP 주소, 수신지 포트>`
+-  TCP 소켓 인터페이스를 사용한 클라이언트와 서버의 상호작용은 아래 그림 참고.
+
+![socket communication](04-tcp-socket-connection-communication.png)
+
+*출처: https://notes.shichao.io/unp/figure_4.1.png
+
+이 때 사용된 소켓 API 각각을 아래 표 참고.
+
+| 소켓 API                         | 설명                                  |
+| ------------------------------ | ----------------------------------- |
+| `s=socket(<parameters>)`       | 연결되지 않은 익명의 새로운 소켓 생성               |
+| `bind(s, <local IP:port>)`     | 소켓에 로컬 포트 번호와 인터페이스 할당              |
+| `connect(s, <remote IP:port>)` | 로컬의 소켓과 원격의 호스트 및 포트 사이에 TCP 커넥션 생성 |
+| `listen(s, ...)`               | 커넥션 받아들이기를 허용함을 로컬 소켓에 표시           |
+| `s2 = accept(s)`               | 누군가 로컬 포트에 커넥션 맺기를 기다림              |
+| `n = read(s, buffer, n)`       | 소켓으로부터 버퍼에 `n`바이트 읽기 시도             |
+| `n = write(s, buffer, n)`      | 소켓으로부터 버퍼에 `n`바이트 쓰기 시도             |
+| `close(s)`                     | TCP 커넥션을 완전히 끊음                     |
+| `shutdown(s, <side>)`          | TCP 커넥션의 입출력만 닫음                    |
+| `getsockopt(s, ...)`           | 내부 소켓 설정 옵션값 읽기                     |
+| `setsockopt(s, ...)`           | 내부 소켓 설정 옵션값 설정                     |
+
