@@ -4,7 +4,7 @@
 
 -  `http://www.oreilly.com/index.html` 페이지를 열어볼 때,
 -  웹 브라우저는 HTTP를 사용하기로 결정한 뒤,
--  ## `www.oreilly.com` 서버로 요청을 보냄.
+-  `www.oreilly.com` 서버로 요청을 보냄.
 -  서버는 요청 받은 객체인 `/index.html`을 찾고,
 -  성공하면 타입과 길이 정보와 함께 HTTP 응답으로 반환.
 
@@ -501,4 +501,9 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 ## HTTP 커넥션 관리
 
-TBD
+### 종종 잘못 이해되는 Connection 헤더
+
+-  [`Connection` 헤더](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Connection)는 현재 커넥션 만을 위한 정보. [홉별<sup>hop-by-hop</sup>](https://en.wikipedia.org/wiki/Hop-by-hop_transport) 헤더라고도 표현.
+-  따라서, 첫 번째 프록시(혹은 그 외의 홉)는 이 헤더를 소비해야 하며, 다운스트림으로 포워딩 X.
+-  그 외 홉 헤더로는 [`Keep-Alive`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Keep-Alive), [`Transfer-Encoding`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Transfer-Encoding), [`TE`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/TE), [`Connection`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Connection), [`Trailer`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Trailer), [`Upgrade`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Upgrade), [`Proxy-Authorization`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Proxy-Authorization) 그리고 [`Proxy-Authenticate`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Proxy-Authenticate)가 있음.
+
