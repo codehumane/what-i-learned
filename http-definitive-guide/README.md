@@ -507,3 +507,18 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 -  따라서, 첫 번째 프록시(혹은 그 외의 홉)는 이 헤더를 소비해야 하며, 다운스트림으로 포워딩 X.
 -  그 외 홉 헤더로는 [`Keep-Alive`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Keep-Alive), [`Transfer-Encoding`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Transfer-Encoding), [`TE`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/TE), [`Connection`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Connection), [`Trailer`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Trailer), [`Upgrade`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Upgrade), [`Proxy-Authorization`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Proxy-Authorization) 그리고 [`Proxy-Authenticate`](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Proxy-Authenticate)가 있음.
 
+
+### 순차적 트랜잭션 처리에 의한 지연
+
+-  앞서 설명한 것처럼 매번 커넥션을 맺고 끊는 것은 비용.
+-  또한, 사용자는 이미지 등의 리소스가 동시에 로드 되는 것을 선호. 비록 총 소요시간이 더 길지라도.
+-  특정 브라우저는 객체의 크기를 알아야 화면에 배치할 수 있음. 즉, 모든 리소스 받을 때까지 텅빈 화면.
+-  그래서 4가지 기법.
+   -  병렬<sup>parallel</sup> 커넥션: 여러 개의 TCP 커넥션
+   -  지속<sup>persistence</sup> 커넥션: TCP 커넥션 재사용
+   -  파이프라인<sup>pipeline</sup> 커넥션: 공유 TCP 커넥션을 통한 병렬 HTTP 요청
+   -  다중<sup>multiplexed</sup> 커넥션: 요청과 응답들에 대한 중재 (experimental)
+
+### 병렬 커넥션
+
+TBD
