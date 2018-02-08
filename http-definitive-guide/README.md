@@ -513,7 +513,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 -  앞서 설명한 것처럼 매번 커넥션을 맺고 끊는 것은 비용.
 -  또한, 사용자는 이미지 등의 리소스가 동시에 로드 되는 것을 선호. 비록 총 소요시간이 더 길지라도.
 -  특정 브라우저는 객체의 크기를 알아야 화면에 배치할 수 있음. 즉, 모든 리소스 받을 때까지 텅빈 화면.
--  그래서 4가지 기법.
+-  그래서 4가지 기법 소개.
    -  병렬<sup>parallel</sup> 커넥션: 여러 개의 TCP 커넥션
    -  지속<sup>persistence</sup> 커넥션: TCP 커넥션 재사용
    -  파이프라인<sup>pipeline</sup> 커넥션: 공유 TCP 커넥션을 통한 병렬 HTTP 요청
@@ -521,4 +521,13 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 ### 병렬 커넥션
 
-TBD
+-  당연히 더 빠르지만, 항상 그런 것은 아님.
+-  예를 들어, 네트워크 대역폭이 좁거나, 응답 서버 혹은 프록시의 커넥션이 부족할 수 있음.
+-  또한 메모리 소모도 있고, 자체적인 성능 문제(?)도 발생.
+-  특정 클라이언트로부터 과도한 커넥션이 맺어진 경우, 서버는 이를 임의로 끊어버릴 수도.
+-  브라우저는 병렬 커넥션을 사용함. 하지만, 대부분 6~8개 정도만을 허용. [여기](https://odetocode.com/articles/743.aspx) 내용 참고.
+
+>  These days we don't have to work quite as hard to achieve more than 2 parallel connections because most user agents use a different set of heuristics when deciding on how many parallel connections to establish.
+
+### 지속 커넥션
+
