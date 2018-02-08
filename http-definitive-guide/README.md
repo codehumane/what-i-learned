@@ -531,3 +531,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 ### 지속 커넥션
 
+-  웹 클라이언트는 사이트 지역성<sup>site locality</sup>을 가짐.
+-  이는 다수의 리소스를 가져올 때 대부분 동일한 서버로 요청함을 가리킴.
+-  HTTP 요청이 끝나도 커넥션을 계속 유지하는 것을 가리켜 [지속<sup>persistence</sup> 커넥션](https://en.wikipedia.org/wiki/HTTP_persistent_connection)이라 부름.
+-  ​
