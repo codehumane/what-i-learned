@@ -523,7 +523,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 -  당연히 더 빠르지만, 항상 그런 것은 아님.
 -  예를 들어, 네트워크 대역폭이 좁거나, 응답 서버 혹은 프록시의 커넥션이 부족할 수 있음.
--  또한 메모리 소모도 있고, 자체적인 성능 문제(?)도 발생.
+-  또한, TCP 느린 시작으로 인한 성능 저하, 메모리 소모도 발생.
 -  특정 클라이언트로부터 과도한 커넥션이 맺어진 경우, 서버는 이를 임의로 끊어버릴 수도.
 -  브라우저는 병렬 커넥션을 사용함. 하지만, 대부분 6~8개 정도만을 허용. [여기](https://odetocode.com/articles/743.aspx) 내용 참고.
 
@@ -534,4 +534,36 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 -  웹 클라이언트는 사이트 지역성<sup>site locality</sup>을 가짐.
 -  이는 다수의 리소스를 가져올 때 대부분 동일한 서버로 요청함을 가리킴.
 -  HTTP 요청이 끝나도 커넥션을 계속 유지하는 것을 가리켜 [지속<sup>persistence</sup> 커넥션](https://en.wikipedia.org/wiki/HTTP_persistent_connection)이라 부름.
--  ​
+-  병렬 커넥션에 비해 다음과 같은 장점이 있음.
+   -  커넥션 맺기 위한 사전 작업과 지연을 줄여줌.
+   -  튜닝된 커넥션을 유지함. (TCP 느린 시작이 끝났으므로)
+   -  커넥션 수도 줄여줌.
+-  하지만, 잘못 관리할 경우 수많은 커넥션이 쌓일 가능성 있음.
+-  이는 클라이언트와 서버 모두 불필요한 리소스 낭비.
+-  따라서, 적은 수의 병렬 커넥션만을 맺고 그것을 유지하는 것이 일반적.
+-  HTTP/1.0+에서는 Keep-Alive 커넥션을, HTTP/1.1에서는 '지속' 커넥션을 이용함.
+
+#### HTTP/1.0+의 Keep-Alive 커넥션
+
+-  `keep-alive`는 HTTP/1.1 명세에서 빠짐. 하지만 많은 웹 애플리케이션이 하위호환을 지원.
+-  클라이언트는 요청 헤더에 `Connection: Keep-Alive` 포함.
+-  서버에서 커넥션 유지를 허용하고자 할 경우 응답 헤더에 동일한 필드를 포함시킴.
+-  허용한다고 하더라도 언제든지 끊을 수 있고, 허용하는 트랜잭션 수를 제한할 수도.
+-  `timeout`이나 `max`등의 `Keep-Alive` 헤더를 추가로 사용하기도.
+-  참고로, 본문의 길이를 정확히 알아야 커넥션을 유지할 수 있음.
+-  다시 말해서, 정확한 `Content-Length` 값과 함께 멀티파트 미디어 형식<sup>multiplart media type</sup>을 가지거나,
+-  청크 전송 인코딩<sup>chunked transfer encoding</sup>으로 인코드 되야 함을 의미.
+-  멍청한<sup>dumb</sup> 프록시를 우회하기 위해 `Proxy-Connection`을 활용하기도 함.
+
+```properties
+Connection: Keep-Alive
+Keep-Alive: max=5, timeout=120
+```
+
+#### HTTP/1.1의 지속 커넥션
+
+-  HTTP/1.1에서는 지속 커넥션이 기본으로 활성화.
+-  커넥션을 끊기 위해서는 `Connection: close` 헤더를 명시해야 함.
+
+### 파이프라인 커넥션
+
