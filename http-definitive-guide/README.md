@@ -519,7 +519,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
    -  파이프라인<sup>pipeline</sup> 커넥션: 공유 TCP 커넥션을 통한 병렬 HTTP 요청
    -  다중<sup>multiplexed</sup> 커넥션: 요청과 응답들에 대한 중재 (experimental)
 
-### 병렬 커넥션
+## 병렬 커넥션
 
 -  당연히 더 빠르지만, 항상 그런 것은 아님.
 -  예를 들어, 네트워크 대역폭이 좁거나, 응답 서버 혹은 프록시의 커넥션이 부족할 수 있음.
@@ -529,7 +529,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 >  These days we don't have to work quite as hard to achieve more than 2 parallel connections because most user agents use a different set of heuristics when deciding on how many parallel connections to establish.
 
-### 지속 커넥션
+## 지속 커넥션
 
 -  웹 클라이언트는 사이트 지역성<sup>site locality</sup>을 가짐.
 -  이는 다수의 리소스를 가져올 때 대부분 동일한 서버로 요청함을 가리킴.
@@ -543,7 +543,7 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 -  따라서, 적은 수의 병렬 커넥션만을 맺고 그것을 유지하는 것이 일반적.
 -  HTTP/1.0+에서는 Keep-Alive 커넥션을, HTTP/1.1에서는 '지속' 커넥션을 이용함.
 
-#### HTTP/1.0+의 Keep-Alive 커넥션
+### HTTP/1.0+의 Keep-Alive 커넥션
 
 -  `keep-alive`는 HTTP/1.1 명세에서 빠짐. 하지만 많은 웹 애플리케이션이 하위호환을 지원.
 -  클라이언트는 요청 헤더에 `Connection: Keep-Alive` 포함.
@@ -560,12 +560,12 @@ Connection: Keep-Alive
 Keep-Alive: max=5, timeout=120
 ```
 
-#### HTTP/1.1의 지속 커넥션
+### HTTP/1.1의 지속 커넥션
 
 -  HTTP/1.1에서는 지속 커넥션이 기본으로 활성화.
 -  커넥션을 끊기 위해서는 `Connection: close` 헤더를 명시해야 함.
 
-### 파이프라인 커넥션
+## 파이프라인 커넥션
 
 -  지속 커넥션을 이용. 여러 개의 요청을 보내고, 응답이 오기 전까지 큐에 넣어둠.
 -  자세한 내용과 그림은 [여기](https://developer.mozilla.org/ko/docs/Web/HTTP/Connection_management_in_HTTP_1.x) 참고.
@@ -574,3 +574,20 @@ Keep-Alive: max=5, timeout=120
 -  HTTP는 메시지에 순번을 매길 수 없으므로 요청 순서와 맞게 응답이 와야 하며,
 -  실패시 언제든 요청은 재생될 수 있으므로 멱등성을 보장하는 메소드(GET, HEAD, PUT, DELETE 등)를 사용해야 함.
 -  또한, 많은 프록시와 서버들이 파이프라이닝을 제대로 지원하지 못함. 이로 인해, 모던 브라우저들은 이 기능을 활성화 시키지 않음.
+
+## 커넥션 끊기에 대한 미스터리
+
+- 어떠한 HTTP 클라이언트, 서버, 프락시든 언제든지 TCP 커넥션을 끊을 수 있음.
+- 예컨대, 지속 커넥션이 일정 시간 유휴상태에 빠지면 서버는 커넥션을 끊음.
+- 하지만, 클라이언트가 데이터 전송을 하지 않음을 보장할 수 X.
+- HTTP 응답은 본문의 크기를 정확히 나타내는 `Content-Length` 헤더를 포함해야 함.
+- 커넥션은 언제든 끊어질 수 있으므로, 응답을 받았을 때 정상적으로 받은 것인지 확인하기 위함.
+- 트랜잭션을 처리하는 도중에 커넥션이 끊길 수 있으므로, 커넥션을 다시 맺고 트랜잭션을 재시도하는 메커니즘 필요.
+- 다만, 여러 번 실행되더라도 같은 결과를 보장하는 멱등성<sup>idempotent</sup>이 보장되어야.
+- TCP의 `close()` 호출은 입력과 출력 채널 모두를 끊는 '전체 끊기'.
+- TCP의 `shutdown()` 호출은 입력이나 출력 채널 하나만을 끊는 '절반 끊기'.
+- 일반적으로는 커넥션의 출력 채널만을 '절반 끊기'하는 것이 안전함.
+- 책에서 '우아한 커넥션 끊기'라 부르는 것은 '서버 출력의 절반 끊기'를 말함.
+- 이미 끊긴 입력 채널에 클라이언트가 데이터를 전송하면, 서버의 OS는 `connection reset by peer`라는 메시지를 응답.
+- 대부분의 OS는 이를 심각한 에러로 취급하여 버퍼에 저장된, 아직 읽히지 않은 모든 데이터를 삭제함.
+
