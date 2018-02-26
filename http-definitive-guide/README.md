@@ -404,19 +404,19 @@ Cookie:_octo=GH1.1.1719295668.1500787962; logged_in=yes; dotcom_user=XXX; _ga=GA
 
 이 때 사용된 소켓 API 각각을 아래 표 참고.
 
-| 소켓 API                         | 설명                                  |
-| ------------------------------ | ----------------------------------- |
-| `s=socket(<parameters>)`       | 연결되지 않은 익명의 새로운 소켓 생성               |
-| `bind(s, <local IP:port>)`     | 소켓에 로컬 포트 번호와 인터페이스 할당              |
+| 소켓 API                       | 설명                                                       |
+| ------------------------------ | ---------------------------------------------------------- |
+| `s=socket(<parameters>)`       | 연결되지 않은 익명의 새로운 소켓 생성                      |
+| `bind(s, <local IP:port>)`     | 소켓에 로컬 포트 번호와 인터페이스 할당                    |
 | `connect(s, <remote IP:port>)` | 로컬의 소켓과 원격의 호스트 및 포트 사이에 TCP 커넥션 생성 |
-| `listen(s, ...)`               | 커넥션 받아들이기를 허용함을 로컬 소켓에 표시           |
-| `s2 = accept(s)`               | 누군가 로컬 포트에 커넥션 맺기를 기다림              |
-| `n = read(s, buffer, n)`       | 소켓으로부터 버퍼에 `n`바이트 읽기 시도             |
-| `n = write(s, buffer, n)`      | 소켓으로부터 버퍼에 `n`바이트 쓰기 시도             |
-| `close(s)`                     | TCP 커넥션을 완전히 끊음                     |
-| `shutdown(s, <side>)`          | TCP 커넥션의 입출력만 닫음                    |
-| `getsockopt(s, ...)`           | 내부 소켓 설정 옵션값 읽기                     |
-| `setsockopt(s, ...)`           | 내부 소켓 설정 옵션값 설정                     |
+| `listen(s, ...)`               | 커넥션 받아들이기를 허용함을 로컬 소켓에 표시              |
+| `s2 = accept(s)`               | 누군가 로컬 포트에 커넥션 맺기를 기다림                    |
+| `n = read(s, buffer, n)`       | 소켓으로부터 버퍼에 `n`바f이트 읽기 시도                   |
+| `n = write(s, buffer, n)`      | 소켓으로부터 버퍼에 `n`바이트 쓰기 시도                    |
+| `close(s)`                     | TCP 커넥션을 완전히 끊음                                   |
+| `shutdown(s, <side>)`          | TCP 커넥션의 입출력만 닫음                                 |
+| `getsockopt(s, ...)`           | 내부 소켓 설정 옵션값 읽기                                 |
+| `setsockopt(s, ...)`           | 내부 소켓 설정 옵션값 설정                                 |
 
 ## TCP의 성능에 대한 고려
 
@@ -590,4 +590,63 @@ Keep-Alive: max=5, timeout=120
 - 책에서 '우아한 커넥션 끊기'라 부르는 것은 '서버 출력의 절반 끊기'를 말함.
 - 이미 끊긴 입력 채널에 클라이언트가 데이터를 전송하면, 서버의 OS는 `connection reset by peer`라는 메시지를 응답.
 - 대부분의 OS는 이를 심각한 에러로 취급하여 버퍼에 저장된, 아직 읽히지 않은 모든 데이터를 삭제함.
+
+
+# 웹 서버
+
+## 간단한 펄 웹서버
+
+```perl
+#!/usr/bin/perl
+
+use Socket;
+use Carp;
+use FileHandle;
+
+# (1) 8080 포트를 기본으로 사용. 명령줄로 덮어쓰기 가능.
+$port = (@ARGV ? $ARGV[0] : 8080);
+
+# (2) 로컬 TCP 소켓을 생성하고 커넥션을 LISTEN
+$proto = getprotobyname('tcp');
+socket(S, PF_INET, SOCK_STREAM, $proto) || die;
+setsockopt(S, SOL_SOCKET, SO_REUSEADDR, pack("l", 1)) || die;
+bind(S, sockaddr_in($port, INADDR_ANY)) || die;
+listen(S, SOMAXCONN) || die;
+
+# (3) 시작 메시지 출력
+printf("    <<Type-O-Serve Accepting on Port %d>>>\n\n", $port);
+
+while (1)
+{
+    # (4) 커넥션 C를 기다림
+    $cport_caddr = accept(C, S);
+    ($cport,$caddr) = sockaddr_in($cport_caddr);
+    C->autoflush(1);
+    
+    # (5) 누구로부터의 커넥션인지 출력
+    $cname = gethostbyaddr($caddr, AF_INET);
+    printf("    <<<Request From '%s'>>>\n", $cname);
+    
+    # (6) 빈 줄이 나올 때까지 요청 메시지 읽어서 출력
+    while ($line = <C>)
+    {
+        print $line;
+        if ($line =~ /^\r/) { last; }
+    }
+    
+    # (7) 응답 메시지를 위한 프롬프트 만들고, 응답줄을 입력 받음
+    #     "." 하나만으로 된 줄이 입력되기 전까지, 입력된 줄을 클라이언트에게 응답
+    printf("    <<<Type Response Followed by '.'>>>\n");
+    
+    while ($line = <STDIN>)
+    {
+        $line =~ S/\r//;
+        $line =~ S/n//;
+        if ($line =~ /^\./) { last; }
+        print C $line . "\r\n";
+    }
+    
+    close(C);
+}
+```
 
