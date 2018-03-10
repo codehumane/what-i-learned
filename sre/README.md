@@ -111,3 +111,80 @@
 - SLI, [SLO](https://en.wikipedia.org/wiki/Service_level_objective)(, 혹은 나아가 SLA)를 정했다면, 이제 이를 어떻게 활용하는지에 대한 이야기.
 - 분기별로 SLO 설정하고 결과를 비교. 이로 인해 얻게 된 `에러 예산`이 있다면, 새로운 릴리즈를 허용.
 - 경직성<sup>inflexibility</sup>과 느린 혁신을 드러나게 하는 도구라고 표현하기도.
+
+# Service Level Objectives
+
+https://landing.google.com/sre/book/chapters/service-level-objectives.html
+
+>  It’s impossible to manage a service correctly, let alone well, without understanding which behaviors really matter for that service and how to measure and evaluate those behaviors.
+
+## Service Level Terminology
+
+### SLI(Service Level Indicator)
+
+-  측정하려는 항목.
+-  주요 지표로는 Request Latency, Error Rate, System Throughput.
+-  Availability 또한 주요 지표. Yield(수율?)이라고 불리기도 함. 데이터 스토리지에서는 Durability.
+
+### SLO(Service Level Objectives)
+
+-  SLI의 목표 수준.
+-  SLI ≤ target 혹은 lower bound ≤ SLI ≤ upper bound 등의 형태로 표현.
+-  시작할 때부터 설정할 필요는 없음.
+-  SLO를 고객에게 공개한다는 점은 인상적.
+-  고객이 서비스 동작에 대한 예측을 할 수 있음.
+-  SLO가 없다면 고객, 운영자, 경영자들은 서로 다른 기대치로 서비스를 바라보게 됨.
+-  또한, 의존 서비스들에게 적절한 행위를 취하게 할 수도. 너무 많은 의존성은 피하게 하거나 폴백 등의 마련.
+
+### SLA(Service Level Aggremenet)
+
+-  explicit or implicit contract with your users
+-  that includes consequences of meeting(or missing) the SLOs they contain
+-  consequences로는 rebate나 penalty 등.
+-  따라서, SRE는 SLA의 결정에는 참여하지 않는다고.
+-  "SLO를 달성하지 못하면 어떻게 될 것인가?"가 SLO와 SLA의 차이점을 잘 나타냄.
+
+## Indicators in Practice
+
+### What Do You and Your Users Care About? 
+
+-  사용자와의 접점 시스템들은 가용성, 응답 시간, 처리량이 중요.
+-  저장소 시스템은 응답 시간, 가용성, 내구성.
+-  데이터 처리 파이프라인 등은 처리량과 종단 간 응답 시간. 하지만 성격에 따라 두 지표는 배타적이기도 함.
+-  놓치지 않아야 할 것은 정확성<sup>correctness</sup>. SRE가 관여하지는 않음.
+
+### Collecting Indicators
+
+-  Bormon, Prometheus 등.
+
+### Aggregation
+
+-  단순함, 유용함을 위해 데이터 합산하기도 하지만, 이 경우 주의가 필요.
+-  예컨대, `1분간 요청의 평균값`은 짝수초 마다 200개, 홀수초 마다 0개의 요청이 발생한 경우를 파악할 수 없음.
+-  대부분의 지표들은 평균보다 분포<sup>distribution</sup>이 중요.
+-  예를 들어, 단순 평균은 아웃 라이어(책에서는 Tail Latency라고 표현)를 인지하기 어려움.
+-  보통 이를 해결하기 위해 백분위수<sup>percentile</sup>를 사용하는데, 책에서도 같은 이야기를 한다.
+
+### Standarlize Indicators
+
+-  표준화된 척도는 많은 노력을 절감시켜줌.
+-  의사소통 비용이나 시스템 간의 비교 등이 용이해 질 것으로 보임.
+
+## Objectives in Practice
+
+-  서비스 간의 통신이 늘어나면서, 서비스 지표와 목표를 설정하는 것이 중요해 짐을 느낌.
+-  지표와 목표가 있다면 이에 의존하는 서비스들은 Fail Fast, Timeout, Bulkhead 등을 적절하게 설정할 수 있음.
+-  에러 예산 같은 개념도 활용할 수 있고 말이다. 즉 적절한 균형을 잡을 수 있는 것.
+-  앞에서 언급된 것 처럼 서로의 기대치를 어느 정도 일치시킬 수도 있고 말이다.
+-  서비스의 상태 추이를 알 수 있으므로 잠재적인 문제에 어느 정도 대응이 가능하기도.
+
+다음은 목표치 선택에 도움이 되는 팁들.
+
+1. Don’t pick a target based on current performance. 제목과 다르게 현재 시스템의 수준을 고려해야 한다는 이야기.
+2. Keep it simple. 복잡하면 이해하기도 파악하기도 어려움.
+3. Avoid absolutes. 자기 만족에 너무 지나친 수준을 설정하지 말 것.
+4. Have as few SLOs as possible. 의외이다. SLO가 사용자의 만족을 정의하는 것의 한계도 한 몫 함.
+5. Perfection can wait.
+
+>  SLOs are a massive lever.
+
