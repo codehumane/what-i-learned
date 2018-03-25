@@ -188,3 +188,52 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 >  SLOs are a massive lever.
 
+# Eliminating Toil
+
+> "If a human operator needs to touch your system during normal operations, you have a bug."
+>
+> \- Carla Geisser, Google SRE
+
+## Toil Defined
+
+- 사전적 의미의 Toil은 "work extremely hard or incessantly"
+- 책에서의 의미는 "running a production service that tends to be manual, repetitive, automatable, tactical, devoid of enduring value, and that scales linearly as a service grows"
+  - Manual: 스크립트로 수행 vs. 사람의 실행
+  - Repetitive: 한 두번이 아닌, 계속되는 반복 작업
+  - Automatable: 머신을 통해 사람이 하는 일을 대체할 수 있는 경우. 하지만 인간의 판단이 필요한 경우는 제외.
+  - Tactical: strategy-driven & practive vs. interrupt-driven & reactive
+  - No enduring value: 서비스의 상태가 작업 후에도 별반 차이가 없음. 반대로 서비스의 영구적 개선을 가져온다면, 너저분한 작업이 필요하다고 하더라도 Toil X.
+  - O(n) with service growth: 서비스의 크기나 트래픽 양에 비례하여 선형적으로 작업량이 늘어남.
+
+## Why Less Toil Is Better
+
+- SRE 팀은 Toil 같은 운영 작업을 업무의 50% 이내로 유지하려 함.
+- 나머지는 서비스 피처를 더하거나, 미래의 toil을 줄이는 작업 등에 투자.
+- SRE 조직이 서비스 크기에 부선형적으로<sup>sublinearly</sup> 스케일 업 되기 위함.
+
+## What Qualifies as Engineering?
+
+- 엔지니어링 작업은 새로우면서도 흥미롭고<sup>novel</sup> 사람의 판단을 필요로 하는 일들임.
+- 이를 통해 동일한 인력으로 더 큰 서비스 혹은 더 많은 서비스를 관리할 수 있음.
+- SRE 활동은 다음처럼 4개로 분류됨.
+  - 소프트웨어 엔지니어링: 코드 작성이나 관련 디자인 혹은 문서화 작업.
+  - 시스템 엔지니어링: 프로덕션 시스템 설정 조정이나 문서화. 개발팀에게 서비스 출시 등 조언 등.
+  - 삽질: 서비스 운영과 직접 관련된 반복 수작업.
+  - 부하: 운영과 직접 관련되지 않은 업무들. 채용, 팀/회사 회의, 버그 큐 치우기, 업무 보고, 동료 평가 등.
+
+## Is Toil Always Bad?
+
+- Toil이 매번 모든 사람을 행복하지 않게 만드는 것은 아님.
+- 또한, 어느 정도의 삽질은 필수 불가결.
+- 하지만, 일정량 이상으로 늘어나면 아래와 같은 문제들을 유발.
+  - **Career stagnation**
+  - **Low morale**: 개인 별 한계를 넘는 경우 burnout, boredom, discontent.
+  - **Creates confusion**: SRE 조직은 엔지니어링 조직이라는 것을 인식시키기 위해 노력함. 하지만 Toil이 많은 경우, 스스로 조직의 역할에 대한 의구심. 타 조직과의 의사소통이 어려워지기도.
+  - **Slows progress**: Less productive. Feature velocity will slow.
+  - **Sets precedent**: 좋지 않은 선례로 인해, 더 많은 단순 반복 운영 업무들을 떠안게 될지도.
+  - **Promotes attrition**: start looking elsewhere for a more rewarding job.
+  - **Cuases breach of faith**: 기대와 다른 업무로 팀 동료들의 신뢰 문제가 발생할 수도.
+
+# Monitoring Distributed System
+
+TBD
