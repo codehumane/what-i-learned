@@ -236,4 +236,59 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 # Monitoring Distributed System
 
-TBD
+모니터링과 알림 시스템을 성공적으로 구축하는 방법에 대해 소개. 특히, 사람이 반드시 개입되어야 하는 이슈와, 그렇지 않은 이슈는 어떻게 다루어야 하는지를 가이드.
+
+## Definitions
+
+- **Monitoring**: 시스템에 대한 실시간 정량적 데이터를 실시간 수집, 가공, 종합, 그리고 표기. QOS, 처리 시간, 에러 수와 타입 등.
+- **White-box monitoring**: 시스템 내부 지표들의 모니터링. 로그, JVM 프로파일링 인터페이스, HTTP 핸들러를 통해 얻은 통계들
+- **Black-box monitoring**: 사용자가 보게 되는 외부에 가시적인 행위들을 테스트.
+- **Dashboard**: 서비스의 핵심 지표들을 요약 뷰로 제공하는 어플리케이션. 필터, 선택자 등을 가짐. 티켓 큐의 길이나 우선순위 높은 버그들, 현재 On-Call 엔지니어 등을 보여줌.
+- **Alert**: 사람이 읽도록 의도된 통지. 이 알림들은 티켓, 이메일 알림, 호출 등으로 분류됨.
+- **Root cause**: 만약 수정되면, 다시는 같은 방식으로 일어나지 않을, 소프트웨어나 휴먼 시스템의 결함. 예컨대, 다음 3가지의 결합이 Root Cause 일 수 있음. 불충분한 프로세스 자동화, 조작된 입력에 의한 소프트웨어 충돌, 그리고 설정 생성을 위해 사용된 스크립트를 충분히 테스트 하지 못함.
+- **Node and machine**: 물리 서버, 가상 머신, 컨테이너 등에서 동작하는 단일 커널 인스턴스. 단일 머신 위에 모니터링 해야 하는 여러 개의 서비스가 있을 수 있음.
+- **Push**: 실행 중인 소프트웨어나 설정에 대한 모든 변경 사항.
+
+## Why Monitor?
+
+- **Analyzing long-term trends**: DB의 크기는 얼마나 빠르게 증가하는가? 사용자 수는?
+- **Comparing over time or experiment groups**: 예를 들어, 노드를 추가했을 때 memcache의 hit rate는 얼마나 올라가는가?
+- **Alerting**: 뭔가 잘못된 것을 감지하고 수정. 혹은 곧 문제가 생길 것 같아서 대비.
+- **Building dashboards**: 서비스에 대한 기본적인 질문들에 대한 답변. 일반적으로 [네 가지 결정적 신호<sup>The Four Golden Signals</sup>](https://landing.google.com/sre/book/chapters/monitoring-distributed-systems.html#xref_monitoring_golden-signals)를 가짐.
+- **Conducting ad hoc retrospective analysis (i.e., debugging)**: 응답 지연이 발생했다. 같은 시간에 다른 일들이 발생한 것이 있는가?
+
+## Setting Reasonable Exceptions for Monitoring
+
+- 견고하고 자동화된 모니터링 시스템을 갖추고 있음에도, 항상 최소 한 명씩은 모니터링 작업을 수행함. 그 정도로 매우 중요한 업무.
+
+- 더 나은 사후 분석<sup>post hoc analysis</sup> 도구를 통해, 더 빠르고 간단한 모니터링 시스템이 만들어짐.
+
+- 하지만 스스로 임계치를 학습하고 문제를 감지해내는 마법과 같은 시스템은 피하려고 함.
+
+  ​
+
+## Symptoms Versus Causes
+
+- 무엇이 망가졌는가(what's broken)와 왜 망가졌는지(why)에 대한 구분.
+- 예컨대, HTTP 500 또는 404를 반환하는 것은 증상, DB 서버가 커넥션을 거부한 것은 원인.
+- 최대의 신호와 최소한의 노이즈<sup>maximum signal and minimum noise</sup>를 위해 중요한 구분.
+
+## Black-Box Versus White-Box
+
+- heavy use of white-box + modest but critical uses of black-box monitoring
+  - black-box
+    - symptom-oriented and represents active(predicted: X) problems
+    - "The system isn't working correctly, right now."
+  - white-box
+    - instarumentation와 함께 로그나 HTTP 엔드포인트.
+    - 문제가 발생하려 하는 징후나, 재시도 후에도 실패한 것 등을 감지할 수 있음.
+- white-box 모니터링은 symptom-oriented 이면서 cause-oriented 이기도.D
+  - 예컨대, DB 지연은 그 자체로도 문제 증상이지만 웹사이트가 느려지는 원인이기도 함.
+  - 이는 white-box가 얼마나 정보가 많으냐에 따라 달림.
+- 디버깅을 위해 원격 측정 지표들을 수집한다면, white-box 모니터링은 필수.
+  - 예를 들어, DB에 부하를 주는 요청에 의해 웹 서버가 느려지는 것 같다면,
+  - DB 처리 속도는 얼마인지와 웹 서버가 DB 결과를 얼마나 빠르게 인지했는지 알아야,
+  - DB 자체가 문제인지 아니면 DB와 웹 서버 사이의 네트워크 문제인지를 인지할 수 있음.
+- black-box를 통한 알림은 문제가 이미 발생한 경우 효과적이지만, 곧 발생할 것 같은 문제에는 무의미.
+- ​
+
