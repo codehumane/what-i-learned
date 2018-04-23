@@ -260,12 +260,8 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 ## Setting Reasonable Exceptions for Monitoring
 
 - 견고하고 자동화된 모니터링 시스템을 갖추고 있음에도, 항상 최소 한 명씩은 모니터링 작업을 수행함. 그 정도로 매우 중요한 업무.
-
 - 더 나은 사후 분석<sup>post hoc analysis</sup> 도구를 통해, 더 빠르고 간단한 모니터링 시스템이 만들어짐.
-
-- 하지만 스스로 임계치를 학습하고 문제를 감지해내는 마법과 같은 시스템은 피하려고 함.
-
-  ​
+- 하지만 스스로 임계치를 학습하고 문제를 감지해내는 마법과 같은 시스템은 피하려고 함.​
 
 ## Symptoms Versus Causes
 
@@ -294,5 +290,40 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 ## The Four Golden Signals
 
-단 4가지만 측정할 수 있다면 응답 지연, 트래픽, 에러, 포화<sup>saturation</sup>을 측정하라.
+단 4가지만 측정할 수 있다면 latency, traffic, errors, saturation을 측정하라.
 
+### Latency
+
+- "The time it takes to service a request."
+- 성공 응답과 실패 응답의 구별은 중요.
+- 예를 들어, DB나 주요 백엔드 연결 실패에 의한 500 에러는 종종 빠르게 반환됨.
+- 만약 전체 응답 지연에 이들을 포함시키면 잘못된 계산 결과를 얻을 수도.
+- 한편, 느린 에러는 빠른 에러보다 훨씬 심각한 문제.
+- 단지 에러를 구별하는 것에 그치지 않고 이런 에러 응답 지연을 추적하는 것이 중요.
+
+### Traffic
+
+- "A measure of how much demand is being placed on your system."
+- 웹 서비스의 경우는 초당 HTTP 요청 수. 그리고 요청 성질에 따라 동적이냐 정적 컨텐츠냐 등으로 나뉠 수 있음.
+- 오디오 스트리밍 시스템의 경우는 네트워크 I/O 비율이나 동시 세션에 집중.
+- 키-밸류 저장 시스템은 초당 트랜잭션 혹은 조회<sup>retrievals</sup> 수.
+
+### Errors
+
+- "The rate of requess that fail."
+- 500 응답과 같이 명시적일 수도 있고, 200 응답이지만 잘못된 컨텐츠가 포함된 암묵적일 수도 있음.
+- 프로토콜 응답 코드로 실패 조건을 표현하기 어렵다면, 보조(내부) 프로토콜이 필요함.
+- 로드 밸런서에서 500을 잡아내는 것에 더해, 종단 시스템 테스트가 필요할 수도.
+
+### Saturation
+
+- "How 'full' your service is."
+- 시스템에서 주요한 자원(메모리 혹은 I/O)의 가용성을 가리킴.
+- 이들 지표는 100%가 되기 전에 성능 저하가 발생하므로 적절한 목표 설정이 중요.
+- 복잡한 시스템에서는 좀 더 상위 수준의 부하 지표로 보완하기도.
+  - "두 배의 트래픽을 감당할 수 있는가?"
+  - "10% 많은 트래픽은?"
+  - "현재보다 트래픽이 적어진다면?"
+- 하지만 CPU 이용률이나 네트워크 대역폭 같은 간접적 신호도 함께 사용해야 함.
+- latency의 증가는 종종 saturation의 선행 지표.
+- 다시 말해, 99th 백분위수 응답 시간 등의 측정은 saturation의 초기 지표가 될 수 있음.
