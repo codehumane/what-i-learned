@@ -352,7 +352,9 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 ## As Simple as Possible, No Simpler
 
-TBD
+소프트웨어와 마찬가지로 모니터링 또한 복잡해질 수 있으며, 따라서 깨지기 쉽고 변경하기 어려우며 유지 부담이 높아질 수 있음. 아래는 무엇을 모니터링할지를 결정할 때의 가이드라인.
 
-
+- 가장 자주 발생하는 사고를 감지하는 규칙은 가능한 쉽고, 예측 가능하고, 신뢰할 수 있어야 함.
+- 드물게 사용되는 데이터 수집, 종합, alerting 설정은 제거.
+- 수집은 되었지만 대시보드에 노출되지 않거나 alert로 사용되지 않은 신호는 제거 후보.
 
