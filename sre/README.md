@@ -342,3 +342,17 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 > How many requests did I serve that took between 0 ms and 10 ms, between 10 ms and 30 ms, between 30 ms and 100 ms, between 100 ms and 300 ms, and so on?
 
+## Choosing an Appropriate Resolution for Measurements
+
+시스템은 각각의 관점과 세분화 수준으로 측정되어야 함.
+
+- CPU 부하의 1분 단위 측정은 심지어 꽤 긴 시간 동안의 상승<sup>spikes</sup>도 드러내지 못할 수 있음.
+- 1년 동안 총 9시간 미만의 다운타임을 목표로 하는 웹 서비스의 경우, 매 1분마다 200 성공 응답 여부를 조사하는 것은 너무 빈번한 것. 
+- 비슷하게, 99.9%의 가용성을 목표로 하는 서비스에 대해, 하드 드라이브 여유 공간을 검사하는 것도 불필요 할 수 있음.
+
+## As Simple as Possible, No Simpler
+
+TBD
+
+
+
