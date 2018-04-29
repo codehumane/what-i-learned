@@ -327,3 +327,18 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 - 하지만 CPU 이용률이나 네트워크 대역폭 같은 간접적 신호도 함께 사용해야 함.
 - latency의 증가는 종종 saturation의 선행 지표.
 - 다시 말해, 99th 백분위수 응답 시간 등의 측정은 saturation의 초기 지표가 될 수 있음.
+
+## Worrying About Your Tail (or, Instrumentation and Performance)
+
+- 평균 값을 지표로 삼는 것의 위험성에 대해 이야기.
+- 지연 시간을 예로 들고 있음.
+  - 초당 1,000개 요청을 받을 때 평균 지연 시간이 100ms라면,
+  - 1%의 요청은 5초가 걸릴 수 있음.
+  - 만약 특정 페이지 렌더링이 여러 웹 서비스에 의존한다면,
+  - 백엔드 1개의 99 백분위수가 프론트엔드의 평균 응답시간이 되기 쉽상.
+- 느린 평균 지연과 매우 느린 "tail" 요청을 구분되어야 함.
+- 가장 쉬운 방법은 아래와 같이 질문하는 것.
+- 더불어, 히스토그램의 경계를 지수(위 질문에서는 대략 3)적으로 나누는 것이 쉽다고도 이야기.
+
+> How many requests did I serve that took between 0 ms and 10 ms, between 10 ms and 30 ms, between 30 ms and 100 ms, between 100 ms and 300 ms, and so on?
+
