@@ -375,3 +375,25 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 - 모든 호출 응답에는 어느 정도의 사고<sup>intelligence</sup>가 필요함. 단순히 로봇의 응답으로 가능하다면, 호출되지 말아야 한다.
 - 호출은 새로운 문제 혹은 지금까지 보지 못한 이벤트에 관한 것이어야 한다.
 
+
+## Monitoring for the Long Term
+
+### Bigtable SRE: A Tale of Over-Alerting
+
+남의 얘기 같지가 않음.
+
+> SLO에 근접해지면 이메일 알림이 발송되었고 SLO를 초과하면 호출기 알림이 발송되었다. 이 두 가지 알림이 너무 빈번하게 발생해서 엔지니어링 시간을 너무 많이 소모했다. 팀은 실제로 대응이 필요한 알림을 선별하는 데 너무 많은 시간을 할애했으며, 실제로 사용자가 영향을 받는 경우에 대한 알림이 극히 적어 종종 놓치는 경우도 많았다. 호출의 상당 부분은 인프라스트럭처에 발생하는 문제점들에 대한 것이었는데, 이 문제점들은 이미 잘 알려져 있는 것이거나, 사실 그렇게 급하게 처리하지 않아도 되는 문제들이어서 이미 정해진 대응책이 있거나 혹은 대응이 필요하지 않은 것들이었다.
+
+그래서 3가지 방안을 도입했다고 함.
+
+1. 빅테이블의 성능을 개선하는 동시에,
+2. SLO 목표치를 일시적으로 75% 요청 지연으로 하향 조정.
+3. 너무 많이 발송돼 대응에 많은 시간이 소모되던 이메일 알림 중단.
+
+호출기가 울리는 일이 줄어들고, 크고 작은 단기적 문제들을 수정하는 대신, 장기적 문제들을 수정해 나갔던 것. 즉, 단기 가용성 목표와 장기적 관점의 목표 간에 적절한 트레이드 오프를 선택.
+
+### The Long Run
+
+아래 내용도 인상 깊어서 전체를 기록.
+
+>  A common theme connects the previous examples of Bigtable and Gmail: a tension between short-term and long-term availability. Often, sheer force of effort can help a rickety system achieve high availability, but this path is usually short-lived and fraught with burnout and dependence on a small number of heroic team members. Taking a controlled, short-term decrease in availability is often a painful, but strategic trade for the long-run stability of the system. It's important not to think of every page as an event is isolation, but to consider whether the overall level of paging leads toward a healthy, appropriately available system with a healty, visible team and long-term outlook.
