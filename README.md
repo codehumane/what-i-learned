@@ -21,6 +21,7 @@
 - [클린 소프트웨어](cleansw/README.md)
 - [수학사전](mathdict/README.md)
 - [신은 주사위 놀이를 하지 않는다](the-improbability-principle/README.md)
+- [Growing Object-Oriented Software, Guided by Tests](goosgt/README.md)
 
 # TIL
 
