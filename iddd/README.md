@@ -430,9 +430,110 @@ public class Forum extends Entity {
 }
 ```
 
-# 12장. 리포지토리
+# 14장. 애플리케이션
 
-TBD
+일단, "애플리케이션이란 무엇인가?"에 대한 이야기.
+
+> What's an Application?
+>
+> To boil it down, I am using the term **application** to mean the finest set of components that are assembled to interact with and support a **Core Domain** model. This generally means the domain model itself, a user interface, internally used Application Services, and infrastructural components. What exactly fits into each of those compartments will vary from application to application and will depend on the specific Architectures in use.
+
+Application Service는 도메인 모델의 개념을 보여주고, 이에 대한 다양한 행동을 취할 수 있게 도와줌. 좀 더 와닿는 표현은 다음과 같다.
+
+> Keep Application Services thin, using them only to coordinate tasks on the model.
+
+아래는 좀 더 구체적인 예시.
+
+- use case tasks coordinate
+- transaction management
+- necessary security authorizations assert
+
+그 외 설명은 좀 아쉽다. 예시 코드만을 기록하는 것으로 마무리. 출처는 [여기](https://github.com/VaughnVernon/IDDD_Samples/blob/master/iddd_identityaccess/src/main/java/com/saasovation/identityaccess/application/IdentityApplicationService.java).
+
+```java
+@Transactional
+public class IdentityApplicationService {
+    
+    // ...
+
+    @Transactional
+    public void activateTenant(ActivateTenantCommand aCommand) {
+        Tenant tenant = this.existingTenant(aCommand.getTenantId());
+
+        tenant.activate();
+    }
+    
+    @Transactional
+    public void addGroupToGroup(AddGroupToGroupCommand aCommand) {
+        Group parentGroup =
+                this.existingGroup(
+                        aCommand.getTenantId(),
+                        aCommand.getParentGroupName());
+
+        Group childGroup =
+                this.existingGroup(
+                        aCommand.getTenantId(),
+                        aCommand.getChildGroupName());
+
+        parentGroup.addGroup(childGroup, this.groupMemberService());
+    }
+    
+    // ...
+}
+```
+
+Application Service가 호출한 도메인 엔티티인 `Group#addGroup` 부분의 코드는 아래와 같음.
+
+```java
+public class Group extends ConcurrencySafeEntity {
+
+    public void addGroup(Group aGroup, GroupMemberService aGroupMemberService) {
+        this.assertArgumentNotNull(aGroup, "Group must not be null.");
+        this.assertArgumentEquals(this.tenantId(), aGroup.tenantId(), "Wrong tenant for this group.");
+        this.assertArgumentFalse(aGroupMemberService.isMemberGroup(aGroup, this.toGroupMember()), "Group recurrsion.");
+
+        if (this.groupMembers().add(aGroup.toGroupMember()) && !this.isInternalGroup()) {
+            DomainEventPublisher
+                .instance()
+                .publish(new GroupGroupAdded(
+                        this.tenantId(),
+                        this.name(),
+                        aGroup.name()));
+        }
+    }
+}
+```
+
+그리고 여기서 사용된 도메인 서비스 `GroupMemberService#isMemberGroup` 부분.
+
+```java
+public class GroupMemberService {
+    public boolean isMemberGroup(Group aGroup, GroupMember aMemberGroup) {
+        boolean isMember = false;
+
+        Iterator<GroupMember> iter =
+            aGroup.groupMembers().iterator();
+
+        while (!isMember && iter.hasNext()) {
+            GroupMember member = iter.next();
+            if (member.isGroup()) {
+                if (aMemberGroup.equals(member)) {
+                    isMember = true;
+                } else {
+                    Group group =
+                        this.groupRepository()
+                            .groupNamed(member.tenantId(), member.name());
+                    if (group != null) {
+                        isMember = this.isMemberGroup(group, aMemberGroup);
+                    }
+                }
+            }
+        }
+
+        return isMember;
+    }
+}
+```
 
 # 애그리게잇과 이벤트 소싱(A+ES)
 
