@@ -85,19 +85,32 @@
 
 ## Composite Simpler Than The Sum Of Its Parts
 
-TBD
+> When composing objects into a new type, we want the new type to exhibit simpler behavior than all of its component parts considered together. The composite object's API must hide the existence of its component parts and the interactions between them, and expose a simpler abstraction to its peers.
 
+컴포짓 객체의 API는 그 객체의 컴포넌트들의 단순 합보다 단순해야 함. 예컨대, 컴포넌트 끼리의 상호작용이나, 나아가서는 어떤 컴포넌트가 있는지 등. 물론, 하나의 컴포넌트만을 소유한 경우라도 적용될 수 있는 규칙. 아래는 이해를 돕는 코드.
 
+```java
+// moneyEditor가 amountField, currencyField라는 필드를 소유함이 드러남.
+moneyEditor.getAmountField().setText(String.valueOf(money.amount()));
+moneyEditor.getCurrencyField().setText(money.currenceyCode());
 
+// 어떤 컴포넌트를 소유하는지를 숨김.
+moneyEditor.setAmountField(money.amount());
+moneyEditor.setCurrencyField(money.currencyCode());
 
+// 컴포넌트들과의 상호작용을 숨김.
+moneyEditor.setValue(money);
+```
 
+## Context Independence
 
+잘못된 정보 은닉은 비용. 코드를 읽기 어렵게 만듦. 객체를 조합하는 것으로 행위를 만들어 내기도 어려움. 한편, 이와 대조적으로 캡슐화는 거의 대부분 좋게 작용한다는 의견은 흥미롭다.
 
+이를 경계하기 위한 한 가지 규칙으로 컨텍스트 독립성<sup>context independence</sup>을 이야기.
 
+> ... each object has no built-in knowledge about the system in which it executes. This allows us to take units of behavior (objects) and apply them in new situations. To be context-independent, whatever an object needs to know about the larger environment it’s running in must be passed in.
 
+그리고 이것이 가져오는 효과를 다시 한 번 명시함.
 
-
-
-
-
+> Context independence guide us towards coherent objects that can be applied in different contexts, and towards systems that we can change by reconfiguring how their objects are composed.
 
