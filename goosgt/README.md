@@ -114,3 +114,24 @@ moneyEditor.setValue(money);
 
 > Context independence guide us towards coherent objects that can be applied in different contexts, and towards systems that we can change by reconfiguring how their objects are composed.
 
+# Achieving Object-Oriented Design
+
+## How Writing A Test First Helps The Design
+
+먼저, 앞선 장에서 이야기 했던 원칙들을 요약.
+
+1. 호출자는 객체가 어떻게 동작하는지가 아닌, 무엇을 하는지와 어디에 의존하는지를 알고 싶을 뿐. 객체 경계를 잘 설정해서 이웃들과 잘 동작할 수 있게 해야 함.
+2. 더 큰 환경에서 잘 사용될 수 있도록 객체는 일관적이고 논리적인 단위를 표현해야 함.
+
+TDD가 이를 돕는 이유는 3가지.
+
+1. 테스트를 먼저 작성한다는 것은 어떻게 이전에 무엇을 할지 생각하는 것. 이는 올바른 수준의 추상화를 달성하는 데 도움이 됨.
+2. 테스트 코드가 길어지고 초점을 흐린다면, 테스트 하려는 대상이 좀 더 작은 단위로 나뉘어야 하는 것은 아닌지를 알려주는 한 가지 신호. 이는 관심사의 분리를 도움.
+3. 암묵적 의존성은 테스트 코드 작성을 힘들게 함. 테스트는 또 하나의 컨텍스트. 결국 Context Independence를 도와줌. 예컨대, 생성자와 같은 명시적인 수단으로 의존성을 주입하지 않고, `ThreadContextHolder`를 사용하는 등 암묵적인 의존성을 주입해야 한다면, 테스트 코드 작성을 고통스러울 것.
+
+개인적으로도 TDD가 큰 도움이 되었던 이유는 HOW가 아닌 WHAT을 먼저 생각하게 한다는 것(Contract of Design). 그리고 불필요하거나 너무 과한 의존성을 알려주는 중요한 설계 신호가 된다는 것.
+
+## Communication Over Classification
+
+TBD
+
