@@ -133,5 +133,63 @@ TDD가 이를 돕는 이유는 3가지.
 
 ## Communication Over Classification
 
-TBD
+- 시스템을 객체들 간의 커뮤니케이션 망<sup>web</sup>으로 봄.
+- 따라서, 잘 설계된 클래스 구조보다 객체들 간의 커뮤니케이션을 더 중요하게 생각.
+- 테스트 코드에서 mock의 대상은 자신의 내부가 아닌 협력(이웃) 객체들.
+- 이런 협력 객체들이 강조된 테스트에서는 이 객체들이 동료여야 하는지 아니면 자신의 내부에 포함되어야 하는지를 볼 수 있게 도와줌.
+- 테스트 코드에서 냄새가 난다면, 너무 많은 세부사항을 노출했거나, 객체들 간의 책임을 재조정해야 하는 신호일 수 있음.
+
+## Value Types
+
+먼저, 값 객체가 왜 좋은지에 대한 설명.
+
+같은 숫자 값이라고 하더라도 feet나 metres는 의미가 다름. 값 객체는 이런 표현력을 높이는 도구. self-explanatory. 또한, 단지 숫자형을 쓰는 것에 비해 변경에도 유리. 추적을 위해 메서드를 일일이 따라가지 않아도 됨. 게다가 상태와 관계를 가지는 객체에 비해 행위가 없으며 Immutable. 이해하고 수정하기에 더 용이함.
+
+다음으로, 값 객체를 도입하는 기법 3가지를 소개.
+
+**Breaking out**
+
+- 객체 코드가 여러 관심사를 다루고 있다면, 특정 관심사와 관련된 행위들을 헬퍼 타입으로 추출.
+- 예컨대, 문자열을 파싱하는 것과 파싱된 결과를 해석하는 것을 구분할 수 있음.
+
+**Budding off**
+
+- 개인적으로 좀 더 이해가 필요한 부분
+- 새로운 도메인 개념 표기를 위한 placeholder type 추가.
+- 처음엔 필드가 없을 수도 있지만 코드가 점차 자라나면서 필드와 메서드들로 채워질 대상.
+- 추상화를 높이는 좋은 수단.
+
+**Bundling up**
+
+- 항상 함께 사용되는 값들이 있다면 새로운 타입 추가의 신호일 수도.
+- "Composite simpler than the sum of its parts"를 만족.
+
+## Where Do Objects Come From?
+
+객체를 발견하는 방법은 값객체의 그것과 유사. 단위 테스트가 더 중요하다는 점을 제외하고 말이다.
+
+**Breaking out**
+
+- 우리는 새로운 기능을 추가할 때 잠시 설계를 미루고, 일단 코드를 작성해 보기도.
+- 어느 정도 코드를 작성하다 보면 코드가 비대해지고 이해하기 어렵다는 것을 발견하게 됨.
+- 이때 응집력 있는 단위의 기능들을 새로운 타입으로 추출.
+
+> We can start pulling out cohesive units of functionality into smaller collaborating objects, which we can then unit-test independently. Splitting out a new object also forces us to look at the dependencies of the code we're pullingo ut.
+
+**Budding off**
+
+- 코드가 안정적인 편이고 어느 정도 체계가 있을 땐 새로운 타입을 먼저 도입하기도.
+- 이 때 새로운 타입은 단지 인터페이스.
+- 이를 사용하는 객체의 테스트에서 새 인터페이스를 목킹.
+- 그리고 이 협력 객체와 어떤 관계를 가져야 하는지를 작성해 나감.
+- 클라이언트의 필요에 의해 새로운 타입이 무엇을 해야 하는지 결정해 가는 것.
+
+> We think of this as “on-demand” design: we “pull” interfaces and  their implementations into existence from the needs of the client,  rather than “pushing” out the features that we think a class should  provide.
+
+**Bundling up**
+
+- "Composite simpler than the sum of its parts"를 적용하는 것.
+- 함께 동작하는 객체 클러스터가 있을 때, 이들 협력을 하나의 객체로 패키징 할 수 있음.
+- 어떤 객체들이 어떤 협력을 하는지를 추상화 할 수 있음.
+- 이는 좀 더 추상화 된 수준으로 프로그래밍 할 수 있게 하는 것.
 
