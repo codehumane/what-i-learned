@@ -193,3 +193,51 @@ TDD가 이를 돕는 이유는 3가지.
 - 어떤 객체들이 어떤 협력을 하는지를 추상화 할 수 있음.
 - 이는 좀 더 추상화 된 수준으로 프로그래밍 할 수 있게 하는 것.
 
+## Identify Relationships With Interfaces
+
+저자가 인터페이스를 어떻게 사용하는지를 소개.
+
+- 인터페이스를 많이 사용하는 편.
+  - 이는 객체가 수행하는 역할을 네이밍하고, 어떤 메시지를 수신하지를 표현하는 수단.
+  - 객체들 간의 관계를 강조할 수 있음.
+- 한편, 인터페이스는 가능한 좁게(책에서는 narrow라고 표현) 유지함.
+  - 호출자의 입장에서는 메소드가 적을수록 역할이 명확하게 드러남.
+  - 어댑터나 데코레이터를 적용하기 쉬운 것은 덤.
+  - "Budding Off"에서 소개했던 "pulling interface"가 좁은 인터페이스 유지에 도움이 됨.
+  - 실제 필요에 기반한 인터페이스가 추출되므로.
+
+## Refactor Interfaces Too
+
+- 일단 인터페이스들이 만들어지면 이들 간의 유사점과 차이점에 주목하기 시작.
+- 유사한 인터페이스들이 하나의 동일한 책임을 갖고 있는 건 아닌지 판단하고 병합.
+- 컴포넌트들이 좀 더 "plug-compatible" 해지고, 추상화된 수준에서의 작업을 가능케 함. 설계가 "malleable"하게 된다고 표현.
+- 차이점이 드러나는 인터페이스들 간에는 이름 등을 통해 구분을 명확하게 함.
+- 구현을 하면서도 인터페이스가 리팩토링 됨. 가독성이 떨어지는 등 구현 코드에서 보이는 신호들에 따라서.
+
+## Compose Objects To Describe System Behavior
+
+저수준의 객체들을 빌딩 블럭처럼 사용해서 더 많은 일들을 하는 객체를 만듦. 이것이 바로 객체 망. 한 가지 좋은 사례로 jMock을 언급. 예컨대 아래와 같은 코드.
+
+```java
+context.checking(new Expectations() {{
+    oneOf(example).doSomething(with(any(String.class)));
+}});
+```
+
+아래는 이들의 관계를 도식화 한 그림.
+
+![jMock - web of objects](jMock-web-of-objects.png)
+
+이런 접근법의 이점은 상대적으로 적은 코드로 유연한 어플리케이션을 만들 수 있다는 것. 특히 관련 있는 여러가지 시나리오를 지원해야 하는 경우에 더 적합.
+
+> For each scenario, we provide a different assembly of components to build, in effect, a subsystem to plug into the rest application. Such design are also easy to extend—just write a new plug-compatible component and add it in.
+
+## Building Up To Higher-Level Programming
+
+- 의도를 드러내는 코드를 두 가지 레이어로 조직화 하라고 함.
+- 구현 계층<sup>implementation layer</sup>: describes how the code does it.
+- 선언 계층<sup>declarative layer</sup>: what the code will do. 구현 계층 객체들의 조합.
+- 이 두 계층은 목적이 다르므로 코딩 스타일도 다름.
+- 구현 계층에서는 전통적인 객체 지향 스타일 가이드 라인을 고수.
+- 선언 계층에서는 좀 더 유연함 — 정적 메소드를 사용하기도 하고, "train wreck" 식의 메소드 체이닝 호출도 허용.
+
