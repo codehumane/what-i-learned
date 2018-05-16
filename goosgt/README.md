@@ -1,4 +1,40 @@
-# 6. Object-Oriented Style
+# Test-Driven Development with Objects
+
+## A Web of Objects
+
+성장 가능하고 좋은 시스템을 만드는 것의 핵심은, 모듈이 어떤 행위를 하고 어떤 속성을 가지는지 보다, 모듈들 간의 커뮤니케이션 설계가 더 중요.
+
+> Object-oriented design focuses more on the communication between objects than on the objects themselves.
+>
+> — Alan Kay
+
+커뮤니케이션이란, 객체들이 메시지를 주고 받는 것. 다른 객체로부터 메시지를 받고, 이에 대한 반응으로 다른 객체들에 메시지를 전달. 혹은 메시지를 보낸 객체에게 값을 반환하거나 예외를 던지거나.
+
+그래서 객체 지향 시스템은 협력하는 객체들의 망<sup>web of collaborating objects</sup>.
+
+개인적으로는 아래 문장이 더 균형 있는 설명이라고 생각.
+
+> A system is built by creating objects and plugging them together so that they can send messages to one another.
+
+![web of objects](web-of-objects.png)
+
+이와 관련된 표현들로는 pluggable, plug-compatible, building block, web of objects, declarative, collaboration, message, composite, composed, Compose objects to describe system behavior, Communication over classification, scenario, Not how but what 등이 있음.
+
+## Values and Objects
+
+여기서 말하는 객체란 값 객체와는 구분되는 것.
+
+클래스라는 동일한 구조물을 사용하기 때문에 흔히 헷갈리기 쉬움. 값 객체는 변하지 않는 수치나 양을 나타냄. 객체는 식별성<sup>identity</sup>을 가지고, 시간에 따라 상태가 변하며, computational processes를 모델링. 식별성이 의미하는 것은 내가 이름이 바뀌더라도 나는 이 세계에서 나인 것. 특정 객체의 상태나 값이 변하더라도 어플리케이션에서는 동일한 대상으로 간주되는 것이 식별성. Identity vs equality. mutable vs immutable.
+
+## Follow the Messages
+
+> We can benefit from this high-level, declarative approach only if our objects are designed to be easily pluggable.
+
+TBD
+
+
+
+# Object-Oriented Style
 
 > Always design a thing by considering it in its next larger context—a chair in a room, a room in a house, a house in an environment, an environment in a city plan.
 
