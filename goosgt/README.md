@@ -28,11 +28,48 @@
 
 ## Follow the Messages
 
-> We can benefit from this high-level, declarative approach only if our objects are designed to be easily pluggable.
+좀 더 상위 수준<sup>high-level</sup>의 선언적<sup>declarative</sup> 접근법은 객체가 easily pluggable 하도록 설계 되어 있을 때 가능한 것.
+
+easily pluggable?
+
+- 객체들이 communication patterns를 따르고,
+- 객체들 간의 의존성이 명확하게 드러난 것.
+
+communication patterns?
+
+- 객체들이 서로 어떻게 이야기를 주고 받는지에 관한 규칙들.
+- 어떤 역할을 수행하는가, 어떤 메시지를 주고 받을 수 있는가, ...
+
+### Communication over Classification
+
+객체 지향을 처음 배울 때 흔히 등장하는 classification에서 벗어나 communication으로의 관점 전환이 필요.
+
+> Thinking of a system in terms of its dynamic, communication structure is a significant mental shift from the static classification that most of  us learn when being introduced to objects.
+
+이를 간단한 게임 예시로 보완 설명.
+
+먼저, 비디오 게임에서 객체를 아래와 같이 분류 가능.
+
+- actor: 플레이어나 적.
+- scenery: 플레이어들이 등장하는.
+- obstacle: 플레이어들이 부딪히는.
+- effects: 폭발이나 연기.
+- script: 게임 진행 중에 객체를 계속 생성해 내는.
+
+게임을 플레이하는 관점에서는 classification이 유용할지도 모르지만 게임 구현자 입장에서는 X.
+
+- 게임 엔진은 `visible` 객체를 표시해야 하고,
+- 시간이 경과하고 있음을 `animated` 객체에게 알려주어야 하며,
+- `physical` 객체 간의 충돌을 감지해야 함.
+- 또, 객체 간의 물리적 충돌이 발생하면, 이를 `collision resolvers`에게 결정을 위임.
+
+게임 엔진은 대상이 어떤 클래스인지 확인하고 이것이  `visible`인지 `physical` 판단하는 것이 아니라, 단지 `visible` 대상이 필요할 뿐. 엔진은 상황에 따라 필요로 하는 것이 있으며, 이에 따라 객체가 수행하는 역할이 달라짐.
+
+![roles-and-objects-in-game-engine](roles-and-objects-in-game-engine.png)
+
+## Tell, Don't Ask
 
 TBD
-
-
 
 # Object-Oriented Style
 
