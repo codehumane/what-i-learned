@@ -69,7 +69,78 @@ communication patterns?
 
 ## Tell, Don't Ask
 
-TBD
+Law of Demeter 혹은 "Tell, Don't Ask" 스타일이라고 부름. 개인적으로는 Martin Fowler의 [TellDontAsk](https://martinfowler.com/bliki/TellDontAsk.html)에 있는 그림이 좋은 설명이라고 생각함.
+
+![Tell, Don't Ask](tell-dont-ask.png)
+
+객체는 자신이 내부에 가지고 있거나 전달 받은 메시지만으로 결정을 내려야 함. 객체를 교환하기가 좀 더 쉬워지고, 따라서 코드가 유연해 짐.
+
+대상 객체의 내부 구조 또는 역할 인터페이스 너머에 있는 나머지 시스템의 구조를 알아야 한다면, "열차 전복<sup>train wrek</sup>"이라고 불리는 깨지기 쉬운 코드가 만들어짐. 아래는 [TrainWreck](http://wiki.c2.com/?TrainWreck)에 나온 간단한 코드 예시.
+
+```
+client.GetMortgage()
+    .PaymentCollection()
+    .GetNextPayment()
+    .ApplyPayment(300.00)
+```
+
+체이닝 자체가 나쁜 것도 아니고, 열차 전복을 무조건 피해야 하는 것도 아님. 언제나 트레이드 오프는 존재. 하지만 적어도 아래와 같은 방식을 함께 고려할 필요는 있음.
+
+```
+client.ApplyMortagePayment(300.00)
+```
+
+객체의 내부 구조(자신과 연결된 다른 객체)가 바뀐다고, 자신을 사용하는 모든 클라이언트 코드가 함께 수정 되는 것은 정말로 고통스러운 일. 또한, `ApplyMortagePayment`라는 이름은 여러 라인의 코드가 하는 일을 가독성 있게 표현함.
+
+## But Sometimes Ask
+
+항상 "Tell"만 하고 살 수는 없는 일. 값 객체나 컬렉션으로부터 정보를 얻기도 하고, 팩토리로부터 새로운 객체를 획득하기도 함. 객체를 검색하거나 필터링 하기 위해 상태를 물어보기도.
+
+```java
+public void reserveSeats(ReservationRequest request) {
+    for (Carriage carriage : carriages) {
+        if (carriage.getSeats().getPercentReserved() < percentReservedBarrier) {
+            request.reserveSeatsIn(carriage);
+            return;
+        }
+    }
+    request.cannotFindSeats();
+}
+```
+
+하지만, 이 경우에도 표현력을 잃지 않으며 열차 전복도 피할 수 있음. 아래 코드에서 `hasSeatsAvailableWithin`를 보면 됨.
+
+```java
+public void reserveSeats(ReservationRequest request) {
+    for (Carriage carriage : carriages) {
+        if (carriage.hasSeatsAvailableWithin(percentReservedBarrier)) {
+            request.reserveSeatsIn(carriage);
+            return;
+        }
+    }
+    request.cannotFindSeats();
+}
+```
+
+심지어 테스트하기도 수월. 테스트 하기 어렵다면 코드에 문제가 있는 것은 아닌지 의심해 볼 일.
+
+## Unit-Testing The Collaborating Objects
+
+묻지도 따지지도 않으므로 내부 상태를 통해 assert X. 어떻게 테스트를 할 수 있을까? 한 가지 방법으로 객체를 mocking 하고, 이웃들과 적절히 커뮤니케이션 하는지를 확인해 볼 수 있음. 이런 명세들을 가리켜 "expectations"라고 부름.
+
+![Test an object by mock objects](test-an-object-by-mock-objects.png)
+
+이런 식으로 하면 TDD에 대한 접근법을 바꿔볼 수 있음.
+
+- 단위 테스트 작성 시 협력 객체들은 아직 존재하지 않아도 됨.
+- 테스트를 만들면서 객체를 지원하는 역할들을 발견.
+- 발견된 역할들은 자바 인터페이스로 선언.
+- 당장은 mocking으로 구현체를 대체.
+- 나머지 시스템을 구현할 때 이들을 채워 나감.
+
+이를 가리켜 "Interface Discovery"라고 부른다고 함. 책의 뒷 부분에서는 이를 다음과 같이 표현하기도.
+
+> We think of this as “on-demand” design: we “pull” interfaces and  their implementations into existence from the needs of the client,  rather than “pushing” out the features that we think a class should  provide.
 
 # Object-Oriented Style
 
