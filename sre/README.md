@@ -261,7 +261,7 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 - 견고하고 자동화된 모니터링 시스템을 갖추고 있음에도, 항상 최소 한 명씩은 모니터링 작업을 수행함. 그 정도로 매우 중요한 업무.
 - 더 나은 사후 분석<sup>post hoc analysis</sup> 도구를 통해, 더 빠르고 간단한 모니터링 시스템이 만들어짐.
-- 하지만 스스로 임계치를 학습하고 문제를 감지해내는 마법과 같은 시스템은 피하려고 함.​
+- 하지만 스스로 임계치를 학습하고 문제를 감지해내는 마법과 같은 시스템은 피하려고 함.
 
 ## Symptoms Versus Causes
 
@@ -278,7 +278,7 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
   - white-box
     - instarumentation와 함께 로그나 HTTP 엔드포인트.
     - 문제가 발생하려 하는 징후나, 재시도 후에도 실패한 것 등을 감지할 수 있음.
-- white-box 모니터링은 symptom-oriented 이면서 cause-oriented 이기도.D
+- white-box 모니터링은 symptom-oriented 이면서 cause-oriented 이기도.
   - 예컨대, DB 지연은 그 자체로도 문제 증상이지만 웹사이트가 느려지는 원인이기도 함.
   - 이는 white-box가 얼마나 정보가 많으냐에 따라 달림.
 - 디버깅을 위해 원격 측정 지표들을 수집한다면, white-box 모니터링은 필수.
@@ -310,7 +310,7 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 ### Errors
 
-- "The rate of requess that fail."
+- "The rate of request that fail."
 - 500 응답과 같이 명시적일 수도 있고, 200 응답이지만 잘못된 컨텐츠가 포함된 암묵적일 수도 있음.
 - 프로토콜 응답 코드로 실패 조건을 표현하기 어렵다면, 보조(내부) 프로토콜이 필요함.
 - 로드 밸런서에서 500을 잡아내는 것에 더해, 종단 시스템 테스트가 필요할 수도.
@@ -397,3 +397,74 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 아래 내용도 인상 깊어서 전체를 기록.
 
 >  A common theme connects the previous examples of Bigtable and Gmail: a tension between short-term and long-term availability. Often, sheer force of effort can help a rickety system achieve high availability, but this path is usually short-lived and fraught with burnout and dependence on a small number of heroic team members. Taking a controlled, short-term decrease in availability is often a painful, but strategic trade for the long-run stability of the system. It's important not to think of every page as an event is isolation, but to consider whether the overall level of paging leads toward a healthy, appropriately available system with a healty, visible team and long-term outlook.
+
+# The Evolution of Automation at Google
+
+## The Value of Automation
+
+여러 요소를 나열하고 있긴 하지만, 이것은 많은 트래픽이나 서버를 관리하지 않는 입장에서는 크게 와닿지 않을 수도 있다. 하지만 조금만 상상해 보면 금방 느껴볼 수도 있는 일이다. 서버 3,000대가 있고 모두 업데이트를 해야 한다면? 1초에 들어 오는 트래픽이 상당해서 조금만 회복이 지체 되어도 손실 금액이 크다면?
+
+그런데 말이다. 이를 바꿔 말하면, 규모가 작은 시스템에서는 자동화의 이점이 그리 크지 않을 수도 있다는 얘기가 된다. 모든 작성되는 코드 또한 읽기나 변경 등의 유지 보수 비용이 발생한다. 무작정 자동화가 필요하다고 말하는 대신, 한 번쯤 자동화로 인한 트레이드 오프를 고려해야 하는 것 아닐까.
+
+### Consistency
+
+> For a start, any action performed by a human or humans hundreds of times won’t be performed the same way each time: even with the best will in the world, very few of us will ever be as consistent as a machine.
+
+- 일관성의 부족은 실수와 부주의, 데이터 품질, 신뢰성 등의 문제를 수반함.
+- 어떤 강한 의지도 기계 만큼의 일관성을 보장하지는 못함.
+
+### A Platform
+
+- 잘 설계되고 수행되는 자동화 시스템은 플랫폼으로써 가치가 있음.
+- 즉, 확장되고, 더 많은 시스템에 적용되고, 더 오랫동안 지속됨.
+- 또한, 실수를 중앙화. 잘못된 코드를 한 번 고치는 것으로 모든 곳에 영원히 적용.
+- 좀 더 자주, 좀 더 지속적으로 수행할 수 있기도.
+- 작업 성능에 대한 메트릭을 추출할 수 있음.
+
+### Faster Repairs
+
+- 공통된 실수에 대해 MTTR이 감소하는 효과를 볼 수도 있음.
+- 실제 운영 환경에서의 수정은 시간과 돈 측면에서 높은 비용임. 자동화에 의해 MTTR이 감소되는 것은 이들 비용을 낮춰주는 것.
+- 그리고 이 자동화 된 작업이 진행되는 동안 사람들은 더 중요한 것에 시간 투자.
+- 뒤이어 나오는 Faster Action과 Time Saving과 겹치는 부분이 많지만, '빠른 수정에 의한 비용 절감'을 그만큼 강조하고 싶은 것으로 보임.
+
+### Faster Action
+
+- 사람이 기계 만큼 빠르지 않다는 이야기.
+- failover나 traffic switching 등과 같은 작업이 한 예.
+- 구글에서의 서비스들은 이미 수동 운영으로는 관리 가능한 수준을 벗어남.
+
+### Time Saving
+
+- 가장 많이 언급되는 자동화의 이유.
+- 하지만 당장 수작업을 하는 것과 자동화 하는 데 필요한 노력 중 어느 것이 더 큰지 계산하기 어려울 때가 있음.
+- 간과하지 말아야 할 것은 한 번 자동화 된 것은 다른 누구도 사용할 수 있다는 것.
+- 즉, 자동화의 이점은 다수가 누릴 수 있음.
+- 이런 면에서 operator와 operation 사이의 디커플링은 매우 강력.
+
+## The Use Cases for Automation
+
+자동화는 소프트웨어에 대해 동작하는 소프트웨어라는 점에서 일종의 "메타 소프트웨어"라고 말함. 아래는 자동화의 예시들. 참고로, 책에서는 non-exhaustive list라는 얘기를 굳이 하고 있음.
+
+개인적으로 하고 있는 것들은 체크해 봄.
+
+- [ ] User account creation
+- [x] Cluster turnup and turndown for services
+- [ ] Software or hardware installation preparation and decommissioning
+- [x] Rollouts of new software changes
+- [x] A special case of runtime config changes: changes to your depedencies
+
+### Google SRE's Use Cases for Automation
+
+
+
+
+
+
+
+
+
+
+
+
+
