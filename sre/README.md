@@ -456,6 +456,42 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 
 ### Google SRE's Use Cases for Automation
 
+- 인프라스트럭처를 오가는 데이터의 품질을 관리하기 보다는,
+- 새로운 클러스터에 서비스를 배포하는 등의 시스템 생명 주기를 관리하는 운영적 측면을 자동화 함.
+- Puppet, Chef는 상위 수준의 추상화를 제공. Perl은 POSIX-level 수준. 
+- 이 둘간의 선택은 트레이드 오프. 추상화 된 도구는 사용하기 쉬움. 하지만 "Leaky Abstraction"에 취약.
+- 예컨대, 새로운 바이너리를 클러스터에 추가하는 것을 atomic으로 간주하기 쉬움. 새로운 버전으로 배포 되거나, 옛날 버전이 유지되거나.
+- 하지만 실제로는 더 복잡. 클러스터의 네트워크가 한 쪽 방향으로만 실패할 수도 있고, 머신이 실패하거나, 클러스터를 관리 레이어에서의 커뮤니케이션이 실패할 수도 있다. 새로운 바이너리가 스태이징만 되고 푸시되지 않을 수도 있고, 푸시는 되었지만 재시작 되지 않았을 수도, 재시작 되더라도 검증되지 않았을 수도 있다.
+- 이런 수준의 결과를 모델링하눈 추상화는 거의 없으며, 이런 경우 대부분 작업이 중단되고 사람의 개입을 필요로 함.
+
+### A Hierarachy of Automation Classes
+
+1. No automation: 마스터 DB를 수동으로 failover.
+2. Externally maintained system-specific automation: failover 스크립트를 작성하여 개인이 소유.
+3. Externally maintained generic automation: 모두가 사용할 수 있는 "generic failover" 스크립트에 이 failover 기능을 추가.
+4. Internally maintained system-specific automation: DB에 이 failover 스크립트를 포함시킴.
+5. system that don't need any automation: DB가 직접 문제를 감지하고, 사람의 개입 없이 자동으로 failover를 수행.
+
+## Automate yourself Out of a Job: Automate ALL the Things!
+
+- Google Ads 제품은 데이터의 높은 신뢰성을 필요로 하므로 MySQL을 사용했었음.
+- 많은 것들을 자동화 했지만 다음의 2가지를 위해 Borg(Google의 클러스터 스케쥴링 시스템)로 이전하기로.
+  - 머신/레플리카 유지보수의 **완전한** 제거. Borg는 새로운 작업의 설정과 깨진 작업의 재시작을 자동으로 수행.
+  - 다수의 MySQL바이너리 패킹을 동일한 물리 머신에 두기. Borg는 컨테이너를 활용해서 머신 리소스를 효율적으로 사용함.
+- 위 이점을 얻을 수 있었지만 failover가 불가피 했고, 처음에는 수동으로 진행 되었으며, 걸리는 시간도 상당했음.
+- 사람의 리소스도 절감하고 에러 예산을 넘지 않기 위해 이 failover를 자동화.
+- failover 시간이 95%의 비율로 30초 이내 수행 가능하게 되었지만, 이에 대한 트레이드오프로 실패가 발생하는 것을 허용해야 했음.
+- 따라서, JDBC와 같은 MySQL 클라이언트들은 이전보다 더 실패에 대한 내성을 키우는 로직을 필요로 하게 됨.
+- 하지만 전체적으로 보면 Borg로의 이전이 더 큰 이득이 됨.
+
+ 
+
+
+
+
+
+
+
 
 
 
