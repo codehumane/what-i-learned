@@ -484,23 +484,34 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
 - 따라서, JDBC와 같은 MySQL 클라이언트들은 이전보다 더 실패에 대한 내성을 키우는 로직을 필요로 하게 됨.
 - 하지만 전체적으로 보면 Borg로의 이전이 더 큰 이득이 됨.
 
- 
+# Release Engineering
 
+## Philosophy
 
+### Self-Service Model
 
+- work at scale을 위해 self-sufficient를 강조.
+- 수많은 엔지니어와 제품이 있음에도 높은 릴리즈 속도를 높게 유지하는 것은,
+- 각 팀이 얼마나 자주 그리고 언제 새로운 제품 버전을 출시할지 스스로 결정할 수 있기 때문.
+- 또한, 릴리즈는 대부분 자동화 되어 있고, 문제가 생겼을 때만 엔지니어들의 개입을 필요로 함,
 
+### High Velocity
 
+- 고객 접점의 기능은 가능한 빠르게 roll out 하는 것이 목표.
+- 잦은 릴리즈는 버전 간의 차이들을 줄일 수 있고, 이는 테스트와 트러블슈팅을 쉽게 만듦.
+- 일부 팀들은 시간 별로 빌드를 수행하고, 빌드의 결과 풀에서 버전을 선택하여 프로덕션에 배포.
+- 이 선택은 테스트ㅇ 결과와 빌드에 포함된 기능을 기반으로 이루어짐.
+- 필자의 팀은 "[Push on Green](https://en.wikipedia.org/wiki/Push_on_green)" 릴리즈 모델을 적용한다고 함.
 
+### Hermetic Builds
 
+- 빌드 도구는 consistency와 repeatability를 보장해야 함.
+- 빌드는 hermetic
+  - 빌드 장비에 설치된 소프트웨어나 라이브러리들에 영향 받지 않음.
+  - 컴파일러와 같은 빌드 도구의 버전, 라이브러리 등의 의존성에만 의존함.
+- 빌드 프로세스는 self-contained.
+  - 빌드 환경 외부의 서비스에 의존하지 않음.
 
+### Enforcement of Policies and Procedures
 
-
-
-
-
-
-
-
-
-
-
+TBD
