@@ -34,15 +34,4 @@
 - [2018. 03](til/2018-03.md)
 - [2018. 04](til/2018-04.md)
 - [2018. 05](til/2018-05.md)
-- [2018. 06](til/2018-06.md)
-
-# MILESTONE
-
-- [ ] HTTP + TCP/IP
-- [ ] DNS
-- [ ] Network
-- [ ] 알고리즘
-- [ ] Ops (SRE, Release It, ...)
-- [ ] Hadoop, HBase, Kafka, ELK, ...
-- [ ] ...
-
+- [2018. 07](til/2018-07.md)
