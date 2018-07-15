@@ -22,6 +22,7 @@
 - [엔터프라이즈 애플리케이션 아키텍처 패턴](poeaa/README.md)
 - [클린 소프트웨어](cleansw/README.md)
 - [수학사전](mathdict/README.md)
+- [소프트웨어 장인](software-craftsman/README.md)
 
 # TIL
 
