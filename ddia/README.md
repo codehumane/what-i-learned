@@ -30,8 +30,7 @@ db_get () {
 
 키-값 저장소를 해시 맵으로 색인하기.
 
-![hashmap index](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0301.png)
-
+- [해시 맵 인덱스 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0301.png) 참고.
 - 키를 데이터 파일의 바이트 오프셋에 매핑해 인메모리 해시 맵을 유지.
 - 단순하지만 Bitcask 등 실제로 많이 사용됨.
 - 고유키가 많지 않으면서도(메모리에 적재해야 하므로) 값의 갱신이 빈번한 경우에 유리.
@@ -61,9 +60,7 @@ db_get () {
 - 따라서, 키-값 검색과 범위 질의에 효율적.
 - 가변적 단위인 세그먼트 아니라, (일반적으로) 4KB라는 고정 크기의 블록이나 페이지 단위로 나눔.
 - 한 페이지에서 참조하는 하위 페이지의 수를 가리켜 분기 계수<sup>branching factor</sup>라고 함. 보통 수백 개에 달함.
-- 키 값의 갱신은 다음 그림과 같이 이루어짐.
-
-![B-tree key add](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0307.png)
+- 키 값의 갱신은 [여기 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0307.png) 참고.
 
 #### 신뢰할 수 있는 B 트리 만들기
 
