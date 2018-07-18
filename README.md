@@ -23,6 +23,7 @@
 - [클린 소프트웨어](cleansw/README.md)
 - [수학사전](mathdict/README.md)
 - [소프트웨어 장인](software-craftsman/README.md)
+- [데이터 중심 애플리케이션 설계](ddia/README.md)
 
 # TIL
 
