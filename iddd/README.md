@@ -150,6 +150,69 @@ public class ForumApplicationService ... {
 
 
 
+# 05. Entities
+
+## Unique Identity
+
+### User Provides Identity
+
+- 사용자에게 고유 식별자를 직접 입력하게 하는 것도 하나의 접근법.
+- 하지만, 대부분의 경우 식별자는 불변이어야 함.
+- 사용자는 과연 고유하긴 하지만 잘못된 값을 입력하지 않을 수 있을까?
+- 혹은 바꾸고 싶은 마음이 들지 않게 할 수는 있을까?
+
+> Workflow-based identity approval is not conducive to high-throughput domains but works best when human-readable identity is a must.
+
+- 꼭 필요한 경우가 아니라면, 결국 고유 식별자를 얻기 위한 또 다른 방법이 필요.
+
+### Application Generates Identity
+
+- 저자는 UUID 또는 GUID 사용을 권장함.
+- 이 식별자는 외부(영속 메커니즘 같은)와의 상호작용 없이, 상대적으로 빠르게 생성 가능.
+- 높은 성능을 필요로 하는 경우에는 UUID 인스턴스들을 미리 생성하고 캐시.
+- 애그리거트 내부의 식별성은 지역적 수준으로도 충분.
+- 이렇게 고유성 수준이 높을 필요가 없다면, UUID의 일부 세그먼트만 사용할 수도.
+- `APM-P-08-14-2012-F36AB21C`와 같이 휴먼 가독성을 고려하기도. 이는 2012/08/14에 생성된 Agile Project Management(APM)의 Product(P) 번호 `F36AB21C`를 가리킴.
+
+### Persistence Mechanism Generates Identity
+
+- 고유 식별자의 생성을 영속 메커니즘에 위임하면 언제나 고유함이 보장됨.
+- 하지만, 값을 얻기 위해 데이터베이스에 다녀 와야 하며, 데이터베이스의 부하에 영향을 받을 수 있음.
+- 이를 회피하는 한가지 방법은 애플리케이션에서 시퀀스와 증분을 캐시하는 것.
+- 하지만 서버 노드의 재시작 등에 의해 일부 값들이 사용되지 않을 수 있음.
+- late identity generation(영속 후에 아이디를 얻는 것)을 사용하면 이런 문제들을 피할 수 있음.
+- 다만, 생성 타이밍이 문제가 될 수 있음.
+
+### When the Timing of Identity Generation Matters
+
+- 엔티티가 영속되기 전에 이벤트를 발행할 수 있음. 그러나 아이디가 아직 없다면, 외부 바운디드 컨텍스트는 이벤트 발행자를 식별할 수 없음.
+- 2개 이상의 엔티티를 `Set` 등에 할당해야 하는데 아직 아이디가 없다면 문제가 됨.
+- 그렇다고 엔티티를 `equals`를 속성으로만 구현할 수는 없는 일.
+
+### Surrogate Identity
+
+- Hibernate 등의 일부 ORM은 시퀀스나 기본 키와 같은 데이터베이스의 네이티브 타입을 선호.
+- 하지만, 도메인을 위한 식별자가 필요하다면 이는 도구와의 상충.
+- 이 경우, 2개의 식별자를 사용하기도 함.
+- 하나는 도메인 모델을 위해 설계된 것이고,
+- 다른 하나는 Hibernate를 위한 것. (*surrogate identity*)
+- 아래에서 `id`가 바로 surrogate이며, `tenant_id_id`와 `username`이 도메인 식별자.
+
+```sql
+CREATE TABLE `tbl_user` (
+  `id` int(11) NOT NULL auto_increment,
+  `enablement_enabled` tinyint(1) NOT NULL,
+  `enablement_end_date` datetime,
+  `enablement_start_date` datetime,
+  `password` varchar(32) NOT NULL,
+  `tenant_id_id` varchar(36) NOT NULL,
+  `username` varchar(25) NOT NULL,
+  KEY `k_tenant_id_id` (`tenant_id_id`),
+  UNIQUE KEY `k_tenant_id_username` (`tenant_id_id`,`username`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+```
+
 # 8장. 도메인 이벤트
 
 ## 언제 그리고 왜 도메인 이벤트를 사용할까
