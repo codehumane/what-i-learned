@@ -46,3 +46,45 @@
 
 ## Item 43. Prefere Method References to Lambdas
 
+> Where method references are shorter and clearer, ues them: where they aren't, stick with lambdas.
+
+### 언제 써야 하는가
+
+- 익명 클래스에 비해 람다가 가지는 주요 이점은 간결함.
+- 메서드 레퍼런스<sup>method reference</sup>는 이보다 더 간결.
+- 아래는 이 차이를 보여주는 multiset implementation 사례.
+
+```java
+map.merge(key, 1, (count, incr) -> count + incr);
+map.merge(key, 1, Integer::sum);
+```
+
+- `count`, `incr`는 보일러 플레이트 코드일 수 있음.
+- 특별히 이름이 더해주는 가치는 없으며, 공간도 차지.
+- 메서드 레퍼런스는 또한 이름이 있으므로 자기 설명적.
+- 람다가 길어진다면, 메서드 레퍼런스로 대체하여, 이름으로 의도를 드러낼 수도.
+
+### 언제 쓰지 말아야 하는가
+
+- 하지만, 람다의 파라미터 이름이 유용한 문서로써 역할을 하는 경우도 있음.
+- 또, 아래처럼 메서드 레퍼런스가 오히려 덜 간결할 수 있음.
+
+```java
+service.execute(HelloMethodReference::do);
+service.execute(() -> do());
+```
+
+- `Function.identity()`도 유사한 사례.
+
+### 메서드 레퍼런스의 종류
+
+| 종류              | 예시                    | 등가 람다                                          |
+| ----------------- | ----------------------- | -------------------------------------------------- |
+| Static            | Integer::parseInt       | str -> Integer.parseInt(str)                       |
+| Bound             | Instnant.now()::isAfter | Instant then = Instant.now(); t -> then.isAfter(t) |
+| Unbound           | String::toLowerCase     | str -> str.toLowerCase()                           |
+| Class Constructor | TreeMap<K, V>::new      | () -> new TreeMap<K, V>                            |
+| Array Constructor | int[]::new              | len -> new int[len]                                |
+
+- Bound, Unbound의 구분이 재밌음.
+- `Instant.now()::isAfter`와 `int[]::new가 가능한 것이 또한 재밌음.
