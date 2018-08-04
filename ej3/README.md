@@ -88,3 +88,52 @@ service.execute(() -> do());
 
 - Bound, Unbound의 구분이 재밌음.
 - `Instant.now()::isAfter`와 `int[]::new가 가능한 것이 또한 재밌음.
+
+## Item 44. Favor the Use of Standard Functional Interface
+
+한 줄로 요약하면 다음과 같음.
+
+> If one of the standard functional interfaces does the job, you should generally use it in preference to a purpose-built functional interface.
+
+### 무엇이 좋은가
+
+- 기존 인터페이스들은 널리 알려진 것이므로 배움의 비용이 적다. 즉, 이해하기에 더 쉽다.
+- 또한, 많은 표준 함수형 인터페이스가 유용한 기본 메서드를 제공함. 따라서, 상호운용성<sup>interoperability</sup>이 높음.
+- `Predicate`의 경우 `and`, `negate`, `or` 등을 제공함.
+
+### 함수형 인터페이스가 불러온 변화
+
+그리고, 개인적으로 아래 내용이 재미있다.
+
+> Now that Java has lambdas, best practices for writing APIs have changed considerably. For example, the *Template Method* pattern [[Gamma95](https://www.safaribooksonline.com/library/view/effective-java-3rd/9780134686097/ref.xhtml#rGamma95)], wherein a subclass overrides a *primitive method* to specialize the behavior of its superclass, is far less attractive. The modern alternative is to provide a static factory or constructor that accepts a function object to achieve the same effect.
+
+- `LinkedHashMap`에는 `removeEldestEntry`를 protected 메서드로 제공하고 있음.
+- 이를 아래와 같이 오버라이딩 하면, `LinkedHashMap`을 캐시처럼 사용 가능.
+
+```java
+protecetd boolean removeEldestEntry(Map.Entry<K,V> eldest) {
+    return size() > 100;
+}
+```
+
+하지만, 오버라이딩 대신, `BiPredicate<Map<K,V>, Map.Entry<K,V>>` 같은 함수형 인터페이스를 생성자의 인자로 받는 방식 등으로 대체 가능.
+
+### 함수형 인터페이스의 종류
+
+- 기본적으로 6가지 종류가 제공됨. `UnaryOperator<T>`, `BinaryOperator<T>`, `Predicate<T>`, `Function<T,R>`, `Supplier<T>`, `Consumer<T>`.
+- 그리고 나머지는 이를 파생한 것들. 그래서 총 43가지가 제공됨.
+- 한 가지 파생은 3가지 primitive type에 대한 것. `int`, `long`, `double`. 이 타입 명이 함수의 접두사로 붙게 됨. 예컨대, `IntPredicate`, `LongBinaryOperator`.
+- 실제로, `java.util.function` 패키지를 열어본 후 각각을 살펴보면 어느 정도 이름으로 동작을 추론할 수 있음.
+
+### Primitive Functional Interface
+
+bulk operations에서는 primitive와 boxed의 성능 차이가 심각할 수도 있다고 함.
+
+> Don't be tempted to use bsaic functional interfaces with boxed primitives instead of primitive functional interfaces.
+
+### Write Your Own Functional Interface
+
+- `ToIntBiFunction<T,T>`이 존재함에도 불구, `Comparator<T>`의 존재가 가져오는 이점이 있음.
+- 먼저, 공통으로 사용되며, 이름이 주는 설명적 이점이 있음.
+- 또한, 부가적인 계약을 강제할 수 있음.
+- 마지막으로, 커스텀 기본 메서드를 가질 수 있음.
