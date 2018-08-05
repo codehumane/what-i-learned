@@ -211,21 +211,15 @@ try (Stream<String> words = new Scanner(file).tokens()) {
 ### Collectors
 
 - 위 코드를 개선할 수 있는 방법을 시작으로, 여러 Collector 들의 쓰임에 대해 소개하고 있음.
-
 - 참고로, [Package java.util.stream](https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html)에서는 collector를 다음과 같이 소개함.
-
   > Implementations of [`Collector`](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html) that implement various useful reduction operations, such as accumulating elements into collections, summarizing elements according to various criteria, etc.
-
 - 컬렉터의 종류는 3가지. `toList()`, `toSet()`, `toCollection(collectionFactory)`.
-
 - Collectors 임포트에 관한 의견도 재미있음.
-
   > It is customary and wise to statically import all members of `Collectors` because it makes stream pipelines more readable.
 
 ## toMap
 
 - 아래는 toMap의 세 번째 인자인 `BinaryOperator<U> mergeFunction`의 쓰임들.
-
   ```java
   // max-wins
   albums.collect(toMap(
@@ -236,9 +230,7 @@ try (Stream<String> words = new Scanner(file).tokens()) {
   // last-write-wins policy
   toMap(keyMapper, valueMapper, (oldVal, newVal) -> newVal);
   ```
-
 - 아래는 `java.lang.reflect.AnnotatedElement`에서 본 4개 인자를 받는 `toMap` 사례.
-
   ```java
   Arrays
       .stream(getDeclaredAnnotations())
@@ -248,7 +240,6 @@ try (Stream<String> words = new Scanner(file).tokens()) {
           ((first,second) -> first),
           LinkedHashMap::new);
   ```
-
 - 참고로, `toConcurrentMap` 메서드도 제공되고 있음.
 
 ## groupingBy
