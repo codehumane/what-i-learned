@@ -133,7 +133,53 @@ bulk operations에서는 primitive와 boxed의 성능 차이가 심각할 수도
 
 ### Write Your Own Functional Interface
 
-- `ToIntBiFunction<T,T>`이 존재함에도 불구, `Comparator<T>`의 존재가 가져오는 이점이 있음.
-- 먼저, 공통으로 사용되며, 이름이 주는 설명적 이점이 있음.
+- `ToIntBiFunction<T,T>`이 존재함에도 불구, `Comparator<T>`와 같이 표준이 아닌 함수형 인터페이스가 가진 이점이 있기도 함.
+- 먼저, 자주 사용되기도 하지만, 이름이 설명적이다.
 - 또한, 부가적인 계약을 강제할 수 있음.
 - 마지막으로, 커스텀 기본 메서드를 가질 수 있음.
+
+## Item 45. Use Streams Judiciously
+
+### vs. Iteration with Code Blocks
+
+아래는 애너그램을 표현하는 2가지 종류의 코드.
+
+```java
+Map<String, Set<String>> groups = new HashMap<>();
+try (Scanner s = new Scanner(dictionary)) {
+    while (s.hasNext()) {
+        String word = s.next();
+        groups.computeIfAbsent(alphbetize(word),
+             (unused) -> new TreeSet<>()).add(word);
+    }
+}
+
+for (Set<String> group : groups.values())
+    if (group.size() >= minGroupSize)
+        println(group.size() + ...);
+```
+
+```java
+try (Stream<String> words = Files.lines(dictionary)) {
+    words.collect(groupingBy(word -> alphabetize(word)))
+    	.values().stream()
+    	.filter(group -> group.size() >= minGroupSize)
+    	.forEach(g -> println(g.size() + ...))
+}
+```
+
+Code Block을 사용하면 좋을 때는
+
+- 로컬 변수에 접근이나 수정이 가능.
+- `return`, `break`, `continue` 가능.
+
+반면, 스트림으로 할 수 있는 것은
+
+- Uniformly transfrom sequences of elements.
+- Filter sequences of elements.
+- Combine sequences of elements unsing a single operation.
+- Accumulate sequences of elements into a collection, perhaps grouping them by some common attribute.
+- Search a sequence of elements for an element satisfying some criterion.
+
+
+
