@@ -268,5 +268,29 @@ words.collect(groupingBy(word -> alphabetize(word)));
 
 > They also include all overloadings of the `reducing` method, and the `filtering`, `mapping`, `flatMapping`, and `collectingAndThen` methods. Most programmers can safely ignore the majority of these methods. From a design perspective, these collectors represent an attempt to partially duplicate the functionality of streams in collectors so that downstream collectors can act as “ministreams.”
 
+## Item 47. Prefer Collection To Stream As A Return Type
 
+### Stream vs. Iterable
 
+- Item 45를 통해, 스트림이 이터레이션을 필요 없게 만드는 것이 아님을 알았음. 둘 간의 적절한 선택이 중요.
+- 그런데 만약 메서드가 `Stream`을 반환한다면, `Iterable`의 for-each 사용이 불가.
+- 이런 불편은 반대도 마찬가지.
+- 이로 인해 아래와 같은 어댑터들을 만들기도 함.
+
+```java
+public static <E> Iterable<E> iterableOf(Stream<E> stream) {
+    return stream::iterator;
+}
+
+public static <E> Stream<E> streamOf(Iterable<E> iterable) {
+    return StreamSupport.stream(iterable.spliterator(), false);
+}
+```
+
+### Collection
+
+- `Collection`은 `Iterable`의 서브타입. 동시에, `stream` 메서드를 가짐.
+- 따라서, 시퀀스를 반환하는 경우이면서, 어떻게 쓰일지 함부로 판단하기 어려운 경우에는 `Collection` 또는 그 서브타입 반환이 좋은 선택.
+- 다만, 단지 컬렉션을 반환하기 위해서 대규모 시퀀스를 메모리에 저장하지는 말라.
+- 만약, 반환하는 시퀀스가 크지만, 간결하게 표현할 수 있다면, 특수 목적의 컬렉션을 반환하는 것을 고려.
+- 책에서는 이 사례로 멱집합<sup>power set</sup> 반환을 구현하고 있음.
