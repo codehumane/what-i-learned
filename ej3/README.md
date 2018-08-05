@@ -181,5 +181,92 @@ Code Block을 사용하면 좋을 때는
 - Accumulate sequences of elements into a collection, perhaps grouping them by some common attribute.
 - Search a sequence of elements for an element satisfying some criterion.
 
+## Item 46. Prefer Side-Effect-Free Functinos in Streams
+
+### Stream Paradigm
+
+- 스트림 패러다임에서 가장 중요한 부분은 각 단계의 연산이 가능한 *pure function*이어야 한다는 것.
+- 이는 함수의 결과가 오직 입력에 의해서만 영향 받음을 의미.
+- 다시 말하면, mutable 상태에 의존 X. 상태 변경도 X.
+- 이를 제대로 쓰기 위해서는 컬렉터에 대해 알아야 한다면서 컬렉터에 대해서만 언급됨.
+
+### ForEach
+
+- `forEach`는 가장 덜 강력하고, 가장 스트림 답지 않다고 함.
+- `forEach`는 오로지 스트림 연산 결과를 레포트하는 데 사용되어야 함. 연산이 아니고. 물론, 예외도 있음.
+
+> But the `forEach` operation is among the least powerful of the terminal operations and the least stream-friendly. It’s explicitly iterative, and hence not amenable to parallelization. The `forEach` operation should be used only to report the result of a stream computation, not to perform the computation.
+
+- 아래 코드는 스트림 API를 사용하긴 했지만, 스트림 패러다임은 X. `freq`를 수정하고 있음.
+
+```java
+Map<String, Long> freq = new HashMap<>();
+try (Stream<String> words = new Scanner(file).tokens()) {
+    words.forEach(word -> {
+        freq.merge(word.toLowerCase(), 1L, Long::sum);
+    });
+}
+```
+
+### Collectors
+
+- 위 코드를 개선할 수 있는 방법을 시작으로, 여러 Collector 들의 쓰임에 대해 소개하고 있음.
+
+- 참고로, [Package java.util.stream](https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html)에서는 collector를 다음과 같이 소개함.
+
+  > Implementations of [`Collector`](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collector.html) that implement various useful reduction operations, such as accumulating elements into collections, summarizing elements according to various criteria, etc.
+
+- 컬렉터의 종류는 3가지. `toList()`, `toSet()`, `toCollection(collectionFactory)`.
+
+- Collectors 임포트에 관한 의견도 재미있음.
+
+  > It is customary and wise to statically import all members of `Collectors` because it makes stream pipelines more readable.
+
+## toMap
+
+- 아래는 toMap의 세 번째 인자인 `BinaryOperator<U> mergeFunction`의 쓰임들.
+
+  ```java
+  // max-wins
+  albums.collect(toMap(
+  	Album::artist,
+  	a->a,
+  	maxBy(comparing(Album::sales))));
+  
+  // last-write-wins policy
+  toMap(keyMapper, valueMapper, (oldVal, newVal) -> newVal);
+  ```
+
+- 아래는 `java.lang.reflect.AnnotatedElement`에서 본 4개 인자를 받는 `toMap` 사례.
+
+  ```java
+  Arrays
+      .stream(getDeclaredAnnotations())
+  	.collect(Collectors.toMap(
+          Annotation::annotationType,
+          Function.identity(),
+          ((first,second) -> first),
+          LinkedHashMap::new);
+  ```
+
+- 참고로, `toConcurrentMap` 메서드도 제공되고 있음.
+
+## groupingBy
+
+다음은 책에서 소개된 몇 가지 `groupingBy` 관련 코드 조각들이다.
+
+```java
+words.collect(groupingBy(String::toLowerCase, counting()));
+words.collect(groupingBy(word -> alphabetize(word)));
+```
+
+- *classifier function*을 통해 엘리먼트들을 카테고리 별로 그룹핑.
+- 두 번째 인자는 *downstream reduction*.
+- 참고로, `collect(couting())`은 다운스트림 컬렉터를 위한 것. `Stream`에 대해서는 `count`라는 메서드가 따로 제공.
+
+아래 문장은 다시 한번 확인.
+
+> They also include all overloadings of the `reducing` method, and the `filtering`, `mapping`, `flatMapping`, and `collectingAndThen` methods. Most programmers can safely ignore the majority of these methods. From a design perspective, these collectors represent an attempt to partially duplicate the functionality of streams in collectors so that downstream collectors can act as “ministreams.”
+
 
 
