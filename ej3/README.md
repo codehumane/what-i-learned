@@ -278,10 +278,12 @@ words.collect(groupingBy(word -> alphabetize(word)));
 - 이로 인해 아래와 같은 어댑터들을 만들기도 함.
 
 ```java
+// stream -> iterable
 public static <E> Iterable<E> iterableOf(Stream<E> stream) {
     return stream::iterator;
 }
 
+// iterable -> stream
 public static <E> Stream<E> streamOf(Iterable<E> iterable) {
     return StreamSupport.stream(iterable.spliterator(), false);
 }
@@ -292,5 +294,20 @@ public static <E> Stream<E> streamOf(Iterable<E> iterable) {
 - `Collection`은 `Iterable`의 서브타입. 동시에, `stream` 메서드를 가짐.
 - 따라서, 시퀀스를 반환하는 경우이면서, 어떻게 쓰일지 함부로 판단하기 어려운 경우에는 `Collection` 또는 그 서브타입 반환이 좋은 선택.
 - 다만, 단지 컬렉션을 반환하기 위해서 대규모 시퀀스를 메모리에 저장하지는 말라.
+
+### Special-Purpose Collection
+
 - 만약, 반환하는 시퀀스가 크지만, 간결하게 표현할 수 있다면, 특수 목적의 컬렉션을 반환하는 것을 고려.
-- 책에서는 이 사례로 멱집합<sup>power set</sup> 반환을 구현하고 있음.
+- 책에서는 예시로 멱집합<sup>power set</sup>을 구현.
+- 주어진 원소가 n일 때, 멱집합의 수는 2^n이 됨.
+- 따라서, 표준 컬렉션 구현체에 이 데이터를 저장하기에는 부담스러움.
+- 대신, 비트 벡터를 사용하여 매번 부분 집합을 구함.
+- 한가지 주의할 점은 30개 이상의 엘리먼트를 입력값으로 받는 경우 예외를 반환한다는 것.
+- 이는 `Stream`이나 `Iterable:Collection`에 비해 `Collection`이 가지는 한계를 드러냄.
+- 혹은, 여기서는 `AbstractCollection`을 사용하고 있는데, 필수 구현인 `Iterable:contains`와 `size`의 구현이 어려울 수도 있음.
+- 예컨대, 데이터가 미리 정해져 있지 않아, 시퀀스를 순회하기 전까지는 값을 알기 어려운 것.
+- 이런 경우에는 `Stream`이나 `Iterable` 반환이 더 자연스러움.
+- 특수 목적 컬렉션 구현은 보이지 않았으나, SubList 목록을 구하는 예시(n(n+1)/2)도 소개함.
+
+## Item 48. Use Caution When Making Streams Parallel
+
