@@ -15,6 +15,7 @@
 - [HTTP 완벽 가이드](http-definitive-guide/README.md)
 - [사이트 신뢰성 엔지니어링](sre/README.md)
 - [Growing Object-Oriented Software, Guided by Tests](goosgt/README.md)
+- [Effective Java, 3rd Edition](https://github.com/codehumane/what-i-learned/blob/master/ej3/README.md)
 - [신은 주사위 놀이를 하지 않는다](the-improbability-principle/README.md)
 - [새빨간 거짓말, 통계](how-to-lie-with-statistics/README.md)
 - [생각한다면 과학자처럼](sientific-habits-of-mind/README.md)
