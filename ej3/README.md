@@ -302,3 +302,21 @@ public static <E> Stream<E> streamOf(Iterable<E> iterable) {
 
 ## Item 48. Use Caution When Making Streams Parallel
 
+### Do not parallelize stream pipelines indiscriminately
+
+- 다음 2가지 경우에는 파이프라인의 병렬화가 성능을 내지 못하는 것으로 보인다고 함.
+- 소스가 `Stream.iterate`로부터 왔거나, 중간 연산에 `limit`가 쓰인 경우.
+- 기본 병렬화 전략은 `limit`이 사용된 경우, 몇 개의 엘리먼트들을 더 처리하더라도 문제가 없다고 가정하며, 불필요한 결과는 버림.
+
+### Performance factor
+
+- `ArrayList`, `HashMap`, `HashSet`, `ConcurrentHashMap` 인스턴스, `arrays`, int `ranges`, long `ranges`에 대한 스트림의 병렬 처리는 빠름.
+- 이들은 정확하고 값싸게 원하는 크기로 분할할 수 있기 때문임.
+- 이들이 빠른 또 다른 중요한 이유는 참조 지역성<sup>Locality-of-reference</sup>. 순차 엘리먼트의 레퍼런스들은 메모리에서 함께 저장된다고 함. 제일 좋은 참조 지역성을 보이는 것은 원시적 배열.
+- 스트림 파이프라인의 종료 연산 특성도 병렬 실행 효과에 영향을 미침. 많은 양의 종료 연산이 발생하거나, 순차적으로 실행되야 할 때는 효과가 적어짐.
+- 병렬 처리를 위한 분할에는 `spliterator`가 사용됨. 따라서, 직접 `Stream`, `Iterable`, `Collection`을 구현해야 하고, 병렬 처리의 효과를 잘 누리고 싶다면, `spliterator` 메서드를 잘 구현해야 함.
+
+### Liveness Failure
+
+
+
