@@ -245,3 +245,57 @@ WHERE latitude > 51.4946 AND latitude < 51.5079
 - 디스크 기반의 인덱스로는 구현하기 어려운 데이터 모델들을 제공.
 - 예컨대, Redis는 우선순위 큐나 셋 같은 다양한 데이터 구조체를 데이터베이스 같은 인터페이스를 통해 제공. 모든 데이터가 메모리에 있기 때문에, 상대적으로 구현하기 쉽다.
 
+### Transaction Processing or Analytics?
+
+시작하면서 재밌는 내용이 나옴.
+
+> In the early days of business data processing, a write to the database typically corresponded to a *commercial transaction* taking place: making a sale, placing an order with a supplier, paying an employee’s salary, etc. As databases expanded into areas that didn’t involve money changing hands, the term *transaction* nevertheless stuck, referring to a group of reads and writes that form a logical unit.
+
+위 언급된 내용처럼, 데이터베이스는 OLTP(Online Transaction Processing)이었지만, 데이터 분석 등과 같은 OLAP(Online Analytic Processing)으로도 발전되고 사용됨. 명확한 구분은 어렵지만 주요 차이로는 아래와 같은 것들이 있음. 특별한 내용은 아니지만 표현이 재미있음.
+
+| Property             | OLTP                                              | OLAP                                      |
+| -------------------- | ------------------------------------------------- | ----------------------------------------- |
+| Main read pattern    | Small number of records per query, fetched by key | Aggregate over large number of records    |
+| Main write pattern   | Random-access, low-latency writes from user input | Bulk import (ETL) or custom stream        |
+| Primarily used by    | End user/customer, via web application            | Internal anayst, for decision support     |
+| What data represents | Latest state of data (curret point in time)       | History of events that happened over time |
+
+처음에는 이 두 가지 용도로 동일한 데이터베이스가 사용되었지만(이런 면에서 꽤나 유연하다), 점차 별도의 분석용 데이터베이스를 사용하기 시작함. 이를 가리켜 데이터 웨어하우스라고 부름.
+
+#### Data Warehousing
+
+OLTP 데이터베이스는 읽기 전용의 복제(OLTP 로부터의) 데이터를 가짐. ETL(Extract-Transform-Load)라고 불림. 이 과정을 잘 나타낸 그림은 [여기](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0308.png)를 참고. 앞에서 살펴 본 인덱싱 알고리즘을 보면 어느 정도 알 수 있듯이, OLTP는 분석적 질의에는 응답하기에 좋지 않음. 반면, 데이터 웨어하우스의 저장소 엔진은 이런 일에 최적화 되어 있음.
+
+#### Stars and Snowflakes: Schemas for Analytics
+
+많은 데이터 웨어하우스는 star schema(dimensional modeling이라고도 알려져 있음)라는 데이터 모델을 주로 사용함. [여기](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0309.png)를 보면 예시 스키마가 나와 있음. [Amazon Redshift의 샘플 데이터베이스](https://docs.aws.amazon.com/ko_kr/redshift/latest/dg/c_sampledb.html)와 유사함. 여기서의 테이블은 크게 2가지로 나뉨. fact와 dimension. fact는 이벤트를 표현하고, dimensions는 이벤트에 대한 who, what, where, when, how, 그리고 why를 나타냄.
+
+이 dimension에는 날짜와 시간만이 담긴 테이블도 존재함. 이 테이블의 존재 이유는 아래와 같이 설명함.
+
+> Even date and time are often represented using dimension tables, because this allows additional information about dates (such as public holidays) to be encoded, allowing queries to differentiate between sales on holidays and non-holidays.
+
+[여기](https://docs.aws.amazon.com/ko_kr/redshift/latest/dg/r_datetable.html)의 예시를 가져오면 다음과 같음.
+
+| 열 이름 | 데이터 형식 | 설명                                                         |
+| ------- | ----------- | ------------------------------------------------------------ |
+| DATEID  | SMALLINT    | 각 행의 고유 ID 값을 나타내는 기본 키입니다. 각 행마다 연중 날짜를 나타냅니다. |
+| CALDATE | 날짜        | 날짜(**2008-06-24** 등)입니다.                               |
+| 일      | CHAR)       | 짧은 형식의 주중 요일(**SA** 등)입니다.                      |
+| 주      | SMALLINT    | 주의 수(**26** 등)입니다.                                    |
+| Month   | CHAR)       | 짧은 형식의 월 이름(**JUN** 등)입니다.                       |
+| QTR     | CHAR)       | 분기 수(**1**~**4**)입니다.                                  |
+| YEAR    | SMALLINT    | 4자리 연도(**2008** 등)입니다.                               |
+| holiday | 부울        | 공휴일(미국 기준) 여부를 나타내는 플래그입니다.              |
+
+참고로, "star schema"라고 이름 지어진 이유는 테이블들의 관계가 마치 별 같기 때문. fact 테이블이 가운데에 있고, 이를 dimension 테이블들이 둘러싸는 모습.
+
+이 템플릿의 변형으로는 snowflake schema가 있음. dimension들이 subdimension들로 좀 더 쪼개진 것. 예를 들어, 상품 테이블이 브랜드나 카테고리와 같이 좀 더 분리되는 것. snowflake schema가 좀 더 정규화 되었지만, star schema가 좀 더 사용하기에 편리해서 더 자주 쓰인다고 함.
+
+데이터 웨어하우스에서의 fact 테이블들은 종종 컬럼을 100개 이상씩 소유한다고 함. 때로는 수백개. dimension 테이블들도 마찬가지. 예를 들어, `dim_store`에는 in-store baekery가 있는지, 상점 면적은 얼만지, 개점일은 언제인지, 마지막 리모델링 일자는 언제인지, 공공 도로에서 얼마나 먼지 등을 모두 담고 있음.
+
+### Column-Oriented Storage
+
+TBD
+
+
+
