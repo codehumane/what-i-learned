@@ -1,5 +1,13 @@
 # Designing Data-Intensive Application
 
+## Data Models ans Query Languages
+
+데이터 모델은 소프트웨어가 데이터를 어떻게 쓸지에 대한 것 뿐 아니라, 우리가 문제를 해결하는 방식에도 영향을 미침. 따라서, 애플리케이션 특성에 따라 적절한 솔루션을 도입하는 것이 중요. 여기서는 특히 관계형과 문서형 모델, 그리고 일부 그래프 기반 데이터 모델을 설명. 또한, 여러 질의 언어와 각 쓰임에 대해서도 비교. 참고로, 3장은 이들의 내부 동작 원리에 대해 알아본다.
+
+### Relational Model Versus Document Model
+
+TBD
+
 ## Storage and Retrieval
 
 ### Data Structures That Power Your Database
