@@ -6,6 +6,103 @@
 
 ### Relational Model Versus Document Model
 
+#### The Birth of NoSQL
+
+NoSQL이라는 이름이 어떠한 기술도 표현하지 못하기 때문에 좋은 이름은 아니라고 함. 최근 들어서야 Not Only SQL로 재해석 되고 있음. NoSQL이 사용되는 이유로는 다음과 같은 것들이 있음.
+
+- 관계형 데이터베이스에 비해 강력한 확장성. 또한, 대용량 데이터셋을 다루기 쉽고 쓰기 처리량도 높음.
+- 오픈 소스 소프트웨어에 대한 전반적인 선호도.
+- 관계형 데이터베이스에서는 잘 지원되지 않는 특수화된 질의 연산들.
+- 관계형 스키마의 제약들 대비, 동적이고 표현적인 데이터 모델에 대한 욕구.
+
+애플리케이션 마다 필요로 하는 데이터베이스의 특성이 있으며, 따라서 다양한 비관계형 데이터베이스와 함께 관계형 데이터베이스도 꾸준히 사용될 것.
+
+#### The Object-Relational Mismatch
+
+대부분의 어플리케이션들은 객체지향 언어를 사용함. 이로 인해, SQL 데이터 모델의 데이터들을 객체지향 언어에 맞게 변환하는 레이어가 필요하게 됨. 흔히 이를 가리켜 [impendance mismatch](https://en.wikipedia.org/wiki/Object-relational_impedance_mismatch)라고 부름.
+
+ORM 프레임워크들이 제공되긴 하지만 불일치를 완전히 없애지는 못함. One-to-Many 등의 관계를 맺어야 하며, 여러 번의 질의 또는 복잡한 Join을 수행해야 할 수도 있음(locality 부족). JSON 형태로 데이터를 저장할 수도 있으나, 데이터 인코딩 포맷에 관련된 문제들도 있다고 함. [여기](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0202.png) 그림을 함께 참고.
+
+하지만, 개인적으로는 이 정도의 불일치가 얼마나 문제인지에 대해서는 공감이 쉽지는 않음.
+
+#### Many-to-One and Many-to-Many Relationships
+
+책의 그림에서 `regions`라는 테이블이 있는데, `id`는 `us:91` 그리고 `region_name`이 `Greater Seattle Area`임. 그리고 이를 참조하는 곳에서는 `region_id`로 `us:91`을 가지고 있음. 왜 `Greater Seattle Area` 대신 코드 같은 값을 사용하는 걸까?
+
+- Consistent style and spelling across profiles (무슨 말일까)
+- Avoiding ambiguity (동일한 도시명이 있는 경우의 구분 등)
+- Ease of updating (값이 변경되면 `regions` 테이블에서만 수정하면 됨)
+- Localization support (다국어 지원에 유리)
+- Better search (워싱턴 안에 시애틀이 있기 때문에, 워싱턴에 있는 자선사업가를 찾을 때 시애틀을 매칭 시켜줄 수 있음)
+
+중복을 제거하기 위해 이런 식으로 정규화를 하면 다대일 관계가 도출되기 마련. 하지만 이는 문서형 모델에는 잘 들어 맞지 않음. 또, 일대다 트리 구조에서는 조인이 필요 없기도 하고, 지원이 약하기도 함. 따라서, 애플리케이션에서 조인을 수행하기도 함. 그리고 점점 기능이 추가되면서 데이터는 점점 연결되기 마련. 여러 곳에 산재한 데이터를 함께 업데이트 해줘야 할 수도 있음.
+
+#### Are Document Databases Repeating History?
+
+hierarhcical model이라고 불렸던 데이터 모델은 문서형 데이터베이스의 JSON과 유사함. 또한, 일대다 관계에서는 잘 동작하지만, 다대다 관계에서는 어렵고, 조인도 지원되지 않음. 따라서, 개발자들은 데이터를 중복시키거나, 직접 하나의 레코드에서 다른 레코드로의 연결을 해주기도 함. 이런 문제를 해결해 주는 방법으로, relational model과 network model이 있음.
+
+##### The Network Model
+
+hierarhcical model에서는 모든 레코드가 하나의 부모를 갖는 반면, network model에서는 여러 부모를 가질 수 있음. 일종의 hierarhcical model에 대한 일반화. 이는 다대일과 다대다 관계를 가능하게 함.
+
+레코드 간의 연결은 외부 키가 아니라 프로그래밍 언어에서의 포인터에 가까움(디스크에 저장되기는 함). 이를 가리켜 access path라고 부름. 루트 레코드에서 원하는 레코드로 접근하기 위해서는 이 경로를 따라가야 함. 책에서는 이들의 경로를 어플리케이션 코드에서 직접 파악하고 있어야 함. 여러 가지 이유로 쉽지 않은 일.
+
+##### The Relational Model
+
+반면에 relational model에서는 아래와 같음.
+
+> a relation (table) is simply a collection of tuples (rows), and that's it. There are no labyrinthine nested structures, no complicated access paths to follow if you want to look at the data.
+
+무엇보다, access path를 선택하는 일은 애플리케이션 코드 대신 쿼리 옵티마이저가 자동으로 수행함. 인덱스가 추가되거나 한다고 해서 쿼리를 꼭 바꿀 필요는 없다.
+
+##### Comparison to Document Databases
+
+문서형 데이터베이스가 hierarchical model과 같은 점은, 별도의 테이블에 데이터를 분리해서 저장하기 보다 자기 자신 안에 위치시킨다는 것. 그러나, 다대일과 다대다의 관계를 맺는 방식에 있어서는 문서형 데이터베이스는 오히려 관계형 데이터베이스와 같다. 관계가 있는 아이템은 고유 식별자를 통해 참조됨. 관계형에서는 이를 외부키라고 부르고, 문서형에서는 문서 참조<sup>document reference</sup>라고 부름. 그리고 읽기가 실행되는 시점에 조인이나 후속 쿼리를 통해 이 식별자가 사용됨.
+
+#### Relational Versus Document Databases Today
+
+관계형과 문서형 데이터베이스를 비교할 때는 장애 내성 속성과 동시성 제어 등 다양함. 하지만 문서형 데이터 모델을 선호할 때의 주요 논점은 스키마 유연성, 지역성<sup>locality</sup>에 따른 더 나은 성능, 특정 애플리케이션 데이터 구조와의 유사성 등이 있음. 관계형 모델은 더 나은 조인, 다대원과 대다대 관계 지원 등이 이야기 됨.
+
+##### Which Data Model Leads to Simpler Application Code?
+
+애플리케이션 데이터가 문서와 유사한 구조(일대다 관계 트리이고, 일반적으로 한 번에 로드되어야 하는)를 가진다면 문서형 모델을 권장. 단점은 내장된 아이템들을 직접 참조하기는 어렵다는 것. 문서를 먼저 찾고 내장된 속성을 찾아야 함. 너무 깊이가 깊지 않다면 문제가 되지는 않음.
+
+조인에 대한 약한 지원은 애플리케이션에 따라 단점이 될 수도 있고 아닐 수도 있음. 예컨대, 분석용 애플리케이션에서는 다대다 관계가 전혀 필요하지 않을 수도 있음. 하지만, 다대다 관계가 많이 필요하다면, 비정규화된 데이터들의 일관성을 맞춰주기 위한 많은 코드가 필요하게 됨. 요청을 여러 번 수행하는 것으로 조인과 같은 결과를 만들어 낼 수도 있겠지만, 조인보다는 아무래도 느리고 코드의 복잡성은 늘어나게 됨.
+
+어떤 관계가 얼마나 존재하느냐에 따라 문서형, 관계형, 그래프 모델을 선택해서 사용하면 됨. 연결이 강할수록 그래프 모델이 유리.
+
+##### Schema Flexibility in The Document Model
+
+데이터에 어떠한 스키마도 강제되지 않음. 언제든 키와 값이 변경될 수 있고, 사용자에게 특정 필드 존재 여부를 보장하지 않음. 이런 특성으로 인해 종종 schemaless라고 불리지만, schema-on-read(schema-on-write와 대조)라는 용어가 더 정확하다고 저자는 주장.  마치 프로그래밍 언어에서 동적 타입 체크와 유사. schema-on-write는 정적 타입 체크에 대응.
+
+애플리케이션에서는 이런 동적 타입 체크를 아래와 같은 식으로 수행.
+
+```javascript
+if (user && user.name && !user.first_name) {
+  // Documents written before Dec 8, 2013 don't hav first_name
+  user.first_name = user.name.split(" ")[0];
+}
+```
+
+정적 타입에서는 `ALTER` 등의 명령어로 스키마를 변경하겠지만, 때때로 성능 상의 이유로 부담이 될 수 있으며, 이 경우에는 `first_name`과 같은 곳에 기본 값으로 `NULL`을 지정하고, 동적 타입에서와 같은 방식으로 처리하기도 함.
+
+아래와 같은 이유 등으로 컬렉션 아이템들이 모두 동일한 구조를 유지할 수 없을 수 있음. 이 때는 schema-on-read 접근법이 유리함.
+
+- 객체의 다양한 타입이 존재함. 그리고 이 각각의 타입을 개별 테이블에 저장하는 것이 실용적이지 않을 수 있음.
+- 데이터의 구조가 외부 시스템에 의해 결정됨. 통제할 수 없고, 언제든 바뀔 수 있음.
+
+##### Data Locality for Queries
+
+여러 테이블에 흩어진 데이터를 함께 보여줘야 할 때, 여러 인덱스 검색이 필요하고, 따라서 디스크 탐색이 수반되고 더 많은 시간이 소요됨. 반면에, 함께 보여줘야 하는 데이터가 한 곳에 있다면 더 나은 성능을 보임. 하지만, 문서 크기가 너무 크면 일부 데이터만 필요로 하는 경우에도 전체를 불러들여야 하는 부담이 생김. 따라서, 문서를 작은 크기로 유지하는 것이 권장됨. 이는 문서형 데이터베이스의 유용함을 다소 감소시킴.
+
+참고로, 지역성을 위해 관련된 데이터를 함께 모아두는 것은 꼭 문서형 데이터베이스에만 있는 것이 아님. 예를 들어, Google Spanner 데이터베이스는 특정 테이블의 로우가 부모 테이블에 인터리브<sup>interleaved</sup>(nested) 되도록 선언할 수 있음.
+
+##### Convergence of Document and Relational Databases
+
+대부분의 관계형 데이터베이스 시스템은 2000년대 중반부터 XML을 지원. 또한, PostgreSQL은 9.3부터, MySQL은 5.7부터 JSON을 지원함. 한편, 문서형 데이터베이스 진영에서는 관계형과 유사한 조인을 쿼리 언어에서 지원. 이런 식으로 서로 간의 경계가 허물어지고 있음.
+
+### Query Languages for Data
+
 TBD
 
 ## Storage and Retrieval
@@ -358,4 +455,5 @@ LSM-트리는 좋은 해결 방안이 됨. 모든 쓰기는 최초에 메모리 
 materialized view의 한 예는 data cube. 설명은 아래와 같고, [그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0312.png)을 보면 바로 대략적인 이해는 바로 될 것.
 
 > It is a grid of aggregates grouped by different dimensions.
+
 
