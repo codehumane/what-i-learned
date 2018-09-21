@@ -103,7 +103,77 @@ if (user && user.name && !user.first_name) {
 
 ### Query Languages for Data
 
-TBD
+기존에 비해 관계형 모델의 데이터 질의 방식은 새로웠음. IMS와 CODASYL이 명령형<sup>imperative</sup> 코드라면, SQL은 선언적<sup>declarative</sup> 질의 언어.
+
+명령형은 수행해야 하는 순서대로 명령어들을 코드 라인별로 작성하며, 모습은 아래와 같음.
+
+```javascript
+function getSharks() {
+    var sharks = [];
+    for (var i = 0; i < animals.length; i++) {
+        if (animals[i].family === "Sharks") {
+            sharks.push(animals[i]);
+        }
+    }
+    return sharks;
+}
+```
+
+관계형 대수에서는 아래와 같이 작성. 여기서의 σ(시그마)는 셀렉션 연산을 나타냄.
+
+```
+sharks = σ family = "Sharks" (animals)
+```
+
+SQL은 이 관계형 대수를 상당히 유사하게 따름. 어떻게가 아닌, 무엇에 대한 패턴을 명시. 어떻게는 쿼리 옵티마이저가 다룬다. 좀 더 간결하고 명령형 API를 다루는 것보다 쉬움. 또한, 구현 세부 사항을 숨겨주기도 함. 이로 인해, 쿼리를 변경하지 않고도 데이터베이스 엔진이 스스로 성능 개선을 할 수도 있음.
+
+```sql
+SELECT * FROM animals WHERE family = 'Sharks';
+```
+
+#### Declarative Queries on the Web
+
+웹 브라우저에서 선언적인 CSS 스타일링을 사용하는 것이 JavaScript를 사용하여 명령형 스타일로 조작하는 것에 비해 훨씬 쉬움. 데이터베이스에서도 마찬가지로 SQL이 훨씬 더 나은 선택임을 강조.
+
+#### MapReduce Querying
+
+*MapReduce*는 여러 머신의 대용량 데이터를 일괄적으로 다루기 위한 프로그래밍 모델. MongoDB와 같은 일부 NoSQL 데이터베이스에서는 제한적인 형태의 MapReduce를 지원함. 이는 선언적이지도 않고, 그렇다고 해서 완전히 명령형 질의 API도 아님. 어느 정도의 코드를 수반하며, 이 때 많은 프로그래밍 언어에 존재하는 `map(collect)`과 `reduce(fold 또는 inject)`에 기반하게 됨.
+
+예를 들면 아래와 같음.
+
+```javascript
+db.observations.mapReduce(
+    function map() { 2
+        var year  = this.observationTimestamp.getFullYear();
+        var month = this.observationTimestamp.getMonth() + 1;
+        emit(year + "-" + month, this.numAnimals); 3
+    },
+    function reduce(key, values) { 4
+        return Array.sum(values); 5
+    },
+    {
+        query: { family: "Sharks" }, 1
+        out: "monthlySharkReport" 6
+    }
+);
+```
+
+`map`과 `reduce`는 순수 함수여야 함. 즉, 입력값으로 넘어온 데이터만을 사용해야 하고, 부가적인 데이터베이스 질의를 할 수도 없으며, 부수효과가 없어야 함. 이렇게 함으로써 함수들이 어디서든, 어떤 순서로든 사용될 수 있으며, 실패 시 다시 수행시킬 수도 있음. 순수 함수라는 제약이 있긴 하지만, 그럼에도 불구하고 강력.
+
+JavaScript 함수를 작성해야 하는 어려움을 피하고 쿼리 옵티마이저의 쿼리 성능 개선 효과를 누리기 위해, MongoDB 2.2부터는 선언적 쿼리 언어도 지원하기 시작. 애그리게이션 파이프라인<sup>aggregation pipeline</sup>이라고 불림.
+
+```javascript
+db.observations.aggregate([
+    { $match: { family: "Sharks" } },
+    { $group: {
+        _id: {
+            year:  { $year:  "$observationTimestamp" },
+            month: { $month: "$observationTimestamp" }
+        },
+        totalAnimals: { $sum: "$numAnimals" }
+    } }
+]);
+```
 
 ## Storage and Retrieval
 
