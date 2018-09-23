@@ -17,5 +17,12 @@
 
 ## [II. Distributed Data](Distributed-Data.md)
 
+### [Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#replication)
+
+- [Leaders and Followers](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#leaders-and-followers)
+- Problems with Replication Lag
+- Multi-Leader Replication
+- Leaderless Replication
+
 ## III. Derived Data
 
