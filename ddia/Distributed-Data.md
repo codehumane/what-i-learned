@@ -423,19 +423,6 @@ sloppy quorums는 쓰기 가용성을 높일 때 유용함. 다만, `w + r > n`�
 
 리더 없는 레플리케이션은 복수 데이터 센터 운영에 적합함. 동시 쓰기의 충돌, 네트워크 단절, 응답 지연 스파이크 등에 내성을 갖도록 설계되었기 때문.
 
-### Detecting Concurrent Writes
+### Deteting Concurrent Writes
 
 TBD
-
-
-
-
-
-
-
-
-
-
-
-
-
