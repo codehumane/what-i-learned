@@ -20,9 +20,9 @@
 ### [Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#replication)
 
 - [Leaders and Followers](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#leaders-and-followers)
-- Problems with Replication Lag
-- Multi-Leader Replication
-- Leaderless Replication
+- [Problems with Replication Lag](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#problems-with-replication-lag)
+- [Multi-Leader Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#multi-leader-replication)
+- [Leaderless Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#leaderless-replication)
 
 ## III. Derived Data
 

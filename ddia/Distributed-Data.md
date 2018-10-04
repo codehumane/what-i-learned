@@ -338,5 +338,104 @@ Tolerance of datacenter outages
 
 ## Leaderless Replication
 
+'Sloppy Quorums and Hinted Handoff'에서 리더 없는 레플리케이션을 잘 정리하는 문단이 있어서 함께 기록.
+
+> Databases with appropriately configured quorums can tolerate the failure of indivisual nodes without the need for failover. They can also tolerate individual nodes going slow, because requests don't have to wait for all n nodes to respond―they can return when w or r nodes have responded. These characteristics make databases with leaderless replication applealing for use cases that require high availability and low latency, and that can tolerate occasional stale reads.
+
+관계형 데이터베이스 시대 동안 리더 없는 레플리케이션은 잊혀짐. 그러다가 Amazon이 인하우스 Dynamo 시스템에 이 모델을 사용하면서 점점 다른 곳에서도 사용. Riak, Cassandra, Voldemort가 그 예. 이 때문에 이 모델을 가리켜 Dynamo-style이라고도 부름.
+
+이 모델에서는 클라이언트가 특정 노드가 아닌 임의의 레플리카로 쓰기 요청을 보냄. 또는, 코디네이터 노드가 이 역할을 대신 수행하거나.
+
+### Writing to the Database When a node Is Down
+
+리더 없는 레플리케이션은 노드의 장애복구<sup>failover</sup>가 필요 없음. 대신, 아래와 같은 방식으로 쓰기와 읽기 요청을 처리함. [여기 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0510.png) 함께 참고.
+
+- 클라이언트는 쓰기 요청을 모든 레플리카에게 병렬로 보냄.
+- 이 중 한 노드가 업데이트로 인해 중단 되었다고 가정.
+- 그러면, 클라이언트는 나머지 정상 노드로부터만 응답을 받음.
+- 그러다가 중단 되었던 노드가 다시 클러스터로 복귀.
+- 클라이언트는 읽기를 위해 모든 레플리카에게 병렬로 요청을 보냄.
+- 중단 되었던 노드로부터는 오래된<sup>stale</sup> 데이터를 받을 수 있음.
+- 클라이언트는 버전 번호를 통해 어떤 값이 최신인지를 스스로 판단.
+
+#### Read Repair And Anti-Entropy
+
+문제가 되던 노드가 정상화 되면, 이 노드는 최신 쓰기를 어떻게 따라잡을까? read repiar 그리고 anti-entropy process 이렇게 두 가지 방법이 주로 사용된다고 함.
+
+먼저, read repair.
+
+- 클라이언트가 읽기 요청을 여러 노드에 동시에 날렸다면,
+- 최신 데이터와 오래된 데이터를 감지할 수 있으며,
+- 오래된 데이터를 반환한 노드에게 최신 데이터를 보내 쓰기 요청.
+- 자주 읽히는 값일 때 잘 동작한다고 함.
+
+다음으로, anti-entropy process.
+
+- 백그라운드 프로세스가 있고,
+- 레플리카 간의 데이터 차이를 찾아다니다가,
+- 누락된 데이터가 있으면 이를 복제함.
+- 리더 기반 레플리케이션에서의 레플리케이션 로그와 다르게,
+- 쓰기를 순서대로 복제하지 않음.
+- 따라서, 데이터가 복제가 심각할 정도로 지연될 수도 있음.
+
+위에서 언급했던, 코디네이터 노드가 없다면 read repair 방식은 애플리케이션 입장에서는 너무 부담. anti-entropy process 방식이 더 낫지 않을까 함. 데이터 복제가 심각할 정도로 지연된다는 것은 무엇일까. 레플리카가 많을 수록 데이터 복제의 지연은 문제가 될 가능성은 낮아 보임. 하지만, 데이터 크기가 많아질 수록 문제가 될 수도 있을 것 같기도 하고. 그렇다고, 이를 보완하는 방법이 아예 없을 것 같지도 않고. 여러모로 추가 확인이 필요해 보임.
+
+#### Quorums for Reading And Writing
+
+- 전체 노드의 갯수가 `n`,
+- 쓰기가 가능한 노드의 갯수를 `w`,
+- 읽기가 가능한 노드의 갯수를 `r`이라고 할 때,
+- `w + r > n`을 만족시켜야 한다고 함.
+- 일반적으로 `n`은 홀수로 두고, `w = r = (n + 1) / 2 (반올림)`을 만족시켜야 함.
+- [여기 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0511.png)처럼, 적어도 하나의 노드로부터 최신 데이터를 읽어 들일 수 있기 때문.
+- 여기서 중요한 건, `w`와 `r`은 얼마나 많은 노드로부터 응답을 기다려야 하는지를 결정하는 값이라는 것.
+- 응답이 돌아오지 않는 이유는 다양. 노드가 중단되었을 수도 있고, 디스크 부족 등의 이유로 연산을 못 해서 그럴 수도 있고, 네트워크 단절이 있을 수도 있고. 어쨌든 중요한 건 몇 개의 노드로부터 응답을 받았는가.
+
+### Limitations of Quorum Consistency
+
+좀 더 유연한 설정도 가능함.
+
+- `w + r ≦ n` 값을 설정할 수도 있음.
+- 오래된 값을 읽어 들일 가능성은 높아짐.
+- 하지만, 응답 지연이 낮고 가용성은 높아짐.
+
+참고로, `w + r > n`에서도 오래된 값이 나올 가능성이 있음. 책에서는 몇 가지 시나리오를 언급하지만, 잘 이해되지 않아 기록하지는 않음. 추후 다시 살펴볼 것. 어쨌든 실제로는 쿼럼 수가 항상 최신 값 읽기를 보장하지는 못한다는 것. Dynamo 스타일 데이터베이스는 일반적으로 결과적 일관성에 최적화 되어 있음.
+
+#### Monitoring Staleness
+
+- 데이터베이스가 최신 값을 반환하는지 모니터링 하는 것은 중요.
+- 리더 기반 레플리케이션에서는 레플리케이션 지연 메트릭을 제공하는 것이 쉬움. 쓰기가 팔로워들에게 같은 순서로 적용되기 때문.
+- 하지만, 리더 없는 레플리케이션에서는 쓰기가 적용되는 순서가 유동적. 만약, read repair만 사용한다면 지연을 추적하는 것은 더더욱 어려움.
+- 리더 없는 레플리케이션에서의 이런 문제를 해결하기 위한 연구들이 진행중. 그러나 실제로 잘 쓰이지는 않는 상태.
+
+### Sloppy Quorums and Hinted Handoff
+
+1. `w` 또는 `r` 쿼럼을 만족시키지 못한다면, 에러를 반환하는 게 좋을까?
+2. 아니면, `n`개 이외의 별도의 노드를 두고, 이 별도의 노드까지 포함하여 `w`를 만족시킨다면, 이를 허용해 주는 게 좋을까?
+
+후자를 가리켜 *sloppy quorum*이라고 함. 굳이 번역하면, 날림 정족수? 그리고 이렇게 임시로 한 노드가 받은 쓰기를 다시 "집(`n`개로 지정됐었던)" 노드로 보내는 것을 가리켜, *hinted handoff*라고 부름.
+
+sloppy quorums는 쓰기 가용성을 높일 때 유용함. 다만, `w + r > n`이 만족하더라도 최신 값을 읽어들이지 못할 수도 있음. 바깥 노드에 최신 데이터가 있을 수도 있기 때문. 따라서, sloppy quorums의 quroum은 전통적인 의미라기 보다, 내구성을 보장해주는 정도의 것.
+
+모든 Dynamo 구현에서는 이것이 선택적임. Riak에서는 기본으로 활성화 되어 있고, Cassandra와 Voldemort에서는 기본으로 비활성화.
+
+#### Multi-Datacenter Operation
+
+리더 없는 레플리케이션은 복수 데이터 센터 운영에 적합함. 동시 쓰기의 충돌, 네트워크 단절, 응답 지연 스파이크 등에 내성을 갖도록 설계되었기 때문.
+
+### Detecting Concurrent Writes
+
 TBD
+
+
+
+
+
+
+
+
+
+
+
+
 
