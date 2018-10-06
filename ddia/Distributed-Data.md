@@ -423,6 +423,40 @@ sloppy quorums는 쓰기 가용성을 높일 때 유용함. 다만, `w + r > n`�
 
 리더 없는 레플리케이션은 복수 데이터 센터 운영에 적합함. 동시 쓰기의 충돌, 네트워크 단절, 응답 지연 스파이크 등에 내성을 갖도록 설계되었기 때문.
 
-### Deteting Concurrent Writes
+### Detecting Concurrent Writes
 
-TBD
+Dynamo 스타일 데이터베이스는 같은 키에 대한 여러 클라이언트의 동시 쓰기를 허용. 따라서, 강한 정족수<sup>quorum</sup>가 사용된다고 해도, 충돌은 발생할 수 있음. 다중 리더 레플리케이션에서도 이는 마찬가지. 다만, 차이점은 Dynamo 스타일에서는 read repair 또는 hinted handoff에서 발생. "[Concurrent writes in a Dynamo-style datastore: there is no well-defined ordering](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0512.png)"에서 이 문제를 잘 표현하고 있음. "Handling Write Conflicts"에서 한 번 다루긴 했지만, 이번에 좀 더 자세히 설명.
+
+#### Last Write Wins (Discarding Concurrent Writes)
+
+PostgreSQL 다중 리더 레플리케이션 사용 시 선택할 수 있는 옵션이었던 것으로 기억함.
+
+- 레플리카들은 오직 최신 값 만을 저장.
+- 최신 값을 결정하는 기준으로 타임스탬프(쓰기 시점에 부여) 등을 활용.
+- 이런 충돌 해결 알고리즘을 가리켜 LWW(Last Write Wins)라고 부름.
+- Cassandra에서는 이 방법만을 유일하게 지원함. Riak에서는 선택적 피처.
+- 이 방식의 문제점은 내구성<sup>durability</sup>. 즉, 같은 키에 대한 여러 쓰기가 동시에 발생하면, 심지어 어떤 경우에는 동시가 아니더라도, 클라이언트에게는 성공했다고 안내되고, 실제로는 오직 하나의 최신 값만이 살아남음.
+- 만약, LWW를 쓰면서 데이터 유실까지 방지하고 싶다면, 오직 한 번만 쓰고, 그 값은 불변으로 유지. 즉, 같은 키에 대한 동시 쓰기를 피하는 것.
+
+#### The "Happens-Before" Relationship and Concurrency
+
+갑자기 동시성<sup>concurrency</sup>에 대한 정의를 내리고 있음. 어쨌든, 시간이 아닌, 의존성을 기준으로 판단한다는 것.
+
+> For defining concurrency, exact time doesn't matter: we simply call two operations concurrent if they are both unaware of each other, regardless of the physical time at which they occurred.
+
+#### Capturing the Happens-Before Relationship
+
+"[Capturing causal dependencies between two clients concurrently editing a shopping cart](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0513.png)"는 두 클라이언트가 cart라는 키에 아이템 목록을 동시에 저장하는 과정을 보여줌. 그림과 같은 방식을 이용하면, 값을 읽어들이지 않고도, 버전 번호만을 통해 동시 작업이었는지 여부를 판별할 수 있음. 읽기 시 반환된 버전의 값들을 병합하고, 이전 쓰기에서 응답 받은 버전 번호와 함께 쓰기를 요청. 서버는 해당 버전보다 위 번호를 가진 값들은 유지하고, 버전에 해당하는 값만을 갱신하고 새로운 버전을 부여. 감지하는 것 뿐만 아니라, 병합하는 것 까지 설명하고 있음에 유의.
+
+#### Merging Concurrently Written Values
+
+어떤 데이터도 조용히 사라지는 것을 방지하는 접근법. 하지만, 클라이언트가 충돌 데이터를 직접 다루는 부담이 발생함.
+
+복수 리더 쓰기에서 다뤘던 것 처럼, 버전 번호나 타임스탬프를 이용할 수도 있음. 하지만, 이는 데이터 유실 가능성을 내재. 따라서, 쇼핑 카트 예제처럼, 값을 병합하는 방식으로 접근. 단, 위 예제와 다르게, 사람들은 아이템을 제거할 수도 있는데, 이 때는 단순 병합으로는 어렵고, 삭제된 아이템에 대해 DB에서는 마커를 남김. 버전 번호와 함께. 그리고 병합에 활용. 이런 마커를 *tombstone*이라고 부른다고 함.
+
+참고로, Riak에서는 이 동시 값들을 가리켜 *siblings*라고 부름. 또한, CRDT라고 부르는 데이터 구조체를 제공하고, 자동으로 *siblings*을 병합시켜줌. 아무래도 애플리케이션에서 이런 일들을 직접 하는 것이 좋은지느 의문.
+
+#### Version Vectors
+
+"[Capturing causal dependencies between two clients concurrently editing a shopping cart](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0513.png)" 예시는 레플리카가 하나만 있을 때를 다룸. 하지만, 여러 대의 레플리카가 있을 수 있음(물론, 리더 없이). 이럴 경우에는 키 별로, 그리고 *레플리카 별로* 버전 번호를 사용. 이 번호는 당연히 어떤 값을 덮어 써야 하고, 어떤 값을 *sibling*으로 유지하는지 판별하기 위해 사용됨.
+
