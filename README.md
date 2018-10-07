@@ -18,6 +18,7 @@
 
 - [Effective Java, 3rd Edition](https://github.com/codehumane/what-i-learned/blob/master/ej3/README.md)
 - [Growing Object-Oriented Software, Guided by Tests](goosgt/README.md)
+- [데이터 중심 애플리케이션 설계](ddia/README.md)
 - [사이트 신뢰성 엔지니어링](sre/README.md)
 - [생각하는 프로그래밍](pp/README.md)
 - [스프링 마이크로서비스](spring-ms/README.md)
@@ -33,5 +34,5 @@
 - [클린 소프트웨어](cleansw/README.md)
 - [수학사전](mathdict/README.md)
 - [소프트웨어 장인](software-craftsman/README.md)
-- [데이터 중심 애플리케이션 설계](ddia/README.md)
+- [알고리즘 도감](algorithms-explained-animated/README.md)
 
