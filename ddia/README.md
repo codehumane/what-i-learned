@@ -26,3 +26,11 @@
 
 ## III. Derived Data
 
+## [Partitioning](./Distributed-Data.md#partitioning)
+
+- [Partitioning and Replication](./Distributed-Data.md#partitioning-and-replication)
+- Partitioning of Key-Value Data
+- Partitioning and Secondary Indexes
+- Rebalancing Partitions
+- Request Routing
+

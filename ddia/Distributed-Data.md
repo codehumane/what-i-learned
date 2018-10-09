@@ -460,3 +460,12 @@ PostgreSQL 다중 리더 레플리케이션 사용 시 선택할 수 있는 옵�
 
 "[Capturing causal dependencies between two clients concurrently editing a shopping cart](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0513.png)" 예시는 레플리카가 하나만 있을 때를 다룸. 하지만, 여러 대의 레플리카가 있을 수 있음(물론, 리더 없이). 이럴 경우에는 키 별로, 그리고 *레플리카 별로* 버전 번호를 사용. 이 번호는 당연히 어떤 값을 덮어 써야 하고, 어떤 값을 *sibling*으로 유지하는지 판별하기 위해 사용됨.
 
+# Partitioning
+
+레플리케이션은 지역적으로 가까운 데이터의 제공, 장애 내성, 읽기 성능 향상을 제공. 하지만, 매우 큰 데이터셋을 가지고 있거나, 쿼리 처리량이 매우 높아야 하는 경우에는 레플리케이션 만으로는 어려움. 따라서, 데이터를 여러 파티션들로 나눌 필요가 있음. 샤딩이라고도 알려짐.
+
+책에서 주로 다룰 내용은, 각각의 파티셔닝 접근법, 파티셔닝에서의 데이터 인덱싱, 리밸런싱, 그리고 요청 라우팅.
+
+## Partitioning and Replication
+
+"[Combining replication and partitioning: each node acts as leader for some partitions and follower for other partitions](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0601.png)"에 나와 있는 것과 같이, 레플리케이션과 파티셔닝을 조합할 수 있다는 얘기. 레플리케이션과 파티셔닝은 서로 거의 독립적이라서, 조합의 방법은 다양함.
