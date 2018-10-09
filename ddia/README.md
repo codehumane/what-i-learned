@@ -29,7 +29,7 @@
 ## [Partitioning](./Distributed-Data.md#partitioning)
 
 - [Partitioning and Replication](./Distributed-Data.md#partitioning-and-replication)
-- Partitioning of Key-Value Data
+- [Partitioning of Key-Value Data](./Distributed-Data.md#partitioning-of-key-value-data)
 - Partitioning and Secondary Indexes
 - Rebalancing Partitions
 - Request Routing

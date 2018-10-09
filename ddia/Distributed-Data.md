@@ -469,3 +469,36 @@ PostgreSQL 다중 리더 레플리케이션 사용 시 선택할 수 있는 옵�
 ## Partitioning and Replication
 
 "[Combining replication and partitioning: each node acts as leader for some partitions and follower for other partitions](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0601.png)"에 나와 있는 것과 같이, 레플리케이션과 파티셔닝을 조합할 수 있다는 얘기. 레플리케이션과 파티셔닝은 서로 거의 독립적이라서, 조합의 방법은 다양함.
+
+## Partitioning of Key-Value Data
+
+데이터를 파티션 하기로 했다면, 레코드를 저장할 노드를 어떤 기준으로 선택해야 할까?
+
+파티셔닝의 목적은 데이터와 쿼리 부하를 여러 노드에 고르게 분산시키는 것. 따라서, 잘 분산되어 있다면,  분산된 노드의 수 만큼, 많은 양의 데이터를 다룰 수 있고, 읽기와 쓰기 처리량도 역시 늘어남. 반대로, 잘 분산되어 있지 않다면 파티셔닝의 효과는 줄어듦. 이렇게 잘 분산되어 있지 않은 경우를 가리켜 *skewed*, 불균형으로 인해 부하가 집중된 파티션을 가리켜 *hot spot*이라고 부름.
+
+hot spot을 피하는 가장 단순한 방법은 레코드가 저장될 노드를 무작위로 고르는 것. 하지만, 이렇게 되면 나중에 레코드를 읽으려 할 때, 어디에 있는지 알 수 없게 되고(매핑 키를 두면 되지 않나?), 따라서 여러 노드에 동시에 질의를 던져야 함.
+
+### Partitioning by Key Range
+
+[A print encyclopedia is partitioned by key range](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0602.png)에서 보는 것처럼, 키를 여러 개의 구간으로 나누고, 구간별로 노드를 지정한 뒤, 값을 저장하는 것. 나중에 값을 찾을 때도, 키가 어느 구간에 속하는지만 알면, 해당 노드에 바로 질의할 수 있음. 예컨대, 타임스탬프를 기준으로 데이터가 각 노드에 분산되어 있고, 특정 월의 데이터가 필요하면 해당 노드에 바로 질의.
+
+하지만, 데이터가 고르게 분배되지 않을 수도 있음. 예를 들어, 2017년 7월에만 데이터가 엄청 몰려 있을 수도. 즉, hot spot. 이런 문제를 피하기 위해, 파티션 경계는 데이터의 상황을 잘 고려해야 함. 따라서, 타임스탬프 대신, 노드 분배 기준을 기기 이름과 타임스탬프의 조합으로 할 수도 있음. 기기 이름 별로 데이터가 잘 분산된다는 가정하에 말이다. 참고로, 파티션 경계는 어드민이 직접 수동으로 결정하거나, 데이터베이스가 자동으로 선택하게 할 수도 있음. Bigtable, RethinkDB, MongoDB 등에서 이런 파티셔닝 전략을 사용한다고 함.
+
+### Partitioning by Hash of Key
+
+이런 skew와 hot spot 때문에, 많은 분산 데이터베이스들은 키의 파티션 결정에 해시 함수를 사용. [Partitioning by hash of key](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0603.png) 그림 참고.
+
+해시 함수는 암호 수준이 높을 필요는 없음. MongoDB에서는 MD5를, Cassandra는 Murmur3를, Vodemort는 Fowler-Noll-Vo 함수를 사용. Java의 `Object.hashCode()`나 Ruby의 `Object#hash` 등 프로그래밍 언어에서 기본으로 제공하는 해시 함수는 적절치 않을 수도. [Java's hashCode is not safe for distributed system](https://martin.kleppmann.com/2012/06/18/java-hashcode-unsafe-for-distributed-systems.html)에서 보듯 같은 키지만, 해싱의 결과가 달라지는 경우가 있기 때문.
+
+하지만, 범위 검색이 어려움. 데이터들이 순차적으로 분산되어 있지 않기 때문. 이로 인해, MongoDB에서는 범위 검색 요청을 모든 파티션에 보냄. Riak, Couchbase, Voldemort에서는 기본 키에 대한 범위 검색을 아예 지원하지 않음. Cassandra는 테이블에 대해 복수 개의 컬럼으로 구성된 *compound primary key*를 선언할 수 있게 함. 이 키의 첫 번째 요소는 파티션을 결정하는 데 쓰이고, 나머지 컬럼들은 Cassandra의 SSTable 데이터를 정렬하기 위한 연결 인덱스로 사용. 따라서, 첫 번째 컬럼 값이 정해져 있기만 하면, 나머지 컬럼을 이용한 범위 검색이 가능.
+
+### Skewed Workloads and Relieving Hot Spots
+
+키를 해싱하는 것 만으로는도 균형 잡기가 어려울 수 있음. 만약, 사용자의 아이디를 해싱해서 파티셔닝 하고, 특정 파티션의 특정 사용자의 데이터만 많아진다면, 이는 결국 불균형.
+
+그리고 이런 불균형<sup>skew</sup>을 피하는 것은 애플리케이션의 책임(데이터 시스템이 해주지 않음). 예를 들어, 파티션 키의 뒷 부분에 랜돔 숫자를 붙여서 다른 곳으로 파티셔닝 되게 할 수도 있음. 하지만, 데이터 읽는 것이 어려워짐. 랜돔 숫자의 자릿수가 2자리였다면, 데이터 읽기 시 원래의 키에 100개의 숫자를 붙여 100개의 키를 만들고, 이 키에 대한 결과를 모두 조회해서 병합해야 함. 따라서, 주요 키(hot spot 대상)에 대해서 별도의 관리를 하고, 이 키에 대한 조회가 발생했을 때만 추가적인 작업을 수행하게 해야 함. 데이터가 많지 않은 대부분의 키에 대해서 이런 추가 작업을 하는 것은 불필요한 자원 낭비이므로.
+
+## Partitioning and Secondary Indexes
+
+TBD
+
