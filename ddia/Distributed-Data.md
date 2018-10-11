@@ -500,5 +500,16 @@ hot spot을 피하는 가장 단순한 방법은 레코드가 저장될 노드�
 
 ## Partitioning and Secondary Indexes
 
-TBD
+보조 인덱스가 파티셔닝에 함께 개입되면 상황은 좀 더 복잡해짐. 보조 인덱스는 레코드를 유일하게 식별할 수 없고, 따라서 기본키 만큼의 명확한 파티션 구분이 어렵기 때문. 보조 인덱스로 파티셔닝을 하는 방법은 2가지. 문서 기반<sup>document-based</sup>, 그리고 용어 기반<sup>term-based</sup> 파티셔닝.
 
+### Partitioning Secondary Indexes by Document
+
+문서 기반 방식의 원리는 간단. "[Partitioning secondary indexes by document](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0604.png)" 그림을 참고. 간단히 설명하면, 파티션 별로 보조 인덱스를 독립적으로 관리하는 것. 이런 이유로 로컬 인덱스(글로벌 인덱스와 대조적)라고 불리기도 함.
+
+주의할 것은, 보조 인덱스들이 파티션 마다 독립적으로 존재하기에, 모든 파티션에게 질의를 던지고 또 결과를 병합해야 한다는 것. 이런 방식을 *scatter/gatter*라고 부른다고 함. 당연하게도, 부담이 큼. 지연시간 증폭<sup>latency amplification</sup>이 나타날 수도 있고. 그럼에도 불구하고 MongoDB, Riak, Cassandra, Elasticsearch, SolrCloud, VoltDB 등에서 사용중. 그래도, 이 벤더들은 가능한 단일 파티션에서 보조 인덱스 질의가 수행될 수 있도록 파티션을 구성하라고 권장.
+
+### Partitioning Secondary Indexes by Term
+
+각 파티션에 보조 인덱스를 독립적으로 구축하는 대신, 모든 파티션에 대한 글로벌 인덱스를 생성할 수 있음(개인적으로는 글로벌이라는 용어가 좋아 보이지는 않음). "[Partitioning secondary indexes by term](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0605.png)" 그림을 보면 이해하기 쉬움. 보조 인덱스를 일정 범위로 나누고 각 파티션에 위치시키는 것. 여기서 보조 인덱스를 그대로 저장할 수도 있고(범위 검색에 유리), 해싱해서 저장할 수도 있음(고르게 분산). 참고로, *term*이라는 용어는 *full-text* 인덱스로부터 나왔다고 함. term은 문서에 존재하는 단어를 가리킴.
+
+글로벌 인덱스의 장점은 읽기가 좀 더 효율적으로 된다는 것. 모든 파티션에 대해 매번 질의를 요청할 필요가 없기 때문. 단점은 글로벌 인덱스의 쓰기가 다소 느려지고 복잡해진다는 것. 인덱스가 항상 최신이려면, 이런 글로벌 인덱스 처리 방식으로 인해, 모든 파티션에 대한 분산 트랜잭션이 필요. 하지만, 데이터베이스들은 이를 지원하지 않고, 따라서 보조 인덱스는 종종 비동기로 갱신됨. 다소 지연이 발생할 수도 있음.
