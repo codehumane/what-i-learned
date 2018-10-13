@@ -24,13 +24,13 @@
 - [Multi-Leader Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#multi-leader-replication)
 - [Leaderless Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#leaderless-replication)
 
-## III. Derived Data
-
 ## [Partitioning](./Distributed-Data.md#partitioning)
 
 - [Partitioning and Replication](./Distributed-Data.md#partitioning-and-replication)
 - [Partitioning of Key-Value Data](./Distributed-Data.md#partitioning-of-key-value-data)
-- Partitioning and Secondary Indexes
-- Rebalancing Partitions
-- Request Routing
+- [Partitioning and Secondary Indexes](./Distributed-Data.md#partitioning-and-secondary-indexes)
+- [Rebalancing Partitions](./Distributed-Data.md#rebalancing-partitions)
+- [Request Routing](./Distributed-Data.md#request-routing)
+
+## III. Derived Data
 
