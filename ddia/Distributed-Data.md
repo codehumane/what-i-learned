@@ -568,4 +568,27 @@ hot spot을 피하는 가장 단순한 방법은 레코드가 저장될 노드�
 
 ### Request Routing
 
-TBD
+각 파티션들은 노드에 분산되어 있는데, 클라이언트는 요청을 보낼 노드를 어떻게 알 수 있을까? 이는 *service discovery*라고 불리는 일반화 된 문제의 한 사례. 데이터베이스에 국한된 문제도 아님.
+
+여기에 대한 몇 가지 접근법이 있음. "[Three different ways of routing a request to the right node](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0607.png)" 그림 함께 참고.
+
+1. 클라이언트는 임의의 노드로 요청을 보냄. 요청을 받은 노드는 자신에게 데이터가 있으면 바로 응답. 그렇지 않다면 요청을 적절한 노드로 포워딩. 포워딩한 노드로부터 응답을 받으면, 그 응답을 클라이언트에게 그대로 반환.
+2. 라우팅 계층이 클라이언트의 요청을 받음. 이 계층에서 요청의 분배를 적절히 수행. partition-aware load balancer.
+3. 클라이언트가 어느 노드에 파티션이 할당되어 있는지를 인지.
+
+각 접근법의 공통된 주요 문제는, 파티션이 할당된 노드가 바뀐 것을 어떻게 인지할 수 있느냐임.
+
+많은 분산 데이터 시스템들은 ZooKeeper와 같은 별도의 코디네이션 서비스를 사용. Cassandra와 Riak은 조금 다름. 노드 간에 *gossip protocol*이라는 프로토콜을 사용해서, 클러스터 상태의 변경을 감지함. 이 프로토콜은 위에서 언급한 접근법 중에 첫 번째 것과 유사한 방식임. ZooKeeper 등의 외부 서비스로부터 독립적이긴 하지만, 데이터베이스에 복잡성이 가중됨.
+
+
+
+
+
+
+
+
+
+
+
+
+

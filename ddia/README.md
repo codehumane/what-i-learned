@@ -24,7 +24,7 @@
 - [Multi-Leader Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#multi-leader-replication)
 - [Leaderless Replication](https://github.com/codehumane/what-i-learned/blob/master/ddia/Distributed-Data.md#leaderless-replication)
 
-## [Partitioning](./Distributed-Data.md#partitioning)
+### [Partitioning](./Distributed-Data.md#partitioning)
 
 - [Partitioning and Replication](./Distributed-Data.md#partitioning-and-replication)
 - [Partitioning of Key-Value Data](./Distributed-Data.md#partitioning-of-key-value-data)
