@@ -96,7 +96,7 @@ DB에 대한 모든 쓰기는 모든 레플리카에서도 함께 처리되어�
 1. 지속적으로 리더 DB의 스냅샷을 생성.
 2. 새로운 팔로워 노드로 스냅샷을 복사.
 3. 팔로워는 리더에게 특정 스냅샷 이후로 생긴 모든 데이터 변경을 요청. *log sequence number*(PostgreSQL) 또는 *binlog coordinates*(MySQL)라고 불리는 레플리케이션 로그의 정확한 위치를 알고 있어야 함.
-4. 모든 변경을 다 따라잡았다면, 리더 노드로 투입.
+4. 모든 변경을 다 따라잡았다면 클러스터로 투입.
 
 위 절차는 DB마다 상당한 차이를 보일 수도 있음.
 
@@ -246,10 +246,10 @@ Consistent prefix reads는 한 가지 해결책. 쓰기가 발생한 순서대�
 - 단일 리더 − A 데이터 센터에 가까운 쓰기 요청이, 리더가 있는 B 데이터 센터에 먼저 전달되고, 다시 A 데이터 센터로 레플리케이션 되는 시간적 비용은 상당함.
 - 복수 리더 − 쓰기 요청은 각 지역의 데이터 센터로 보내지므로, 단일 리더에 비해 성능은 좋음.
 
-Tolerance of datacenter outages
+*Tolerance of datacenter outages*
 
 - 단일 리더 − 리더가 있던 데이터 센터에 장애가 나면, 다른 데이터 센터의 한 팔로워를 리더로 승격시켜야 함.
-- 복수 리더 − 단일 리더에서의 절차가 필요 없음. 그냥 계속 운영하면 됨.
+- 복수 리더 − 장애가 나지 않은 데이터 센터는 계속 운영이 가능. 물론, 데이터 센터가 정상화 되면, 레플리케이션을 따라 잡아야 함.
 
 *Tolerance of network problem*
 
@@ -340,7 +340,7 @@ Tolerance of datacenter outages
 
 'Sloppy Quorums and Hinted Handoff'에서 리더 없는 레플리케이션을 잘 정리하는 문단이 있어서 함께 기록.
 
-> Databases with appropriately configured quorums can tolerate the failure of indivisual nodes without the need for failover. They can also tolerate individual nodes going slow, because requests don't have to wait for all n nodes to respond―they can return when w or r nodes have responded. These characteristics make databases with leaderless replication applealing for use cases that require high availability and low latency, and that can tolerate occasional stale reads.
+> Databases with appropriately configured quorums can tolerate the failure of indivisual nodes without the need for failover. They can also tolerate individual nodes going slow, because requests don't have to wait for all n nodes to respond―they can return when w or r nodes have responded. These characteristics make databases with leaderless replication appealing for use cases that require high availability and low latency, and that can tolerate occasional stale reads.
 
 관계형 데이터베이스 시대 동안 리더 없는 레플리케이션은 잊혀짐. 그러다가 Amazon이 인하우스 Dynamo 시스템에 이 모델을 사용하면서 점점 다른 곳에서도 사용. Riak, Cassandra, Voldemort가 그 예. 이 때문에 이 모델을 가리켜 Dynamo-style이라고도 부름.
 
@@ -382,24 +382,24 @@ Tolerance of datacenter outages
 
 #### Quorums for Reading And Writing
 
-- 전체 노드의 갯수가 `n`,
-- 쓰기가 가능한 노드의 갯수를 `w`,
-- 읽기가 가능한 노드의 갯수를 `r`이라고 할 때,
-- `w + r > n`을 만족시켜야 한다고 함.
-- 일반적으로 `n`은 홀수로 두고, `w = r = (n + 1) / 2 (반올림)`을 만족시켜야 함.
+- 전체 노드의 갯수가 n,
+- 쓰기가 가능한 노드의 갯수를 w,
+- 읽기가 가능한 노드의 갯수를 r이라고 할 때,
+- w + r > n을 만족시켜야 함.
+- 일반적으로 n은 홀수로 두며,
+- w = r = (n + 1) / 2 (반올림)으로 설정.
 - [여기 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0511.png)처럼, 적어도 하나의 노드로부터 최신 데이터를 읽어 들일 수 있기 때문.
-- 여기서 중요한 건, `w`와 `r`은 얼마나 많은 노드로부터 응답을 기다려야 하는지를 결정하는 값이라는 것.
-- 응답이 돌아오지 않는 이유는 다양. 노드가 중단되었을 수도 있고, 디스크 부족 등의 이유로 연산을 못 해서 그럴 수도 있고, 네트워크 단절이 있을 수도 있고. 어쨌든 중요한 건 몇 개의 노드로부터 응답을 받았는가.
+- 여기서 중요한 건, w와 r은 얼마나 많은 노드로부터 응답을 기다려야 하는지를 결정하는 값이라는 것.
 
 ### Limitations of Quorum Consistency
 
 좀 더 유연한 설정도 가능함.
 
-- `w + r ≦ n` 값을 설정할 수도 있음.
+- w + r ≦ n 값을 설정할 수도 있음.
 - 오래된 값을 읽어 들일 가능성은 높아짐.
 - 하지만, 응답 지연이 낮고 가용성은 높아짐.
 
-참고로, `w + r > n`에서도 오래된 값이 나올 가능성이 있음. 책에서는 몇 가지 시나리오를 언급하지만, 잘 이해되지 않아 기록하지는 않음. 추후 다시 살펴볼 것. 어쨌든 실제로는 쿼럼 수가 항상 최신 값 읽기를 보장하지는 못한다는 것. Dynamo 스타일 데이터베이스는 일반적으로 결과적 일관성에 최적화 되어 있음.
+참고로, w + r > n에서도 오래된 값이 나올 가능성이 있음. 책에서는 몇 가지 시나리오를 언급하지만, 잘 이해되지 않아 기록하지는 않음. 추후 다시 살펴볼 것. 어쨌든 실제로는 쿼럼 수가 항상 최신 값 읽기를 보장하지는 못한다는 것. Dynamo 스타일 데이터베이스는 일반적으로 결과적 일관성에 최적화 되어 있음.
 
 #### Monitoring Staleness
 
@@ -410,12 +410,12 @@ Tolerance of datacenter outages
 
 ### Sloppy Quorums and Hinted Handoff
 
-1. `w` 또는 `r` 쿼럼을 만족시키지 못한다면, 에러를 반환하는 게 좋을까?
-2. 아니면, `n`개 이외의 별도의 노드를 두고, 이 별도의 노드까지 포함하여 `w`를 만족시킨다면, 이를 허용해 주는 게 좋을까?
+1. w 또는 r 쿼럼을 만족시키지 못한다면, 에러를 반환하는 게 좋을까?
+2. 아니면, n개 이외의 별도의 노드를 두고, 이 별도의 노드까지 포함하여 w를 만족시킨다면, 이를 허용해 주는 게 좋을까?
 
-후자를 가리켜 *sloppy quorum*이라고 함. 굳이 번역하면, 날림 정족수? 그리고 이렇게 임시로 한 노드가 받은 쓰기를 다시 "집(`n`개로 지정됐었던)" 노드로 보내는 것을 가리켜, *hinted handoff*라고 부름.
+후자를 가리켜 *sloppy quorum*이라고 함. 굳이 번역하면, 날림 정족수? 그리고 이렇게 임시로 한 노드가 받은 쓰기를 다시 "집(n개로 지정됐었던)" 노드로 보내는 것을 가리켜, *hinted handoff*라고 부름.
 
-sloppy quorums는 쓰기 가용성을 높일 때 유용함. 다만, `w + r > n`이 만족하더라도 최신 값을 읽어들이지 못할 수도 있음. 바깥 노드에 최신 데이터가 있을 수도 있기 때문. 따라서, sloppy quorums의 quroum은 전통적인 의미라기 보다, 내구성을 보장해주는 정도의 것.
+sloppy quorums는 쓰기 가용성을 높일 때 유용함. 다만, w + r > n이 만족하더라도 최신 값을 읽어들이지 못할 수도 있음. 바깥 노드에 최신 데이터가 있을 수도 있기 때문. 따라서, sloppy quorums의 quroum은 전통적인 의미라기 보다, 내구성을 보장해주는 정도의 것.
 
 모든 Dynamo 구현에서는 이것이 선택적임. Riak에서는 기본으로 활성화 되어 있고, Cassandra와 Voldemort에서는 기본으로 비활성화.
 
@@ -454,7 +454,7 @@ PostgreSQL 다중 리더 레플리케이션 사용 시 선택할 수 있는 옵�
 
 복수 리더 쓰기에서 다뤘던 것 처럼, 버전 번호나 타임스탬프를 이용할 수도 있음. 하지만, 이는 데이터 유실 가능성을 내재. 따라서, 쇼핑 카트 예제처럼, 값을 병합하는 방식으로 접근. 단, 위 예제와 다르게, 사람들은 아이템을 제거할 수도 있는데, 이 때는 단순 병합으로는 어렵고, 삭제된 아이템에 대해 DB에서는 마커를 남김. 버전 번호와 함께. 그리고 병합에 활용. 이런 마커를 *tombstone*이라고 부른다고 함.
 
-참고로, Riak에서는 이 동시 값들을 가리켜 *siblings*라고 부름. 또한, CRDT라고 부르는 데이터 구조체를 제공하고, 자동으로 *siblings*을 병합시켜줌. 아무래도 애플리케이션에서 이런 일들을 직접 하는 것이 좋은지느 의문.
+참고로, Riak에서는 이 동시 값들을 가리켜 *siblings*라고 부름. 또한, CRDT라고 부르는 데이터 구조체를 제공하고, 자동으로 *siblings*을 병합시켜줌. 아무래도 애플리케이션에서 이런 일들을 직접 하는 것이 좋은지는 의문.
 
 #### Version Vectors
 
