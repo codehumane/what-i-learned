@@ -14,7 +14,7 @@
 - [2017-4Q](til/2017-4Q.md)
 - [2017-3Q](til/2017-3Q.md)
 
-# 책 목록
+# BOOK
 
 - [Effective Java, 3rd Edition](book/ej3/README.md)
 - [Growing Object-Oriented Software, Guided by Tests](book/goosgt/README.md)
@@ -35,4 +35,8 @@
 - [수학사전](book/mathdict/README.md)
 - [소프트웨어 장인](book/software-craftsman/README.md)
 - [알고리즘 도감](book/algorithms-explained-animated/README.md)
+
+# DOCUMENT
+
+- [Package java.util.stream Description](https://github.com/codehumane/what-i-learned/blob/master/document/java-util-stream.md)
 
