@@ -66,3 +66,43 @@
 - 값 삭제 ― 삭제한 노드의 왼쪽 가지에서 최댓값을 가진 노드를 찾고, 삭제한 노드 자리에 위치시킴.
 - 값 접근 ― 루트 노드부터 아래로 비교해 가며 찾아감. 비교 노드 값이 크면 왼쪽 가지로, 작으면 오른쪽 가지로 이동.
 - 트리가 어느 정도 균형 잡혀 있다면 O(log n)이 소요되지만, 한쪽으로 치우쳐 있다면 O(n)이 소요될 수 있음.
+
+# 정렬
+
+주어진 값을 순서대로 나열하는 것. 데이터가 많을 수록 이런 정렬 알고리즘의 효율은 중요할 것.
+
+## [bubble sort](https://en.wikipedia.org/wiki/Bubble_sort)
+
+- 가장 오른쪽 값부터 시작해서 왼쪽 값보다 작으면 왼쪽으로 이동.
+- 연산 횟수는 (n-1) + (n-2) + ... + 1 = n^2/2
+- O(n^2)
+
+## [selection sort](https://en.wikipedia.org/wiki/Selection_sort)
+
+- 수열 중 최솟값 검색해서 가장 왼쪽부터 채워나감.
+- (n-1) + (n-2) + ... + 1 = n^2/2
+- O(n^2)
+
+## [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort)
+
+- 가장 왼쪽 값부터 시작해서, 자신의 왼쪽 수열 중에 자신이 들어갈 위치를 결정.
+- 1 + 2 + ... (n-2) + (n-1) = n^2/2
+- O(n^2)
+
+## [heap sort](https://en.wikipedia.org/wiki/Heapsort)
+
+- 내림차순 힙을 구성하고, 루트를 추출. 이를 반복.
+- log(n) + log(n-1) + … + log2
+- O(n log n)
+
+## [merge sort](https://en.wikipedia.org/wiki/Merge_sort)
+
+- 좌우 분할을 재귀적으로 반복. 나눌 만큼 나눈 뒤 병합을 반복.
+- 시간 복잡도 구하기는 [예전에 작성한 글](http://codehumane.github.io/2017/11/11/%EB%B3%91%ED%95%A9%EC%A0%95%EB%A0%AC-%EC%8B%9C%EA%B0%84%EB%B3%B5%EC%9E%A1%EB%8F%84-%EA%B5%AC%ED%95%98%EA%B8%B0/) 참고.
+- O(n log n)
+
+## [quick sort](https://en.wikipedia.org/wiki/Quicksort)
+
+- 임의의 pivot을 정하고 좌측에는 pivot 보다 작은 값을, 우측에는 큰 값을 둠. 둘로 나눠진 수열에 대해서 재귀 반복.
+- 시간 복잡도는 병합 정렬의 것을 구하듯 구하면 됨. O(n log n) 소요.
+
