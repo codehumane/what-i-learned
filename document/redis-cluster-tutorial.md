@@ -58,3 +58,23 @@ https://redis.io/topics/cluster-tutorial 내용 읽고 간단 정리. 자세한 
     - 일정 시간이 지나서 B1이 마스터로 승격.
     - B에 쓰여졌던 데이터는 유실.
 7. 이런 이유로 maximum window, node timeout 설정은 중요.
+
+## Redis Cluster configuration parameters
+
+- cluster-enabled<yes/no>
+- cluster-config-file<filename>
+- cluster-node-time<milliseconds>
+    - RC가 노드의 비가용성을 판단하는 기준 시간.
+    - 마스터가 이 시간 동안 이용이 불가하다면 슬레이브로 페일오버를 시도.
+    - 이 시간이 지나면 질의 요청을 받지 않는 등의 다른 제어 파라미터로도 사용.
+- cluster-slave-validity-factor<factor>
+    - 슬레이브가 마스터와 연결이 끊겼고,
+    - 만약 `factor * node-timeout` 값 만큼 시간이 지나면,
+    - 더 이상 유효하지 않은 슬레이브로 간주함.
+- cluster-migration-barrier<count>
+    - 마스터가 가지고 있어야 하는 최소한의 슬레이브 갯수.
+    - 보장된 수의 노드 이외(비대칭적 노드)에는 레플리카 마이그레이션에 사용.
+    - [Replica migration](https://redis.io/topics/cluster-spec#replica-migration) 함께 참고.
+- cluster-require-full-coverage<yes/no>
+    - 클러스터의 일부 노드가 다운되었을 때, 그러니까 full coverage가 아닐 때에도, 요청을 받아줄지 여부.
+    - [여기](http://redisgate.kr/redis/cluster/cluster-require-full-coverage.php)에 설명이 잘 나와 있음.
