@@ -1,6 +1,6 @@
 # Redis Cluster Specification
 
-## Main properties ans rationales of the design
+## Main properties and rationales of the design
 
 ### Redis Cluster goals
 
