@@ -34,3 +34,42 @@
 - 높은 추상화를 추구하기 보다는 현실적 문제를 다룸. 메모리 사용량, CPU 요건, 대역폭, 하이퍼스레딩과 CPU 바인딩의 이점과 단점 등을 논의.
 - 특별한 이야기는 아님. 개인적으로는 지면이 아까운..
 
+# Case Study: The Exception That Grounded an Airline
+
+- 정기적인 DB 유지보수가 있었고,
+- 이 때, A라는 DB로부터 B라는 DB로 페일오버가 예정됨.
+- 서비스에 이상이 없는지를 확인할 수 있는 모니터링과 함께,
+- 무중단 DB 페일오버를 수동으로 진행.
+- 문제 없이 완료 후 작업은 모두 끝남.
+- 하지만 몇 시간 후 항공사 시스템에 전면 장애가 발생.
+- 장애 발생 시의 즉각적인 대응과 포스트 모텀 등을 이야기 한 뒤(이런 부분들이 잼있었음),
+- 문제의 원인이 된 코드도 보여줌. CF라는 시스템은 아래의 코드만으로 이뤄진 애플리케이션이 실행되고 있었다고 함.
+
+```java
+public class FlightSearch implements SessionBean {
+
+    private MonitoredDataSource connectionPool;
+
+    public List lookupByCity(...) throws SQLException, RemoteException {
+        Connection conn = null;
+        Statement stmt = null;
+
+        try {
+            conn = connectionPool.getConnection();
+            stmt = conn.createStatement();
+
+            // ...
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+    }
+}
+
+```
+
+- `stmt.close()`가 SQLException을 던지기 때문.
+- 데이터베이스의 페일오버 시 연결이 끊겼고, 이 때 `stmt.close()`의 호출이 예외를 발생시켰으며, 이로 인해 커넥션이 종료되지 않고, 리소스가 누수되어서 발생한 문제.
