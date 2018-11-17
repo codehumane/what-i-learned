@@ -21,6 +21,7 @@
 - [Designing Data-Intensive Application](book/ddia/README.md)
 - [사이트 신뢰성 엔지니어링](book/sre/README.md)
 - [생각하는 프로그래밍](book/pp/README.md)
+- [Release It, 2nd Edition](book/release-it-2e/README.md)
 - [스프링 마이크로서비스](book/spring-ms/README.md)
 - [알고리즘](book/algorithm/README.md)
 - [HTTP 완벽 가이드](book/http-definitive-guide/README.md)
@@ -39,4 +40,6 @@
 # DOCUMENT
 
 - [Package java.util.stream Description](https://github.com/codehumane/what-i-learned/blob/master/document/java-util-stream.md)
+- [Redis Cluster Tutorial](https://github.com/codehumane/what-i-learned/blob/master/document/redis-cluster-tutorial.md)
+- [Redis Cluster Specification](https://github.com/codehumane/what-i-learned/blob/master/document/redis-cluster-specification.md)
 
