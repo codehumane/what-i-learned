@@ -117,3 +117,64 @@ public class FlightSearch implements SessionBean {
 5. Chiles라는 사람은 이를 가리켜 "crackstoppers"라고 부름.
 
 ## Stopping Crack Propagation
+
+고장 모드 설계는 항공사 사례에 적용 가능함. SQLException를 부적절하게 핸들링 했던 것이 원인인데, 이를 막을 수 있었던 지점을 저수준부터 고수준까지 소개. 먼저, DB 연결 설정부터.
+
+1. 가용한 풀이 없으면 요청 스레드를 막도록 설정되어 있었기 때문에, 결국 요청을 처리하는 모든 스레드를 가두게 됨.
+2. 자원이 고갈되면 더 많은 커넥션을 생성하도록 설정할 수도 있었을 것. (새로 바뀐 DB에 대해 새로운 커넥션을 맺을 수 있었을 것)
+3. 또는 호출자를 영원히 멈추게 하는 대신, 제한된 시간 동안만 막도록 설정할 수도 있었을 것.
+4. 참고로, 아래 내용은 HikariCP의 `maximumPoolSize`에 대한 설명. 더불어, 이런 글([Hikari, About Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing))도 있음. 예전에는 못 봤던 문서.
+
+> "This property controls the maximum size that the pool is allowed to reach, including both idle and in-use connections. Basically this value will determine the maximum number of actual connections to the database backend. A reasonable value for this is best determined by your execution environment. When the pool reaches the size, and no idel connections are available, calls to getConnection() will block for up to `connectionTimeout` milliseconds before timing out."
+
+다음으로, CF가 다른 애플리케이션을 호출할 때 RMI를 사용한 것에 대해.
+
+1. RMI는 기본적으로 타임아웃이 없음. 호출이 블럭되면 영원히 대기.
+2. RMI 소켓에 타임아웃을 설정하는 것이 좋았을 것.
+3. 혹은, HTTP 요청을 타임아웃과 함께 사용.
+4. 블럭된 스레드를 클라이언트가 버리는 것도 방법.
+
+좀 더 큰 수준에서 본다면.
+
+1. CF 서버를 2개 이상의 서비스 그룹으로 나누는 것도 방법.
+2. 모든 그룹이 여전히 다 죽을 수도 있지만, 항상 그런 것은 아님.
+
+이보다 더 큰 수준의 아키텍처 이슈로 본다면.
+
+1. CF에서 요청/응답 메시지 큐를 사용할 수도 있음.
+2. 혹은 튜플 스페이스<sup>tuple space</sup>에서 검색 조건에 맞는 항공편을 찾을 수도.
+3. 아키텍처의 결합도가 높아질수록, 오류가 전파될 가능성은 높아짐.
+4. 반대로 말하면, 아키텍처 결합도가 낮을 수록 충격을 흡수함. 에러를 증폭시키는 대신 줄여주기도.
+
+## Chain of Failure
+
+1. 하나의 작은 이슈가 다른 이슈를 낳고, 그리고 이로 인해 또 다른 이슈가 생기고, ...
+2. 이런 일련의 사건들이 모두 똑같이 일어날 확률은 매우 낮음. 그러나 각각은 독립사건.
+3. 그러나, 사건의 조합은 독립적이지 않음. 특정 지점이나 레이어의 장애는 이에 의존하는 다른 지점의 장애를 일으킬 가능성이 큼.
+4. 예컨대, DB가 느려지면 애플리케이션 서버들의 메모리는 고갈될 가능성이 높음.
+5. 3가지 용어 정의를 잠깐 하고 가면 아래와 같음.
+
+```
+Fault: 소프트웨어의 내부 상태를 비정상적으로 만드는 상황. 지연 버그, 체크되지 않은 경계 조건이나 외부 인터페이스 등에 의한 것.
+Error: 비정상적인 행위가 가시적인 것. 트레이딩 시스템이 갑자기 100억 달러를 사들인다거나 하는 것.
+Failure: 응답하지 않는 시스템. 
+```
+
+6. 실패<sup>fault</sup>는 틈을 열고, 에러가 되며, 에러는 장애가 됨.
+7. 당연하게도, 높은 수준의 결합도를 가진 복잡한 시스템은 에러로 이어질 수 있는 실패 전파의 경로가 많음.
+8. 가능한 실패에 대해 미리 준비할 수 있는 한 가지 방법은 모든 외부 요청, I/O, 리소스 사용을 살피고, 잘못된 수 있는 경우를 따져보는 것.
+
+```
+초기 연결이 맺어지지 않는다면?
+연결을 맺는데 10분이 걸린다면?
+연결은 맺었는데, 다시 끊어진다면?
+연결을 맺었는데, 응답이 오지 않는다면?
+질의 응답이 오는데 2분이 걸린다면?
+10,000개의 요청이 동시에 들어온다면?
+`SQLException` 에러 메시지를 로깅하는데 디스크가 꽉 차있다면?
+```
+
+9. 실패는 반드시 발생하며, 모든 것을 예방할 수는 없음.
+10. 그리고 이 실패가 에러가 되지 않도록 막음과 동시에 실패나 에러를 감수할 것인지 결정도 해야함.
+
+
