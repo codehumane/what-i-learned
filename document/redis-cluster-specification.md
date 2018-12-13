@@ -200,3 +200,42 @@ GET x
 8. [CLUSTER NODES](https://redis.io/commands/cluster-nodes)나 [CLUSTER SLOTS](https://redis.io/commands/cluster-slots) 명령어를 이용해 전체 클러스터 정보를 갱신할 수도 있음.
 9. 리다이렉션이 일어나면, 많은 슬럿들이 재구성 되었을 가능성이 높고, 따라서 가능한 빨리 갱신해 주는 것이 좋음.
 
+### Cluster live reconfiguration
+
+1. RC에서는 클러스터의 운영 중에도 노드를 추가하거나 삭제할 수 있음. 리밸런싱도 물론.
+2. 노드 추가를 예로 들면, 빈 노드를 클러스터에 투입, 다른 노드의 일부 해시 슬럿들을 새로운 노드로 이동.
+3. 추가, 삭제, 리밸런싱의 핵심은 어쨋든 해시 슬럿의 이동임. 그리고 해시 슬럿은 단지 키의 집합이며, 따라서 RC가 리샤딩 때 하는 것은 인스턴스 간의 키 이동임.
+4. 슬럿들의 이동에는 CLUSTER 하위 명령어들이 사용됨.
+
+```
+CLUSTER ADDSLOTS slot1 [slot2] ... [slotN]
+CLUSTER DELSLOTS slot1 [slot2] ... [slotN]
+CLUSTER SETSLOT slot NODE node
+CLUSTER SETSLOT slot MIGRATING node
+CLUSTER SETSLOT slot IMPORTING node
+```
+
+5. [CLUSTER ADDSLOTS](https://redis.io/commands/cluster-addslots), [CLUSTER DELSLOTS](https://redis.io/commands/cluster-delslots), [CLUSTER SETSLOT](https://redis.io/commands/cluster-setslot) 각각에 대한 설명은 링크 문서 참고.
+6. 아래는 SETSLOT 사용 예시.
+
+```
+- A와 B라는 마스터 노드가 있고, 해시 슬럿 8을 A에서 B로 이동시킨다고 해보자.
+- B에게 `CLUSTER SETSLOT 8 IMPORTING A` 명령을 보냄.
+- A에게 `CLUSTER SETSLOT 8 MIGRATING B` 명령을 보냄.
+- 만약, A가 쿼리를 받았고 키가 존재하면 바로 응답.
+- 만약, A가 쿼리를 받았고 키가 존재하지 않으면, -ASK 리다이렉션을 이용해 마이그레이션 타겟으로 질의를 포워딩.
+- B는 마이그레이션 중인 키에 대해서는 ASKING 커맨드로 처리된 요청에만 응답함.
+- 그렇지 않은 경우라면 -MOVED 리다이렉션 에러를 통해 진짜 해시 슬럿 주인에게 요청을 리다이렉션(일반적인 처리 방식).
+```
+
+7. 이 기간 동안에는 A에 더 이상 키를 생성하지 않음.
+8. 그리고 그 동안 redis-trib가 해시 슬럿 8에 있는 키들을 A에서 B로 이동시킴.
+    - `CLUSTER GETKEYSINSLOT slot count` 명령어를 던지면,
+    - 명시된 slot의 count 만큼의 키가 반환됨.
+    - 반환된 키에 대해, redis-trib는 "A" 노드에게 MIGRATE 명령을 전달.
+    - `MIGRATE target_host target_port key target_database id timeout`
+    - 원자적 방식(두 개의 인스턴스 마이그레이션 동안 모두 잠금 상태가 되며, 보통 아주 짧은 기간 안에 끝남)으로 마이그레이션이 이뤄짐.
+    - RC에서는 데이터베이스를 0이 아닌 값으로 설정할 이유가 없으나, MIGRATE는 범용적인 명령이라서 데이터베이스 지정이 필요.
+9. 마이그레이션이 끝났다면, `SETSLOT <slot> NODE <node-id>` 명령어가 두 노드로 전달해서, 정상적인 슬럿 상태를 다시 한 번 설정.
+10. 참고로, 변경사항이 클러스터에 자연 전파되는 것을 기다리고 싶지 않을 때, 위 명령어를 전체 노드에 전달하기도 함.
+
