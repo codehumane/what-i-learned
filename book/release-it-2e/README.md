@@ -235,4 +235,34 @@ Failure: 응답하지 않는 시스템.
 
 ### HTTP PROTOCOLS
 
-TBD
+1. HTTP 기반의 프로토콜은 소켓을 사용함. 따라서, 앞서 언급했던 문제들에 취약.
+2. 여기에 HTTP 자체의 이슈들도 더해짐. 예컨대, 아래와 같은 것들이 있음.
+   - 수신자가 TCP 커넥션 연결을 받아들였지만, HTTP 요청에 대한 응답을 하지 않음.
+   - 연결은 받아들였지만, 요청을 읽어들이지 못할 수도 있음. 요청 바디가 너무 큰 경우, 수신자의 TCP 윈도우를 꽉 차게 하고, 호출자의 TCP 버퍼도 차게 되면서, 소켓의 쓰기가 블럭될 수 있음.
+   - 호출자가 반환한 응답 상태를 호출자가 다루는지 모를 수 있음.
+   - 수신자가 반환한 컨텐츠 타입을 호출자가 이해하지 못할 수 있음. 예를 들어, JSON 요청을 했는데 404 에러 HTML 페이지가 반환된다거나.
+   - 수신자가 JSON을 응답한다고 하면서 실제로는 평문을 반환할 수도 있음.
+3. 세부적인 제어가 가능한 클라이언트 라이브러리를 사용하라. (커넥션과 읽기 타임아웃 등이 제공되는)
+4. 응답을 바로 도메인 객체로 매핑하려는 라이브러리는 쓰지 말아라. 기대를 충족하는 응답인지를 먼저 확인할 수 있어야 한다.
+
+### VENDOR API LIBRARIES
+
+그냥, 왠만해서는 쓰지 말라는 이야기.
+
+### COUNTERING INTEGRATION POINT PROBLEMS
+
+1. 통합이 없는 시스템은 드물고, 대부분 쓸모도 없음.
+2. 통합 지점을 어떻게 안전하게 만들 수 있을까?
+3. 가장 효과적인 안정성 패턴은 Circuit Breaker와 Decoupling Middleware(뒤에서 다루는 내용들).
+4. 테스팅 또한 도움이 됨.
+    - 냉소적인 소프트웨어는 형태나 기능 위반(잘못된 형태의 헤더나 비정상적인 연결 종료 등)을 다룰 수 있어야 하고,
+    - 이를 확인하기 위해서 Test Harness가 도움이 됨.
+
+### REMEMBER THIS
+
+1. Beware this necessary evil: 모든 통합 지점은 결국엔 어떤 식으로든 실패함.
+2. Prepare for the many forms of failure: 통합 지점 실패는 다양한 형태를 띰. 다양한 네트워크 오류부터 문법 에러까지. 그리고 약속된 프로토콜을 통해 에러가 오는 감사한 경우도 없을 것.
+3. Know when to open up abstractions: 통합 지점 실패를 디버깅할 때는 종종 저수준을 살펴야 하기도. 패킷 스니퍼나 네트워크 진달 도구가 도움이 됨.
+4. Failure propagate quickly: 코드가 충분히 방어적이지 않다면, 원격 시스템의 실패는 보통 실패 전파로 이어짐.
+5. Apply patterns to avert integration point problems: Circuit Breaker, Timeouts, Decoupling Middleware, Handshaking 등이 도움이 될 것.
+
