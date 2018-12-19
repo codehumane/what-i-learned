@@ -266,3 +266,12 @@ Failure: 응답하지 않는 시스템.
 4. Failure propagate quickly: 코드가 충분히 방어적이지 않다면, 원격 시스템의 실패는 보통 실패 전파로 이어짐.
 5. Apply patterns to avert integration point problems: Circuit Breaker, Timeouts, Decoupling Middleware, Handshaking 등이 도움이 될 것.
 
+## Chain Reactions
+
+1. 스케일 아웃을 취하고 있다고 하더라도, 부하 관련 충돌이나 자원 누수와 같은 결함은 연쇄 반응으로 이어질 수 있음.
+   - 예를 들어, 클러스터에서 특정 노드가 부하로 인해 문제가 생겼다고 해보자. 메모리 누수일 수도 있고, 부하가 심한 상황에서 발생하는 레이스 컨디션일 수도 있음.
+   - 그래서 특정 노드가 클러스터에서 빠지면, 나머지 노드들이 추가로 부하를 얻게 됨.
+   - 부하 관련 이슈이므로 나머지 노드들 역시 같은 이슈를 겪을 가능성이 높아짐.
+2. 결함을 제거하는 것이 연쇄 반응을 막을 수 있는 유일한 방법.
+3. Bulkhead 패턴처럼 레이어를 여러 개의 풀로 나누는 것이 때때로 도움이 되기도 함.
+
