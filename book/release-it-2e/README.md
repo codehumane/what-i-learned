@@ -349,3 +349,57 @@ session.setAttribute(EXPENSIVE_BEAN_HOLDER, ref);
 
 ## Blocked Threads
 
+1. 멀티스레딩은 많은 처리를 동시에 할 수 있게 해주었지만, 동시성 오류의 가능성을 가져왔음.
+2.  필자가 겪은 대부분의 시스템 장애는 명백한 충돌이라기 보다는, 프로세스는 실행중이지만 프로세스들이 아무 것도 하지는 않는 상태였음.
+3. 하지만 사용자 입장에서는 똑같은 문제. 어쨋든 사용자가 아무 것도 할 수 없기 때문임. 비즈니스 스폰서 입장에서는 "Is it generating revenue?"라고만 물을 뿐임.
+4. 이 때문에 외부 모니터링과 함께 내부 모니터링도 필요하다고 주장. 목<sup>mock</sup> 클라이언트를 만들어 실제 사용자가 수행하는 트랜잭션들을 주기적으로 확인해 보게 할 수도 있음. 프로세스가 실행중이냐 여부와 상관 없이, 사용자가 겪을 수 있는 문제를 조기에 드러낼 수 있음.
+5. 스레드 잠김(잠시 동안의 잠김은 문제 없음. 오히려 자연스러움)은 어려운 문제이고, 테스트로도 발견하기 어려움. 가장 좋은 방법은 신중하게 코드를 작성하는 것. 잘 작성되고 입증된 라이브러리를 사용하는 것도 좋음.
+6. 여러 가지 이유로 도메인 객체에 synchronize를 사용하는 것도 반대. 대신, 도메인 객체를 불변으로 만들라고 권장함. 질의와 렌더링에 사용하는 것. 상태를 변경해야 한다면, 커맨드 객체에게 위임. CQRS라고도 불림.
+
+#### SPOT THE BLOCKING
+
+```java
+String key = (String) request.getParameteR(PARAM_ITEM_SKU);
+Availability avl = globalObjectCache.get(key);
+```
+
+1. 위 코드에서 블럭킹 호출을 찾을 수 있겠는가?
+2. `globalObjectCache`가 동기화가 있을만한 지점이라고 추측했을지도 모르지만, 여기서 중요한 것은 호출 코드에서는 어디가 블럭킹 지점인지 결코 알 수 없다는 것.
+3. 자바에서는 synchronized 메소드를 unsynchronized로 바꾸기 위해 클래스를 상속할 수도 있음. 리스코프 치환 원칙에 위배되기도 함.
+
+```java
+public class GlobalObjectCache {
+    // ...
+    public synchronized Object get(String id) {
+        Object obj = items.get(id);
+        if (obj == null) {
+            obj = create(id);
+            items.put(id, obj);
+        }
+    }
+    // ...
+}
+```
+
+4. 어쨌든 `GlobalObjectCache#get`에는 synchronized가 걸려 있음.
+5. 이를 사용하는 시스템에서는 재고 관리가 필요했음. 재고 정보는 원격 호출로 가져오고, 15분 단위로 원격 시스템에서 재고 수치를 갱신.
+6. 재고 호출량이 많기 때문에, 호출자는 캐싱을 도입하기로 함.
+7. 캐싱 도입을 위해 `GlobalObjectCache`를 상속하는 `RemoteAvailabilityCache`를 만들고, create 부분을 원격 호출하는 코드로 대체.
+8. 기능적으로 문제가 없었으나 부하가 심한 경우 원격 호출이 대기하게 됐고, synchronized와의 조합으로 수 많은 호출부가 대기하게 됨.
+9. 결과적으로 전체 사이트가 다운 됨. 단지, 원격 재고 시스템이 안 된다는 이유 때문에 말이다. 재고를 불러올 수 없다고 전체 시스템이 마비되어야 할까?
+
+#### LIBRARIES
+
+1. 라이브러리는 스레드 잠김의 단골 손님. 오픈소스이건 벤더 코드이건.
+2. 많은 라이브러리들은 자신의 리소스 풀링을 위해 마치 서비스 클라이언트 처럼 동작함. 이것이 영원히 스레드가 잠기는 문제의 원인이 됨.
+3. 또한, 이런 라이브러리들은 자신들의 실패 모드에 대한 설정을 제공하지 않음.
+4. 여기서 벤더 코드에 대한 비판이 또 나옴. 기록은 생략.
+5. 라이브러리가 깨지기 쉽다면, 요청을 다루는 스레드를 우리가 보호할 수 있어야 함.
+6. 그렇지 않다면 적어도 퓨처를 반환하는 래퍼 클래스로 라이브러리를 감싸는 것이 좋음. 그리고 이 래퍼 클래스들을 사용할 수 있는 스레드 풀을 관리하라는 이야기. 타임아웃도 래퍼 클래스를 통해 제공하고 말이다. Hystrix의 [`execution.isolation.strategy`](https://github.com/Netflix/Hystrix/wiki/configuration#executionisolationstrategy)를 같이 보면 더 좋을 듯.
+7. 이런 블럭 스레드는 통합 지점에서 주로 발견되며, 연쇄 반응으로 이어지기 쉽상. 또한 피드백 루프를 만들며 사소한 문제가 전체 장애로 확장되기도.
+
+#### REMEMBER THIS
+
+원래 이 항목은 기록하지 않았는데, 아래 내용이 인상 깊어서 특별히 기록함.
+
+> All manner of problems can lurk in the shadows of third-party code. Be very wary. Test it yourself. Whenever possible, acquire and investigate the code for surprises and failure modes. You might also prefer open source libraries to closed source for this very reason.
