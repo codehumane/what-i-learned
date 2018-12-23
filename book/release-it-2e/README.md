@@ -403,3 +403,17 @@ public class GlobalObjectCache {
 원래 이 항목은 기록하지 않았는데, 아래 내용이 인상 깊어서 특별히 기록함.
 
 > All manner of problems can lurk in the shadows of third-party code. Be very wary. Test it yourself. Whenever possible, acquire and investigate the code for surprises and failure modes. You might also prefer open source libraries to closed source for this very reason.
+
+## Self-Denial Attacks
+
+1. Self-Denial Attack을 어떻게 번역해야 할지 모르겠음.
+2. 어쨌든 책에서 소개하는 이 단어의 정의는 다음과 같음.
+
+> A self-denial attack describes any situation in which the system-or the extended system that includes humans-consipires against itself.
+
+3. 스스로를 망가뜨리는 상황을 이야기하는 것이고, 대량의 트래픽이 몰릴 수 있게 마케팅을 하는 등의 행위를 가리킴.
+4. 트래픽이 몰리는 경우를 대비하는 방법으로 (어떻게 보면 당연한) "shared-nothing" 아키텍처 구성도 언급함. 다소 뜬금 없긴 하지만, 대량 트래픽이 몰리는 경우 공유 자원에 의해 잘못된 잠금을 경험했기 때문에 언급하는 것으로 보임.
+5. 또한, 하드웨어 로드 밸런싱을 구성하고, 요청이 몰리는 시스템의 나머지에 대해서는 정상적으로 응답하게 할 수도 있음. 미리 이벤트 상품 전용 서버를 구축할 수도 있음.
+6. 오토 스케일링 시에는 "pre-autoscale"을 권장한다는 이야기도.
+7. 교육과 훈련, 커뮤니케이션의 중요성도 함께 언급. (별 것 아닌 것 같지만 제일 효율적인 수단이라고 생각함)
+
