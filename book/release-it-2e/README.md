@@ -861,3 +861,28 @@ HTTP는 *handshaking*을 위한 옵션이 별로 없음. 503 정도가 현재 �
 2. Consider health checks.
 3. Build handshaking into your own low-level protocols.
 
+## Test Harnesses
+
+통합 테스트의 어려움에 대해 이야기.
+
+1. 한 가지 변경 때문에 전체 회사가 테스트에 참여해야 하거나,
+2. 오늘날의 시스템은 서로 얽히고 섥히기에 변경 관리의 부담이 만만치 않음.
+3. 보통 정상적인 경우의 기능 테스트에 그침.
+
+하지만, 실패는 반드시 일어나고, 여기에 대비하는 한 가지 좋은 방법은 바로 *test harness*.
+
+1. 이를 통해 저수준의, 그리고 실패하는 네트워크 API를 작성할 수 있음.
+2. 바이트를 너무 빠르게 또는 천천히 보내거나,
+3. 소켓 바인딩 후 단일 연결에 대해서는 서비스를 하지 않거나.
+4. 단일 *test harness*로 이런 다양한 형태의 올바르지 않은 네트워크 행위를 만들어 낼 수 있음.
+5. 저자가 사용하는 한 가지 방법은 포트 별로 각 상황을 만드는 것.
+6. 10200은 연결만 허용하고 응답 X, 10201은 응답하되 `/dev/random`을 그대로 복사해서 응답, 20202는 연결을 허용하지만 바로 버림, ...
+7. 그리고 애플리케이션 수준의 비정상 행위들을 만들어서 조합할 수도 있음. 책에서는 서브클래스를 만들어서 한다고 하는데, 실제로 보면 좋을 듯 함.
+
+### REMEMBER THIS
+
+1. Emulate out-of-spec failures.
+2. Stress the caller.
+3. Leverage shared harnesses for common failures.
+4. Supplement, don't replace, other testing methods.
+
