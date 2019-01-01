@@ -842,3 +842,22 @@ Beware of illusions and superstitions.
 1. 직접 호출하는 경우라면 *circuit breaker*를 두거나,
 2. 로드 밸런싱 풀을 사용한다면 풀에 다시 합류시키거나.
 3. 고정으로 할당된 VM은 로드 밸런서의 헬쓰 체크로 재통합.
+
+## Handshaking
+
+*handshaking*이란, 기기들 간의 통신을 적절히 조정하기 위한 신호를 가리킴.
+
+1. EIA-232C와 같은 직렬<sup>serial</sup> 프로토콜은 수신자가 수신 받을 준비가 되었다는 것을 알려줌.
+2. 아날로그 모뎀은 기기 간의 속도와 인코딩을 합의하기 위해 *handshaking*을 사용.
+3. 앞서 소개했던 것처럼, TCP는 three-phase handshake.
+
+HTTP는 *handshaking*을 위한 옵션이 별로 없음. 503 정도가 현재 통신할 수 없다는 일시적 상태를 알려줄 뿐. 클라이언트가 이 응답에 잘 대응하는가는 또 다른 이야기. 원격 프로시저 호출 기술들도 마찬가지로 *handshaking*에 약함. 
+
+*handshaking*은 부하 상황에서 스스로를 보호할 수 있는 하나의 수단. HTTP 기반의 서버에서 *hadnshaking*을 유사하게 나마 만들 수 있는 방법은 로드밸런서를 이용하는 것. 헬스 체크를 통해 서버의 건강 상태를 확인하고, 문제가 있는 서버로는 요청을 전달하지 않는 것. *circuit breaker* 또한 임시방편이 될 수 있음.
+
+### REMEMBER THIS
+
+1. Create cooperative demand control.
+2. Consider health checks.
+3. Build handshaking into your own low-level protocols.
+
