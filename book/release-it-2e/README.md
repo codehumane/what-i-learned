@@ -770,3 +770,17 @@ Force Multiplier도 좀 더 기억에 남기고자, 원래는 기록하지 않�
 2. Purge data with application logic.
 3. Roll the logs.
 
+## Fail Fast
+
+실패를 미리 알 수 있다면 빠르게 실패하는 것이 좋음. 호출자가 불필요하게 자원을 점유 당하지 않기 때문. 그런데 어떻게 실패를 미리 알 수 있을까?
+
+첫 번째로, "resource unavailable" 종류의 문제가 있음. 로드 밸런서는 연결 요청을 받지만, 서비스 풀 안에 가용한 서버가 없을 수 있음. 이 때 바로 연결 거부 응답을 하는 것. 설정으로 연결 요청을 큐에 대기시키기도 하는데 이는 *fail fast* 위반. DB 연결이나 외부 서비스의 연결 등 모든 통합 지점에서, 서비스는 가용한 모든 연결과 *circuit breaker* 상태를 빠르게 확인하고, 하나라도 부족하다면 빠르게 실패를 응답할 수 있음.
+
+두 번째로, 웹 애플리케이션에서는 서블릿이나 컨트롤러에서 기본적인 파라미터를 작업 시작 전에 확인한 뒤, 유효하지 않다면 바로 실패를 응답할 수 있음. 
+
+### REMEMBER THIS
+
+1. Avoid Slow Responses and Fail Fast.
+2. Reserve resources, verify Integration Points.
+3. Use for input validation.
+
