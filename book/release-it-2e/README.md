@@ -896,3 +896,15 @@ HTTP는 *handshaking*을 위한 옵션이 별로 없음. 503 정도가 현재 �
 2. Avoid many failure modes through total decoupling. 잘 사용한 미들웨어는 결합도를 낮춰줌. 이는 응답 지연의 감소와 더불어, 장애 확산을 막아주는 효과를 주기도.
 3. Learn many architectures, and choose among them.
 
+## Shed Load
+
+TCP는 대량의 연결 유입을 다루기 위해 리슨 큐를 사용함. 포트 별로 대기열에 저장. 그리고 큐가 꽉차면 ICMP RST(reset) 패킷을 응답하며 연결을 거부. 서비스도 마찬가지여야 함. 감당할 수 없을 만큼 부하가 늘어난다면 연결을 거부해야 함. *fail fast*와도 관련.
+
+"너무 많은 부하"를 정의하는 이상적 방법은 SLA를 기준으로 결정. 이 기준을 넘어서기 시작한다면, 애플리케이션에 세마포어를 두는 것도 방법. 동시 접속을 제한하는 것. 요청을 큐로 받는 것도 비슷한 효과를 기대할 수 있지만, 복잡성과 응답 지연 면에서 좋은 선택은 아님. 로드 밸런서가 있다면, 각 인스턴스가 헬스 체크 응답으로 503을 반환하여 잠시 요청을 받지 않을 수도. 시스템의 경계 안이라면 *back pressure*를 만드는 것이 더 효율적(뒤에서 다루는 내용). 이 경우라면 *shed load* 보다 우선시 됨.
+
+#### REMEMBER THIS
+
+1. You can't out-scale the world.
+2. Avoid slow responses using Shed Load.
+3. Use load balancers as shock absorbers.
+
