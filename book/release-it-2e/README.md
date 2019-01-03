@@ -886,3 +886,13 @@ HTTP는 *handshaking*을 위한 옵션이 별로 없음. 503 정도가 현재 �
 3. Leverage shared harnesses for common failures.
 4. Supplement, don't replace, other testing methods.
 
+## Decoupling Middleware
+
+점점 그늘 속으로 사라진 미들웨어의 위상을 언급하긴 하지만, 잘 사용한다면 시스템 간의 커플링을 낮출 수 있음을 이야기. 다른 시스템 호출에 대한 구체적인 지식을 몰라도 되게 해주므로. 또한, 발행-구독의 메시징 시스템을 사용한다면, 시간적 그리고 대상에 대한 의존성도 낮춰줌. 이는 재앙의 전파를 막아주기도 하고, 응답 속도의 향상도 가져다 줌. 하지만, 큐의 예외, 늦은 응답, 콜백, 가정, 결과적 일관성과 결과적 실패 등을 모두 고려해야 함. 이는 비즈니스적 고려도 필요하기도 한 일.
+
+### REMEMBER THIS
+
+1. Decide at the last responsible moment. 미들웨어와 관련된 선택은 쉽게 돌이킬 수 없는 결정이므로.
+2. Avoid many failure modes through total decoupling. 잘 사용한 미들웨어는 결합도를 낮춰줌. 이는 응답 지연의 감소와 더불어, 장애 확산을 막아주는 효과를 주기도.
+3. Learn many architectures, and choose among them.
+
