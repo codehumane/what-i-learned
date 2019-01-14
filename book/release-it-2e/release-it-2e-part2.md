@@ -42,3 +42,33 @@
 2. Modeling and analysis can never be sufficiently complete. A *priori* prediction of all failure modes is not possible.
 3. Human action is a major source of system failures.
 
+# Foundations
+
+## Networking in the Data Center and the Cloud
+
+데이터 센터와 클라우드에서 네트워킹을 한다는 것은 단순히 소켓 열기를 넘어, 별도의 노력과 보안이 요구되는 것.
+
+### NICS AND NAMES
+
+호스트네임에 대한 오해들이 있음. *hostname*이 완전히 별개인 2가지로 정의될 수 있기 때문.
+
+1. OS가 자기 자신을 인식하기 위해 사용하는 이름. 호스트네임과 "[default search domain](https://apple.stackexchange.com/questions/286395/what-does-the-search-domain-in-the-network-preferences-do)"이 합쳐져 FQDN(Fully Qualified Domain Name)이 됨.
+2. 외부 시스템에 대한 이름. DNS 리졸브 대상.
+
+이로 인해, 장비가 가진 FQDN이, DNS가 IP 주소를 위해 가지고 있는 FQDN과 같은 것인지를 보장할 수 없음. 예컨대, "spock.example.com"에 대한 장비의 FQDN 집합(?)을 가지면서, "mail.example.com"과 "www.example.com"과 같은 DNS 매핑을 가질 수 있음. 장비의 호스트네임은 장비 식별에 사용되는 반면, DNS 네임은 IP 주소 식별에 사용. 많은 유틸리티와 프로그램은 장비 스스로에게 할당한 FQDN을 합법적인 DNS 이름으로 간주.
+
+그 외에도 다양한 복잡함이 존재. "DNS 네임 -> IP 주소"는 다대다 관계. 단일 장비는 다수의 NIC를 가짐(멀티호밍<sup>multihoming</sup>). 이더넷 포트, Wi-Fi, 루프백 NIC, ... 그리고 데이터 센터는 다른 목적으로 멀티호밍을 함. 관리와 모니터링을 위한 네트워크를 서로 분리하여 보안을 강화하는 것. 또한, 백업 같이 높은 트래픽이 필요한 네트워크와 프로덕션 트래픽을 분리하기도 함. [본딩과 티밍](https://zetawiki.com/wiki/%EB%B3%B8%EB%94%A9,_%ED%8B%B0%EB%B0%8D)도 언급.
+
+### PROGRAMMING FOR MULTIPLE NETWORKS
+
+다수의 인터페이스는 애플리케이션에도 영향을 미침. 언어들이 지원하는 "쉬운" 버전의 소켓 리스닝을 피할 것.
+
+```
+// 안 좋은 접근법
+ln, err := net.Listen("tcp", ":8080")
+
+// 좋은 접근법
+ln, err := net.Listen("tcp", "spock.example.com:8080")
+```
+
+어떤 인터페이스에 바인딩을 할 것인지 결정하기 위해서는, 애플리케이션이 장비의 이름과 IP 주소들을 알아야 함. 멀티호밍 된 장비에서 `getLocalHost` 등의 호출은 서버 내부의 호스트네임에 대응하는 IP 주소를 반환. 또한, 로컬 네이밍 컨벤션에 따라 얼마든지 달라질 수 있음. 따라서, 소켓을 리슨해야 하는 서버 애플리케이션은 어떤 인터페이스를 바인딩할 것인지를 결정할 수 있도록 설정 가능한 프로퍼티를 제공해야 함.
