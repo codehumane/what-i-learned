@@ -139,6 +139,21 @@ public class FlightSearch implements SessionBean {
 
 # Stability Antipatterns
 
+### 요약
+
+1. [Integration Points](#integration-points)는 어디에나 존재함을 언급. 그리고 이 통합 지점에서 발생하는 저수준의 소켓 통신에 대해 설명한 뒤, 새벽 5시만 되면 서버를 재시작해야 했던 사례 소개. HTTP 프로토콜은 소켓 통신을 감싼 만큼, 기본적으로 소켓의 한계에 더해 HTTP 고유의 문제를 더 가지고 있음도 언급. 통합 지점의 문제는 어떻게 극복할지도 간단히 언급.
+2. 또한, 실패가 수평적으로 전파되는 [Chain Reactions](#chain-reactions)의 문제와, 실패가 업스트림으로 전파되는 [Cascading Failures](#cascading-failures) 문제를 함께 언급.
+3. [Users](#users)의 트래픽이 수용량<sup>capacity</sup>을 넘어설 때 일어날 수 있는 메모리 고갈, 소켓 부족 문제들을 언급. 더불어, 무거운(외부 연동부 호출이나 데이터 쓰기를 발생시키는) 고객들을 어떻게 대비해야 하는지, 나쁜 의도를 가지고 시스템을 공격하는 고객은 어떻게 대응해야 하는지도 함께 언급.
+4. 멀티 스레드의 잘못된 사용으로 인한 [Blocked Threads](#blocked-threads) 문제들을 언급.
+5. 마케팅 등의 활동을 통해 스스로 대량의 트래픽을 유입시키지만 이로 인해 시스템이 무너지는 [Self-Denial Attacks](#self-denial-attacks) 문제와 그 대응을 이야기.
+6. 점대점 통신으로 인한 비효율, 병목이 될 수 있는 공유 자원의 문제인 [Scailing Effects](#scailing-effects) 대해서도 언급.
+7. 서로 통신하는 시스템 간에 수용력에 불균형 즉, [Unbalanced Capacities](#unbalanced-capacities)이 있을 수 있음. 호출부나 제공자를 탄력있게<sup>resilient</sup> 만드는 것을 제안(*auto scailing*, *handshaking*, *backpressure*, *circuit breaker*, *bulkhead*).
+8. 서버 재시작이나, 배치 실행, 설정 변경 등에 의해, 일시적으로 높은 부하가 서버에 과중되는 문제인 [Dogpile](#dogpile)도 언급. *slew* 등을 통해 위험이나 변경의 크기를 분산하거나 하는 등의 노력을 강조.
+9. Reddit.com의 장애 사례를 소개하며, 자동화의 한계를 받아들이고, 감속구간이나 제한자 등의 [Force Multiplier](#force-multiplier)를 함께 둘 것을 이야기.
+10. [Slow Responses](#slow-responses)가 연결 거부나 에러 응답보다 나쁨. 업스트림으로 문제가 전파되고, 사용자의 리로드나 재시도 등으로 더 많은 부담이 서버에 과중될 수도 있음.
+11. 마지막으로, 읽어 들여야 하는 데이터가 매우 클 때의 [Unbounded Result Sets](#unbounded-result-sets) 문제들에 대한 이야기. 데이터 제공자를 너무 신뢰하지 않으면서, 애플리케이션 수준의 프로토콜에 적절한 제한도 필요.
+
+
 ## Integration Points
 
 1. 저자는 1996년 이래로 단일 모드로 된 웹사이트를 본 적이 없다고 함.
@@ -510,7 +525,7 @@ Beware of illusions and superstitions.
 4. 느린 응답은 또한 또 다른 내재된 문제의 증상일 수도.
 5. 메모리 누수는 종종 느린 응답의 형태로 나타남. (가상 머신이 트랜잭션 처리를 위한 메모리를 얻기 위해 점점 더 열심히 일하기 때문)
 6. 높은 CPU 사용량으로도 나타날 수도 있으나, 가비지 컬렉션 때문이지, 트랜잭션 처리 자체를 위한 작업 때문은 아님.
-7. 때로는 네트워크 정첼 인해 느린 응답이 만들어지기도 함. LAN 안에서는 보기 드문 일이지만, WAN에서는 분명히 발생할 수 있는 문제. 잦은 통신을 하는 프로토콜 일수록 더더욱.
+7. 때로는 네트워크 정체로 인해 느린 응답이 만들어지기도 함. LAN 안에서는 보기 드문 일이지만, WAN에서는 분명히 발생할 수 있는 문제. 잦은 통신을 하는 프로토콜 일수록 더더욱.
 8. 소켓의 전송 버퍼를 빈 상태로 유지하며 수신 버퍼를 꽉 채우는 바람에 TCP 정지가 발생하는 경우는 자주 봄. 저수준에서 직접 소켓 프로토콜을 다룰 때 많이 발생하며, 수신 버퍼가 빌 때까지 읽기 루틴이 루프를 돌지 않는 경우에 이 문제가 발생.
 9. 느린 응답은 상위 레이어로 전파되는 경향이 있음.
 10. 당연한 얘기지만, 애플리케이션 성능을 모니터링할 수 있어야 하며, SLA 위반을 인지할 수 있어야 함.
