@@ -12,4 +12,5 @@
 [Part 2. Design for Production](./release-it-2e-part2.md)
 
 6. [Case Study: Phenomenal Cosmic Powers, Itty-Bitty Liviing Space](./release-it-2e-part2.md#case-study-phenomenal-cosmic-powers-itty-bitty-living-space)
+7. [Foundations](./release-it-2e-part2.md#foundations)
 
