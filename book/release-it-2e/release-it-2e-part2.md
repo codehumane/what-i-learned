@@ -119,3 +119,16 @@ ln, err := net.Listen("tcp", "spock.example.com:8080")
 별 것 아닌 것 같지만 이 정의는 중요하다고 함. "서버를 재시작 해"라고 했을 때, 우리는 무엇을 해야 한다는 얘기일까? 단어에 대해 서로 다르게 이해한다면, 단일 프로세스를 죽이라는 것인지, 혹은 전제 장비를 말하는 것인지 확신하기 어려움.
 
 다시 돌아와서, 이제부터 인스턴스가 필요로 하는 코드, 설정, 커넥션에 대해 알아볼 예정.
+
+## Code
+
+### BUILDING THE CODE
+
+개발자의 코드가 프로덕션 인스턴스까지 가는데, 강한 "일련의 보호<sup>chain of custody</sup>"가 필요. 허가되지 않은 누군가가 시스템에 코드를 넣는 일은 금지되어야 함.
+
+일단 개발자의 코드는 VCS를 통해서 관리. 의존성 없이, 오직 코드만이 VCS로 들어감. 다음으로, 의존성을 인터넷으로 받는 것은 위험. 몰래 의존성이 대체될 수도 있고, 업스트림 저장소가 공격 받은 상태일 수도. 인터넷 상으로 받았다고 하더라도, 가능한 비공개 저장소로 옮겨야 함. 전자 서명이 업스트림 제공자의 정보와 매치되는 라이브러리만 이동시켜야. 빌드 시스템 플러그인 같은 것도 신뢰 X. 젠킨스 플러그인 사례도 언급. 개인 컴퓨터가 아닌, CI 서버를 통해 프로덕션 빌드를 하고, 아무나 쓰기를 할 수 없는 안전한 저장소에 바이너리를 관리하라.
+
+### IMMUTABLE AND DISPOSABLE INFRASTRUCTURE
+
+[여기 그림](https://learning.oreilly.com/library/view/release-it-2nd/9781680504552/images/design_for_production/layers_of_stucco.png)처럼 기존 이미지에 계속 변경을 추가하기보다, [여기 그림](https://learning.oreilly.com/library/view/release-it-2nd/9781680504552/images/design_for_production/start_from_known_state.png)처럼 known base image로부터 매번 새로 시작하라고 이야기. 기존 것은 버리고<sup>disposable</sup>, 새로 만들어서 사용하는 불변<sup>immutable</sup> 인프라를 구축.
+
