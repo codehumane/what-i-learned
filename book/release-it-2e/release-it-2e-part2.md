@@ -132,3 +132,39 @@ ln, err := net.Listen("tcp", "spock.example.com:8080")
 
 [여기 그림](https://learning.oreilly.com/library/view/release-it-2nd/9781680504552/images/design_for_production/layers_of_stucco.png)처럼 기존 이미지에 계속 변경을 추가하기보다, [여기 그림](https://learning.oreilly.com/library/view/release-it-2nd/9781680504552/images/design_for_production/start_from_known_state.png)처럼 known base image로부터 매번 새로 시작하라고 이야기. 기존 것은 버리고<sup>disposable</sup>, 새로 만들어서 사용하는 불변<sup>immutable</sup> 인프라를 구축.
 
+## Configuration
+
+### CONFIGURATION FILES
+
+설정의 "starter kit"은 인스턴스 기동 시 읽어들이는 파일 집합. 동일한 소프트웨어가 여러 서버 인스턴스에서 동작하므로, 일부 설정들은 장비마다 다를 수 있음. 바이너리가 환경 별로 다른 것을 원하지는 않을 것. 따라서, 프로퍼티 파일이 환경 별로 다를 수 밖에 없고, 이는 VCS에서 설정을 분리해야 하는 한 가지 이유가 됨. 설정 파일에서 민감 정보를 분리해야 하는 것도 중요한 이유.
+
+그렇다고 설정을 아예 VCS에 두지 말라는 것은 아님. 적어도 다른 저장소에서 관리. 접근 권한을 관리하면서 말이다.
+
+### CONFIGURATION WITH DISPOSABLE INFRASTRUCTURE
+
+EC2나 컨테이너 플랫폼 같은 이미지 기반의 환경에서는 설정 파일을 인스턴스 별로 다르게 가져갈 수 없음. 애플리케이션 시작 시 설정을 주입하거나, 설정 서비스를 활용해야 함.
+
+EC2는 텍스트 블럽을 통해 사용자 데이터를 넘겨줄 수 있게 함. 한편, Heroku는 환경 변수를 선호. 이를 활용해 애플리케이션 시작 시 설정을 주입.
+
+ZooKeeper나 etcd 등의 설정 서비스를 이용할 수도. 애플리케이션은 이 서비스에 설정을 질의. 다만, 이 방식은 설정 서비스에 대한 의존도를 낳고, 따라서 설정 서비스의 다운 타임은 "심각도 1" 문제가 됨. 또한, 가용성 확보를 위해 네트워크 토폴로지를 잘 구성해야 하고, 실제로 운영 가용성도 매우 높아야 함. ZooKeeper는 스케일 가능하지만 엘라스틱하지는 않음. 따라서 노드 추가/삭제가 쉽지는 않고, 따라서 높은 수준의 운영 성숙도가 필요하고 운영 부담을 안겨줌. 하나의 애플리케이션 만을 위해서, 또는 작은 팀을 위해서 이를 운영하는 것은 편익이 작음. 대부분의 경우 설정 주입이 더 나은 선택.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
