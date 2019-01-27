@@ -203,3 +203,15 @@ EC2는 텍스트 블럽을 통해 사용자 데이터를 넘겨줄 수 있게 �
 5. 커넥션 풀, 캐시, 써킷 브레이커의 상태
 
 헬스 체크는 트래픽 관리에서도 중요. 다음 장에서 살펴봄.
+
+# Interconnect
+
+Foundation, Instance에 대해 알아봤으니, [여기 그림](https://learning.oreilly.com/library/view/release-it-2nd/9781680504552/images/design_for_production/layered_concerns.png)대로 Interconnect에 대해 다룰 차례. Routing, load balancing, failover, traffic management 등을 이야기. 높은 가용성을 만들어 내는 부분이기도 함.
+
+## Solutions at Different Scales
+
+Foundation, Instance 다루는 부분은 프로덕션 환경이 무엇이냐에 따라 선택이 달라지는 반면, Interconnect, Control Plane, Operation에서는 조직의 상황을 고려해야 함. 예컨대, 조직의 수가 많고 변화가 잦은 곳에서는 Consul 등의 동적 디스커버리 서비스가 이득이 되겠지만, 그렇지 않다면 DNS 엔트리를 고려하는 것도 괜찮음.
+
+일례로, 디스커버리 서비스 사용의 편익을 따지는 이야기가 나옴. 변화가 얼마나 잦은가, 늘어나는 운영적 부담을 떠안을 조직은 있는가, 조직 규모가 커서 IP 주소와 같은 변경사항(가상화나 클라우드 환경에서는 자주 일어나는)을 모두 일일이 개발자가 대응해야 하지는 않는지.
+
+## DNS
