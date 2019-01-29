@@ -13,4 +13,6 @@
 
 6. [Case Study: Phenomenal Cosmic Powers, Itty-Bitty Liviing Space](./release-it-2e-part2.md#case-study-phenomenal-cosmic-powers-itty-bitty-living-space)
 7. [Foundations](./release-it-2e-part2.md#foundations)
+8. [Processes on Machines](./release-it-2e-part2.md#processes-on-machines)
+9. [Interconnect](./release-it-2e-part2.md#interconnect)
 
