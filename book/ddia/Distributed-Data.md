@@ -580,9 +580,74 @@ hot spot을 피하는 가장 단순한 방법은 레코드가 저장될 노드�
 
 많은 분산 데이터 시스템들은 ZooKeeper와 같은 별도의 코디네이션 서비스를 사용. Cassandra와 Riak은 조금 다름. 노드 간에 *gossip protocol*이라는 프로토콜을 사용해서, 클러스터 상태의 변경을 감지함. 이 프로토콜은 위에서 언급한 접근법 중에 첫 번째 것과 유사한 방식임. ZooKeeper 등의 외부 서비스로부터 독립적이긴 하지만, 데이터베이스에 복잡성이 가중됨.
 
+# Transactions
 
+다음은 현실 속의 데이터 시스템에서 얼마든지 일어날 수 있는 일들.
 
+1. DB 소프트웨어나 하드웨어의 장애<sup>fail</sup>
+2. 애플리케이션의 충돌<sup>crash</sup>
+3. 네트워크 중단에 의한, DB와 애플리케이션 또는 DB 노드들 간의 통신 단절
+4. 여러 클라이언트의 DB 동시 쓰기로 인한 변경 사항 유실
+5. 부분적 업데이트로 인한 비일관적인 읽기
+6. 클라이언트 간의 레이스 컨디션으로 인한 예상치 못한 버그
 
+트랜잭션은 이런 이슈들을 단순화하기 위한 목적으로 사용됨. 여기서의 트랜잭션은 아래와 같이 정의.
+
+> A transaction is a way for an application to group several reads and writes together into a logical unit.
+
+이는 부분적 성공 또는 실패를 없애는 일이고, 따라서 이로 인해 벌어질 수 있는 다양한 영향을 차단함. 
+
+## The Slippery Concept of a Transaction
+
+"트랜잭션은 확장성에 대립하고, 크게 확장된 시스템은 어느 것이든 좋은 성능과 높은 가용성을 위해 트랜잭션을 포기해야 한다" 혹은 그 반대의 말은 과대 선전이고 너무 과장됐다고 얘기함. 실제로는 이렇게 간단하지 않으며, 따라서 트랜잭션이 보장해 주는 것들을 자세히 살펴볼 필요가 있음.
+
+### The Meaning of ACID
+
+트랜잭션에 의해 보장되는 안전은 흔히 ACID로 설명됨. 하지만 ACID의 구현은 DB마다 다름. 특히 isolation.
+
+#### Atomicity
+
+일반적으로 *atomic*은 더 이상 작은 단위로 쪼갤 수 없는 것을 가리킴. 하지만 어느 문맥에서 사용되느냐에 따라 조금씩 다른 의미를 가짐. 예컨대, 멀티 스레드 프로그래밍에서 어떤 연산이 *atomic*이라고 함은, 다른 스레드가 연산의 중간 상태를 알 수 없음을 가리킴. 하지만 ACID에서 *atomic*은 동시성에 관한 것이 아님(isolation이 동시성에 관한 것). 대신, 트랜잭션 실행 도중 어떤 문제가 생기면 모두 버리고 원래대로 돌아감을 의미함. 문제가 생긴 상태를 그대로 두면, 이를 해결하는 것이 복잡해짐. 하지만, 전체를 다시 돌리면, 애플리케이션은 이를 감지하고 단지 재시도를 하면 됨.
+
+*abortability*라는 단어가 차라리 낫지 않았을까 하는 개인적 얘기도 있음.
+
+#### Consistency
+
+이 단어는 너무 중의적.
+
+1. replica consistency, eventual consistency
+2. 리밸런싱에 관한 consistent hashing
+3. CAP 이론에서의 consistency
+4. ACID에서의 consistency
+
+ACID에서의 consistency는 트랜잭션이 완료됐을 때 항상 invariants가 만족됨을 보장하는 것. 하지만 이를 보장해야 하는 것은 결국은 애플리케이션의 역할(물론, DB의 invariants가 도움이 될 때도 있음)이 큼.
+
+#### Isolation
+
+둘 이상의 클라이언트가 동시에 같은 DB 부분에 쓰기와 읽기를 발생시키면 동시성 문제(레이스 컨디션)가 발생함. 뒤에서 자세하게 다뤄지므로 기록은 생략.
+
+#### Durability
+
+커밋된 데이터가 유실되지 않게 하는 것. 하드웨어 장애나 데이터베이스 충돌에도 불구하고 말이다. 일단 비휘발성 저장소에 저장되는 것이고, write-ahead 로그나 B 트리 이야기에서 다뤘던 것들을 포함하는 것이기도 함. 또한, 레플리케이션을 포함할 수도. 하지만 이미 앞서 언급했던 것 처럼, 완벽한 내구성은 존재하지 않음.
+
+## Summary
+
+일단, isolation level에 대한 내용이 어김 없이 나올 뿐만 아니라, 상당 부분이 이 내용에 할애됨.
+
+1. Dirty reads
+2. Dirty writes
+3. Read skew (nonrepeatable reads)
+4. Lost updates
+5. Write skew
+6. Phantom reads
+
+높은 격리 수준인 serializable을 구현하기 위한 방법으로 3가지를 언급.
+
+1. Literally executing transactions in a serial order: 트랜잭션을 매우 빠르게 처리할 수 있고, 단일 CPU 코어로도 충분히 감당할 만한 낮은 처리량을 가진다면, 간단하고 효과적인 선택지.
+2. Two-phase locking: 수 년간 serializability를 구현하기 위한 표준적인 방법으로 사용되어 옴. 하지만 성능적 한계로 많이 사용되지 않음.
+3. Serializable snapshot isolation (SSI): 앞서의 두 가지 문제를 피하는 비교적 최근의 알고리즘. 낙관적 접근법을 사용하며, 따라서 블로킹 없이 트랜잭션을 처리함. 트랜잭션 커밋 시 체크를 하고, serializable을 달성할 수 없다면 종료시킴.
+
+이번 장에서 다룬 것은 단일 장비 위의 데이터베이스에 대한 것이었음. 분산 데이터베이스는 새로운 도전 과제들을 동반하며, 이어지는 2개의 챕터에서 다룬다고 함.
 
 
 
