@@ -32,5 +32,11 @@
 - [Rebalancing Partitions](./Distributed-Data.md#rebalancing-partitions)
 - [Request Routing](./Distributed-Data.md#request-routing)
 
+### [Transactions](./Distributed-Data.md#transactions)
+
+- [The Slippery Concept of a Transaction](./Distributed-Data.md#the-slippery-concept-of-a-transaction)
+- [Weak Isolation Levels](./Distributed-Data.md#weak-isolation-levels)
+- [Summary](./Distributed-Data.md#summary)
+
 ## III. Derived Data
 

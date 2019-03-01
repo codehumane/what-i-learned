@@ -665,6 +665,51 @@ update mailboxes set unread = unread + 1 where recipient_id = 2
 4. 재시도는 데이터베이스 바깥에 사이드 이펙트를 유발할 수도. 이메일 중복 전송 등 말이다. 2PC가 도움이 될 수도 있을 것.
 5. 재시도 중에 클라이언트의 프로세스가 실패한다면, 데이터베이스에 쓰려던 데이터가 유실 될 수도.
 
+## Weak Isolation Levels
+
+다른 내용은 익숙한 것들이라 생략. 생소한 Write Skew and Phantoms에 대해서만 기록.
+
+### Write Skew and Phantoms
+
+*dirty writes*와 *lost updates*와 유사하지만 조금 다른 개념. 둘 이상의 트랜잭션의 서로 다른 객체들을 업데이트 하기 때문. DB의 레코드 차원에서는 레이스 컨디션이 아니지만, 애플리케이션 요구사항 차원에서는 일종의 충돌이자 레이스 컨디션. 이를 극복하는 몇 가지 방안도 소개하고 있음. *lost updates* 보다는 까다로움.
+
+1. 진짜 serializable isolation을 사용하거나,
+2. 트리거 또는 materalized view를 사용해서, 여러 객체를 별도의 한 객체로 모은 다음, 제약사항 설정으로 자동 검사를 실행하거나,
+3. SELECT FOR UPDATE로 락을 걸거나.
+
+#### More examples of write skew
+
+생각보다 많은 곳에서 이슈가 될 수 있음을 이야기. 여러 예시 중 회의실 예약 시스템만 기록. 이 경우는 snapshot isolation으로는 예방 불가. serializable isolation 필요.
+
+```sql
+BEGIN TRANSACTION;
+
+SELECT COUNT(*)
+  FROM bookings
+  WHERE room_id = 123 AND
+    end_time > '2015-01-01 12:00' AND
+    start_time < '2015-01-01 13:00';
+INSERT INTO bookings
+  (room_id, start_time, end_time, user_id)
+  VALUES (123, '2015-01-01 12:00', '2015-01-01 13:00', 666);
+
+COMMIT;
+```
+
+#### Phantoms causing write skew
+
+*write skew*의 원인을 일반화하면 *phantom*이라는 것.
+
+> This effect, where a write in one transaction changes the result of a search query in another transaction, is called a *phantom*.
+
+#### Materializing conflicts
+
+phantoms의 문제가 락을 지정할 수 있는 대상 객체가 없는 것이라면, 이를 위한 가공의 객체를 하나 추가하면 되지 않을까?
+
+> For example, in the meeting room booking case you could imagine creating a table of time slots and rooms. Each row in this table corresponds to a particualr room for a particular time period (say, 15 minutes). You create rows for all possible combinations of rooms and time periods ahead of time, e.g. for the next six months.
+
+이제 SELECT FOR UPDATE가 가능함.
+
 ## Summary
 
 일단, isolation level에 대한 내용이 어김 없이 나올 뿐만 아니라, 상당 부분이 이 내용에 할애됨.
