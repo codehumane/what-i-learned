@@ -630,6 +630,41 @@ ACID에서의 consistency는 트랜잭션이 완료됐을 때 항상 invariants�
 
 커밋된 데이터가 유실되지 않게 하는 것. 하드웨어 장애나 데이터베이스 충돌에도 불구하고 말이다. 일단 비휘발성 저장소에 저장되는 것이고, write-ahead 로그나 B 트리 이야기에서 다뤘던 것들을 포함하는 것이기도 함. 또한, 레플리케이션을 포함할 수도. 하지만 이미 앞서 언급했던 것 처럼, 완벽한 내구성은 존재하지 않음.
 
+### Single-Object and Multi-Object Operations
+
+Atomicity와 Isolation에 대해 다시 언급. 클라이언트가 하나의 트랜잭션 안에서 여러 개의 쓰기를 발생시킬 때 데이터베이스가 해야 하는 것들 중 하나. 예컨대, 아래와 같은 SQL이 있다고 해보자.
+
+```sql
+SELECT COUNT(*) FROM emails WHERE recipient_id = 2 AND unread_flag = true
+```
+
+하지만 email이 너무 많아서 쿼리가 너무 느려질 수 있음. 이 때, 읽지 않은 메시지 수를 별도의 테이블 필드에서 관리할 수 있음(일종의 비정규화).
+
+```sql
+insert into emails (recipient_id, body, unread_flag) values (2, 'hello', true)
+update mailboxes set unread = unread + 1 where recipient_id = 2
+```
+
+이 때, insert와 udpate 사이에 읽지 않은 메시지 수를 조회하는 query를 호출하면, "dirty read"로 인해 *isolation*이 보장되지 않을 수 있음. 또한, `update mailboxes` 문장만 실패한다면 *atomicity*가 보장되지 않는 것.
+
+#### Single-object writes
+
+스토리지 엔진은 단일 오브젝트(키-밸류 페어 같은)에 대한 *atomicity*와 *isolation*을 제공할 수 있음. *atomicity*는 충돌 복구를 위한 로그를 통해서, *isolation*은 각 객체에 대한 락을 이용해서. 일부 데이터베이스는 좀 더 복잡한 원자적 연산을 제공함. increment 또는 compare-and-set 연산이 그 예. 하지만 이들은 트랜잭션으로 보기 어려움. 다수의 객체에 대한 다수의 연산들을 그룹으로 묶을 수 있어야 함.
+
+#### The need for multi-object transactions
+
+특별한 내용 없음.
+
+#### Handling errors and aborts
+
+중간에 문제가 생기면 작업 내용을 모두 버리고 재시도를 하는 것도 하나의 방법. 단순하고 효과적인 에러 핸들링이긴 하지만 완벽한 것은 아님.
+
+1. 트랜잭션을 실제로 성공했지만, 네트워크 실패로 클라이언트가 오류 응답을 받을 수도 있음. 애플리케이션 차원에서 중복 데이터에 대한 별다른 처리가 없다면, 재시도는 여러가지 문제를 야기할 수 있음.
+2. 과부하로 인한 에러인 경우, 트랜잭션의 재시도는 문제를 더 악화시킴. 이 때는 재시도 횟수를 제한하거나, 백오프<sup>exponential backoff</sup>를 사용하거나, 부하 관련 에러는 다른 에러와는 조금 다르게 처리할 수도 있음.
+3. 데드락, 격리 위반, 순간적인 네트워크 오류, 페일오버 등 일시적인 에러에 대한 재시도만이 가치가 있음.
+4. 재시도는 데이터베이스 바깥에 사이드 이펙트를 유발할 수도. 이메일 중복 전송 등 말이다. 2PC가 도움이 될 수도 있을 것.
+5. 재시도 중에 클라이언트의 프로세스가 실패한다면, 데이터베이스에 쓰려던 데이터가 유실 될 수도.
+
 ## Summary
 
 일단, isolation level에 대한 내용이 어김 없이 나올 뿐만 아니라, 상당 부분이 이 내용에 할애됨.
