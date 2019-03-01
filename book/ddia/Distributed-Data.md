@@ -729,10 +729,41 @@ phantoms의 문제가 락을 지정할 수 있는 대상 객체가 없는 것이
 
 이번 장에서 다룬 것은 단일 장비 위의 데이터베이스에 대한 것이었음. 분산 데이터베이스는 새로운 도전 과제들을 동반하며, 이어지는 2개의 챕터에서 다룬다고 함.
 
+# The trouble with Distributed Systems
 
+## Faults and Partial Failures
 
+### Cloud Computing and Supercomputing
 
+## Unreliable Networks
 
+### Network Faults in Practice
+
+### Detecting Faults
+
+### Timeouts and Unbounded Delays
+
+### Synchronous Versus Asynchronous Networks
+
+## Unreliable Clocks
+
+### Monotonic Versus Time-of-Day Clocks
+
+### Clock Synchronization and Accuracy
+
+### Relying on Synchronized Clocks
+
+### Process Pauses
+
+## Knowledge, Truth, and Lies
+
+### The Truth Is Defined by the Majority
+
+### Byzantine Faults
+
+### System Model and Reality
+
+## Summary
 
 
 
