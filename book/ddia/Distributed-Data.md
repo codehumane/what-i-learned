@@ -847,4 +847,48 @@ phantoms의 문제가 락을 지정할 수 있는 대상 객체가 없는 것이
 - 왜 보장하기 어려운지 여러 이유들을 열거.
 - 그래서, MiFID II 같은 규제에서는 적어도 100ms 마다 동기화 하는 것을 요구함.
 
+### Relying on Synchronized Clocks
+
+- 시계를 사용하는 것은 생각보다 단순하지 않음.
+- 하루가 정확히 86,400초를 가지지 않을 수도 있고,
+- 시간이 뒤로 갈 수도 있으며,
+- 노드 간의 시간이 서로 다를 수도 있음.
+- 시간이 중요한 시스템이라면 이런 부정확성을 잘 다룰 수 있어야 함.
+- 일단, 모든 장비간의 시간 오프셋을 모니터링 해야하고,
+- 만약, 특정 노드의 시간이 너무 멀어졌다면 죽은 노드로 간주하고 클러스터에서 제외.
+
+#### Timestamps for ordering events
+
+나중에 발생한 이벤트가 오히려 앞서 일어났다고 잘못 판단되는 사례를 소개.
+
+- 노드 간 시계는 0.3ms 차이가 있었고,
+- Riak, Cassandra 등과 같이, 멀티 리더 또는 리더 없는 리플리케이션에서 LWW(Last Write Wins)가 사용되는 상황.
+- 어떤 경우에는 클라이언트에서 타임스탬프를 제공하기도 하지만 근본적인 해결책은 X.
+
+어떻게 이벤트의 순서를 잘 보장할 수 있을까?
+
+- NTP 동기화는 이런 부정확성 극복 X. 네트워크 왕복 시간(RTT) 때문.
+- 대신, 논리적 시계(카운트 증가)가 도움이 됨.
+- 동시성 감지에서 사용 됐던 방식. (Detecting Concurrent Writes 참고)
+- 이는 monotonic clock도 아니고 time-of-day clock도 아님.
+- 단지 이벤트의 상대적인 순서만을 측정.
+
+#### Clock readings have a confidence interval
+
+- 퍼블릭 인터넷에 있는 NTP 서버로는 10ms 정도의 오차를 가지게 됨.
+- 네트워크가 혼잡한 경우에는 100ms 까지도 치솟기도.
+- 따라서, 시간을 읽을 때 정확한 시간을 읽는다고 생각하기 보다,
+- 어느 정도 오차 범위를 내포한 값이라고 생각해야 함.
+
+#### Synchronized clocks for global snapshots
+
+- snapshot isolation에서는 monotonic하게 증가하는 트랜잭션 ID가 필요.
+- 분산 시스템에서 코디네이션을 통해 이 ID를 증가시켜줄 수 있으나 병목이 되기 쉽상.
+- 그렇다고 로컬의 time-of-day 시계를 사용하면 정확한 시간 보장이 X.
+- Spanner는 시계의 TrueTime API를 통해 보고되는 confidence interval을 사용한다고 함. (바로 위에서 소개했던)
+- A와 B가 있을 때 각각의 confidence interval은 [A earliest, A latest], [B earliest, B latest]
+- 이 경우 반드시 두 interval이 오버랩 되지 않는 경우에 한해 누가 더 먼저 일어났는지 결정한다고 함. (A earliest < A latest < B earliest < B latest)
+- 그렇지 않은 경우에는 확신할 수 없다고 판단.
+
+### Process Pauses
 
