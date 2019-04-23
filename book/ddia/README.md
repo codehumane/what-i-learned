@@ -38,7 +38,7 @@
 - [Weak Isolation Levels](./Distributed-Data.md#weak-isolation-levels)
 - [Summary](./Distributed-Data.md#summary)
 
-### The trouble with Distributed Systems
+### [The trouble with Distributed Systems](./Distributed-Data.md#the-trouble-with-distributed-systems)
 
 - [Faults and Partial Failures](./Distributed-Data.md#faults-and-partial-failures)
 - [Unreliable Networks](./Distributed-Data.md#unreliable-networks)
