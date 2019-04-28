@@ -8,7 +8,7 @@
 - 비동기와 동기 모두 사용 가능
 - 시간에 따라 0, 1, 다수 혹은 무한 개의 이벤트를 다룰 수 있음.
 
-### 밀어내기와 끌어오기
+### Push versus Pull
 
 밀어내기(push)를 통한 이벤트 수신을 위해, Observable/Observer 쌍을 구독으로 연결함.
 
@@ -46,7 +46,7 @@ interface Subscriber<T> implements Observer<T>, Subscription {
 
 - 첫 인상으로는 이름이 괜찮게 지어졌다고 생각 됨.
 
-### 비동기와 동기
+### Async versus Sync
 
 - 일반적으로 Observable은 비동기.
 - 하지만 반드시 그럴 필요는 없고 기본값은 사실 동기 방식이라고 함.
@@ -130,3 +130,178 @@ for (int i = 0; i < 30; i++) {
     Thread.sleep(100);
 }
 ```
+
+### Concurrency and Parallelism
+
+병렬성(praralleism)
+
+- 동시에 수행하는 작업들.
+- 일반적으로 서로 다른 CPU나 기기에서 처리.
+- 동시성의 특수한 형태.
+
+동시성(concurrency)
+
+- 여러 작업들을 합성하거나 번갈아 수행.
+- 하나의 CPU가 여러 스레드들을 처리하는 것은 시 분할. 병렬 실행 아니고 동시 실행.
+
+Observable 스트림의 직렬성.
+
+- onNext, onCompleted, onError 이벤트는 동시에 방출되지 않음.
+- 항상 직렬화되어 스레드에 안전해야 함.
+- Observable의 규약임.
+- 이에 따라, 아래의 예제는 잘못된 사용. 규약 위반.
+- 두 개의 스레드가 동시에 onNext를 호출할 수 있음.
+
+```java
+Observable.creaet(s -> {
+  new Thread(() -> {
+    s.onNext("one");
+    s.onNext("two");
+  }).start();
+  
+  new Thread(() -> {
+    s.onNext("three");
+    s.onNext("four");
+  }).start();
+})
+```
+
+- 동시성과 병렬성의 이점을 취하고자 한다면 구성(composition) 사용을 권장.
+- merge와 flatMap 등이 자주 사용되는 이유이기도.
+- 아래는 그 예.
+
+```java
+Observable<String> a = Observable.create(s -> {
+  new Thread(() -> {
+    s.onNext("one");
+    s.onNext("two");
+    s.onCompleted();
+  }).start();
+});
+
+Observable<String> a = Observable.create(s -> {
+  new Thread(() -> {
+    s.onNext("three");
+    s.onNext("four");
+    s.onCompleted();
+  }).start();
+});
+
+Observable<String> c = Observable.merge(a, b);
+```
+
+왜 동시에 `onNext()`를 호출하면 안 될까?
+
+- 일단, `onNext()`는 사람이 사용하기를 의도한 것. 동시성은 어려움.
+- 게다가, `scan`이나 `reduce` 같은 몇몇 연산자는 동시 방출이 불가.
+- 교환법칙이나 결합법칙이 성립하지 않는 이벤트들의 스트림을 그대로 축적하기 위한 연산.
+- 마지막으로, 모든 옵저버와 연산자가 thread-safe여야 한다면 동기화 오버헤드로 인한 성능 저하가 발생.
+- 실제로, `.parallel(Function f)` 연산자가 원래 존재했지만, 라이브러리 버전 1에서 제거했다고 함.
+
+### Lazy versus Eager
+
+- Observable 타입은 lazy.
+- 구독되기 전까지 아무 것도 하지 않음.
+- Future와 같은 eager 타입과는 구분됨.
+- 따라서, 캐싱을 쓰지 않고도(Future와 비교됨),
+- 레이스 컨디션으로 인한 데이터 유실 없이,
+- Observable들의 구성이 가능함.
+
+책에서는 아래 2가지로 다시 설명하고 있음.
+
+1. Subscription, not construction starts work.
+2. Overvables can be reused.
+
+재사용의 의미는 아래 코드로 확인 가능.
+
+```java
+someData.subscribe(s -> println("Subscriber 1: " + s));
+someData.subscribe(s -> println("Subscriber 2: " + s));
+```
+
+### Duality
+
+- Rx Observable은 Iterable의 비동기 "쌍대(dual)".
+- 다시 말해서, Observable은 Iterable의 모든 기능을 제공하지만,
+- 데이터의 플로우는 정 반대. pull이 아니라 push.
+
+| Pull ()  | Push ()       |
+| -------- | ------------- |
+| T next() | onNext()      |
+|          | onError()     |
+|          | onCompleted() |
+
+- 이로 인해, Iterable로 할 수 있는 건 Observable로도 할 수 있음.
+
+```java
+getDataFromLocalMemorySynchronously()
+  .skip(10)
+  .limit(5)
+  .map(s -> s + "_transformed")
+  .forEach(System.out::println);
+
+getDataFromNetworkAsynchronously()
+  .skip(10)
+  .take(5)
+  .map(s -> s + "_tranformed")
+  .subscribe(System.out::println);
+```
+
+### Cardinality
+
+- Observable은 여러 개의 값들을 비동기로 푸시할 수 있음.
+- `Future<List<Friend>>` 같은 식으로 할 수도 있겠으나,
+- 반환해야 할 목록이나 데이터 소스가 크다면, 성능이나 반응 시간 측면에서 좋지 않음.
+- 무엇보다도, 컬렉션 전체가 도착할 때까지 기다리지 않고, 항목을 받는 즉시 처리 가능.
+- 구성 또한 가능. 모든 방출을 기다리는 `zip`이나, 각 값을 즉시 방출하는 `merge` 등을 이용.
+
+```java
+Observable<String> o1 = getDataAsObservable(1);
+Observable<String> o1 = getDataAsObservable(2);
+Observable.merge(o1, o2);
+Observable.zip(o1, o2);
+```
+
+### Single
+
+Single 형도 제공함. API를 사용할 때 보다 단순하게 생각할 수 있음.
+
+```java
+public static Single<String> getDataA() {
+  return Single.<String> create(o -> {
+    o.onSuccess("DataA");
+  }).subscribeOn(Schedulers.io());
+}
+
+public static Single<String> getDataB() {
+  return Single.just("DataB").subsribeOn(Schedulers.io());
+}
+
+getDataA().mergeWith(getDataB());
+```
+
+### Completable
+
+반환형이 없을 때는 `Observable<Void>`나 `Single<Void>`를 사용할 수 있으나 다소 어색할 수 있음. 이 때, Completable 형을 사용하는 게 도움이 될 수 있음.
+
+```java
+static Completable writeToDatabase(Object data) {
+  return Completable.create(s -> {
+    doAsyncWrite(
+      data,
+      () -> s.onCompleted(),
+      error -> s.onError(error)
+    )
+  });
+}
+```
+
+### Zero to infinity
+
+|      |                           |                     |                         |
+| ---- | ------------------------- | ------------------- | ----------------------- |
+|      | void doSomething()        | T getData()         | Iterable<T> getData()   |
+|      | Completable doSomething() | Single<T> getData() | Observable<T> getData() |
+
+
+
