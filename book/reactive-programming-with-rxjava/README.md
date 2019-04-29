@@ -303,5 +303,8 @@ static Completable writeToDatabase(Object data) {
 |      | void doSomething()        | T getData()         | Iterable<T> getData()   |
 |      | Completable doSomething() | Single<T> getData() | Observable<T> getData() |
 
+## Mechanical Sympathy: Blocking versus Nonblocking I/O
+
+비교 내용은 [여기 발표 자료](https://github.com/Netflix-Skunkworks/WSPerfLab/blob/master/test-results/RxNetty_vs_Tomcat_April2015.pdf)를 보는 게 더 도움이 됨.
 
 
