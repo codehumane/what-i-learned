@@ -86,3 +86,24 @@ Flux<String> emits10IncreasingValuesAtRegularPace = Flux
   .interval(Duration.ofMillis(100))
   .take(10);
 ```
+
+# Learn how to create Mono instances
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Mono
+
+## Description
+
+- `Mono<T>` 역시 Reactive Streams `Publisher`.
+- `Flux`의 특수화. 최대 1개의 `<T>` 엘리먼트 방출.
+- vlued(complete with element), empty, failed(error) 중에 하나.
+- 오직 완료 시그널에만 관심있는 경우에 사용. `Runnable`에 대응.
+
+![mono](https://tech.io/servlet/fileservlet?id=26381681436051)
+
+```java
+Mono.just(1)
+    .map(integer -> "foo" + integer)
+    .or(Mono.delay(Duration.ofMillis(100)))
+    .subscribe(System.out::println);
+```
+
