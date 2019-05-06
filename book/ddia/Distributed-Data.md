@@ -933,4 +933,44 @@ while (true) {
 
 ## Knowledge, Truth, and Lies
 
-작성 중..
+### The Truth Is Defined by the Majority
+
+- 많은 분산 알고리즘들은 정족수<sup>quorum</sup>에 의존.
+- 단일 노드에 의존할 수 없기 때문.
+- 노드는 언제든 실패할 수 있음. GC 멈춤, 네트워크 단절, …
+- 9장의 consensus algorithms에서 좀 더 자세히 다룰 예정.
+
+#### The leader and the lock
+
+- A라는 노드가 리더였지만, 다수에 의해 A는 강등되고 B가 리더로 승격됨.
+- 하지만, A는 이 사실을 인지하지 못하고, 여전히 자신이 리더인 듯 행동.
+- 이 경우 여러 충돌 문제가 생길 수 있음. 아래는 그 예시.
+
+![Incorrect implementation of a distributed lock](figure-8-4-incorrect-implementation-of-a-distributed-lock.png)
+
+- Process Pauses에서 살펴봤듯이, `isValid`와 `process` 사이에 GC가 발생하면 일어날 수 있는 일.
+
+```java
+if (lease.isValid()) {
+  process(request);
+}
+```
+
+#### Fencing tokens
+
+- 리소스에 대한 접근을 보호하고자 lock이나 lease를 사용한다면,
+- split brain(false belief of being "the chosen one")이 문제가 되지 않음을 보장해 줘야 함.
+- 한 가지 방법은 fencing. 아래 그림 참고.
+
+![Figure 8-5. Fencing tokens](figure-8-5-fencing-tokens.png)
+
+- 잠금 서버가 lock 또는 lease를 승인하는 것에 더해,
+- *fencing token*이라 불리는 것을 반환하는 것.
+- 클라이언트는 잠금을 획득하면서 이 토큰을 얻게 되고,
+- 쓰기 요청을 보낼 때 이 토큰을 같이 보냄.
+- ZooKeeper를 사용한다면, zxid(트랜잭션 ID)나 cversion(노드 버전)을 fencing token으로 사용할 수 있음.
+-  monotonically increasing이 보장되는 값.
+
+### Byzantine Faults
+
+TBD
