@@ -54,13 +54,13 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Flux
 
 ```java
 Flux.fromIterable(getSomeLongList())
-  .delayElements(Duration.ofMillis(100))
-  .doOnNext(serviceA::someObserver)
-  .map(d -> d * 2)
-  .take(3)
-  .onErrorResumeWith(errorHandler::fallback)
-  .doAfterTerminate(serviceM::incrementTerminate)
-  .subscribe(System.out::println);
+    .delayElements(Duration.ofMillis(100))
+    .doOnNext(serviceA::someObserver)
+    .map(d -> d * 2)
+    .take(3)
+    .onErrorResumeWith(errorHandler::fallback)
+    .doAfterTerminate(serviceM::incrementTerminate)
+    .subscribe(System.out::println);
 ```
 
 ## Practice
@@ -77,8 +77,12 @@ Flux<String> fromIterable = Flux.fromIterable(Arrays.asList("1", "2"));
 
 ```java
 Flux<string> fromError = Flux.error(new IllegalStateException("Hello"));
-Flux<String> emits10IncreasingValuesAtRegularPace = Flux
-	.interval(Duration.ofMillis(1000))
-  .take(10);
 ```
 
+아래는 100ms 주기로 0부터 9까지를 방출하는 코드.
+
+```java
+Flux<String> emits10IncreasingValuesAtRegularPace = Flux
+  .interval(Duration.ofMillis(100))
+  .take(10);
+```
