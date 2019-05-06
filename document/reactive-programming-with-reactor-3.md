@@ -29,7 +29,56 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro
 
 - 여기에 더해 *operators*라는 개념도 있음.
 - 데이터의 각 단계에 어떤 처리를 적용할지를 나타냄.
-- 오퍼레이터의 적용은 새로운 중간단계의 `Publisher를 반환.
+- 오퍼레이터의 적용은 새로운 중간단계의 `Publisher`를 반환.
 - 또한 체이닝 됨.
 - 마지막 형태는 결국 `Subscriber`.
 - 자바의 Stream이랑 많이 유사.
+
+# Learn how to create Flux Instance
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Flux
+
+## Description
+
+- `Flux<T>`는 Reactive Streams `Publisher`.
+- Flux 시퀀스를 만들고, 변환하고, 조율하는 많은 연산자들을 가지고 있음.
+- `onNext` 이벤트를 통해 0 ~ n 개의 \<T\> 엘리먼트를 emit하고,
+- `onComplete`그리고 `onError` 종료 이벤트를 통해 complete 또는 error 처리.
+- 종료 이벤트가 없다면 무한 `Flux`.
+
+![Flux 흐름](https://tech.io/servlet/fileservlet?id=26381665455829)
+
+- Flux의 정적 팩토리 ― 원천을 직접 생성하거나, 몇 개의 콜백 타입을 이용해 만들어 냄.
+- 연산자이자 인스턴스 메서드 ― 비동기 프로세싱 파이프라인 빌드.
+- `Flux#subscribe()` 또는 멀티캐스팅 연산(`Flux#publish`, `Flux#publishNext`): 파이프라인 전용 인스턴스를 구체화하고, 그 안에서 데이터 흐름을 일으킴.
+
+```java
+Flux.fromIterable(getSomeLongList())
+  .delayElements(Duration.ofMillis(100))
+  .doOnNext(serviceA::someObserver)
+  .map(d -> d * 2)
+  .take(3)
+  .onErrorResumeWith(errorHandler::fallback)
+  .doAfterTerminate(serviceM::incrementTerminate)
+  .subscribe(System.out::println);
+```
+
+## Practice
+
+여러 팩토리를 이용한 `Flux` 생성.
+
+```java
+Flux<String> empty = Flux.empty();
+Flux<String> fromReadilyAvailableData = Flux.just("1", "2");
+Flux<String> fromIterable = Flux.fromIterable(Arrays.asList("1", "2"));
+```
+
+명령형 비동기 코드에서는 try-catch로 예외를 다뤘음. Reactive Streams에서는 `onError` 시그널을 정의해서 예외를 다룸. 그리고 이 이벤트는 종료 이벤트임을 다시 한 번 강조.
+
+```java
+Flux<string> fromError = Flux.error(new IllegalStateException("Hello"));
+Flux<String> emits10IncreasingValuesAtRegularPace = Flux
+	.interval(Duration.ofMillis(1000))
+  .take(10);
+```
+
