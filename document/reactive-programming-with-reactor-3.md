@@ -107,3 +107,32 @@ Mono.just(1)
     .subscribe(System.out::println);
 ```
 
+# StepVerifier and how to use it
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/StepVerifier
+
+## Description
+
+- `reactor-test` artifact (이로부터 많은 것들이 설명됨)
+- 어떤 `Publisher`도 구독할 수 있음.
+- 그리고 나서 사용자가 정의한, 시퀀스에 관한 expectation들을 assert.
+- expectation을 충족하지 못하면 `AssertionError`를 생산.
+- 정적 팩토리인 `crate`로 `StepVerifier` 인스턴스를 얻어낼 수 있음.
+
+```java
+StepVerifier.create(T<Publisher>).{expectations...}.verify();
+```
+
+- DSL로 데이터 파트에 대한 expectation 셋업.
+- 단일 종료 expectation (completion, error, cancellation...)으로 끝남.
+
+```java
+StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofHours(3)))
+            .expectSubscription()
+            .expectNoEvent(Duration.ofHours(2))
+            .thenAwait(Duration.ofHours(1))
+            .expectNextCount(1)
+            .expectComplete()
+            .verify();
+```
+
