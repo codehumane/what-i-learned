@@ -136,3 +136,23 @@ StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofHours(3)))
             .verify();
 ```
 
+# Learn to transform our asynchronous data
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/transform
+
+## Practice
+
+- Mono와 Flux의 `map`에 대한 간단 소개.
+- 그리고 나머지 부분은 `flatMap`에 대한 것.
+- `flatMap`은 변환(transformation) `Function`을 인자로 받음.
+- 그런데 이 `Function`은 `U`가 아니라, `Publisher<U>`를 반환.
+- 그리고 이 퍼블리셔는 각 엘리먼트에 적용할 비동기 변환을 나타냄.
+- 만약, `map`을 사용한다면, `Flux<Publisher<U>>`를 얻게 됨.
+- 게다가 동기(synchronous) 호출.
+
+> But `flatMap` on the other hand knows how to deal with these inner publishers: it will subscribe to them then merge all of them into a single global output, a much more useful `Flux<U>`. Note that if values from inner publishers arrive at different times, they can interleave in the resulting `Flux`.
+
+이제 아래 그림이 이해됨. 'Async transformation'이라는 말도 와 닿음.
+
+![async transformation](https://raw.githubusercontent.com/reactor/projectreactor.io/master/src/main/static/assets/img/marble/flatmap.png)
+
