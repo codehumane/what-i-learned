@@ -34,7 +34,7 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro
 - 마지막 형태는 결국 `Subscriber`.
 - 자바의 Stream이랑 많이 유사.
 
-# Learn how to create Flux Instance
+# Learn how to create Flux Instances
 
 https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Flux
 
