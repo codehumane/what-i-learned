@@ -156,3 +156,21 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/transform
 
 ![async transformation](https://raw.githubusercontent.com/reactor/projectreactor.io/master/src/main/static/assets/img/marble/flatmap.png)
 
+# Merge
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Merge
+
+- Merging sequences
+- 몇 개의 `Publisher`들로부터 값들을 듣고(listening),
+- 단일 `Flux`로 값들을 방출(emitting)하는 것.
+- `merge`와 `concat`의 차이에 대해서도 언급.
+- 이 차이는 reactor document에 더 잘 나와 있다고 생각함.
+
+> Merge data from Publisher sequences contained in an array / vararg into an interleaved merged sequence. Unlike concat, sources are subscribed to eagerly.
+
+![merge](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/mergeFixedSources.svg)
+
+> Concatenate all sources provided in an Iterable, forwarding elements emitted by the sources downstream. Concatenation is achieved by sequentially subscribing to the first source then waiting for it to complete before subscribing to the next, and so on until the last sources completes. Any error interrupts the sequence immediately and is forwarded downstream.
+
+![concat](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#concat-java.lang.Iterable-)
+
