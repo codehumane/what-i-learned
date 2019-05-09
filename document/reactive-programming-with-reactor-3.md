@@ -174,3 +174,65 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Merge
 
 ![concat](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/concatVarSources.svg)
 
+# Request
+
+## Description
+
+![reactive stream sequences/interactions](https://tech.io/servlet/fileservlet?id=26381655039806)
+
+- 처음 소개했던 그림이 다시 나옴.
+- volume control을 다룰 차례이기 때문.
+- Reactive Stream 용어로는 backpressure.
+- 이를 통해 `Subscriber`가 `Publisher`에게,
+- 얼마나 많은 데이터를 처리할 준비가 되었는지를 알려줌.
+- `Publisher`가 생산하는 데이터 속도를 제한하는 피드백 메커니즘.
+- 이러한 수요의 제어<sup>control of the demand</sup>는 `Subscription` 레벨에서 이뤄짐.
+- `Subscription`은 각 `subscribe()` 호출에서 만들어지고,
+- `cancel()`이나 `request(long)`를 통해 제어.
+- 참고로, `request(Long.MAX_VALUE)`는 무한 수요<sup>unbounded demand</sup>를 의미.
+
+## Practice
+
+`StepVerifier`를 통해서도 수요 조정이 가능.
+
+```java
+// TODO Create a StepVerifier
+// that initially requests all values
+// and expect 4 values to be received
+StepVerifier requestAllExpectFour(Flux<User> flux) {
+  return StepVerifier
+    .create(flux)
+    .expectNextCount(4)
+    .expectComplete();
+}
+
+// TODO Create a StepVerifier
+// that initially requests 1 value and expects User.SKYLER
+// then requests another value and expects User.JESSE.
+StepVerifier requestOneExpectSkylerThenRequestOneExpectJesse(Flux<User> flux) {
+  return StepVerifier
+    .create(flux)
+    .expectNext(User.SKYLER)
+    .expectNext(User.JESSE)
+    .thenCancel(); // cancel하지 않으면 영원히 끝나지 않음.
+}
+
+// TODO Return a Flux
+// with all users stored in the repository
+// that prints automatically logs for all Reactive Streams signals
+Flux<User> fluxWithLog() {
+  return new ReactiveUserRepository()
+    .findAll()
+    .log();
+}
+
+// TODO Return a Flux with all users stored in the repository that prints "Starring:" on subscribe, "firstname lastname" for all values and "The end!" on complete
+Flux<User> fluxWithDoOnPrintln() {
+  return repository
+    .findAll()
+    .doOnSubscribe(s -> log.info("Starring:"))
+    .doOnNext(u -> log.info(u.getFirstname() + " " + u.getLastname()))
+    .doOnComplete(() -> log.info("The end!"));
+}
+```
+
