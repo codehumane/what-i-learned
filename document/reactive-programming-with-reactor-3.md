@@ -176,6 +176,8 @@ https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Merge
 
 # Request
 
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Request
+
 ## Description
 
 ![reactive stream sequences/interactions](https://tech.io/servlet/fileservlet?id=26381655039806)
@@ -233,6 +235,62 @@ Flux<User> fluxWithDoOnPrintln() {
     .doOnSubscribe(s -> log.info("Starring:"))
     .doOnNext(u -> log.info(u.getFirstname() + " " + u.getLastname()))
     .doOnComplete(() -> log.info("The end!"));
+}
+```
+
+# Error
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Error
+
+## Description
+
+- 에러를 전파<sup>propagate</sup>하고, 에러로부터 복구<sup>recover</sup>할 수 있는 연산자들이 내장.
+- 예컨대, 폴백으로 다른 시퀀스를 사용하거나, 새로운 `Subscription`을 재시도하거나.
+
+## Practice
+
+- [Project Reactor 도큐먼트의 Static Fallback Value](https://projectreactor.io/docs/core/release/reference/#_static_fallback_value)를 보면, 
+- 폴백 값 제공을 위한 `Mono#onErrorReturn`, `Flux#onErrorResume`,
+- CheckedException을 처리하기 위한 `Exceptions#propagate` 설명이 잘 나와 있음.
+- `onErrorReturn`와 `onErrorResume`은 각각 아래와 같이 설명.
+
+> Catch and return a static default value <br/>
+> Catch and execute an alternative path with a fallback method
+
+```java
+/**
+ * TODO Return a Mono<User> containing User.SAUL
+ * when an error occurs in the input Mono,
+ * else do not change the input Mono.
+ */
+Mono<User> betterCallSaulForBogusMono(Mono<User> mono) {
+  return mono.onErrorReturn(User.SAUL);
+}
+
+/**
+ * TODO Return a Flux<User> containing User.SAUL and User.JESSE
+ * when an error occurs in the input Flux,
+ * else do not change the input Flux.
+ */
+Flux<User> betterCallSaulAndJesseForBogusFlux(Flux<User> flux) {
+  return .onErrorResume(e -> Flux.just(User.SAUL, User.JESSE));
+}
+
+/**
+ * TODO Implement a method
+ * that capitalizes each user of the incoming flux
+ * using the #capitalizeUser method
+ * and emits an error containing a GetOutOfHereException error
+ */
+Flux<User> capitalizeMany(Flux<User> flux) {
+  return flux
+    .map(u -> {
+      try {
+        return capitalizeUser(u);
+      } catch (GetOutOfHereException e) {
+        throw Exceptions.propaget(e);
+      }
+    });
 }
 ```
 
