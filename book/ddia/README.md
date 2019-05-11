@@ -43,6 +43,7 @@
 - [Faults and Partial Failures](./Distributed-Data.md#faults-and-partial-failures)
 - [Unreliable Networks](./Distributed-Data.md#unreliable-networks)
 - [Unreliable Clocks](./Distributed-Data.md#unreliable-clocks)
+- [Knowledge, Truth, and Lies](https://github.com/codehumane/what-i-learned/blob/master/book/ddia/Distributed-Data.md#knowledge-truth-and-lies)
 
 ## III. Derived Data
 
