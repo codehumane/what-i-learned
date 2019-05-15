@@ -294,3 +294,43 @@ Flux<User> capitalizeMany(Flux<User> flux) {
 }
 ```
 
+# Adapt
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Adapt
+
+- RxJava2와 Reactor 3 타입들을 외부 라이브러리 없이도 서로 interact.
+- `Flux`, `Flowable`은 모두 `Publisher`의 구현체이며,
+- 모든 `Publisher`로부터 변환 가능한 팩토리 메서드를 제공.
+
+```java
+// TODO Adapt Flux to RxJava Flowable
+Flowable<User> fromFluxToFlowable(Flux<User> flux) {
+    return Flowable.fromPublisher(flux);
+}
+
+// TODO Adapt RxJava Flowable to Flux
+Flux<User> fromFlowableToFlux(Flowable<User> flowable) {
+  return Flux.from(flowable);
+}
+```
+
+- `Observable`은 `Publisher` 구현체가 아니지만 약간의 트릭으로 `Flux` 어댑트가 가능.
+- `Flowable`로 변환한 뒤 `Flux`로 변환하는 것.
+- 참고로, `Observable`은 백프레셔를 지원하지 않아서,
+- `Flowable` 변환 시 백프레셔 전략을 지정해 줘야 함.
+
+```java
+// TODO Adapt Flux to RxJava Observable
+Observable<User> fromFluxToObservable(Flux<User> flux) {
+  return Observable.fromPublisher(flux);
+}
+
+// TODO Adapt RxJava Observable to Flux
+Flux<User> fromObservableToFlux(Observable<User> observable) {
+  return Flux.from(observable.toFlowable(BackpressureStrategy.BUFFER));
+}
+```
+
+- 그 외에 `Mono` <-> `Single` 변환,
+- `Mono` <-> `CompletableFuture` 변환을 다루고 있음.
+
