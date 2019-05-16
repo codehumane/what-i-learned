@@ -334,3 +334,86 @@ Flux<User> fromObservableToFlux(Observable<User> observable) {
 - 그 외에 `Mono` <-> `Single` 변환,
 - `Mono` <-> `CompletableFuture` 변환을 다루고 있음.
 
+# Other Operations
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/OthersOperations
+
+## Description
+
+- 그 동안 다룬 범주에는 포함되지 않지만 유용한 연산자들을 소개.
+- 이 외에도 [Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html)나 [Mono](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html) javadoc, 그리고 [레퍼런스 가이드](https://projectreactor.io/docs/core/release/reference/index.html#which-operator)를 잘 살펴볼 것을 권장.
+- 서로 다른 지연을 가진 여러 `Flux`를 하나로 합치는 `zip`.
+- 여러 `Mono` 중 가장 먼저 응답이 도착하는 것을 사용하는 `first`.
+- `Flux`에도 마찬가지로 `first` 존재.
+- `Flux`의 타입과 값에 관심 없고 단지 완료되기만을 바라는 경우 사용하는 `ignoreElements`와 `then`.
+- `onNext`에서 기본적으로는 null 값을 허용치 않음. 아래의 `Mono#onNext`, `MonoJust`의 코드는 참고.
+
+```java
+// Mono#doOnNext
+public final Mono<T> doOnNext(Consumer<? super T> onNext) {
+  Objects.requireNonNull(onNext, "onNext");
+  return doOnSignal(this, (Consumer)null, onNext, (Consumer)null, (Runnable)null, (LongConsumer)null, (Runnable)null);
+}
+
+// MonoJust
+MonoJust(T value) {
+    this.value = Objects.requireNonNull(value, "value");
+}
+```
+
+- `Mono`에 넘겨주려는 값이 null일 수 있는 경우를 위한 `Mono#justOrEmpty`.
+- `Mono`가 empty인 경우를 방지하기 위한 `Mono#defaultIfEmpty`.
+
+```java
+// TODO Create a Flux of user from Flux of username, firstname and lastname.
+Flux<User> userFluxFromStringFlux(Flux<String> usernameFlux, Flux<String> firstnameFlux, Flux<String> lastnameFlux) {
+  
+  return Flux
+      .zip(usernameFlux, firstnameFlux, lastnameFlux)
+      .map(tuple3 -> new User(tuple3.getT1(), tuple3.getT2(), tuple3.getT3()));
+}
+
+// TODO Return the mono which returns its value faster
+Mono<User> useFastestMono(Mono<User> mono1, Mono<User> mono2) {
+  return Mono.first(mono1, mono2);
+}
+
+// TODO Return the flux which returns the first value faster
+Flux<User> useFastestFlux(Flux<User> flux1, Flux<User> flux2) {
+  return Flux.first(flux1, flux2);
+}
+
+// TODO Convert the input Flux<User> to a Mono<Void> that represents the complete signal of the flux
+Mono<Void> fluxCompletion(Flux<User> flux) {
+  return flux.ignoreElements().then();
+}
+
+// TODO Return a valid Mono of user for null input and non null input user (hint: Reactive Streams do not accept null values)
+Mono<User> nullAwareUserToMono(User user) {
+  return Mono.justOrEmpty(user);
+}
+
+// TODO Return the same mono passed as input parameter, expect that it will emit User.SKYLER when empty
+Mono<User> emptyToSkyler(Mono<User> mono) {
+  return mono.defaultIfEmpty(User.SKYLER);
+}
+
+// 참고로, `userFastestMono`를 검증하는 코드는 아래와 같음.
+@Test
+public void fastestMono() {
+  ReactiveRepository<User> repository = new ReactiveUserRepository(MARIE);
+  ReactiveRepository<User> repositoryWithDelay = new ReactiveUserRepository(250, MIKE);
+  Mono<User> mono = workshop.useFastestMono(repository.findFirst(), repositoryWithDelay.findFirst());
+  StepVerifier.create(mono)
+      .expectNext(MARIE)
+      .verifyComplete();
+
+  repository = new ReactiveUserRepository(250, MARIE);
+  repositoryWithDelay = new ReactiveUserRepository(MIKE);
+  mono = workshop.useFastestMono(repository.findFirst(), repositoryWithDelay.findFirst());
+  StepVerifier.create(mono)
+      .expectNext(MIKE)
+      .verifyComplete();
+}
+```
+
