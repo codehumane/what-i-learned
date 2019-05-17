@@ -397,8 +397,11 @@ Mono<User> nullAwareUserToMono(User user) {
 Mono<User> emptyToSkyler(Mono<User> mono) {
   return mono.defaultIfEmpty(User.SKYLER);
 }
+```
 
-// 참고로, `userFastestMono`를 검증하는 코드는 아래와 같음.
+참고로, `userFastestMono`를 검증하는 코드는 아래와 같음.
+
+```java
 @Test
 public void fastestMono() {
   ReactiveRepository<User> repository = new ReactiveUserRepository(MARIE);
@@ -414,6 +417,32 @@ public void fastestMono() {
   StepVerifier.create(mono)
       .expectNext(MIKE)
       .verifyComplete();
+}
+```
+
+# Reactive to Blocking
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/ReactiveToBlocking
+
+- 일부 코드만 reactive로 바꿀 때가 있음.
+- 이 경우 리액티브 시퀀스를 좀 더 명령형(imperative)으로 재사용 해야 할수도.
+- `Mono#block()`을 사용하면 `Mono` 값이 이용 가능해질 때까지 대기하게 됨.
+- 만약, `onError` 이벤트가 발생하면 `Exception`을 던지게 됨.
+- MUST 대문자로 (굳이, 당연한 얘기 같음에도 불구하고) 아래의 경고도 하고 있음.
+
+> You MUST avoid this at all cost in the middle of other reactive code, as this has the potential to lock your whole reactive pipeline.
+
+- 아래는 각각 `Mono`와 `Flux`를 blocking 하는 코드들.
+
+```java
+// TODO Return the user contained in that Mono
+User monoToValue(Mono<User> mono) {
+  return mono.block();
+}
+
+// TODO Return the users contained in that Flux
+Iterable<User> fluxToValues(Flux<User> flux) {
+  return flux.toIterable();
 }
 ```
 
