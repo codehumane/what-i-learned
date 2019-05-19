@@ -981,7 +981,7 @@ if (lease.isValid()) {
 - 이런 문제를 가리켜 *Byzantine fault*라고 부르며,
 - 이 환경에서 합의를 이끌어 내는 것을 *Byzantine Generals Problem*이라 부름.
 - 그리고, 일부 노드가 오동작을 하거나 프로토콜을 준수하지 않는 상황에서도,
-- 혹은 악성 공격자가 네트워크를 방해하는 경우에도,
+- 혹은 악성 공격자가 네트워크를 방해하는 경우에도,g
 - 정상적으로 운영되는 시스템을 가리켜 *Byzantine fault-tolerant* 시스템이라 부름.
 - 일반적인 웹 애플리케이션에서는 이것이 문제가 되지는 않음.
 - 하지만 중앙 권력<sup>central authority</sup>이 없는 P2P 네트워크에서는 문제가 될 수도.
@@ -992,4 +992,38 @@ if (lease.isValid()) {
 - 물론, 일부 구현만 문제가 되는 경우에만 도움 됨.
 - 그리고 여전히 전통적인 방어 메커니즘(인증, 인가, 인크립션, 방화벽 등)은 필요.
 - Weak forms of lying 정도는 극복 가능.
+
+### System Model and Reality
+
+분산 시스템의 다양한 문제를 견뎌내는 알고리즘들이 존재. 이 알고리즘들은 하드웨어나 소프트웨어 설정의 지나친 세부 사항에 의존하는 대신, *system model*을 이용.
+
+타이밍에 관한 가정으로는 아래 3가지 시스템 모델을 주로 사용.
+
+1. *Synchronous model*
+   - 네트워크 지연, 프로세스 멈춤, 시간 오류를 일정 범위까지 인정.
+   - 하지만, 현실적인 모델은 아님. 범위를 벗어나는 지연과 멈춤 등은 일어나기 때문.
+2. *Partially synchronous model*
+   - 대부분의 경우에는 synchronous sytem 같이 동작하나,
+   - 가끔은 네트워크 지연, 프로세스 멈춤, 시간 오류가 지정된 범위를 넘기도 함.
+3. *Asynchronous model*
+   - 타이밍에 관한 어떠한 가정도 하지 않음.
+   - 심지어 시계도 가지고 있지 않음(따라서, 타임아웃을 사용하지도 못함).
+
+노드 실패에 대해서도 고려해야 함. 마찬가지로 3가지 모델이 존재.
+
+1. *Cash-stop faults*
+   - 노드는 오직 고장(crashing)에 의해서만 실패(fail)한다는 모델.
+   - 즉, 노드는 갑자기 응답을 멈췄다면 영원히 돌아오지 않음을 의미.
+2. *Crash-recovery faults*
+   - 고장(crash)이 나도 어느 정도 시간(unknown time)이 지나면 다시 응답.
+   - 이 모델은 노드들이 (고장이 났을 때도) 안정적인 스토리지를 가지고 있다고 가정함.
+3. *Byzantine (arbitrary) faults*
+   - 노드들이 속임수도 쓰고 다른 노드를 속이기도 하는 등,
+   - 노드는 어느 것이든 할 수 있다고 가정함.
+
+현실에서는 *partially synchronous model*과 *crash-recovery faults*의 혼합 모델이 가장 일반적. 그런데 분산 알고리즘에서는 이 모델을 어떻게 다루고 있을까?
+
+#### Correctness of an algorithm
+
+TBD
 
