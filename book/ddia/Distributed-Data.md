@@ -995,6 +995,8 @@ if (lease.isValid()) {
 
 ### System Model and Reality
 
+> 전반적으로 잘 와닿지 않는 부분. 나중에 시간 내어 다시 한 번 읽어 볼 것.
+
 분산 시스템의 다양한 문제를 견뎌내는 알고리즘들이 존재. 이 알고리즘들은 하드웨어나 소프트웨어 설정의 지나친 세부 사항에 의존하는 대신, *system model*을 이용.
 
 타이밍에 관한 가정으로는 아래 3가지 시스템 모델을 주로 사용.
@@ -1025,5 +1027,70 @@ if (lease.isValid()) {
 
 #### Correctness of an algorithm
 
-TBD
+알고리즘이 *정확하다<sup>correct</sup>*는 것을 정의하기 위해 그것의 *속성<sup>properties</sup>* 을 기술하기도 함. 예컨대, 정렬 알고리즘의 결과는 아래의 속성을 가짐.
 
+1. 결과 목록에서 임의의 서로 다른 두 개의 엘리먼트에 대해,
+2. 왼 쪽의 값은 오른 쪽의 값보다 더 작다.
+
+분산 알고리즘에서도 마찬가지이며, fencing tokens을 만드는 알고리즘은 아래의 속성을 가짐.
+
+1. *Uniqueness*.
+   -  2개 이상의 요청이
+   - 서로 같은 fencing token 값을 얻어낼 수 없다.
+2. *Monotonic sequence*.
+   - x 요청이 t<sub>x</sub> 토큰을 반환했고,
+   - y 요청이 t<sub>y</sub> 토큰을 반환했고,
+   - y가 시작되기 전에 x가 먼저 완료됐다면,
+   - t<sub>x</sub> < t<sub>y</sub>를 만족한다.
+3. *Availability*.
+   - fencing token을 요청한 노드가
+   - 죽지만<sup>crash</sup> 않는다면,
+   - 결국 응답을 받게 된다.
+
+이런 속성들을 어떤 상황에서건 모두 만족시킨다면 우리는 그 알고리즘을 정확하다고 말함. 하지만, 모든 노드에 충돌이 일어나거나, 모든 네트워크가 갑자기 무한으로 지연된다면, 어느 알고리즘도 일을 완수할 수 없음.
+
+#### Safety and liveness
+
+우선, *safety*와 *liveness* 속성을 서로 구분할 필요가 있음. 예컨대, fencing token 예시에서는 아래 표와 같음.
+
+| fencing token property | kind of properties |
+| ---------------------- | ------------------ |
+| uniqueness             | safety             |
+| monotonic sequence     | safety             |
+| availability           | liveness           |
+
+이 둘을 구분하는 한 가지 방법이 있음. liveness 속성은 종종 그 정의 안에 "결과적<sup>eventually</sup>" 이라는 단어가 들어간다는 것. 약식으로 각각이 정의되기도 함. *safety*는 *nothing bad happens*, *liveness*는 *something good eventually happens*. 하지만, 약식의 정의들은 읽지 않는 것이 좋음. 모호하기 때문. 대신, 실제 *safety*와 *liveness*의 정의는 정확하고 수학적.
+
+*safety*
+
+- safety 속성이 위배되었다면, 우리는 그것이 깨진 지점을 가리킬 수 있음.
+- 예컨대, 유일성 속성을 위배되었다면, 중복된 fencing token을 반환한 연산을 식별할 수 있음.
+- 또한, safety 속성이 위배되었다면 되돌릴 수 없음. 비가역적.
+
+*liveness*
+
+- 약간 다른 방식으로 동작함.
+- 특정 시점을 가리킬 수 없음.
+- 다만, 미래에 속성이 충족될 것이라는 기대만 있을 뿐.
+- 요청에 대한 응답을 아직 받지 않은 경우가 그 예.
+
+이런 차이를 이해하고 나면 어려운 시스템 모델을 다루는 데 도움이 됨. 뒤이어 나온 내용을 요약하면, 분산 알고리즘에서는 safety 속성은 항상 만족시키고, liveness에 대해서는 약간의 예외를 허용한다는 것.
+
+#### Mapping system models to the real world
+
+- safety, liveness 속성과 시스템 모델이 분산 알고리즘의 정확성을 이해하는 데 도움이 되긴 하지만,
+- 실제로 알고리즘을 구현하다보면 지저분한 현실을 다시 마주하게 됨.
+- 디스크의 손상, 하드웨어의 오류로 인한 데이터 유실.
+- 펌웨어 버그로 인한 재시작 시의 하드 드라이브 인식 실패.
+- 노드의 기억상실로 인한 정족수 판단 불가 등.
+- 따라서, 실제 알고리즘의 구현에는 가정에 위배될 수 있음을 고려해야.
+- 예컨대, `printf("Sucks to be you")`와 더불어 `exit(666)` 등.
+- 사람으로 하여금 뒷 처리를 할 수 있도록.
+- 물론, 추상화된 시스템 모델이 가치가 없다는 것은 아님.
+- 오히려 반대. 현실의 복잡한 문제의 이해를 돕고, 시스템 적으로 문제를 풀 수 있게 도와줌.
+
+# Consistency and Consensus
+
+> 앞 장에서 소개된 분산 시스템의 여러가지 암울한 현실 문제들에 대한 일종의 해결책을 기대.
+
+TBD
