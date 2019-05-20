@@ -446,3 +446,49 @@ Iterable<User> fluxToValues(Flux<User> flux) {
 }
 ```
 
+# Blocking to Reactive
+
+https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/BlockingToReactive
+
+## Description
+
+- "How to deal with legacy, non reactive code?"
+- 예컨대, JDBC 연결 같은 blocking 코드를 사용해야 할 때,
+- 어떻게 하면 리액티브 파이프라인을 사용하면서도 성능 저하를 최소화 할 수 있을까?
+
+> The best course of action is to isolate such intrinsically blocking parts of your code into their own execution context via a `Scheduler`, keeping the efficiency of the rest of the pipeline high and only creating extra threads when absolutely needed.
+
+- blocking 부분은 `Scheduler` 같은 것을 써서, 별도의 스레드로 격리시키라고 함.
+- 스레드 자원을 좀 더 사용하는 대신, 성능 상의 이점을 계속 유지.
+
+## Practice
+
+- `subscribeOn` 메서드는 자신에게 제공된 `Scheduler`와 함께 시퀀스를 격리.
+- 예컨대, `Schedulers.elastic()`은 스레드 풀을 생성함.
+- 이 풀은 (그래서 `elastic`이라는 이름을 가지는 듯) 수요에 따라 자동으로 크기를 증감.
+- 아래는 publisher가 blocking인 경우의 예시.
+
+```java
+// TODO Create a Flux for reading all users from the blocking repository deferred until the flux is subscribed, and run it with an elastic scheduler
+Flux<User> blockingRepositoryToFlux(BlockingRepository<User> repository) {
+  final Scheduler scheduler = Schedulers.elastic();
+
+  return Flux
+      .defer(() -> Flux.fromIterable(repository.findAll()))
+      .subscribeOn(scheduler);
+}
+```
+
+- 아래는 subscriber가 blocking인 경우의 예시.
+
+```java
+// TODO Insert users contained in the Flux parameter in the blocking repository using an elastic scheduler and return a Mono<Void> that signal the end of the operation
+Mono<Void> fluxToBlockingRepository(Flux<User> flux, BlockingRepository<User> repository) {
+  return flux
+      .publishOn(Schedulers.elastic())
+      .doOnNext(repository::save)
+      .then();
+}
+```
+
+끝.
