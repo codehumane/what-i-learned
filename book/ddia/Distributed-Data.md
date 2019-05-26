@@ -1127,6 +1127,10 @@ if (lease.isValid()) {
 
 ## Linearizability
 
-TBD
+두 개의 서로 다른 레플리카에게 동시에 질의를 던지면 서로 다른 대답이 돌아올 수 있음. 이는 혼란스러움. 하지만, 레플리카 지연이 있다고 하더라도, 클라이언트들이 같은 데이터를 볼 수 있다면? 마치 하나의 데이터 카피만 존재하는 것 처럼 보여준다면 훨씬 간단해 질 것. 이것이 *linearizability*의 기본 아이디어라고 함. *atomic consistency*, *strong consistency*, *immediate consistency*, *external consistency*라고도 불린다고.
 
+여기까지 보면서, 작성한 것을 바로 볼 수 있는지는 언급이 없길래 걱정했음. 하지만 바로 뒤이어 나옴.
 
+> In a linearizable system, as soon as one client successfully completes a write, all clients reading from the database must be able to see the value just written.
+
+읽어 들인 값이 가장 최신임을 보장한다고 함. 그리고 이 값들은 오래된 캐시나 레플리카에서 오지 않음. 그래서 *linearizability*는 *recency guarantee*라고도 불림. 
