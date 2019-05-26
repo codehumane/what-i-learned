@@ -1134,3 +1134,18 @@ if (lease.isValid()) {
 > In a linearizable system, as soon as one client successfully completes a write, all clients reading from the database must be able to see the value just written.
 
 읽어 들인 값이 가장 최신임을 보장한다고 함. 그리고 이 값들은 오래된 캐시나 레플리카에서 오지 않음. 그래서 *linearizability*는 *recency guarantee*라고도 불림. 
+
+### What Makes a System Linearizable?
+
+linearizable 예시를 몇 개 더 소개. 먼저, 아래는 non-linearizable 시스템의 예.
+
+![](figure-9-2-non-linearizable.png)
+
+한편, 아래 그림은 linearizable. 일단 한 클라이언트가 새로운 값을 받았다면, 뒤 이은 읽기들도 모두 새로운 값을 반환함(쓰기 요청에 대한 응답을 받지 않았다고 하더라도). "데이터의 단일 복사본"을 기대하는 시스템을 그대로 보여줌.
+
+![figure-9-3-linearizable](figure-9-3-linearizables.png)
+
+아래 그림은 좀 더 복잡하고 상세한 예시. 수직으로 그려진 선들은 DB 연산이 실제로 수행된 시간. 이런 마커들은 앞으로만 갈 뿐 뒤로는 가지 않음. 참고로 여기서의 cas(x, v old, v new) ⇒ r는 compare and set 연산을 가리킴. 최신 값인 경우에만 값 설정이 되는 것. 또한, 이 모델에서는 어떤 트랜잭션 격리도 가정하지 않음. 그리고, 마지막 경고 표시는 linearizable이 깨진 모습. 그림이 이해되지 않는다면 책을 다시 한 번 볼 것.
+
+![](figure-9-4-linearizable-in-detail.png)
+
