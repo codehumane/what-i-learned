@@ -1163,3 +1163,40 @@ Linearizability
 - 객체들을 하나의 트랜잭션으로 묶지는 않음.
 - write skew 같은 문제를 해결하지는 못함.
 
+### Relying on Linearizability
+
+- 언제 linearizability가 유용할까?
+- 시스템이 올바르게 동작하기 위해 linearizability가 중요한 요건인 영역이 일부 있음.
+
+#### Locking and leader election
+
+- single-leader replication은 한 개의 리더만을 허용.
+- 리더를 선출하는 한 가지 방법은 잠금<sup>lock</sup>.
+- 모든 노드는 시작할 때 잠금을 얻으려고 시도하고,
+- 이에 성공한 하나의 노드만이 리더가 됨.
+- 잠금이 어떻게 구현되든 반드시 linearizable이어야 함.
+- 어떤 노드가 잠금을 소유할지를 모든 노드가 동의해야 하는 것.
+- ZooKeeper와 etcd 같은 코디네이션 서비스가 분산 잠금과 리더 선출에 주로 사용됨.
+
+#### Constraints and uniqueness guarantees
+
+- DB의 컬럼 유니크 제약이나,
+- 파일 저장 서비스에서 두 개의 파일이 같은 경로와 이름을 가질 수 없는 것 등이 여기에 해당.
+- 잠금이나 원자적 compare-and-set과 매우 유사.
+- 은행 계좌 잔액이나 상품의 재고, 비행기 좌석 예약도 같은 이슈를 가짐.
+- 물론, 이들을 좀 더 느슨하게 처리할 수도 있음. "Timeliness and Integrity"에서 다룰 예정.
+- 하지만, DB의 유니크 제약이나, 외부키, 속성 제약 등은 linearizability 없이 구현 불가.
+
+#### Cross-channel timing dependencies
+
+- 커뮤니케이션 채널이 여러개이기에 linearizability 위반이 드러나는 것.
+- 몇 가지 사례 소개. 당연한 얘기. 기록은 생략. 
+
+### Implementing Linearizable Systems
+
+가장 궁금한 부분. 개념에 대한 이해도 높아질 것으로 기대.
+
+### The Cost of Linearizability
+
+TBD
+
