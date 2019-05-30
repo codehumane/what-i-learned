@@ -1194,7 +1194,61 @@ Linearizability
 
 ### Implementing Linearizable Systems
 
-가장 궁금한 부분. 개념에 대한 이해도 높아질 것으로 기대.
+가장 궁금한 부분. 개념에 대한 이해도 높아질 것으로 기대. 일단, linearizability 의미 다시 언급.
+
+> behave as though there is only a single copy of the data, and all operations on it are atomic
+
+가장 쉬운 방법은 진짜로 단일 카피의 데이터를 사용하는 것. 하지만, 이 방식은 장애 내성이 약함. 데이터를 가진 노드에 장애가 생긴다면, 영원히 데이터가 유실되거나, 적어도 노드가 정상화 될 때까지 이용이 불가. 가장 흔한 해결책은 리플리케션. 그래서 5장에서 소개된 리플리케이션 방식들을 살펴보며, 각각이 linearizability는 가능한지에 대해서도 알아봄.
+
+*Single-leader replication (potentially linearizable)*
+
+- 리더로부터, 혹은 동기적으로 업데이트 된 팔로워로부터 데이터를 읽어 들일 수 있다면 linearizable.
+- 하지만, 모든 단일 리더 DB가 설계상 또는 동시성 버그로 인해 linearizable인 것은 아님.
+- 또한, 서로 다른 노드가 서로 리더라고 주장할 수도 있음.
+- 비동기 리플리케이션에서는 페일오버로 인해 쓰기가 유실될 수도 있음. 이는 duarbility와 linearizability 모두 위반.
+
+*Consensus algorithms (linearizable)*
+
+- 합의 알고리즘은 단일 리더 리플리케이션과 닮아 있음.
+- 그러나 split brain과 stale replac를 막는 방안을 가지고 있고,
+- 이로 인해 linearizable 저장소 구현이 가능.
+- ZooKeepr나 etcd가 동작하는 방식임.
+
+*Multi-leader replication (not linearizable)*
+
+- 일반적으로 linearizable 아님.
+- 여러 노드가 동시에 쓰기 요청을 받고,
+- 서로 비동기적으로 리플리케이션하기 때문.
+- 이따금 충돌이 일어나기도.
+
+*Leaderless replication (probably not linearizable)*
+
+- 이전에도 언급했지만 DynamoDB가 여기에 해당.
+- 정족수 읽기와 쓰기(w + r > n)를 통해 강한 일관성이 가능하다는 주장들이 있음.
+- 일단, 설정을 어떻게 하느냐에 따라 일관성 보장이 어려울 수 있음.
+- 또한, "Last write wins" 충돌 해결 방식은 time-of-day clock(시간 불일치 이슈)을 기반으로 하기 때문에 nonlinearizable.
+- sloppy quorums 또한 linearizability 위반.
+- 다시 한 번 말하지만, sloppy quorum은 바깥 노드에 최신 데이터가 있을 수 있기 때문에, 최신 값을 제공하지 못할 수도 있음. 기본적으로는 내구성을 위한 수단.
+- 아무리 강한 정족수라고 하더라도 linearizability는 어려움. 뒤이어 설명.
+
+#### Linearizability and quorums
+
+직관적으로는 강한 정족수 읽기/쓰기가 linearizability를 달성할 것 같아 보임(Dynamo 같은 모델). 그러나 다양한 네트워크 지연 때문에, 레이스 컨디션이 일어날 수도 있음. 아래 그림이 그 예시.
+
+![nonlinearizability despite strict quorum](figure-9-6-quorum-but-nonlinearizble.png)
+
+이해를 돕기 위해, 위에서 기록했던 quorum 개념을 다시 한 번 적음.
+
+- 전체 노드의 갯수가 n,
+- 쓰기가 가능한 노드의 갯수를 w,
+- 읽기가 가능한 노드의 갯수를 r이라고 할 때,
+- w + r > n을 만족시켜야 함.
+- 일반적으로 n은 홀수로 두며,
+- w = r = (n + 1) / 2 (반올림)으로 설정.
+- [여기 그림](https://www.safaribooksonline.com/library/view/designing-data-intensive-applications/9781491903063/assets/ddia_0511.png)처럼, 적어도 하나의 노드로부터 최신 데이터를 읽어 들일 수 있기 때문.
+- 여기서 중요한 건, w와 r은 얼마나 많은 노드로부터 응답을 기다려야 하는지를 결정하는 값이라는 것.
+
+동기적으로 read repair를 하여 linearizability를 높일 수는 있음. 하지만 성능상의 문제가 있어서, Riak은 read repair 사용 X. Cassandra는 쿼럼 읽기를 끝내기 전에 read repair를 기다린다고 함. 하지만, 같은 키에 대한 동시 쓰기가 발생한다면, last-write-wins의 충돌 해결이 가진 근본적 한계 때문에 lineariazability 달성 어려움.
 
 ### The Cost of Linearizability
 
