@@ -1091,33 +1091,21 @@ if (lease.isValid()) {
 
 # Consistency and Consensus
 
-> 앞 장에서 소개된 분산 시스템의 여러가지 암울한 현실 문제들에 대한 일종의 해결책을 기대하며 읽음.
+> 앞 장에서 소개된 분산 시스템의 여러가지 문제를 어떻게 극복할 수 있는지를 기대하며 읽음.
 
-분산 시스템에 여러 문제들을 소개했었음. 이에 대한 가장 쉬운 해결책은 실패하게 내버려 두고 사용자에게 에러 메시지를 보여주는 것. 이것이 불가하다면, 결국 장애 내성<sup>tolerating faults</sup>을 위한 방법을 찾아야 함. 그러니까, 일부 내부 컴포넌트가 결함이 있다고 하더라도, 서비스는 정상 동작을 지속하는 것.
+분산 시스템의 여러 문제들을 소개했었음. 이에 대한 가장 쉬운 해결책은 그냥 실패하게 내버려 두는 것. 그리고 사용자에게 에러 메시지를 보여주면 됨. 하지만 이를 받아들일 수 없는 경우가 대부분. 결국 장애 내성<sup>tolerating faults</sup>을 위한 방법을 찾아야 함. 일부가 결함이 있다고 하더라도, 서비스는 정상 동작을 지속하는 것.
 
-이번 장에서는 fault tolerant distributed system을 만들기 위한 프로토콜과 알고리즘 사례들을 소개. 이 방법들은 일단 다음과 같은 문제들이 발생할 수 있다고 가정.
+이번 장에서는 fault tolerant distributed system을 만들기 위한 프로토콜과 알고리즘들을 소개. 이 방법들은 일단 다음과 같은 문제들이 발생할 수 있다고 가정.
 
-- 패킷 손실, 꼬임, 중복, 예측 불가 지연.
+- 패킷의 손실, 꼬임, 중복, 지연.
 - 시계는 정확할 수 없음. 기껏해야 근사치.
 - 노드는 멈추거나 혹은 언제든 충돌날 수 있음.
 
 ## Consistency Guarantees
 
-- 어떤 방식의 리플리케이션(single/multi/leaderless)이든 데이터 비일관성은 일어남.
-- 동시에 두 개 이상의 서로 다른 노드에서 서로 다른 데이터를 보게 되는 것.
-- 모든 복제된 DB는 적어도 결과적 일관성을 제공.
-- 수렴<sup>convergence</sup>이란 이름이 더 적합할지도.
-- 결과적으로 모든 레플리카는 같은 값으로 수렴하기 때문.
-- 하지만 이는 매우 약한 보장. 언제 수렴하는지는 말하지 않기 때문.
-- 이는 애플리케이션 개발을 매우 힘들게 만듦. 여러 이유를 소개하고 있음.
-- 이번 장에서는 강한 일관성 모델을 살펴볼 예정.
-- 물론, 이 모델들은 좀 더 안 좋은 성능을 가지거나,
-- 장애 내성을 덜 가질 수 있음.
-- 그럼에도 불구하고 정확한 사용을 돕기 때문에 매력적.
-- 이 모델들은 트랜잭션의 격리 레벨과 유사한 점이 많음.
-- 하지만 분명 서로 독립적인 영역.
-- 트랜잭션 격리는 동시에 실행되는 트랜잭션 간의 레이스 컨디션을 피하기 위한 것.
-- 반면, 분산 일관성은 딜레이나 장애 등의 상황에서 레플리카 상태를 어떻게 조정하는지에 관한 것.
+어떤 방식의 리플리케이션(single/multi/leaderless)이든 데이터 비일관성은 일어남. 동시에 두 개 이상의 서로 다른 노드에서 서로 다른 데이터를 보게 되는 것. 그래도 결과적 일관성은 제공. 수렴<sup>convergence</sup>이란 이름이 더 적합할지도. 결과적으로 모든 레플리카는 같은 값으로 수렴하기 때문. 하지만 이는 매우 약한 보장. 언제 수렴하는지는 말하지 않기 때문. 이는 애플리케이션 개발을 매우 힘들게 만듦. 여러 이유를 소개하고 있음. 이번 장에서는 강한 일관성 모델을 살펴볼 예정. 물론, 이 모델들은 좀 더 안 좋은 성능을 가지거나, 장애 내성이 약할 수 있음. 그럼에도 불구하고 정확한 사용을 돕기 때문에 매력적.
+
+참고로, 트랜잭션의 격리 레벨과 유사하게 느낄 수 있으나 분명 독립적인 영역. 트랜잭션 격리는 동시에 실행되는 트랜잭션 간의 레이스 컨디션을 피하기 위한 것인 반면, 분산 일관성은 딜레이나 장애 등의 상황에서 레플리카 상태를 어떻게 조정하는지에 관한 것.
 
 이어지는 내용들은 총 3개
 
@@ -1129,23 +1117,35 @@ if (lease.isValid()) {
 
 두 개의 서로 다른 레플리카에게 동시에 질의를 던지면 서로 다른 대답이 돌아올 수 있음. 이는 혼란스러움. 하지만, 레플리카 지연이 있다고 하더라도, 클라이언트들이 같은 데이터를 볼 수 있다면? 마치 하나의 데이터 카피만 존재하는 것 처럼 보여준다면 훨씬 간단해 질 것. 이것이 *linearizability*의 기본 아이디어라고 함. *atomic consistency*, *strong consistency*, *immediate consistency*, *external consistency*라고도 불린다고.
 
-여기까지 보면서, 작성한 것을 바로 볼 수 있는지는 언급이 없길래 걱정했음. 하지만 바로 뒤이어 나옴.
+읽어 들인 값이 가장 최신임을 보장한다는 얘기도 나옴. (정말?)
 
 > In a linearizable system, as soon as one client successfully completes a write, all clients reading from the database must be able to see the value just written.
 
-읽어 들인 값이 가장 최신임을 보장한다고 함. 그리고 이 값들은 오래된 캐시나 레플리카에서 오지 않음. 그래서 *linearizability*는 *recency guarantee*라고도 불림. 
+그리고 이 값들은 오래된 캐시나 레플리카에서 오지 않음. 그래서 *linearizability*는 *recency guarantee*라고도 불림. 
 
 ### What Makes a System Linearizable?
 
-linearizable 예시를 몇 개 더 소개. 먼저, 아래는 non-linearizable 시스템의 예.
+linearizable 예시를 몇 개 더 소개하면서 개념적 이해를 돕고 있음. 먼저, 아래는 non-linearizable 시스템의 예.
 
 ![](figure-9-2-non-linearizable.png)
 
-한편, 아래 그림은 linearizable. 일단 한 클라이언트가 새로운 값을 받았다면, 뒤 이은 읽기들도 모두 새로운 값을 반환함(쓰기 요청에 대한 응답을 받지 않았다고 하더라도). "데이터의 단일 복사본"을 기대하는 시스템을 그대로 보여줌.
+한편, 아래 그림은 linearizable.
+
+1. 일단 한 클라이언트가 새로운 값을 받았다면,
+2. 뒤 이은 읽기들도 모두 새로운 값을 반환함. (쓰기 요청에 대한 응답을 받지 않았다고 하더라도 말이다)
+3. "데이터의 단일 복사본"을 기대하는 시스템을 그대로 보여줌.
 
 ![figure-9-3-linearizable](figure-9-3-linearizables.png)
 
-아래 그림은 좀 더 복잡하고 상세한 예시. 수직으로 그려진 선들은 DB 연산이 실제로 수행된 시간. 이런 마커들은 앞으로만 갈 뿐 뒤로는 가지 않음. 참고로 여기서의 cas(x, v old, v new) ⇒ r는 compare and set 연산을 가리킴. 최신 값인 경우에만 값 설정이 되는 것. 또한, 이 모델에서는 어떤 트랜잭션 격리도 가정하지 않음. 그리고, 마지막 경고 표시는 linearizable이 깨진 모습. 그림이 이해되지 않는다면 책을 다시 한 번 볼 것.
+아래 그림은 좀 더 복잡하고 상세한 예시.
+
+1. 수직으로 그려진 선들은 DB 연산이 실제로 수행된 시간.
+2. 이런 마커들은 앞으로만 갈 뿐 뒤로는 가지 않음.
+3. 참고로, 여기서의 cas(x, v old, v new) ⇒ r는 compare and set 연산을 가리킴.
+4. 최신 값인 경우에만 값 설정이 되는 것.
+5. 또한, 이 모델에서는 어떤 트랜잭션 격리도 가정하지 않음.
+6. 그리고, 마지막 경고 표시는 linearizable이 깨진 모습.
+7. 그림이 이해되지 않는다면 책을 다시 한 번 볼 것.
 
 ![](figure-9-4-linearizable-in-detail.png)
 
@@ -1153,44 +1153,44 @@ linearizable 예시를 몇 개 더 소개. 먼저, 아래는 non-linearizable �
 
 Serializability
 
-- 트랜잭션의 격리 속성.
-- 이 트랜잭션은 여러 객체를 읽고 쓰기도 함.
-- 트랜잭션이 마치 순차적(some serial order)으로 실행된 것 처럼 작동.
+1. 트랜잭션의 격리 속성.
+2. 이 트랜잭션은 여러 객체를 읽고 쓰기도 함.
+3. 트랜잭션이 마치 순차적(some serial order)으로 실행된 것 처럼 작동.
 
 Linearizability
 
-- 레지스터(register, 그러니까 개별 객체)에 대한 읽기와 쓰기의 recency guarantee.
-- 객체들을 하나의 트랜잭션으로 묶지는 않음.
-- write skew 같은 문제를 해결하지는 못함.
+1. 레지스터(register, 그러니까 개별 객체)에 대한 읽기와 쓰기의 recency guarantee.
+2. 객체들을 하나의 트랜잭션으로 묶지는 않음.
+3. write skew 같은 문제를 해결하지는 못함.
 
 ### Relying on Linearizability
 
-- 언제 linearizability가 유용할까?
-- 시스템이 올바르게 동작하기 위해 linearizability가 중요한 요건인 영역이 일부 있음.
+1. 언제 linearizability가 유용할까?
+2. 시스템이 올바르게 동작하기 위해 linearizability가 중요한 요건인 영역이 일부 있음.
 
 #### Locking and leader election
 
-- single-leader replication은 한 개의 리더만을 허용.
-- 리더를 선출하는 한 가지 방법은 잠금<sup>lock</sup>.
-- 모든 노드는 시작할 때 잠금을 얻으려고 시도하고,
-- 이에 성공한 하나의 노드만이 리더가 됨.
-- 잠금이 어떻게 구현되든 반드시 linearizable이어야 함.
-- 어떤 노드가 잠금을 소유할지를 모든 노드가 동의해야 하는 것.
-- ZooKeeper와 etcd 같은 코디네이션 서비스가 분산 잠금과 리더 선출에 주로 사용됨.
+1. single-leader replication은 한 개의 리더만을 허용.
+2. 리더를 선출하는 한 가지 방법은 잠금<sup>lock</sup>.
+3. 모든 노드는 시작할 때 잠금을 얻으려고 시도하고,
+4. 이에 성공한 하나의 노드만이 리더가 됨.
+5. 잠금이 어떻게 구현되든 반드시 linearizable이어야 함.
+6. 어떤 노드가 잠금을 소유할지를 모든 노드가 동의해야 하는 것.
+7. ZooKeeper와 etcd 같은 코디네이션 서비스가 분산 잠금과 리더 선출에 주로 사용됨.
 
 #### Constraints and uniqueness guarantees
 
-- DB의 컬럼 유니크 제약이나,
-- 파일 저장 서비스에서 두 개의 파일이 같은 경로와 이름을 가질 수 없는 것 등이 여기에 해당.
-- 잠금이나 원자적 compare-and-set과 매우 유사.
-- 은행 계좌 잔액이나 상품의 재고, 비행기 좌석 예약도 같은 이슈를 가짐.
-- 물론, 이들을 좀 더 느슨하게 처리할 수도 있음. "Timeliness and Integrity"에서 다룰 예정.
-- 하지만, DB의 유니크 제약이나, 외부키, 속성 제약 등은 linearizability 없이 구현 불가.
+1. DB의 컬럼 유니크 제약이나,
+2. 파일 저장 서비스에서 두 개의 파일이 같은 경로와 이름을 가질 수 없는 것 등이 여기에 해당.
+3. 잠금이나 원자적 compare-and-set과 매우 유사.
+4. 은행 계좌 잔액이나 상품의 재고, 비행기 좌석 예약도 같은 이슈를 가짐.
+5. 물론, 이들을 좀 더 느슨하게 처리할 수도 있음. "Timeliness and Integrity"에서 다룰 예정.
+6. 하지만, DB의 유니크 제약이나, 외부키, 속성 제약 등은 linearizability 없이 구현 불가.
 
 #### Cross-channel timing dependencies
 
-- 커뮤니케이션 채널이 여러개이기에 linearizability 위반이 드러나는 것.
-- 몇 가지 사례 소개. 당연한 얘기. 기록은 생략. 
+1. 커뮤니케이션 채널이 여러개이기에 linearizability 위반이 드러나는 것.
+2. 몇 가지 사례 소개. 당연한 얘기. 기록은 생략. 
 
 ### Implementing Linearizable Systems
 
@@ -1202,34 +1202,34 @@ Linearizability
 
 *Single-leader replication (potentially linearizable)*
 
-- 리더로부터, 혹은 동기적으로 업데이트 된 팔로워로부터 데이터를 읽어 들일 수 있다면 linearizable.
-- 하지만, 모든 단일 리더 DB가 설계상 또는 동시성 버그로 인해 linearizable인 것은 아님.
-- 또한, 서로 다른 노드가 서로 리더라고 주장할 수도 있음.
-- 비동기 리플리케이션에서는 페일오버로 인해 쓰기가 유실될 수도 있음. 이는 duarbility와 linearizability 모두 위반.
+1. 리더로부터, 혹은 동기적으로 업데이트 된 팔로워로부터 데이터를 읽어 들일 수 있다면 linearizable.
+2. 하지만, 모든 단일 리더 DB가 설계상 또는 동시성 버그로 인해 linearizable인 것은 아님.
+3. 또한, 서로 다른 노드가 서로 리더라고 주장할 수도 있음.
+4. 비동기 리플리케이션에서는 페일오버로 인해 쓰기가 유실될 수도 있음. 이는 duarbility와 linearizability 모두 위반.
 
 *Consensus algorithms (linearizable)*
 
-- 합의 알고리즘은 단일 리더 리플리케이션과 닮아 있음.
-- 그러나 split brain과 stale replac를 막는 방안을 가지고 있고,
-- 이로 인해 linearizable 저장소 구현이 가능.
-- ZooKeepr나 etcd가 동작하는 방식임.
+1. 합의 알고리즘은 단일 리더 리플리케이션과 닮아 있음.
+2. 그러나 split brain과 stale replac를 막는 방안을 가지고 있고,
+3. 이로 인해 linearizable 저장소 구현이 가능.
+4. ZooKeepr나 etcd가 동작하는 방식임.
 
 *Multi-leader replication (not linearizable)*
 
-- 일반적으로 linearizable 아님.
-- 여러 노드가 동시에 쓰기 요청을 받고,
-- 서로 비동기적으로 리플리케이션하기 때문.
-- 이따금 충돌이 일어나기도.
+1. 일반적으로 linearizable 아님.
+2. 여러 노드가 동시에 쓰기 요청을 받고,
+3. 서로 비동기적으로 리플리케이션하기 때문.
+4. 이따금 충돌이 일어나기도.
 
 *Leaderless replication (probably not linearizable)*
 
-- 이전에도 언급했지만 DynamoDB가 여기에 해당.
-- 정족수 읽기와 쓰기(w + r > n)를 통해 강한 일관성이 가능하다는 주장들이 있음.
-- 일단, 설정을 어떻게 하느냐에 따라 일관성 보장이 어려울 수 있음.
-- 또한, "Last write wins" 충돌 해결 방식은 time-of-day clock(시간 불일치 이슈)을 기반으로 하기 때문에 nonlinearizable.
-- sloppy quorums 또한 linearizability 위반.
-- 다시 한 번 말하지만, sloppy quorum은 바깥 노드에 최신 데이터가 있을 수 있기 때문에, 최신 값을 제공하지 못할 수도 있음. 기본적으로는 내구성을 위한 수단.
-- 아무리 강한 정족수라고 하더라도 linearizability는 어려움. 뒤이어 설명.
+1. 이전에도 언급했지만 DynamoDB가 여기에 해당.
+2. 정족수 읽기와 쓰기(w + r > n)를 통해 강한 일관성이 가능하다는 주장들이 있음.
+3. 일단, 설정을 어떻게 하느냐에 따라 일관성 보장이 어려울 수 있음.
+4. 또한, "Last write wins" 충돌 해결 방식은 time-of-day clock(시간 불일치 이슈)을 기반으로 하기 때문에 nonlinearizable.
+5. sloppy quorums 또한 linearizability 위반.
+6. 다시 한 번 말하지만, sloppy quorum은 바깥 노드에 최신 데이터가 있을 수 있기 때문에, 최신 값을 제공하지 못할 수도 있음. 기본적으로는 내구성을 위한 수단.
+7. 아무리 강한 정족수라고 하더라도 linearizability는 어려움. 뒤이어 설명.
 
 #### Linearizability and quorums
 
