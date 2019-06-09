@@ -1280,3 +1280,4 @@ linearizability가 매우 유용한 보장이긴 하지만, 매우 적은 데이
 ## Ordering Guarantees
 
 TBD
+

@@ -38,12 +38,19 @@
 - [Weak Isolation Levels](./Distributed-Data.md#weak-isolation-levels)
 - [Summary](./Distributed-Data.md#summary)
 
-### [The trouble with Distributed Systems](./Distributed-Data.md#the-trouble-with-distributed-systems)
+### [The Trouble with Distributed Systems](./Distributed-Data.md#the-trouble-with-distributed-systems)
 
 - [Faults and Partial Failures](./Distributed-Data.md#faults-and-partial-failures)
 - [Unreliable Networks](./Distributed-Data.md#unreliable-networks)
 - [Unreliable Clocks](./Distributed-Data.md#unreliable-clocks)
 - [Knowledge, Truth, and Lies](https://github.com/codehumane/what-i-learned/blob/master/book/ddia/Distributed-Data.md#knowledge-truth-and-lies)
+
+### [Consistency and Consensus](./Distributed-Data.md#consistency-and-consensus)
+
+- [Consistency Guarantees](./Distributed-Data.md#consistency-guarantees)
+- [Linearizability](./Distributed-Data.md#linearizability)
+- Ordering Guarantees
+- Distributed Transactions and Consensus
 
 ## III. Derived Data
 
