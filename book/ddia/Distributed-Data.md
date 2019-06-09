@@ -1252,5 +1252,31 @@ Linearizability
 
 ### The Cost of Linearizability
 
-TBD
+snigle-leader와 multi-leader 환경에서 네트워크 단절이 있는 경우를 이야기. 특별한 내용은 없다.
 
+#### The CAP theorem
+
+이는 단지 single-leader와 multi-leader 만의 문제는 아님. 네트워크가 신뢰할 수 없다면 어디서든 일어날 수 있는 일. 심지어 하나의 데이터 센터 내에서도. 이 경우의 트레이드 오프는 다음과 같음.
+
+*linearizable but unavilable*
+
+1. linearizability가 꼭 필요하다면,
+2. 일부 레플리카들이 다른 레플리카들과 단절된 경우,
+3. 일부 레플리카들은 단절된 기간 동안 요청을 처리할 수 없음.
+4. 에러를 반환하거나 문제가 해결될 때까지 요청을 대기시켜야 함.
+
+*available but not linearizable*
+
+1. linearizability가 꼭 필요하지 않다면,
+2. 네트워크 단절이 있다고 하더라도,
+3. 각 레플리카들은 독립적으로 요청을 처리할 수 있음. 
+
+참고로, CAP 이론이 데이터베이스에게 선택지를 제공했고, 새로운 NoSQL 들의 탄생을 이끌었다는 점에서는 칭찬할 만 하지만, 그 정의로 하여금 혼동을 일으키기 때문에 사용을 피하자고 주장하고 있음. "either Consistent or Available when Partitioned"라는 표현이 더 정확하고, CAP의 A가 말하는 바가 실제 데이터베이스들의 구현과는 거리가 있으며, 네트워크 지연이나 죽은 노드 등의 여러 트레이드 오프는 무시한 채 너무 작은 범위만을 다루고, ...
+
+#### Linearizability and network delays
+
+linearizability가 매우 유용한 보장이긴 하지만, 매우 적은 데이터베이스들만이 이를 제공함. 심지어 현대의 멀티 코어 CPU에 있는 RAM 조차 linearizable X. 그리고 이런 선택의 이유는 장애 내성<sup>fault tolerance</sup>라기 보다는 성능. 
+
+## Ordering Guarantees
+
+TBD
