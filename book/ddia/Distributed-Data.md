@@ -1279,5 +1279,39 @@ linearizability가 매우 유용한 보장이긴 하지만, 매우 적은 데이
 
 ## Ordering Guarantees
 
-TBD
+### Ordering and Causality
+
+#### The causal order is not a total order
+
+- *total order*라는 용어를 사용하고 있음.
+- 어떤 두 수도 서로 비교될 수 있는, 예를 들면 자연수.
+- 하지만 수학적 집합은 not totally ordered. {a, b} < {b, c} ?
+- 이를 가리켜 *incomparable*, *partial order*라고 부름.
+- linearizability는 total order. 하나의 데이터 카피만 있는 것처럼 동작하고, 모든 연산은 원자적이므로.
+- causality는 partial order. 인과적 관계가 있다면 ordered, 동시(서로를 모르는) 실행인 경우는 incomparable.
+- DB에서의 lock과 MVCC가 떠오름. (잘못된 연상인가?)
+- concurrency를 가리켜 분기하고 병합되는 타임라인이라 부르는 부분도 재밌음. 즉, incomparable.
+
+#### Linearizability is stronger than causal consistency
+
+- linearizability이 causal을 내포하는 것으로 관계를 설명.
+- linearizability가 이해하기 쉽고 매력적으로 보일지 모르지만,
+- 계속 언급했듯이 성능과 가용성 측면에서 비용이 큼.
+- causal consistency가 너무 느려지지도 않으면서 네트워크 실패에도 살아남을 수 있는 가장 강한 일관성 모델.
+- linearizabilty가 필요해 보이는 시스템도 실은 causal consistency가 필요한 경우가 많음. 
+
+#### Capturing causal depdencies
+
+linearizable 하지 않은 시스템에서 어떻게 causal consistency를 지속할 수 있는지 대략적인 아이디어를 소개.
+
+- causality를 유지하려면 어떤 연산이 다른 연산 보다 전에 일어났다는 것(happend before)을 알아야 함.
+- 그리고 전에 일어난 연산이 아직 반영되지 않았다면 뒤 이은 연산들의 적용을 기다려야 함.
+- 리플리케이션이 일어날 때도 이런 causality를 생각해 볼 수 있음.
+- causal dependencies를 파악하는 것은 "Detecting Concurrent Writes"에서 살펴봤던 개념과 유사.
+- lost update를 방지하기 위해, 같은 키에 대한 동시 쓰기를 감지하는 것.
+- causal consistency는 여기에서 좀 더 나아감.
+- 전체 데이터베이스를 가로 질러 causal dependencies를 추적해야 함.
+- 이를 위해 애플리케이션이 읽어들인 데이터의 버전이 무엇이었는지를 데이터베이스가 알아야 함.
+- 데이터베이스에 쓰기 요청을 보낼 때, 이전 연산에서 받은 버전 번호를 함께 보내야 하는 이유가 됨.
+- "Serializable Snapshot Isolation (SSI)"에서도 비슷한 아이디어를 다룸.
 
