@@ -1302,16 +1302,32 @@ linearizability가 매우 유용한 보장이긴 하지만, 매우 적은 데이
 
 #### Capturing causal depdencies
 
-linearizable 하지 않은 시스템에서 어떻게 causal consistency를 지속할 수 있는지 대략적인 아이디어를 소개.
+- causality를 유지하려면, 서로 다른 연산이 'happened before' 관계인지를 알 수 있어야 함.
+- 참고로, 동시에 일어난 연산은 순서 보장 X. 즉, partial order.
+- 반면, 'happened before' 관계라면, 연산이 실행되는 관계를 보장해 줌.
+- 예를 들어, 먼저 일어난 연산이 아직 실행중이라면 뒤이은 연산들은 대기.
+- 여기서 causal dependencies는 아래 기준으로 판단하면 됨.
 
-- causality를 유지하려면 어떤 연산이 다른 연산 보다 전에 일어났다는 것(happend before)을 알아야 함.
-- 그리고 전에 일어난 연산이 아직 반영되지 않았다면 뒤 이은 연산들의 적용을 기다려야 함.
-- 리플리케이션이 일어날 때도 이런 causality를 생각해 볼 수 있음.
-- causal dependencies를 파악하는 것은 "Detecting Concurrent Writes"에서 살펴봤던 개념과 유사.
-- lost update를 방지하기 위해, 같은 키에 대한 동시 쓰기를 감지하는 것.
-- causal consistency는 여기에서 좀 더 나아감.
-- 전체 데이터베이스를 가로 질러 causal dependencies를 추적해야 함.
+> If a  node had already seen the value X when it issued the write Y, then X and Y may be cusally related.
+
+- 이 causal dependencies를 파악하는 방법은 "Detecting Concurrent Writes"에서 다룬 내용과 유사.
+- 다만, 단일 키에 대해서가 아니라 전체 데이터베이스를 가로 질러 causal dependencies를 추적.
 - 이를 위해 애플리케이션이 읽어들인 데이터의 버전이 무엇이었는지를 데이터베이스가 알아야 함.
 - 데이터베이스에 쓰기 요청을 보낼 때, 이전 연산에서 받은 버전 번호를 함께 보내야 하는 이유가 됨.
 - "Serializable Snapshot Isolation (SSI)"에서도 비슷한 아이디어를 다룸.
+
+### Sequence Number Ordering
+
+- causality가 중요한 이론적 개념이긴 하지만,
+- 모든 causal dependencies를 추적하는 것은 실용적이지 않을 수도.
+- 많은 애플리케이셔에서 데이터 쓰기에 앞서 많은 읽기가 일어나는데, 이 많은 읽기에 대해 추적하는 것이 큰 부하가 될 수도 (왜? 버전만 보면 되는 것 아닌가?)
+- 대안으로 시퀀스 넘버나 타임스탬프를 이용해 이벤트의 순서를 매길 수 있음.
+- time-of-day clock이 아닌 logical clock(매 연산마다 값이 증가하는 카운터를 주로 사용)을 사용
+- 시퀀스 넘버나 타임스탬프는 공간을 적게 차지함(몇 바이트 안 됨)
+- 또한, total order를 제공. 즉, 모든 연산이 고유한 번호를 가지며, 두 개의 번호는 항상 비교(누가 더 큰가)가 가능함.
+- 싱글 리더 리플리케이션 데이터베이스에서는 리플리케이션 로그가 쓰기 연산의 total order가 될 수 있음. causality로도 쓰일 수 있음.
+
+#### Noncausal sequence number generators
+
+TBD
 
