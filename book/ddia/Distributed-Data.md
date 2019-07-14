@@ -1380,6 +1380,29 @@ Lamport timestamp가 causality와 함께 total order를 만족시키긴 하지�
 
 ### Total Order Broadcast
 
+단일 CPU 코어에서는 total ordering을 만족시키기 쉬움. 하지만 분산 시스템에서는 모든 노드가 동의하는 total ordering을 만족시키기 어려움. 타임스탬프 또는 시퀀스 넘버를 이용한 순서 부여에 대해서 알아봤으나, 싱글 리더 리플레케이션만큼 강력하지 않다는 것도 알게 됨. 물론, 싱글 리더는 처리량이 많아지거나, 리더 실패 시 페일오버를 다뤄야 할 때 문제가 됨. 이를 극복하기 위해 *total order broadcast* 또는 *atomic broadcast*라는 접근법을 살펴볼 예정.
+
+total order broadcast는 종종 노드 간 메시지 교환 프로토콜로 설명됨. 약식으로는, 아래의 두 가지 속성이 항상 만족해야 함.
+
+1. *Reliable delivery*. 메시지 유실 없음. 한 노드로 메시지가 전달됐다면 다른 모든 노드에도 전달된 것.
+2. *Totally ordered delivery*. 메시지는 모든 노드에 같은 순서로 전달됨.
+
+#### Using total order broadcast
+
+1. ZooKeeper나 etcd 같은 컨센서스 서비스<sup>consensus service</sup>는 total order broadcast를 구현하고 있음.
+2. 참고로, total order broadcast는 consensus와 깊은 연관이 있음.
+3. total order bradcast는 데이터베이스 리플리케이션에서 필요로 하는 것과 완전히 일치.
+4. 데이터베이스에 대한 쓰기가 일어나면, 모든 레플리카들은 같은 순서로 같은 쓰기를 수행함. 레플리카들은 서로 일관된 상태를 유지하게 됨. *state machine replication*이라고 알려져 있음.
+5. total order broadcast도 마찬가지 방식을 사용.
+6. 여기서 중요한 건 메시지가 전달될 때 순서가 고정된다는 것.
+7. 이 순서로 인해 데이터 삽입의 소급 적용은 불가.
+8. 타임스탬프 순서 지정보다 강력한 이유가 됨.
+9. total order broadcast를 로그 생성 방법으로 이해할 수도 있음.
+10. 메시지 전달을 로그 어펜딩으로 보는 것.
+11. total order broadcast는 fencing token을 제공하는 잠금 서비스에서도 유용하게 쓰임.
+12. 내용은 생략. ZooKeeper에서의 zxid 참고.
+
+#### Implementing linearizable storage using total order broadcast
 
 
 
