@@ -1380,7 +1380,7 @@ Lamport timestamp가 causality와 함께 total order를 만족시키긴 하지�
 
 ### Total Order Broadcast
 
-단일 CPU 코어에서는 total ordering을 만족시키기 쉬움. 하지만 분산 시스템에서는 모든 노드가 동의하는 total ordering을 만족시키기 어려움. 타임스탬프 또는 시퀀스 넘버를 이용한 순서 부여에 대해서 알아봤으나, 싱글 리더 리플레케이션만큼 강력하지 않다는 것도 알게 됨. 물론, 싱글 리더는 처리량이 많아지거나, 리더 실패 시 페일오버를 다뤄야 할 때 문제가 됨. 이를 극복하기 위해 *total order broadcast* 또는 *atomic broadcast*라는 접근법을 살펴볼 예정.
+단일 CPU 코어에서는 total ordering을 만족시키기 쉬움. 하지만 분산 시스템에서는 모든 노드가 동의하는 total ordering을 만족시키기 어려움. 타임스탬프 또는 시퀀스 넘버를 이용한 순서 부여에 대해서 알아봤으나, 싱글 리더 리플레케이션만큼 강력하지 않다는 것도 알게 됨. 물론, 싱글 리더는 처리량이 많아지거나, 리더 실패 시 페일오버를 다뤄야 할 때 문제가 됨. 이를 극복하기 위해 *total order broadcast* 혹은 *atomic broadcast*라고 불리는 접근법을 살펴볼 예정.
 
 total order broadcast는 종종 노드 간 메시지 교환 프로토콜로 설명됨. 약식으로는, 아래의 두 가지 속성이 항상 만족해야 함.
 
@@ -1403,6 +1403,28 @@ total order broadcast는 종종 노드 간 메시지 교환 프로토콜로 설�
 12. 내용은 생략. ZooKeeper에서의 zxid 참고.
 
 #### Implementing linearizable storage using total order broadcast
+
+linearizable 시스템에서는 연산이 total order 함. 하지만 이 둘이 완전히 같지는 않음. 일단, total order broadcast는 비동기. 메시지가 고정된 순서와 함께 전달되긴 하지만, 메시지가 언제 도착하는지는 보장하지 않음. 반면, linearizability는 recency guarantee. 즉, 가장 최근에 쓰인 값이 읽힘을 보장.
+
+하지만, total order broadcast를 사용해서 linearizable 저장소를 만들 수 있음. 예를 들어, 사용자 계정의 이름이 고유하다는 제약을 만족시킬 수 있음. total order broadcast를 append-only 로그처럼 사용해서 linearizable compare-and-set 연산을 구현하는 것.
+
+1. 메시지를 로그에 추가<sup>append</sup>. 예컨대, 특정 사용자 이름을 내가 사용하겠다는 메시지.
+2. 내가 추가한 메시지를 만날 때까지 로그를 읽어들임.
+3. 특정 사용자 이름을 사용한다는 첫 번째 메시지가 바로 내가 작성했던 메시지라면 성공.
+4. 메시지를 커밋하고 클라이언트에게 이를 알림.
+5. 다른 이가 작성한 메시지라면 나의 연산은 중단시킴.
+
+이 절차가 linearizable 쓰기를 보장하긴 하지만, linearizable 읽기는 보장하지 않음에 유의.
+
+> if you read from a store that is asynchronously updated from the log, it may be stale.
+
+정확히 말하면 위 절차는 *sequential consistency*(*timeline consistency*라고도 알려짐. linearizable보다는 좀 더 약한 보장)를 제공하는 것. 만약, 읽기도 linearizable 하게 하고 싶다면 몇 가지 방법이 있음.
+
+1. 읽기도 log를 통해 수행. 읽기 요청이 들어오면 이 또한 메시지로 간주하여 로그에 추가한 뒤, 로그를 읽어들이고, 추가했던 읽기 메시지가 읽어들여지면 읽기 요청에 대한 처리를 수행. 로그 상의 메시지 위치가 언제 읽기를 수행할지에 대한 마킹. etcd의 quorum read에서 사용된다고 함.
+2. 최신 로그 메시지의 위치가 어딘지 구하고, 이 위치까지 모두 읽어들여지면, 읽기 요청에 대한 처리를 함. ZooKeeper에서의 sync() 연산 원리.
+3. 쓰기를 동기적으로 레플리카에 복제할 수도 있음. 체인 리플리케이션에서 사용.
+
+#### Implmenting total order broadcast using linearizable storage
 
 
 
