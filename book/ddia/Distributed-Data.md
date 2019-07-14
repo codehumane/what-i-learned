@@ -1362,3 +1362,24 @@ linearizability가 매우 유용한 보장이긴 하지만, 매우 적은 데이
     - 버전 벡터: 두 연산이 concurrent인지 causally dependent인지 판단 가능.
     - Lamport timestamp: 항상 total ordering을 강제함. concurrent 여부 모름. 대신 좀 더 더 간결.
 
+#### Timestamp ordering is not sufficient
+
+Lamport timestamp가 causality와 함께 total order를 만족시키긴 하지만, 분산 시스템의 여러 문제를 해결하기에는 충분치 않음.
+
+- 예를 들어, 사용자 이름이 고유한 시스템을 생각해 보자.
+- 두 사용자가 같은 이름의 계정을 동시에 생성하려고 하면,
+- 한 사용자는 성공해야 하고 나머지 사용자는 실패해야 함.
+- 만약 특정 노드가 한 사용자의 요청을 받았고,
+- 이 요청을 성공시키거나 실패시키려면,
+- 다른 노드에 같은 이름의 계정 생성이 처리 중인지,
+- 처리 중이라면 그 요청의 타임스탬프는 얼마인지를 알아야 함.
+- 하지만, 네트워크 문제로 인해 다른 노드와 통신할 수 없다면,
+- 시스템은 중단될지도 모르며, 이런 시스템은 장애 내성을 가진다고 말할 수 없음.
+
+따라서, 고유성 제약 등이 구현되어야 한다면, 연산의 total ordering 만으로는 충분치 않음. total order가 완료<sup>finalized</sup>되었는지도 알아야 함. 이 아이디어는 뒤이은 *total order broadcast*에서 다룸.
+
+### Total Order Broadcast
+
+
+
+
