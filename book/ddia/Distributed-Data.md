@@ -1424,7 +1424,18 @@ linearizable 시스템에서는 연산이 total order 함. 하지만 이 둘이 
 2. 최신 로그 메시지의 위치가 어딘지 구하고, 이 위치까지 모두 읽어들여지면, 읽기 요청에 대한 처리를 함. ZooKeeper에서의 sync() 연산 원리.
 3. 쓰기를 동기적으로 레플리카에 복제할 수도 있음. 체인 리플리케이션에서 사용.
 
-#### Implmenting total order broadcast using linearizable storage
+#### Implementing total order broadcast using linearizable storage
 
+total order broadcast를 이용해 linearizble compare-and-set 연산을 만들 수 있는지 알아보았음. 이번에는 바꿔서 linearizable 스토리지를 가지고 있다고 가정하고, total order broadcast를 어떻게 이룰 수 있는지 살펴봄.
 
+가장 간단한 방법은 원자적으로 increment-and-get 연산을 할 수 있는 linearizable 레지스터를 가지는 것. 혹은 compare-and-set. 알고리즘은 아래와 같음.
+
+1. 레지스터를 통해 정수를 linearizable하게 increment-and-get.
+2. 결과 값을 total order broadcast 할 메시지에 추가하여 시퀀스로 사용.
+3. 그리고 이 메시지를 모든 노드에 전달.
+4. 수신자는 시퀀스 넘버에 따라 순차적으로 메시지들을 처리.
+
+lamport timestamp와 다르게 시퀀스 넘버에 갭이 없음에 유의. 따라서 4번 다음에 6번 메시지를 받았다면, 5번 메시지를 기다려야 함을 알 수 있음.
+
+일련의 절차가 실패하지 않는다면 매우 쉽다. 하지만, 문제는 노드간의 커뮤니케이션이 실패할 때임. 노드가 실패했을 때 값을 복구하는 것도 문제. 결국 합의 알고리즘을 고민하게 됨. 바로 뒤이어 살필 내용.
 
