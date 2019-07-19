@@ -1452,12 +1452,12 @@ lamport timestamp와 다르게 시퀀스 넘버에 갭이 없음에 유의. 따�
 
 FLP(Fischer, Lynch, Paterson 이름을 따서 만들어진, 합의를 언제나 만족시키는 알고리즘은 없다는)는 정말일까? 이는 타임아웃도 사용할 수 없고, 시계도 사용할 수 없는, 비동기 시스템 모델에서 입증된 개념. 만약, 타임아웃을 사용할 수 있거나, 충돌이 의심되는 노드를 식별을 수 있는 대안이 있다면, 합의는 가능함.
 
-## Atomic Commit and Two-Phase Commit (2PC)
+### Atomic Commit and Two-Phase Commit (2PC)
 
 - 원자성은 실패한 트랜잭션이 절반만 변경된 채로 데이터베이스를 더럽히는 일을 방지해 줌.
 - 트랜잭션이 여러 오브젝트에 걸쳐 일어나거나, 보조 인덱스를 유지해야 할 때, 원자성은 특히 더 중요.
 
-### From single-node to distributed atomic commit
+#### From single-node to distributed atomic commit
 
 단일 데이터베이스 노드에서 트랜잭션을 수행할 때는 스토리지 엔진에 의해 원자성이 보장됨.
 
