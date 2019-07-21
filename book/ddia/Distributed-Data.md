@@ -1477,3 +1477,20 @@ FLP(Fischer, Lynch, Paterson 이름을 따서 만들어진, 합의를 언제나 
 - 특정 노드의 실패가 감지된다고 해서, 성공했던 다른 노드의 커밋을 취소할 수도 없는 일.
 - *read committed* 격리 등을 어기게 되는 것. 데이터를 신뢰하기 어려워짐.
 
+
+#### Introduction to two-phase commit
+
+- 2PC(two-phase commit)는 여러 노드에 대한 원자적 트랜잭션 커밋을 위한 알고리즘.
+- 절차는 아래 그림 참고. 커밋/중단 프로세스가 두 개의 페이즈로 나뉜 것.
+
+![2PC](https://www.ibm.com/developerworks/data/library/techarticle/dm-0611chang/figure1.gif)
+
+- 2PC는 *coordinator(transaction manager라고도 불리는)*를 사용(단일 노드 트랜잭션에서는 사용 X).
+- 2PC 트랜잭션은 여러 데이터베이스 노드에 있는 데이터를 읽고 쓰는 것으로 시작.
+- 애플리케이션이 커밋할 준비가 되면 coordinator는 1 페이즈를 시작.
+- 즉, *prepare* 요청을 각 노드로 보내서, 커밋할 준비가 됐는지를 확인.
+- 만약, 모든 노드로부터 "yes" 응답을 받으면, 페이즈 2에서 *commit* 요청을 보냄.
+- "no" 응답을 하나라도 받으면, 페이즈 2에서 *abort* 요청을 보냄.
+
+#### A system of promises
+
