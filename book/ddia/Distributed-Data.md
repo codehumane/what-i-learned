@@ -1538,13 +1538,26 @@ FLP(Fischer, Lynch, Paterson 이름을 따서 만들어진, 합의를 언제나 
 
 #### Exactly-once message processing
 
-heterogeneous 분산 트랜잭션은 서로 다른 시스템간의 트랜잭션 통합.
-
+- heterogeneous 분산 트랜잭션은 서로 다른 시스템간의 트랜잭션 통합.
 - 예를 들어, 메시지 큐에서 데이터베이스로 메시지를 전달하고, 데이터베이스는 트랜잭션 처리가 완료되어야만 메시지가 확인했다고(acknowledgement) 간주.
 - 메시지 확인(acknowledgement)과 데이터베이스 쓰기(write)를 하나의 트랜잭션 안에서 원자적으로 커밋하는 것.
 - 메시지 전달이나 데이터베이스 쓰기가 실패하면 둘 다 abort.
 - 나중에 메시지 브로커가 메시지를 다시 전달할 수 있게 함.
 - 몇 번의 재시도가 있을 순 있지만, 메시지가 정확히 한 번(exactly once) 처리됨을 보장.
+- 하지만, 이런 분산 트랜잭션은 트랜잭션에 참여하는 시스템들이 모두 원자적 커밋 프로토콜을 사용할 수 있어야 가능.
 
-하지만, 이런 분산 트랜잭션은 트랜잭션에 참여하는 시스템들이 모두 원자적 커밋 프로토콜을 사용할 수 있어야 가능.
+#### XA transactions
+
+- X/Open XA(eXtended Architecture)는 서로 다른 기술 간의 2PC를 구현하는 표준.
+- 전통적인 관계형 데이터베이스와 메시즈 브로커들(ActiveMQ, HornetQ, MSMQ, ...)에서 지원됨.
+- 이는 네트워크 프로토콜이 아닌, 단지 트랜잭션 코디네이터와의 인터페이스 역할을 하는 C API.
+- Java와 같은 언어들에서도 이런 API가 존재. JTA(Java Transaction API), JDBC(Java Database Connectivity), JMS(Java Message Service).
+- XA는 애플리케이션이 네트워크 드라이버나 클라이언트 라이브러리를 사용한다는 것을 전제로 함.
+- XA API를 구현하는 코디네이터는 일반적으로 라이브러리 형태. 그리고 트랜잭션을 발행하는 애플리케이션과 같은 프로세스에 로드됨.
+- 참여자들의 트랜잭션을 추적하며, 참여자들의 *prepare*에 대한 응답을 수집하고, 로컬 디스크에 로그를 남겨 각 트랜잭션의 *commit*/*abort* 결정을 기록함.
+- 애플리케이션 프로세스에 2PC에서 코디네이터 장애가 일어난 경우와 동일하게 대응하면 됨.
+
+#### Holding locks while in doubt
+
+
 
