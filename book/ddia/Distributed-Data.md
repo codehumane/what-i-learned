@@ -1614,3 +1614,20 @@ uniform agreement와 integrity가 핵심 아이디어. 모두가 같은 결과�
 
 참고로, 대부분의 컨센서스 알고리즘은 비잔틴 장군 문제가 없다고 가정함. 이 문제를 극복할 수 있기는 하지만 내용이 방대하여 책에서는 다루지 않는다고. 
 
+#### Consensus algorithms and total order broadcast
+
+- 가장 많이 알려진 컨센서스 알고리즘은 Viewstamped Replication(VSR), Paxos, Raft, Zab.
+- 실제로는 대부분의 알고리즘이 앞서 소개한 형식적인 모델(값을 제안하고 결정)을 사용하지 않음.
+- 대신, 값들의 시퀀스<sup>sequence</sup>를 결정.
+- 이는 total order broadcast 알고리즘을 가능하게 함.
+- total order broadcast가 정확히 한 번 모든 노드에게 동일한 순서로 메시지를 전달하므로,
+- 몇 차례(조금 어색한 표현이긴 하지만) 컨센서스(다음으로 보낼 메시지를 결정)를 수행하는 것과 같음.
+- 앞에서 언급했던 4가지 속성도 만족.
+    - agreement: 다음에 보낼 메시지를 결정.
+    - integrity: 메시지 중복 없음.
+    - validity: 메시지 손상이나 조작 않음.
+    - termination: 메시지 유실 없음
+- total order broadcast를 컨센서스 알고리즘으로 사용할 수 있고,
+- 모든 값에 대해 매번 컨센서스를 수행하지 않아도 되는 효율성 때문에,
+- VSR, Raft, Zab는 total order broadcast를 구현하여 컨센서스를 수행.
+
