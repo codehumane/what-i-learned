@@ -1631,3 +1631,15 @@ uniform agreement와 integrity가 핵심 아이디어. 모두가 같은 결과�
 - 모든 값에 대해 매번 컨센서스를 수행하지 않아도 되는 효율성 때문에,
 - VSR, Raft, Zab는 total order broadcast를 구현하여 컨센서스를 수행.
 
+#### Single-leader replication and consensus
+
+- 싱글 리더 리플리케이션은 모든 쓰기가 리더에게 가고, 모든 팔로워에게 동일한 순서대로 복제가 일어남.
+- 이는 본질적으로 total order broadcast. 하지만, 컨센서스는 아님.
+- termination 속성을 만족시키지 못하기 때문.
+- 싱글 리더 리플리케이션에서는 사람에 의해 리더가 지정이 되고,
+- 따라서 장애가 나면 이 설정을 바꿀 때까지는 쓰기를 지속할 수 없음.
+- 일부 데이터베이스는 자동으로 리더 선출과 페일오버를 진행.
+- 이는 장애 내성을 가진<sup>fault-tolerant</sup> total order broadcast이며, 컨센서스도 해결.
+- 하지만 리더 선출에는 결국 컨센서스가 필요. 그렇지 않으면 split brain이 일어날 수도.
+
+
