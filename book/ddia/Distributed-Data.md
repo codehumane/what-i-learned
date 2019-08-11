@@ -1680,4 +1680,36 @@ safety 속성도 만족시키고, 동시에 fault-tolerant. total order broadcas
 - 일반적으로 실패하는 노드의 감지에 타임아웃을 사용. 네트워크 지연이 매우 가변적이거나, 지역적으로 멀리 분산된 시스템에서는, 노드가 실패했다고 잘못 감지되는 경우가 많아짐. 이것이 안정성 속성에 해를 끼치지는 않지만, 잦은 리더 선출은 큰 성능 저하를 발생시킴.
 - 그 외에, Raft가 가지는 예외 현상(한 네트워크 링크만을 제외하고 전체 네트워크가 정상일 때, 시스템이 더 이상 진행되지 않을 수 있음)에 대해서도 언급. 다른 컨센서스 알고리즘도 유사한 문제를 가지고 있다고 함.
 
+### Membership and Coordination Services
+
+ZooKeeper나 etcd 같은 프로젝트들은 종종 "분산 키-값 저장소" 또는 "코디네이션 및 설정 서비스"라고 불림. 값을 저장하고 읽는다는 점에서 데이터베이스와 유사. 그런데 왜 굳이 데이터베이스가 아닌 이런 서비스를 사용하는 걸까?
+
+일단, 이곳에는 많은 데이터가 아닌 적은 양의 데이터를 저장함. 그리고 이 데이터는 장애 내성을 가진 total order broadcast 알고리즘으로 다른 노드에 복제됨. ZooKeeper는 구글의 Chubby 락 서비스를 본따 만들어짐. toatl order broadcast를 구현했을 뿐만 아니라(따라서 컨센서스도), 몇 가지 분산 시스템에서 유용한 특징들을 가지고 있음.
+
+*Linearizable atomic operations*
+
+- 원자적 compare-and-set 연산을 사용하면 락을 구현할 수 있음.
+- 여러 노드들이 동시에 같은 연산을 수행하려 한다면 하나만 성공.
+- 컨센서스 프로토콜은 연산이 원자적이고 lineraizable 함을 장애 상황에서도 보장.
+- 그리고 분산 락은 일반적으로 *lease*([Process Pause](https://github.com/codehumane/what-i-learned/blob/master/book/ddia/Distributed-Data.md#process-pauses)에서 다뤘던)를 이용해서 구현됨.
+
+*Total ordering of operations*
+
+- lease나 lock을 사용할 때, process pause 등에 의한 클라이언트의 충돌을 막기 위해 [fencing token](https://github.com/codehumane/what-i-learned/blob/master/book/ddia/Distributed-Data.md#fencing-tokens)을 사용.
+- fencing token은 lock을 얻을 때마다 일정하게<sup>monotonically</sup> 증가하는 숫자. 
+- ZooKeeper는 모든 연산에 대해 total order를 보장하며, 일정하게 증가하는 트랜잭션 ID(zxid)와 버전 번호(cversion)을 제공하여 fencing token을 구현.
+
+*Failure detection*
+
+- 클라이언트는 ZooKeeper 서버에 대해 오래 지속되는 세션을 유지.
+- 그리고 서로 주기적으로 heartbeat를 교환. 노드가 살아 있는지 감지하기 위함.
+- 커넥션에 일시적인 단절이나 ZooKeeper 노드의 장애가 있더라도 세션은 살아 있음.
+- 하지만 세션 타임아웃 보다 오랜 시간 heartbeat가 중단되면 세션이 죽었다고 판단.
+- 세션이 유지하고 있던 락은 자동으로 해제되도록 설정 가능.
+- ZooKeeper에서는 이런 노드를 가리켜 *ephemeral nodes*라고 부름.
+
+*Change notifications*
+
+- 변경 감지도 가능.
+- 변경 파악을 위한 잦은 poll을 피할 수 있음.
 
