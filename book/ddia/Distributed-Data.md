@@ -1721,8 +1721,13 @@ ZooKeeper/Chubby 모델의 사용 예가 몇 가지 있음. 대표적으로, 여
 
 일반적으로, ZooKeepr에 의해 관리되는 데이터들의 종류는 느리게 변경되는 것들. 예컨대, "the node running on IP address 10.1.1.23 is the leader for partition 7". 한편, ZooKeeper는 애플리케이션의 런타임 상태(자주 바뀌는 데이터들)를 저장하려는 의도로 만들어지지는 않았음. 이런 것들은 BookKeeper 같은 도구를 사용.
 
+#### Service discovery
 
-
-
-
+- ZooKeeper, etcd, Consul 등은 *service discovery*로도 사용.
+- 하지만, service discovery에 컨센서스가 꼭 필요한지는 명확치 않음.
+- DNS 같은 전통적인 도구들은, 성능과 가용성을 이유로 여러 캐시 레이어를 두고 있고, 이로 인해 linearizable 하지는 않기 때문.
+- 물론, service discovery는 리더 선출을 필요로 함.
+- 이런 이유로 일부 컨센서스 시스템들은 read-only 캐싱 레플리카를 지원하기도 함.
+- 이들 레플리카는 비동기적으로 컨센서스 알고리즘의 결정 로그들을 받아서 읽기 전용으로 제공. 투표에 참여하지는 않음.
+- (일반적으로 쓰기에 비해 많이 발생하는) 읽기 요청에 대한 확장성을 제공하기 위함. 다만, linearizable 하지는 않음.ㄴ
 
