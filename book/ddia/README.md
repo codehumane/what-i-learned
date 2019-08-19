@@ -49,8 +49,6 @@
 
 - [Consistency Guarantees](./Distributed-Data.md#consistency-guarantees)
 - [Linearizability](./Distributed-Data.md#linearizability)
-- Ordering Guarantees
-- Distributed Transactions and Consensus
-
-## III. Derived Data
+- [Ordering Guarantees](./Distributed-Data.md#ordering-guarantees)
+- [Dddiaistributed Transactions and Consensus](./Distributed-Data.md#distributed-transactions-and-consensus)
 
