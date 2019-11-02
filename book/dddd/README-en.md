@@ -45,4 +45,14 @@ Scenario:
 
 ## Architecture
 
-TBD
+BC(마찬가지로 Bounded Context가 너무 길어서 이제부터는 줄여서 기록) 안에는 무엇이 있나? Ports and Adapters 아키텍처 다이어그램에서 보듯, 도메인 모델 이상의 것들로 이뤄져 있음.
+
+![ports and adpater diagram](https://kalele.io/wp-content/uploads/2018/10/ports_and_adapters.png)
+
+- Input Adapter: REST 엔드포인트, 메시지 리스너
+- Application Services: 유스 케이스 오케스트레이션, 트랜잭션 관리
+- Domain Model (참고로, 이곳은 Technology-Free 구역!)
+- Output Adapters: 영속성 관리나 메시지 센더
+
+![ports-and-adapters-layer](./ports-and-adapters-layer.png)
+
