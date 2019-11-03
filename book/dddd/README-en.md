@@ -65,15 +65,18 @@ BC(마찬가지로 Bounded Context가 너무 길어서 이제부터는 줄여서
 
 ## What is a Subdomain?
 
+먼저, IDDD 책에 나오는 아래 문장을 먼저 보는 게 더 도움이 될 것.
+
+> the subdomains live in the problem space and the bounded contexts in the solution space
+
 - 간단히 말하면, 서브 도메인은 사업 전체 도메인의 부분.
 - 대부분의 비즈니스 도메인은 크기가 크고 복잡하기 때문에,
 - 서브 도메인 하나씩 나누어 살피는 것이 이해하는 데 도움이 됨.
+
+> Subdomains can be used to logically break up your whole business domain so that you can understand your problem space on a large, complext project.
+
 - 한편, 서브 도메인은 전문 영역이기도 함.
 - 이는 서브 도메인에 한 명 이상의 도메인 전문가가 있음을 암시함.
-
-IDDD 책에는 아래와 같은 이야기가 나오기도.
-
-> the subdomains live in the problem space and the bounded contexts in the solution space
 
 참고로, BC와 서브 도메인의 차이를 이해하는 데에는 아래의 글이 도움이 되었음.
 
@@ -104,7 +107,7 @@ http://gorodinski.com/blog/2013/04/29/sub-domains-and-bounded-contexts-in-domain
 - 소프트웨어를 구매했거나, 레거시 시스템의 경우, 경계가 그어져 있지 않은(unbounded) 경우들이 존재.
 - 하지만, 내부에 논리적으로 구분된 도메인 모델들은 존재할 것.
 - 이들을 서브 도메인으로 생각하면 도움이 됨.
-- 예컨대, 규모 있는 시스템의 복잡성을 쪼개서 다룰 수 있게 함.
+- 예컨대, 규모 있는 시스템의 복잡성을 쪼개서 다룰 수 있게 함(서브 도메인이므로 특히 문제 영역을 말이다).
 - 어느 도메인에 집중해야 하는지도 알려줌.
 - 도메인 간의 관계와 의존성을 이해하는 데도 도움.
 - 만약, 어떤 이유로 BC와 서브 도메인을 분리할 수 없다면,
