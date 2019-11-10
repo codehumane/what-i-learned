@@ -194,3 +194,45 @@ http://gorodinski.com/blog/2013/04/29/sub-domains-and-bounded-contexts-in-domain
 - 일부의 변경이 여러 곳으로 전파되어 발생하는 "whack-a-mole(한 곳을 고치면 다른 곳에서 문제가 생기는)" 이슈.
 - 드러나지 않은 지식이나 일부 영웅(모든 언어를 한 번에 하는)만이 완전한 붕괴로부터 시스템을 구함.
 
+## Making Good Use of Context Mapping
+
+- 어떤 인터페이스로 BC 통합을 할지는 팀에 따라 다름.
+- RPC, SOAP, REST, 메시징.
+- 다만, 데이터베이스나 파일 시스템을 통한 통합은 피할 것.
+- RPC, REST, 메시징을 하나씩 살펴볼 것.
+- 이는 강건함(robust)의 정도가 높아지는 순서.
+
+### RPC with SOAP
+
+- 사용하기 쉬움. 로컬 메서드나 프로시저를 호출하는 것 처럼.
+- 그러나, 강건함<sup>robustness</sup>이 부족. 네트워크가 실패한다면?
+- Published Language와 함께 Open Host Service가 제공된다면 관심 있게 고려해 볼 수 있는 대상.
+- 물론 Anticorruption Layer를 두는 것도 가능.
+
+### RESTful HTTP
+
+- BC 간에 주고 받는 리소스에 집중.
+- POST, GET, PUT, DELETE를 활용해 좋은 API를 설계.
+- 마찬가지로, PL, OHS, ACL을 함께 사용.
+- RPC와 같이, 네트워크나 서비스 제공자의 장애 등으로 문제가 발생할 수 있으나, 이를 극복할 수 있는 메커니즘들이 있음.
+- 강건함(신뢰성, 확장성 등)에서 유리.
+- 한편, ACL에 대해 충분히 풀어서 설명하는 부분이 있어 그대로 기록.
+
+> A common mistake made when using REST is to design resources that directly reflect the Aggregates in the domain model. Doing this forces every client into a Conformist relationship, where if the model changes shpae the resources will also. So you don't wnat to do that. Instead, resources should be designed synthetically to follow client-driven use cases. By "synthetic" I mean that to the client the resources provided must have the shape and composition of what they need, not what the actual domain model looks like. Sometimes the model will look just like what the client needs. But what the client needs is what drives the design of the resources, and not the model's current composition.
+
+### Messaging
+
+- 가장 강건함.
+- 시간적 결합을 낮추기 때문.
+- 메시지 교환에 대한 지연을 이미 감수. 즉각 결과를 기대하지 X
+- 물론 REST 기반의 폴링을 통해 비동기 메시징을 구현할 수는 있음.
+- Train Wreks라는 용어도 소개하고 있음. A -> B -> C 요청이 모두 블럭킹으로 처리.
+- 일반적으로는 BC의 애그리거트가 도메인 이벤트를 발행.
+- 다수의 관심 있는 곳에서 이를 소비.
+- 이벤트의 타입이나 값을 보고 특정 행위를 취할지 여부를 결정.
+- 이벤트가 발행하는 곳의 의해 만들어지는 것이긴 하지만,
+- 때로는 이벤트를 발행하는 곳에 커맨드 메시지를 명시적으로 보내기도 함.
+- 이 경우에도 클라이언트 BC는 결과를 도메인 이벤트로 받게 됨.
+- 메시징 메커니즘에는 반드시 At-Least-Once Delivery가 보장 되어야 함.
+- 이는 구독 BC가 Idempotent Receiver로 구현되어 있음을 의미하기도.
+- 한편, 요청을 하고 응답을 받기까지 어느 정도 지연이 있기 마련임을 전제. (Eventual Consistency)
