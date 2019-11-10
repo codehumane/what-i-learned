@@ -112,3 +112,85 @@ http://gorodinski.com/blog/2013/04/29/sub-domains-and-bounded-contexts-in-domain
 - 도메인 간의 관계와 의존성을 이해하는 데도 도움.
 - 만약, 어떤 이유로 BC와 서브 도메인을 분리할 수 없다면,
 - 모듈(DDD에서의 모듈은 Java나 Scala에서의 패키지를 가리킴)을 통해 구분하자.
+
+# Strategic Design with Contet Mapping
+
+- BC 간의 통합(integrate)을 가리켜 Context Mapping(앞으로 CM으로 줄여서 기록) 이라고 함.
+- 서로 다른 BC에는 서로 다른 UL이 존재하므로, BC 간의 연결에는 번역이 필요.
+- 한편, 번역은 비용이 많이 들어가는 일.
+- 명확한 경계와 계약은 변화를 잘 지원할 것.
+
+## Kinds of Mappings
+
+- Partnership
+- Shared Kernel
+- Customer-Supplier
+- Conformist
+- Anticorruption Layer
+- Open Host Service
+- Published Language
+- Separate Ways
+- Big Ball of Mud
+
+### Partnership
+
+- 서로의 성공과 실패가 서로에게 의존된 상황.
+- 강하게 의존된 만큼 자주 만나서 계획을 동기화하고 지속적 통합을 진행.
+- 오랫동안 지속되기 어려운 만큼, 비용이 더 크다고 느낄 땐, 다시 관계를 맺는 것이 좋음.
+
+### Shared Kernel
+
+- 작고 공통된 모델을 '공유'
+- 한 팀에서 코드를 작성/빌드/테스트 한 뒤, 다른 팀에게 공유할 수도.
+- 공유하는 모델에 대해, 열려 있는 커뮤니케이션과 지속적 동의가 필요하므로, 유지하기가 어려울 수 있음.
+- 하지만 Separate Ways보다 낫다고 판단될 때도.
+
+### Customer-Supplier
+
+- Customer: 업스트림
+- Supplier: 다운스트림.
+- Supplier가 Customer가 필요로 하는 것을 제공.
+- 하지만 결국 Supplier가 무엇을 언제 제공할지 결정하는 구조.
+- 매우 일반적이고 실용적인 관계. 같은 조직 내에서도 있을 수 있는.
+
+### Conformist
+
+- 업스트림, 다운스트림 모두 존재하지만,
+- 업스트림이 다운스트림에 대한 특정 요구를 지원할 동기가 없고,
+- 다운스트림은 매번 UL을 번역할 노력을 감수할 수 없어,
+- 업스트림의 UL을 그대로 따라야 하는 경우임.
+- Amazon.com의 모델을 셀러들이 따라는 경우가 그 예.
+
+### Anticorruption Layer
+
+- 가장 방어적인 CM 관계.
+- 다운스트림 팀이 번역 레이어를 만듦.
+- 가능한 이 계층을 만들기를 권장.
+- 모델을 필요에 맞게 생성하고, 외부로부터의 독립성을 유지하기 위함.
+- 하지만 비용이 드는 일.
+
+### Open Host Service
+
+- 자신의 BC에 대해 접근할 수 있도록 프로토콜이나 인터페이스를 만들어 서비스로 제공.
+- 이 프로토콜은 "열려"있음. 언제든 사용해서 BC와의 통합을 꾀할 수 있음.
+- 잘 작성된 문서와 함께 API로 제공.
+
+### Published Language
+
+- 잘 문서화된 정보 교환 언어.
+- 여러 BC들이 쉽게 소비하고 번역하도록 도움.
+- Open Host Service에서 이런 Published Language를 주로 사용.
+
+### Separte Ways
+
+- 통합이 이뤄지지 않음.
+- 각자의 해결책들을 만들어 사용.
+
+### Big Ball of Mud
+
+- 계속 언급되는 내용.
+- 이로 인한 문제로 3가지 언급.
+- 부적절한 연결과 의존성으로 인한, 교차 오염(cross-contamination)된 애그리거트의 증가.
+- 일부의 변경이 여러 곳으로 전파되어 발생하는 "whack-a-mole(한 곳을 고치면 다른 곳에서 문제가 생기는)" 이슈.
+- 드러나지 않은 지식이나 일부 영웅(모든 언어를 한 번에 하는)만이 완전한 붕괴로부터 시스템을 구함.
+
