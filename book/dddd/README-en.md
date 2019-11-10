@@ -236,3 +236,18 @@ http://gorodinski.com/blog/2013/04/29/sub-domains-and-bounded-contexts-in-domain
 - 메시징 메커니즘에는 반드시 At-Least-Once Delivery가 보장 되어야 함.
 - 이는 구독 BC가 Idempotent Receiver로 구현되어 있음을 의미하기도.
 - 한편, 요청을 하고 응답을 받기까지 어느 정도 지연이 있기 마련임을 전제. (Eventual Consistency)
+
+## An Example in Context Mapping
+
+- 2장에서 얘기한 `Policy` 타입으로 예를 들고 있음.
+- Underwriting, Claims, Inspection BC에서 모두 `Policy`가 존재.
+- 이 중에서 어디에 주 소속이 되는지는 회사의 상황(부서 구조 등)마다 다르지만,
+- 여기서는 일단 Underwriting에 속한다고 전제.
+- 일단, Underwriting BC에서 `Policy`가 발급(issue).
+- `PolicyIssued`라는 도메인 이벤트를 발행(publish).
+- 여기에는 `Policy`에 대한 식별자가 담김. 바로 `issuedPolicyId`.
+- 이벤트를 구독하는 곳에서는 추적을 위해 이 식별자를 유지.
+- 추가 정보가 필요하면 이 식별자를 사용해서 추가 질의를 던질 수도.
+- 이 때의 질의는 RESTful Open Host Service와 Published Language를 통해 이뤄짐.
+- `issuedPolicyId`로 `IssuedPolicyData`를 얻어 오는 HTTP GET 요청을 던짐.
+
