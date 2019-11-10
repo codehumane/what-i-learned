@@ -29,6 +29,7 @@
 - [스프링 마이크로서비스](book/spring-ms/README.md)
 - [알고리즘](book/algorithm/README.md)
 - [HTTP 완벽 가이드](book/http-definitive-guide/README.md)
+- [Domain-Driven Design Distilled](book/dddd/README-en.md)
 - [도메인 주도 설계 핵심](book/dddd/README.md)
 - [도메인 주도 설계 구현](book/iddd/README.md)
 - [신은 주사위 놀이를 하지 않는다](book/the-improbability-principle/README.md)
