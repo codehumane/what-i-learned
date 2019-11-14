@@ -251,3 +251,37 @@ http://gorodinski.com/blog/2013/04/29/sub-domains-and-bounded-contexts-in-domain
 - 이 때의 질의는 RESTful Open Host Service와 Published Language를 통해 이뤄짐.
 - `issuedPolicyId`로 `IssuedPolicyData`를 얻어 오는 HTTP GET 요청을 던짐.
 
+# Tactical Design with Aggregates
+
+지금까지 BC(Bounded Context), SD(Subdomain), CM(Context Mapping)에 대해서 알아 봤음. 이는 전략적<sup>strategic</sup> 설계. 그렇다면 BC 안은 어떨까?
+
+## Why Used
+
+Aggregate가 뭔지, `Product`, `BacklogItem`, `Release`, `Sprint`는 어떻게 모델링 하는지 살펴 볼 예정. 먼저, Aggregate에 대한 설명들.
+
+- 각 Aggregate는 1개 이상의 Entity로 구성.
+- 이 중에서 특정 Entity가 Aggregate Root로 불림.
+- 이 Root Entity가 나머지들을 소유함.
+- Root Entity 이름 = Aggregate의 개념적 이름
+- 물론, Aggregate는 Value Object를 가지기도.
+- 각 Aggregate는 트랜잭션의 일관성<sup>consistency</sup> 경계를 형성해야 함.
+- Aggregate 안에서는 모든 부분이 사업 규칙에 따라 일관성을 유지해야 한다는 의미.
+- 참고로, 여기서의 트랜잭션의 의미는 아래와 같음.
+
+> Either way, what I mean by "transaction" is how modifications to an Aggregate are isolated and how business invariants - the rules to which the software must always adhere - are guaranteed to be consistent following each business operation.
+
+- 아래와 같은 말도 있는데 이는 좀 더 생각해 볼 일.
+
+> only one of the two should be committed in a single transaction.
+
+참고로, Entity와 Value Object를 설명하는 글이 있어 비교 형식으로 간단히 기록.
+
+- Entity는 고유 식별성을 가짐.
+- "models an individual thing"
+- 같은 타입이든 아니든, 다른 엔티티와의 구분이 가능.
+- 대부분 mutable(제약은 아님).
+- 한편, Value Object는 immutable.
+- 고유 식별성을 가지지 않음.
+- 현재 어떤 값들을 가지고 있는가로 동등성이 결정됨.
+- "models an immutable conceptual whole"
+- Entity를 묘사, 수량화, 측정하는 데 사용됨.
