@@ -285,3 +285,58 @@ Aggregate가 뭔지, `Product`, `BacklogItem`, `Release`, `Sprint`는 어떻게 
 - 현재 어떤 값들을 가지고 있는가로 동등성이 결정됨.
 - "models an immutable conceptual whole"
 - Entity를 묘사, 수량화, 측정하는 데 사용됨.
+
+## Aggregate Rules of Thumb
+
+아래 4가지 기본적인 설계 규칙에 대한 이야기. 절대적인 원칙이 아님. Aggregates를 잘 설계하기 위한 가이드.
+
+1. Protect business invariants inside Aggregate boundaries.
+2. Design small Aggregates.
+3. Reference other Aggregates by identity only.
+4. Update other Aggregates using eventual consistency.
+
+## Modeling Aggregates
+
+일단, 몇 가지 빠지기 쉬운 함정<sup>hook</sup>들에 대해 이야기.
+
+- 도메인 모델링을 할 때 한 가지 빠지기 쉬운 함정은 Anemic Domain Model
+- 빈혈<sup>anemic</sup>이라는 표현이 인상 깊음.
+- 이는 무분별한 public getter, setter를 만들어 두는 것.
+- 한편, Application Service에 도메인 로직이 누출되는 것도 주의.
+
+다음으로, Aggregate를 모델링 하는 방법들을 소개.
+
+- 먼저, Aggregate Root Entity를 위한 클래스 생성.
+- 다음으로, 전역적으로 유일한 식별자를 추가.
+- 필요한 속성/필드도 추가.
+- 단, getter/setter는 조심스럽게 추가. anemic domain model에 유의.
+- 대신, 필요한 도메인 로직들을 추가.
+
+### Choose Your Abstractions Carefully
+
+도메인 전문가의 멘탈 모델을 명시적으로 따르는 UL을 모델링 하라.
+
+- `Product`, `BacklogItem` 대신 `ScrumElement`로 추상화 하거나,
+- `Release`, `Sprint`를 `ScrumElementContainer`로 추상화 하고,
+- `typeName` 프로퍼티 같은 것으로 세부적인 것을 구분하는 예시를 들고 있음.
+- 이렇게 하면 몇 가지 문제들이 따라옴.
+- 소프트웨어 모델이 도메인 전문가의 멘탈 모델과 매치되지 않음.
+- 추상화의 수준이 너무 높아서, 각 타입의 세부사항을 모델링하기 시작하면 문제들(정확히 무엇인지는 언급 안 됨)을 마주침.
+- 각 클래스들에 특수한 케이스들을 결국 만들게 되거나, 복잡한 클래스 계층을 만들게 됨.
+- 실제로 필요한 것보다 더 많은 코드를 작성하게 됨.
+- 사용자 인터페이스까지 영향을 미칠 수 있음. 혼란을 일으킴.
+- 시간과 돈의 낭비.
+- 정작 새로운 요구사항이 생겼을 때 들어맞지 않음.
+
+### Right-Sizing Aggregates
+
+Aggregate의 경계를 어떻게 결정해야, 경계가 너무 크지도 않으면서 비즈니스 요구사항/규칙을 보호할 수 있을까?
+
+- "Design small Aggregates"로 시작.
+- 한 개의 엔티티로 시작하는 것도 방법.
+- 그리고 나서 "Protect business invariants inside Aggregate boundaries"로 넘어갈 것.
+- Aggregate A1이 변경될 때, 함께 변경되어야 하는 Aggregate가 있는지를 도메인 전문가에게 물어보자.
+- 다음으로 함께 변경될 때, 얼마나 즉각 반영이 되어야 하는 것인지도 확인.
+- 즉각인지, N 초/분/시간/일인지 말이다.
+- 즉각이라면 하나의 Aggregate가 되어야 하는 건 아닌지 고려.
+- 나머지는 결과적 일관성을 사용하여 함께 변경.
