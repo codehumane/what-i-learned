@@ -340,3 +340,57 @@ Aggregate의 경계를 어떻게 결정해야, 경계가 너무 크지도 않으
 - 즉각인지, N 초/분/시간/일인지 말이다.
 - 즉각이라면 하나의 Aggregate가 되어야 하는 건 아닌지 고려.
 - 나머지는 결과적 일관성을 사용하여 함께 변경.
+
+# Tactical Design with Domain Events
+
+우선 도메인 이벤트의 정의부터.
+
+> A domain Event is a record of some business significant-occurrence in a Bounded Context.
+
+- 앞서 소개된 것처럼, 전략적 설계에서 도움될 뿐만 아니라,
+- (CM에서 하나의 메커니즘으로 이용되는 것을 말하는 듯)
+- 전술적 설계를 통해서 개념화 되고 Core Domain의 일부가 됨.
+- 도메인 이벤트로 얻는 이점을 이해하고자, causal consistency를 소개.
+- total order, partial order, linearizability 등을 함께 생각하면 도움.
+- 이런 causal ordering이 없으면 도메인에는 여러 혼란이.
+- 바르게 정렬된 도메인 이벤트의 생성과 발행을 통해 causal order 가능.
+
+## Designing, Implementing, and Using Domain Events
+
+일단, 전체적인 모습부터 설명.
+
+- `OccurredOn` 프로퍼티가 필수는 아니지만 종종 유용함. 공통 인터페이스로 추출.
+- 도메인 이벤트의 타입명은 UL을 잘 반영해야. UL을 사용하는 목적과 같은 이유로.
+- 과거형을 사용. 어떤 사건이 일어났는지 쉽게 설명하기 위함. `ProductCreated`, `SprintScheduled`, ...
+
+다음으로, 도메인 이벤트가 가져야 할 프로퍼티들에 대해 소개.
+
+> "What is the application stimulus that causes the Domain Event to be published?"
+
+- 위 질문을 던져 보라고 함.
+- `ProductCreated` 이벤트를 발생시킨 것은 `CreateProduct`라는 커맨드.
+- 이 안에 있는 프로퍼티들을 그대로 이벤트에 담는 것을 고려.
+- `tenantId`, `productId`, `name`, `description`
+- 만약, 추가적인 정보가 더 필요하다면, 도메인 이벤트를 발행한 BC에게 다시 질의.
+- 이 추가 정보들을 이벤트에 담을 수도 있겠으나, 도메인 이벤트의 의미가 흐려질 수 있음.
+- 예컨대, `BacklogItemUpdated`에 `BacklogItem`의 모든 내용을 담는다면, `BacklogItem`에 무슨 일이 일어났는지를 알기 어려움. 이전의 `BacklogItemCommitted` 또는 `BacklogItemUpdated`를 찾아 일일이 비교해야 할 지도 모름.
+
+causal order에 대한 이야기도.
+
+- Aggregate의 변경 내용과 도메인 이벤트는 같은 트랜잭션에 함께 저장되어야 함.
+- Aggregate는 자신의 테이블에, 도메인 이벤트는 event store 테이블에.
+- 이를 통해 causal ordering을 보장(?)할 수 있다.
+- 이렇게 저장된 도메인 이벤트는 이에 관심 있는 여러 곳으로 발행.
+- 그 대상이 같은 BC일 수도, 다른 BC일 수도.
+- 주의할 것은, causal order로 도메인 이벤트를 저장한 것이, 여러 분산된 노드들에도 동일한 순서로 도착하는 것을 보장하는 것은 아니라는 점.
+- 따라서, 이를 소비하는 측에도 적절한 인과관계(causality)를 인지하는 장치가 필요.
+- sequence 또는 causal identifier 등을, 도메인 이벤트 안이나 이벤트의 메타데이터로 포함.
+- 이를 통해 소비하려는 도메인 이벤트의 순서가 맞지 않는지 여부를 판단하고,
+- 순서에 맞는 이벤트가 먼저 들어올 때까지 기다릴 수 있음.
+- 혹은 아직 오지 않은 이벤트를 무시하는 것도 방법. 먼저 들어온 더 높은 sequence의 데이터로 충분한 유스 케이스라면.
+
+그 외에도 몇 가지를 더 이야기.
+
+- 도메인 이벤트를 일으키는 지점은 다양. 커맨드, 특정 시간의 만료, ...
+- UL의 사용. 4:00가 아니라, "Markets Closed"와 같은.
+- 커맨드 != 도메인 이벤트. 커맨드는 여러 유휴성 검증에 의해 거부될 수도. 한편, 도메인 이벤트는 히스토리이자 논리적으로 거부될 수 없는 대상.
