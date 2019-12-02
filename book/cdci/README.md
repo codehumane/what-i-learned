@@ -117,3 +117,17 @@ int f(int n) {
 
 참고로, 중앙값에 대한 정의는 [여기](https://ko.wikipedia.org/wiki/%EC%A4%91%EC%95%99%EA%B0%92)를 참고. 그리고 이진트리와 힙의 차이는 [여기](https://cs.stackexchange.com/questions/27860/whats-the-difference-between-a-binary-search-tree-and-a-binary-heap) 설명만으로도 충분해 보임.
 
+# 면접 문제
+
+## 배열과 문자열
+
+### 해시테이블
+
+- 해시테이블을 구현하는 방법으로 balanced binary search tree 자료구조도 함께 이야기.
+- 이 때는 탐색이 O(logN)이 됨.
+- 대신, 크기가 큰 배열을 미리 할당해 놓지 않아도 되므로 잠재적으로 작은 공간을 사용.
+- 또한, 키의 집합을 특정 순서로 차례대로 접근하므로 상황에 따라 유용하기도.
+- 원래 알고 있는 방식은 배열과 연결리스트 사용.
+- 따라서 탐색은 O(1).
+- 물론 최악의 경우는 매번 해시 충돌이 일어나 탐색이 O(N)이 될 수도.
+
