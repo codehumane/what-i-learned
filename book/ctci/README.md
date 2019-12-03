@@ -160,3 +160,13 @@ String joinWords(String[] words) {
 - 매번 두 개의 문자열을 읽어들인 뒤, 새로운 문자열로 복사하기 때문.
 - 한편, StringBuilder는 가변 크기 배열을 이용하여 필요할 때만 문자열을 복사.
 
+## 연결리스트
+
+- 연결리스트가 단방향인지 양방향인지 고려.
+- 그리고 runner 기법도 소개. 부가 포인터라고도 불림.
+- 연결리스트 순회 시, 두 개의 포인터를 사용하는 것.
+- 예컨대, slow pointer와 fast pointer를 두고,
+- fast pointer가 2칸씩 이동할 때 slow pointer는 1칸씩 이동시킴.
+- fast pointer가 끝에 도달하면, slow pointer는 절반에 도달.
+- 한 번의 순회로 절반이 어딘지 알아낼 수 있는 것.
+
