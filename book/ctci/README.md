@@ -139,3 +139,24 @@ int f(int n) {
 - 1 + 2 + ... + n/4 + n/2
 - [제논의 역설](https://ko.wikipedia.org/wiki/%EC%A0%9C%EB%85%BC%EC%9D%98_%EC%97%AD%EC%84%A4)이 떠오름. 무한급수.
 
+
+### StringBuilder
+
+- 지금은 유효하지 않은 지식. 그냥 생각해 보는 재미.
+- 아래와 같은 코드가 있다고 할 때 수행시간은 얼마나 될까?
+
+```java
+String joinWords(String[] words) {
+    String sentence = "";
+    for (String w : words) {
+        sentence = sentence + w;
+    }
+    return sentence;
+}
+```
+
+- 모든 문자열의 길이가 x라고 하고, n개의 문자열이 주어졌다고 가정.
+- 그럼 수행시간은 O(x + 2x + ... + nx) = O(xn^2)
+- 매번 두 개의 문자열을 읽어들인 뒤, 새로운 문자열로 복사하기 때문.
+- 한편, StringBuilder는 가변 크기 배열을 이용하여 필요할 때만 문자열을 복사.
+
