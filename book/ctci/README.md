@@ -170,3 +170,61 @@ String joinWords(String[] words) {
 - fast pointer가 끝에 도달하면, slow pointer는 절반에 도달.
 - 한 번의 순회로 절반이 어딘지 알아낼 수 있는 것.
 
+
+## 스택과 큐
+
+### 스택 구현하기
+
+- 말 그대로 쌓는다는 의미(stack)
+- LIFO이며, pop, push, peek, isEmpty 연산 제공.
+- 재귀 알고리즘에 유용. 재귀 함수를 빠져나와 퇴각 검색(backtrack)을 할 때.
+- 책에서는 배열과 달리 i번째 항목에 상수 시간에 접근할 수 없다고 함.
+- 하지만, java.util.Stack을 열어 보면 그렇지 않음. add와 get 구현은 아래와 같음.
+
+```java
+public
+class Stack<E> extends Vector<E> {
+  
+  public E push(E item) {
+    addElement(item);
+    return item;
+  }
+
+  public synchronized void addElement(E obj) {
+    modCount++;
+    add(obj, elementData, elementCount);
+  }
+
+  private void add(E e, Object[] elementData, int s) {
+    if (s == elementData.length)
+      elementData = grow();
+    elementData[s] = e;
+    elementCount = s + 1;
+  }
+
+}
+
+// get은 vector에 있음
+public class Vector<E>
+    extends AbstractList<E>
+    implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+{
+ 
+  public synchronized E get(int index) {
+    if (index >= elementCount)
+      throw new ArrayIndexOutOfBoundsException(index);
+
+    return elementData(index);
+  }
+}
+```
+
+- 그래서, queue로 쓸 때는 LinkedList 보다 빠르고, stack으로 쓸 때는 Stack 보다 빠른 ArrayDeque를 살펴봄.
+- 하지만 get을 제공하지는 않음. 내부적으로는 array를 사용하는데 get을 제공하지 않는 이유는 뭔지 궁금.
+
+### 큐 구현하기
+
+- FIFO. add, remove, peek, isEmpty 연산 제공.
+- stack과 마찬가지로 연결리스트를 이용해 구현 가능.
+- BFS나 캐시 구현에 종종 사용. 노드를 접근한 순서를 기억하고 있다가 뭔가를 해야 할 때 유용.
+
