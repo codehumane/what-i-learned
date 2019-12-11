@@ -263,6 +263,11 @@ data class Tree<T>(val root: Node<T>) {
 - '모든 왼쪽 자식들 <= n < 모든 오른쪽 자식들'
 - 참고로, 같은 값을 처리하는 방식에 따라 이진 탐색 트리는 약간씩 정의가 달라질 수 있음.
 - 어떤 곳은 중복된 값을 가지면 안 되고, 어떤 곳은 오른쪽이나 양쪽 어느 곳이든 존재할 수 있기도 함. 미리 명확히 할 필요 O.
+- 아래는 위키피디아의 정의.
+
+> A binary search tree is a rooted binary tree, whose internal nodes each store a key (and optionally, an associated value) and each have two distinguished sub-trees, commonly denoted left and right. The tree additionally satisfies the binary search property, which states that the key in each node must be greater than or equal to any key stored in the left sub-tree, and less than or equal to any key stored in the right sub-tree.
+
+![binary search tree](https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Binary_search_tree.svg/200px-Binary_search_tree.svg.png)
 
 #### 균형 vs. 비균형
 
