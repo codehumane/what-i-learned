@@ -295,3 +295,13 @@ data class Tree<T>(val root: Node<T>) {
 - 마지막 단계의 노드 갯수는 최대가 되는 것.
 - 노드의 갯수가 2^(k-1). k는 트리의 높이.
 
+### 이진 트리 순회
+
+이에 대한 설명은 [위키피디아 페이지](https://ko.wikipedia.org/wiki/%ED%8A%B8%EB%A6%AC_%EC%88%9C%ED%9A%8C)의 내용이 개인적으로 더 좋음.
+
+![tree traversal example](https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Sorted_binary_tree.svg/250px-Sorted_binary_tree.svg.png)
+
+- 중위 순회: A > B > C > D > E > F > G > H > I (left, root, right)
+- 전위 순회: F > B > A > D > C > E > G > I > H (root, left, right)
+- 후위 순회: A > C > D > E > B > H > I > G > F (left, right, root)
+
