@@ -332,3 +332,15 @@ data class Tree<T>(val root: Node<T>) {
 - 최대 힙은 반대. 조금만 생각해 보면 당연.
 - 마찬가지로 O(logN) 소요.
 
+### 트라이 (접두사 트리)
+
+일단 위키피디아에서 가져온 아래의 그림으로 기본적인 설명은 대체.
+
+![trie(prefix tree or digital tree)](https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Trie_example.svg/250px-Trie_example.svg.png)
+
+- 문자열을 검색할 때는 해시테이블을 활용할 수 있지만,
+- 주어진 문자열이 다른 문자들의 접두사인지 여부를 알려면,
+- trie 구조가 빠름.
+- 길이가 K인 접두사가 주어지면, 이 접두사가 유효한지 여부 판단은 O(K)에 수행.
+- 이는 해시테이블 검색 비용과 동일한 것. 해시테이블도 O(1)이 아니라 문자열 K를 읽어들이는 O(K) 수행이 필요.
+
