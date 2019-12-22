@@ -381,3 +381,30 @@ class Node {
 - 그래프 알고리즘은 인접 행렬과 인접 리스트에서 모두 사용 가능하지만, 인접 행렬은 효율성이 떨어질 수도.
 - 어떤 노드에 인접한 노드를 찾기 위해 모든 노드를 순회해야 할 수도 있기 때문.
 
+#### 그래프 탐색
+
+- 당연히 DFS와 BFS 이야기.
+- 모든 노드를 탐색하고자 할 때는 DFS가 좀 더 선호된다고 함. 간단해서.
+- 한편, 노드 사이의 최단 경로나 임의의 경로를 찾고 싶을 때는 BFS가 일반적으로 더 나음.
+- DFS를 이용하면, 최단 경로가 아닐 수도 있고, 관련 없는 너무 많은 관계를 살피게 될지도.
+- 아래 코드는 <알고리즘> 책에 나왔던 의사 코드.
+- 직접 구현했던 코드는 [여기](https://github.com/codehumane/algorithm/blob/3f5fa5d702/src/main/java/data/BreathFirstSearch.java) 참고.
+
+```
+for all u ∈ V:
+  dist(u) = ∞
+
+dist(s) = Θ
+Q = [s] (queue containing just s)
+while Q is not empty:
+  u = eject(Q)
+  for all edges (u, v) ∈ E:
+    if dist(v) = ∞:
+      inject(Q, v)
+      dist(v) = dist(u) + 1
+```
+
+- 양방향 탐색(bidirectional search)도 언급. 최단 경로를 찾을 때 사용되곤 함.
+- 모든 노드가 k개의 이웃 노드와 연결되어 있고, s에서 t로의 최단 거리가 d인 그래프를 가정.
+- BFS는 O(k^d), 양방향 탐색은 O(k^(d/2))가 됨.
+
