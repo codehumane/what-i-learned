@@ -55,4 +55,4 @@
 - [Learn Kotlin by Example](https://github.com/codehumane/what-i-learned/blob/master/document/learn-kotlin-by-example.md)
 - [Reactive Programming with Reactor 3](https://github.com/codehumane/what-i-learned/blob/master/document/reactive-programming-with-reactor-3.md)
 - [Spring Metrics, Prometheus](https://github.com/codehumane/what-i-learned/blob/master/document/spring-metrics-prometheus.md)
-
+- [java.util.Deque w/ ArrayDeque](https://github.com/codehumane/what-i-learned/blob/master/document/java-util-deque.md)
