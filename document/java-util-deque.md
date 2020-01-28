@@ -29,8 +29,7 @@ Deque와 ArrayDeque 내용을 오라클 문서 기준으로 간단히 기록.
 
 - special value 형태는 보통 capacity-restricted를 위한 것이긴 하나,
 - Deque의 일반적인 구현체들은 자신이 가진 엘리먼트 갯수의 제한이 없음.
-- ArrayDeque가 떠오름. 구현체 열어보면 바로 확인 됨.
-- 이 녀석은 List를 사용하고, 용량이 부족할 때 2배로 길이 증가됨.
+- ArrayDeque를 생각해 보면 됨.
 - Deque는 Queue 인터페이스의 확장이라 했다.
 - Queue의 FIFO에 대응하는 Deque 연산들은 아래와 같음.
 
