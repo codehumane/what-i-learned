@@ -132,3 +132,49 @@ mysql> SELECT event_name AS Stage, TRUNCATE(TIMER_WAIT/1000000000000,6) AS Durat
 - LIKE '%문자열' 또는 LIKE '%문자열%'은 인덱스의 의미를 퇴색.
 - '문자열%'이라고 하더라도, 데이터 selectivity가 10~15%(이 수치의 출처는 모르겠음)를 넘지 않아야.
 
+## SQL 레벨에서의 접근법
+
+> 4장도 MySQL 레퍼런스에 나오는 일반적인 이야기가 아니라서 키워드 위주로 기록.
+
+### 데이터 흐름을 이해하자
+
+- Temporary Table, Using filesort가 발생하더라도,
+- 불필요한 데이터까지 불러들이지 않도록 함.
+- 방법은 책 참고.
+- 한편, 반드시 필요한 데이터만 조인 연산 대상으로 활용.
+- 전자의 이야기가 불필요한 projection의 지양이었다면,
+- 후자 이야기는 selection의 지양으로 보임.
+- 사례는 책 참고.
+- [MySQL 성능을 죽이는 잘못된 쿼리 습관](https://gywn.net/2012/05/mysql-bad-sql-type/)을 보는 것도 도움될 것.
+
+### 불필요한 조인을 피하자
+
+- 제목 그대로.
+
+### Semi Join으로 인한 비효율을 제거하자
+
+- 5.5 버전 이하일 경우에 한정된 얘기로 보임.
+- [EXISTS vs IN - which one is better in MySQL 5.5 and MySQL 5.7?](https://stackoverflow.com/questions/48906772/exists-vs-in-which-one-is-better-in-mysql-5-5-and-mysql-5-7) 글 함께 참고.
+
+### Outer Join이 반드시 필요한지 파악하자
+
+- 무분별한 Outer Join은 성능 저하를 가져온다고 나옴.
+- [Outer Join Simplification](https://dev.mysql.com/doc/refman/5.7/en/outer-join-simplification.html)에 아래 문구를 발견.
+
+> When the optimizer evaluates plans for outer join operations, it takes into consideration only plans where, for each such operation, the outer tables are accessed before the inner tables. The optimizer choices are limited because only such plans enable outer joins to be executed using the nested-loop algorithm.
+
+- 그래서 outer join의 대상을 미리 좁혀주는 것을 권장.
+- Inner Join과 Outer Join 구분은 아래 그림 참고.
+
+![SQL JOINS CHEATSHEET](https://camo.githubusercontent.com/26bcd184e10be85ee10d503f641706f630dd1f43/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3333373831312f323336343536372f32303931376230612d613637652d313165332d386232312d6436653037313930376236352e706e67)
+
+### 서브쿼리를 적극 활용하자
+
+- 이것도 마찬가지로, 로드되는 데이터를 최소화하기 위한 노력.
+- 목적이 중요. 당연히 무분별한 서브쿼리도 존재. 주의.
+
+### 트랜잭션의 Isolation 레벨에서 테이블 잠금이 발생할 수 있음을 기억하자
+
+- REPEATABLE-READ여도 아래 SQL은 테이블 잠금 유발 가능.
+- `INSERT INTO SELECT..` 또는 `CREATE TABLE AS SELECT..`
+- REPEATABLE-READ의 특성을 생각할 것.
