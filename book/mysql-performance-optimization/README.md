@@ -37,7 +37,7 @@
 - [Optimizing Queries with EXPLAIN](https://dev.mysql.com/doc/refman/8.0/en/using-explain.html)
 - [EXPLAIN Output Format](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html)
 
-몇 가지 기록.
+링크 내용에서 몇 가지 기록.
 
 - EXPLAIN은 MySQL이 어떻게 명령문을 수행할지에 대한 정보를 제공.
 - 더 빨라지기 위해 어디에 인덱스를 추가해야 하는지를 파악할 수 있음.
@@ -59,9 +59,9 @@
 
 ### 쿼리 프로파일링을 이해하자
 
-일단, dev.mysql.com의 [SHOW PROFILE Statement](https://dev.mysql.com/doc/refman/8.0/en/show-profile.html)을 보면, SHOW PROFILE이 deprecated이며, Performance Scheme를 사용하라고 하고 있음. 자세한 내용은 [Query Profiling Using Performance Schema](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-query-profiling.html)를 참고.
+일단, [SHOW PROFILE Statement](https://dev.mysql.com/doc/refman/8.0/en/show-profile.html)을 보면, SHOW PROFILE이 deprecated이며, Performance Scheme를 사용하라고 하고 있음. 자세한 내용은 [Query Profiling Using Performance Schema](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-query-profiling.html)를 참고.
 
-아래의 SQL을 수행했다고 가정.
+링크 내용의 예시로 어느 정도 설명이 가능. 먼저, 아래의 SQL을 수행했다고 가정.
 
 ```sql
 mysql> SELECT * FROM employees.employees WHERE emp_no = 10001;
@@ -84,7 +84,7 @@ mysql> SELECT EVENT_ID, TRUNCATE(TIMER_WAIT/1000000000000,6) as Duration, SQL_TE
 +----------+----------+--------------------------------------------------------+
 ```
 
-그리고 세부적 단계마다 소요된 시간 확인도 가능.
+그리고 해당 이벤트의 세부적 단계마다 소요된 시간 확인도 가능.
 
 ```sql
 mysql> SELECT event_name AS Stage, TRUNCATE(TIMER_WAIT/1000000000000,6) AS Duration
