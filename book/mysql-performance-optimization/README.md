@@ -178,3 +178,35 @@ mysql> SELECT event_name AS Stage, TRUNCATE(TIMER_WAIT/1000000000000,6) AS Durat
 - REPEATABLE-READ여도 아래 SQL은 테이블 잠금 유발 가능.
 - `INSERT INTO SELECT..` 또는 `CREATE TABLE AS SELECT..`
 - REPEATABLE-READ의 특성을 생각할 것.
+
+## 스키마 레벨에서의 접근법
+
+### 인덱스는 적재적소에 배치하자
+
+#### MySQL InnoDB에서 Primary Key는 성능에 직접적인 영향을 준다
+
+- InnoDB에서는 Primary Key 순서로 데이터가 저장.
+- 따라서, 키로 UUID를 사용하거나, Primary Key 값의 변경에 따른,
+- B+ Tree의 Leaf Node 순서의 대규모 이동에 유의.
+- [MySQL InnoDB Primary Key Choice: GUID/UUID vs Integer Insert Performance](https://kccoder.com/mysql/uuid-vs-int-insert-performance/) 글 함께 참고.
+- 이에 더해, 많은 데이터가 쌓여 있을 때도 함께 고려해야 함.
+
+#### 불필요한 인덱스는 과감하게 삭제하자
+
+- 만약, (a), (b), (a, b), (b, a) 인덱스가 있다고 해보자.
+- 어떤 게 불필요한 인덱스일까?
+
+#### 인덱스 개수에 따른 데이터 변경 테스트
+
+- 인덱스가 0~3개일 때의 각각의 insert 성능 비교
+
+### 테이블 파티셔닝을 활용해 대용량 데이터를 관리하자
+
+#### 파티셔닝 간단히 이해하기
+
+- 데이터 '선택'의 효율을 높인 것.
+- 한편, 다음의 트레이드 오프들을 고려.
+- 파티셔닝 키는 Primary Key와 연관된 컬럼이어야 함.
+- 파티셔닝 사용 시 Unique Key, Foreign Key 제약 조건 추가 불가.
+- 풀텍스트 인덱싱 혹은 스퍄셜 인덱싱 기능 사용 불가.
+- 데이터 조회 시 반드시 파티셔닝 키가 포함되어야 함(그렇지 않으면 전체 스캔)
