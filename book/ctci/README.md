@@ -461,9 +461,27 @@ while Q is not empty:
 
 ### 산술 우측 시프트 vs. 논리 우측 시프트
 
-= 산술 우측 시프트(arithmetic right shift)는 맨 앞의 부호비트는 그대로 두고 비트를 오른쪽으로 이동.
+- 산술 우측 시프트(arithmetic right shift)는 맨 앞의 부호비트는 그대로 두고 비트를 오른쪽으로 이동.
 - 논리 우측 시프트(logical right shift)는 맨 앞의 부호비트를 포함하여 오른쪽으로 이동. 비게 된 부분에는 0을 채움.
 - 산술 우측 시프트는 값을 '대략' 2로 나눈 효과가 있음. `>>` 연산과 같음.
 
 ![logical left shift one bit](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Rotate_left_logically.svg/300px-Rotate_left_logically.svg.png)
+
+### 기본적인 비트 조작: 비트값 확인 및 채워넣기
+
+```kotlin
+// 비트값 확인
+fun getBit(num: int, i: int) = ((num & (1 << i)) != 0)
+
+// 비트값 채우기
+fun setBit(num: int, i: int) = num | (1 << i)
+
+// 비트값 삭제
+fun clearBit(num: int, i: int) = num & ~(1 << i)
+
+// 비트값 바꾸기
+fun updateBit(num: int, i: int, bitIs1: boolean) = (num & ~(1 << i)) | ((if bitIs1 1 else 0) << i)
+```
+
+마지막 비트값 바꾸기는 자세히 보면, 비트값 삭제(0과 1인 경우 모두)와 비트값 채우기(1인 경우만)의 조합임을 알 수 있음.
 
