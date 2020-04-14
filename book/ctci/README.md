@@ -459,3 +459,11 @@ while Q is not empty:
 1 | 0 001 | -7 | 1 001
 0 | 0 000 | -0 | 1 000
 
+### 산술 우측 시프트 vs. 논리 우측 시프트
+
+= 산술 우측 시프트(arithmetic right shift)는 맨 앞의 부호비트는 그대로 두고 비트를 오른쪽으로 이동.
+- 논리 우측 시프트(logical right shift)는 맨 앞의 부호비트를 포함하여 오른쪽으로 이동. 비게 된 부분에는 0을 채움.
+- 산술 우측 시프트는 값을 '대략' 2로 나눈 효과가 있음. `>>` 연산과 같음.
+
+![logical left shift one bit](https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Rotate_left_logically.svg/300px-Rotate_left_logically.svg.png)
+
