@@ -540,3 +540,59 @@ P(A∪B) = P(A) + P(B) - P(A∩B)
 
 - P(A∩B) = 0
 - P(A∪B) = P(A) + P(B)
+
+## 재귀와 동적 프로그래밍
+
+- 부분문제(subproblem)에 대한 해법을 통해 완성.
+- 상향식, 하향식, 반반 접근법이 있음. 병합정렬이 반반 접근법.
+- 재귀적 알고리즘은 공간 효율성이 안 좋을 수 있음. O(n)의 메모리를 사용해야 할 수도.
+- 따라서 재귀적(recursive) 대신 순환적(iterative) 방법은 없을지 먼저 고민.
+- 동적 프로그래밍과 메모이제이션도 언급.
+
+### 피보나치
+
+- 피보나치 문제를 재귀, 하향식, 상향식 동적 프로그래밍으로 각각 접근.
+
+#### 재귀
+
+- 일단, 피보나치 재귀 방식은 아래와 같음.
+
+```kotlin
+fun fibonacci(n: Int): Int {
+    if (n == 1) return 0
+    if (n == 2) return 1
+    return fibonacci(n - 1) + fibonacci(n - 2)
+}
+```
+
+- 이 방식의 시간 복잡도는 O(2^n).
+- 수행 트리를 그려보면 쉽게 알 수 있음.
+
+![피보나치 재귀 시간복잡도](https://qph.fs.quoracdn.net/main-qimg-07b90165ddb687ddf6700e90fea22c24.webp)
+
+#### 하향식 동적 프로그래밍 (메모이제이션)
+
+- 위 그림을 보면 같은 입력 값의 연산이 꽤 반복됨을 알 수 있음.
+- 이 연산들을 캐시하는 방식은 아래와 같음.
+- 시간 복잡도는 O(n).
+
+```kotlin
+fun fibonacci(n: Int): Int {
+    val cache = IntArray(n + 1)
+    return fibonacciMemoization(n, cache)
+}
+
+fun fibonacciMemoization(n: Int, cache: IntArray): Int {
+    if (n == 1) return 0
+    if (n == 2) return 1
+
+    if (cache[n] == 0)
+        cache[n] = fibonacci(n - 1) + fibonacci(n - 2)
+
+    return cache[n]
+}
+```
+
+#### 상향식 동적 프로그래밍
+
+TBD
