@@ -595,4 +595,42 @@ fun fibonacciMemoization(n: Int, cache: IntArray): Int {
 
 #### 상향식 동적 프로그래밍
 
-TBD
+- 코드를 보면 알 수 있듯, 상향식도 가능함.
+- 구현은 아래와 같고, 시간 복잡도도 O(n).
+
+```kotlin
+fun fibonacciTopDown(n: Int): Int {
+    if (n < 2) return n - 1
+
+    val cache = IntArray(n + 1) { -1 }
+    cache[1] = 0
+    cache[2] = 1
+
+    (3..n).forEach {
+        if (cache[it] == -1)
+            cache[it] = cache[it - 1] + cache[it - 2]
+    }
+
+    return cache[n]
+}
+```
+
+- 좀 더 살펴보면, `cache` 배열을 아래와 같이 제거할 수도 있음.
+- `forEach` 문도 사라지고 좀 더 간결해 보임.
+
+```kotlin
+fun fibonacciTopDownWithoutArray(n: Int): Int {
+    if (n < 2) return n - 1
+
+    var cache1 = 0
+    var cache2 = 1
+
+    repeat(n - 2) {
+        val current = cache1 + cache2
+        cache1 = cache2
+        cache2 = current
+    }
+
+    return cache2
+}
+```
