@@ -674,3 +674,24 @@ TinyURL 같은 시스템 설계를 예시로 사용.
 - 4단계 극복을 위한 해결책 고민.
 - 시스템 전체를 뒤엎을 수도, 일부만 수정할 수도.
 
+## 정렬과 탐색
+
+- Person 객체로 이뤄진 크기가 큰 배열이 있음.
+- 이 배열을 나이순으로 정렬해야 한다면?
+- 우선, 배열의 크기가 큼을 알 수 있음.
+- 또한, 나이순 정렬이므로 값의 범위가 좁다는 것도.
+- 따라서, 버킷 정렬<sup>bucket sort</sup> 혹은 <sup>radix sort</sup>가 적합.
+- 책에서는 [버블](https://en.wikipedia.org/wiki/Bubble_sort), [선택](https://en.wikipedia.org/wiki/Selection_sort), [병합](https://en.wikipedia.org/wiki/Merge_sort), [퀵](https://en.wikipedia.org/wiki/Quicksort), [기수](https://en.wikipedia.org/wiki/Radix_sort)를 소개.
+- 선택은 최소값 찾아서 앞으로 보내기.
+- 버블은 원소를 최대한 맨 뒤로 보내기.
+- 퀵은 pivot.
+- 탐색에 대한 내용은 기록 생략.
+- 기수는 낮은 자리수부터 비교해 정렬(자릿수 고정).
+
+| 종류 | Big-θ | Big-Ω | Big-O | Memory |
+| --- | ----- | ----- | ----- | ------ |
+| 선택 | n^2 | n^2 | n^2 | 1 |
+| 버블 | n | n^2 | n^2 | 1 |
+| 병합 | n log n | n log n | n log n | n |
+| 퀵 | n log n | n log n | n^2 | log n |
+| 기수 | - | kn | kn | - |
