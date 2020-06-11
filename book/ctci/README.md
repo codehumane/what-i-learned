@@ -763,4 +763,39 @@ TinyURL 같은 시스템 설계를 예시로 사용.
   - 브라우저가 웹 페이지를 파싱.
   - 브라우저가 웹 페이지를 화면에 표시.
 
+## 스레드와 락
 
+일반적인 이해는 필요한 내용.
+
+### 자바의 스레드
+
+- 자바의 모든 스레드는 `java.lang.Thread` 클래스 객체에 의해 생성되고 제어됨.
+- `main()` 실행을 위해 하나의 사용자 스레드(user thread)가 자동으로 만들어 지는데, 이 스레드를 주 스레드(main thread)라고 부름.
+- 스레드 생성하는 방법으로는 `Runnable` 인터페이스 구현과 `Thread` 클래스 상속이 있음.
+- 다중 상속 지원 안 되는 점을 고려할 때 `Runnable`이 선호됨.
+
+### 동기화와 락
+
+- 스레드 간 메모리 동기화가 이득이 되기도 하지만 공유된 자원을 동시에 수정하려고 할 때 문제가 되기도.
+- 이를 제어하기 위해 동기화(synchronization) 방법을 제공.
+- 동기화된 메서드.
+  - 메서드 시그니처에 `synchronized` 키워드 선언.
+  - 인스턴스 메서드에 선언: 같은 객체의 메서드 동시 접근을 차단.
+  - 스태틱 메서드에 선언: 객체 구분 없이 동시 접근 차단.
+- 동기화 된 블럭
+  - `synchronized(this) { // 블라 블라 }`
+  - 메서드 단위가 아닌 특정 블럭 단위로 적용.
+- 락(lock)
+  - 좀 더 세밀한 제어가 가능.
+  - [여기](https://winterbe.com/posts/2015/04/30/java8-concurrency-tutorial-synchronized-locks-examples/) 보면 `Semaphore`, `StampedLock`, `ReadWriteLock`, `ReentrantLock` 등 여러 도구들이 존재.
+
+### 교착상태와 교착상태 방지
+
+교착상태 발생의 4가지 조건을 이야기.
+
+1. 상호 배제(mutual exclusion)
+2. 들고 기다리기(hold and wait)
+3. 선취(preemption) 불가능
+4. 대기 상태의 사이클(circular wait)
+
+이 중 1개의 조건만 제거해도 교착상태 방지. 주로 4번을 막는 데 초점이 맞춰져 있고, 나머지는 회피가 어려움.
