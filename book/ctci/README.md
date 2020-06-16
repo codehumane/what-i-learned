@@ -869,3 +869,97 @@ boolean isUniqueChars(String str) {
 - 개인적으로는 배열을 하나 더 만들어 치환하면 될 것으로 생각했음. 배열 하나를 더 사용해야 한다는 것이 상대적 단점.
 - 한편 char 배열이 아닌 String을 사용하는 방법도 얘기. 다만 매번 복사를 해야 한다는 단점. 하지만 한 번만 루프를 도는 것으로 결과 반환이 가능.
 - 책에 나온 코드는 다소 이상한 점이 있어 [geeksforgeeks 코드](https://www.geeksforgeeks.org/urlify-given-string-replace-spaces/) 참고.
+
+### 회문 순열(palindrome permutation)
+
+비트 벡터에서 한 개만 1인지 여부를 판단하는 게 재밌어서 기록함. 회문이란 앞으로 읽으나 뒤로 읽으나 같은 단어나 구절을 의미하며, 회문 '순열'인지 판단하는 것이므로 문자열 재배열을 통해 회문이 가능한지를 판단해야 함. 접근법의 다양성이나 설명의 상세함 측면에서 [여기 LeetCode 글](https://leetcode.com/articles/palindrome-permutation/)이 더 좋음.
+
+- Brute Force: O(128 * N) / O(1)
+- Using HashMap: O(N) / O(N). `HashMap<Character, Integer>`을 이용해 두 번의 루프로 해결.
+- Using Array: O(N) / O(128). 각 문자들이 ASCII 문자라고 가정하고, `int[128]`을 이용해 2번의 접근법을 취함. 2번에 비해 적은 공간 사용. 코드로 보면 아래와 같음.
+
+```java
+public class Solution {
+    public boolean canPermutePalindrome(String s) {
+        int[] map = new int[128];
+        for (int i = 0; i < s.length(); i++) {
+            map[s.charAt(i)]++;
+        }
+        int count = 0;
+        for (int key = 0; key < map.length && count <= 1; key++) {
+            count += map[key] % 2;
+        }
+        return count <= 1;
+    }
+}
+```
+
+- Single Pass: O(N) / O(128). 3번의 방식을 취하되 루프를 한 번 도는 것으로 해결. 그리고 루프를 돌며 `count` 정수형 변수를 이용해 홀수 존재여부를 판단.
+
+```java
+public class Solution {
+    public boolean canPermutePalindrome(String s) {
+        int[] map = new int[128];
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            map[s.charAt(i)]++;
+            if (map[s.charAt(i)] % 2 == 0)
+                count--;
+            else
+                count++;
+        }
+        return count <= 1;
+    }
+}
+```
+
+- 책에는 나오지 않은 Using Set. O(n) / O(1). 4번의 접근법과 유사하나 `count` 대신 `HashSet`을 사용. 코드 가독성이 좋아짐.
+
+```java
+public class Solution {
+    public boolean canPermutePalindrome(String s) {
+        Set < Character > set = new HashSet < > ();
+        for (int i = 0; i < s.length(); i++) {
+            if (!set.add(s.charAt(i)))
+                set.remove(s.charAt(i));
+        }
+        return set.size() <= 1;
+    }
+}
+```
+
+- Bit Vector. LeetCode 글에는 나오지 않지만, 책에서는 언급된, 비트 벡터에 1이 딱 한 개만 있는지 판별하는 것이 흥미로운 방법. `int`를 비트 벡터로 쓰고 있는데, 이 숫자에서 -1을 한 것과 이 숫자를 & 연산하면 0이 나와야 함.
+
+```java
+public class Solution {
+  public boolean isPermutationOfPalindrome(String phrase) {
+    int bitVector = createBitVector(phrase);
+    return bitVector == 0 || checkExactlyOneBitSet(bitVector);
+  }
+
+  /* Create a bit vector for the string. For each letter with value i, toggle the ith bit. */
+  private int createBitVector(String phrase) {
+    int bitVector = 0;
+    for (char c : phrase.toCharArray()) {
+      int x = getCharNumber(c);
+      bitVector = toggle(bitVector, x);
+    }
+    return bitVector;
+  }
+
+  private int toggle(int bitVector, int index) {
+    if (index < 0)	return bitVector;
+    int mask = 1 << index;
+    if((bitVector & mask) == 0)
+      bitVector |= mask;
+    else
+      bitVector &= ~mask;
+    return bitVector;
+  }
+
+  /* Check that exactly one bit is set by subtracting one from the integer and ANDing it with the original integer */
+  private boolean checkExactlyOneBitSet(int bitVector) {
+    return (bitVector & (bitVector-1)) == 0;
+  }
+}
+```
