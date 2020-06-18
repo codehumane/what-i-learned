@@ -963,3 +963,41 @@ public class Solution {
   }
 }
 ```
+
+### 문자열 압축
+
+문제 설명은 [여기 LeetCode](https://leetcode.com/problems/string-compression/) 참고. 첫 번째 풀이 코드는 아래와 같음.
+
+```java
+String compressBad(String str) {
+  String compressedString = "";
+  int countConsecutive = 0;
+  
+  for (int i = 0; i < str.length(); i++) {
+    countConsecutive++;
+
+    if (i + 1 >= str.length() || str.charAt(i) != str.charAt(i + 1)) {
+      compressedString += "" + str.charAt(i) + countConsecutive;
+      countConsecutive = 0;
+    }
+  }
+
+  return compressedString.length() < str.length() ? compressedString : str;
+}
+```
+
+- 문자열의 길이가 p이고, 연속된 문자의 종류가 k라고 하면, O(p + k^2)의 수행시간 소요.
+- k^2인 까닭은 문자열 concatenation 연산 때문.
+- 이를 `StringBuiler`나 배열을 이용한 방식으로 바꿔볼 수 있음.
+- 한편, 이런 문자열 처리를 하지 않고, 미리 압축하는 게 더 좋을지를 판단해 볼 수도 있음.
+
+```java
+String compress(String str) {
+  if (countCompression(str) >= str.length()) return str;
+  // 생략
+}
+
+int countCompression(String str) {
+  // 구현 생략 (문자열 조작하는 코드와 유사)
+}
+```
