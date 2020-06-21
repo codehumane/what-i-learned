@@ -1083,3 +1083,34 @@ void setZeros(int[][] matrix) {
 - xyxy = waterbottlewaterbottle
 - 회전 지점이 어디인지 상관 없음.
 - s1s1과 s2를 이용한 isSubstring으로 회전 문자열 여부 판단 가능.
+
+## 연결리스트 해법
+
+### 중복 없애기
+
+> 정렬되어 있지 않은 연결리스트가 주어졌을 때 이 리스트에서 중복되는 원소를 제거하는 코드를 작성하라. 임시 버퍼를 사용할 수 없다면 어떻게 풀까?
+
+- `HashSet`을 이용하여 1번의 순회로 중복 제거 가능.
+- O(N) 소요.
+- 하지만 버퍼를 쓸 수 없다면?
+- 2개의 포인터를 사용.
+- 1개의 포인터는 원소를 순차적으로 순회.
+- 나머지 1개의 포인터는 현재 원소와 중복된 것을 찾고 제거하는 데 사용.
+- 공간은 O(1)이고 수행 시간은 O(N^2).
+
+```java
+void deleteDups(LinkedListNode head) {
+  LinkedListNode current = head;
+  while (current != null) {
+    LinkedListNode runner = current;
+    while (runner.next != null) {
+      if (runner.next.data == current.data) {
+        runner.next = runner.next.next;
+      } else {
+        runner = runner.next;
+      }
+    }
+    current = current.next;
+  }
+}
+```
