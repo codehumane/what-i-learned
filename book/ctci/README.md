@@ -989,7 +989,7 @@ String compressBad(String str) {
 - 문자열의 길이가 p이고, 연속된 문자의 종류가 k라고 하면, O(p + k^2)의 수행시간 소요.
 - k^2인 까닭은 문자열 concatenation 연산 때문.
 - 이를 `StringBuiler`나 배열을 이용한 방식으로 바꿔볼 수 있음.
-- 한편, 이런 문자열 처리를 하지 않고, 미리 압축하는 게 더 좋을지를 판단해 볼 수도 있음.
+- 한편, 이런 문자열 처리를 하지 않고, 압축하는 게 더 좋을지를 미리 판단해 볼 수도 있음.
 
 ```java
 String compress(String str) {
@@ -1001,3 +1001,85 @@ int countCompression(String str) {
   // 구현 생략 (문자열 조작하는 코드와 유사)
 }
 ```
+
+### 0행렬
+
+> M x N 행렬의 한 원소가 0일 경우, 해당 원소가 속한 행과 열의 모든 원소를 0으로 설정하는 알고리즘을 작성하라.
+
+- 행렬을 순회해 가면서 값이 0인 셀을 발견하면, 바로 그 열과 행을 모두 0으로 만든다 -> X
+- 안 되는 까닭은, 0인 셀 발견 시, 0으로 바뀐 건지 아니면 원래 0인지 알 수 없기 때문.
+- 그래서 0의 위치를 기록하기 위한 행렬 하나를 더 둘 수도 있음. 하지만 공간복잡도가 O(MN)이 됨.
+- 하지만 0의 위치가 정확히 필요한 것은 아님.
+- 어떤 행의 값들이, 어떤 열의 값들이 0인지만 알면 0으로 바꾸는 작업이 가능.
+- 따라서 `new boolean[matrix.length]`와 `new boolean[matrix[0].legnth]` 배열만으로 충분.
+- 이 배열을 비트 벡터로 바꿔볼 수는 있겠으나 공간 복잡도는 여전히 O(N).
+- 좀 더 나아가서, 주어진 행렬의 첫 번째 열과 행 공간을 0의 행과 열 표기 공간으로 사용할 수도.
+
+```java
+void setZeros(int[][] matrix) {
+  boolean rowHasZero = false;
+  boolean colHasZero = false;
+  
+  // 첫 번재 행에 0이 있는지 확인
+  for (int j = 0; j < matrix[0].length; j++) {
+    if (matrix[0][j] == 0) {
+      rowHasZero = true;
+      break;
+    }
+  }
+
+  // 첫 번재 열에 0이 있는지 확인
+  for (int i = 0; i < matrix.length; i++) {
+    if (matrix[i][0] == 0) {
+      colHasZero = true;
+      break;
+    }
+  }
+
+  // 나머지 배열에 0이 있는지 확인
+  for (int i = 1; i < matrix.legnth; i++) {
+    for (int j = 1; j < matrix[0].length; j++) {
+      if (matrix[i][j] == 0) {
+        matrix[i][0] = 0;
+        matrix[0][j] = 0;
+      }
+    }
+  }
+
+  // 첫 번째 열을 이용해서 행을 0으로 바꾼다.
+  for (int i = 1; i < matrix.length; i++>) {
+    if (matrix[i][0] == 0) {
+      nullifyRow(matrix, i);
+    }
+  }
+
+  // 첫 번째 행을 이용해서 열을 0으로 바꾼다.
+  for (int j = 1; j < matrix[0].length; j++>) {
+    if (matrix[0][j] == 0) {
+      nullifyColumn(matrix, j);
+    }
+  }
+
+  // 첫 번째 행을 0으로 바꾼다.
+  if (rowHasZero) {
+    nullifyRow(matrix, 0);
+  }
+
+  // 첫 번째 열을 0으로 바꾼다.
+  if (colHasZero) {
+    nullifyColumn(matrix, 0);
+  }
+}
+```
+
+### 문자열 회전
+
+> 한 단어가 주어진 문자열 안에 포함되어 있는지를 판별하는 isSubstring 메서드가 있다고 가정. 이를 한 번만 호출해서, s1과 s2 문자열이 서로 회전 관계에 있는지를 판별. 예컨대, waterbottle은 erbottlewat를 회전시킨 결과.
+
+- s1 = xy = waterbottle
+- x = wat
+- y = erbottle
+- s2 = yx = erbottlewat
+- xyxy = waterbottlewaterbottle
+- 회전 지점이 어디인지 상관 없음.
+- s1s1과 s2를 이용한 isSubstring으로 회전 문자열 여부 판단 가능.
