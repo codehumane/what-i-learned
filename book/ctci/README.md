@@ -1114,3 +1114,51 @@ void deleteDups(LinkedListNode head) {
   }
 }
 ```
+
+### 뒤에서 k번째 원소 구하기
+
+> 단방향 연결리스트가 주어졌을 때 뒤에서 k번째 원소를 찾는 알고리즘을 구현하라.
+
+- 만약 연결리스트 길이를 안다면, 단순히 연결리스트 순회만으로 가능.
+- 재귀로도 가능. 하지만 재귀는 일반적으로 깔끔하긴 해도 최적이 아닐 때가 많음. 이 문제에서 공간 복잡도는 O(n)이 됨.
+
+```java
+class Index {
+  public int value = 0;
+}
+
+LinkedListNode kthToLast(LinkedListNode head, int k) {
+  Index idx = new Index();
+  return kthToLast(head, k, idx);
+}
+
+LinkedListNode kthToLast(LinkedListNode head, int k, Index idx) {
+  if (head == null) return null;
+  LinkedListNode node = kthToLAst(head.next, k, idx);
+  idx.value = idx.value + 1;
+  if (idx.value == k) reutrn head;
+  return node;
+}
+```
+
+- 재귀는 보통 순환적(iterative)으로 변환 가능.
+- 이전 문제처럼 2개의 포인터를 사용하면 됨.
+
+```java
+LinkedListNode nthToLast(LinkedListNode head, int k) {
+  LinkedListNode p1 = head;
+  LinkedListNode p2 = head;
+
+  for (int i = 0; i < k; i++) {
+    if (p1 == null) return null;
+    p1 = p1.next;
+  }
+
+  while (p1 != null) {
+    p1 = p1.next;
+    p2 = p2.next;
+  }
+
+  return p2;
+}
+```
