@@ -1162,3 +1162,35 @@ LinkedListNode nthToLast(LinkedListNode head, int k) {
   return p2;
 }
 ```
+
+### 분할
+
+> Write code to partition a linked list around a value x, such that all nodes less than x come before all nodes greater than or equal to x. If x is contained within the list, the values of only need to be after the elements less than x (see below). The partition element x can appear anywhere in the “right partition”; it does not need to appear between the left and right partitions.
+>
+> EXAMPLE
+> - Input: 3 -> 5 -> 8 -> 5 -> 10 -> 2 -> 1 [partition= 5]
+> - Output: 3 -> 1 -> 2 -> 10 -> 5 -> 5 -> 8
+
+아래는 최적화된 방법. 바로 이해가 되지 않아 한참을 봤음.
+
+```java
+LinkedListNode partition(LinkedListNode node, int x) {
+  LinkedListNode head = node;
+  LinkedListNode tail = node;
+
+  while (node != null) {
+    LinkedListNode next = node.next;
+    if (node.data < x) {
+      node.next = head;
+      head = node;
+    } eles {
+      tail.next = node;
+      tail = node;
+    }
+    node = next;
+  }
+
+  tail.next = null;
+  return head;
+}
+```
