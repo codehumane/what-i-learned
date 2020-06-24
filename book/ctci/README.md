@@ -1194,3 +1194,43 @@ LinkedListNode partition(LinkedListNode node, int x) {
   return head;
 }
 ```
+
+### 리스트의 합
+
+문제 기록은 생략. 예시만 기록.
+
+> - 입력: (7 -> 1 -> 6) + (5 -> 9 -> 2). 즉, 617 + 295
+> - 출력: 2 -> 1 -> 9. 즉, 912.
+
+풀이는 책과 다르게 재귀 대신 순환적(iterative)으로 풀어봄. 전체 풀이는 [여기](https://github.com/codehumane/algorithm/commit/e748a823314b1ea59e9ba4ed6bb7928617b9fbc0) 참고.
+
+```java
+public static LinkedListNode sum(LinkedListNode l1, LinkedListNode l2) {
+    LinkedListNode cur = new LinkedListNode();
+    LinkedListNode head = cur;
+    int carry = 0;
+
+    while (l1 != null || l2 != null) {
+        int left = (l1 == null) ? 0 : l1.value;
+        int right = (l2 == null) ? 0 : l2.value;
+        int sum = carry + left + right;
+
+        carry = sum / 10;
+        cur.value = sum % 10;
+        cur.next = new LinkedListNode();
+        cur = cur.next;
+
+        if (l1 != null) l1 = l1.next;
+        if (l2 != null) l2 = l2.next;
+    }
+
+    cur.next = null;
+    return head;
+}
+```
+
+이제 재밌는 건, LinkedList의 순서를 역순으로 바꾸는 거다. 높은 자릿수의 숫자가 앞에 오는 것. 위 예시는 아래처럼 바뀜.
+
+> - 입력: (6 -> 1 -> 7) + (2 -> 9 -> 5). 즉, 617 + 295
+> - 출력: (9 -> 1 -> 2). 즉, 912.
+
