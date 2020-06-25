@@ -1234,3 +1234,29 @@ public static LinkedListNode sum(LinkedListNode l1, LinkedListNode l2) {
 > - 입력: (6 -> 1 -> 7) + (2 -> 9 -> 5). 즉, 617 + 295
 > - 출력: (9 -> 1 -> 2). 즉, 912.
 
+이 문제의 까다로운 점은 일단 자릿수가 다를 때임. (1->6)과 (2)가 있다고 치면, 2는 1이 아니라 6과 더해야 함. 그리고 자릿수 올림을 앞에다 붙여야 한다는 점. 책에서는 이를 고려해서 앞에 0패딩을 붙이는 등의 노력을 함. 하지만, 어짜피 길이 계산 등 때문에 루프가 몇 번 더 필요함. 그래서 차라리 아래와 같이 하는 게 가독성 면에서 더 이득이 아닐까 함.
+
+```java
+public static LinkedListNode sumReversely(LinkedListNode l1, LinkedListNode l2) {
+    l1 = reverse(l1);
+    l2 = reverse(l2);
+    return reverse(sum(l1, l2));
+}
+
+private static LinkedListNode reverse(LinkedListNode node) {
+    if (node == null) return null;
+
+    LinkedListNode head = node;
+    node = node.next;
+    head.next = null;
+
+    while (node != null) {
+        LinkedListNode after = node.next;
+        node.next = head;
+        head = node;
+        node = after;
+    }
+
+    return head;
+}
+```
