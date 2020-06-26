@@ -7,18 +7,18 @@ AMQP(Advanced Message Queuing Protocol)는 RabbitMQ가 사용하는 메시징 �
 
 ## What is AMQP 0-9-1?
 
-메시지 브로커는 퍼블리셔(프로듀서라고 하기도)로부터 메시지를 받고(receive), 다시 컨슈머에게 라우팅(route). 브로커 안을 좀 더 들여다보면, 메시지는 먼저 익스체인지(exchange)로 보내지고(published), 익스체인지는 바인딩(binding)이라고 불리는 규칙을 사용해서 메시지 복사본을 큐에 분산(distribute). 그림으로 보면 아래와 같음.
+메시지 브로커는 퍼블리셔(프로듀서라고 하기도)로부터 메시지를 받고<sup>receive</sup>, 다시 컨슈머에게 라우팅<sup>route</sup>. 브로커 안을 좀 더 들여다보면, 메시지는 먼저 익스체인지<sup>exchange</sup>로 보내지고<sup>published</sup>, 익스체인지는 바인딩<sup>binding</sup>이라고 불리는 규칙을 사용해서 메시지 복사본을 큐에 분산<sup>distribute</sup>. 그림으로 보면 아래와 같음.
 
 ### Model in Brief
 
 !["Hello, world" example routing](https://www.rabbitmq.com/img/tutorials/intro/hello-world-example-routing.png)
 
-- 퍼블리셔는 다양한 메시지 퍼블리싱 시에 *메시지 속성(message attributes)*을 지정. 메시지 메타데이터.
+- 퍼블리셔는 다양한 메시지 퍼블리싱 시에 *메시지 속성<sup>message attributes</sup>*을 지정. 메시지 메타데이터.
 - 일부 메타데이터는 브로커가 사용. 하지만 나머지는 완전히 opaque. 메시지 받는 애플리케이션에서만 관심.
 - 네트워크 실패나 애플리케이션의 처리 실패 때문에, message acknowledgements 제공. 자동으로 브로커에게 알려줄 수도 있고, 개발자가 직접 결정할 수도 있음. 이 기능을 사용할 때는, 브로커가 통지를 받았을 때에만 큐에서 메시지를 제거함.
-- 메시지가 라우팅 되지 않으면, 메시지는 퍼블리셔에게 반환되거나(returned), 제거되거나(dropped), DLQ로 이동되거나.
+- 메시지가 라우팅 되지 않으면, 메시지는 퍼블리셔에게 반환되거나<sup>returned</sup>, 제거되거나<sup>dropped</sup>, DLQ로 이동되거나.
 
-*queue, exchange, binding을 통칭하여 AMQP 엔티티라고 함.
+*큐<sup>queue</sup>, 익스체인지<sup>exchange</sup>, 바인딩<sup>binding</sup>을 통칭하여 AMQP 엔티티라고 함.
 
 ### Programmable Protocol
 
@@ -64,7 +64,7 @@ AMQP(Advanced Message Queuing Protocol)는 RabbitMQ가 사용하는 메시징 �
 - 라우팅 키 R과 함께 새로운 메시지가 direct 익스체인지에 도착하면,
 - 익스체인지는 K = R 여부를 판단하고 큐로 이 메시지를 라우팅.
 - 그리고 다수의 워커들(동일 애플리케이션의 인스턴스들)이 있으면,
-- 작업(task)을 라운드 로빈 방식으로 분산시켜 줌.
+- 작업<sup>task</sup>을 라운드 로빈 방식으로 분산시켜 줌.
 - 큐가 아닌 컨슈머들에 대한 로드 밸런싱임에 유의.
 
 ![direct exchange](https://www.rabbitmq.com/img/tutorials/intro/exchange-direct.png)
@@ -89,7 +89,7 @@ AMQP(Advanced Message Queuing Protocol)는 RabbitMQ가 사용하는 메시징 �
 
 - 라우팅 키 대신, 메시지 헤더에 있는 속성들을 기반으로 라우팅.
 - 라우팅 키는 무시됨.
-- 바인딩 시 지정된 값과 헤더의 값을 매칭하여 라우팅.
+- 큐가 연결<sup>bound</sup>될 때 지정된 값과 헤더의 값을 매칭하여 라우팅.
 - `x-match` 인자의 값이 `all`일 때는 모든 헤더를 매칭하고,
 - `x-match` 인자의 값이 `any`일 때는 1개 헤더만 매칭.
 - 라우팅 키가 문자열일 필요가 없는(정수형이거나 딕셔너리 같은) 곳에서 direct 익스체인지로 사용될 수 있음.
@@ -101,14 +101,117 @@ AMQP(Advanced Message Queuing Protocol)는 RabbitMQ가 사용하는 메시징 �
 
 메시지를 저장하고 애플리케이션에 의해 소비. 큐는 익스체인지와 프로퍼티 일부를 공유하지만, 부가적인 속성도 가지고 있음.
 
-- Name
-- Durable (the queue will survive a broker restart)
-- Exclusive (used by only one connection and the queue will be deleted when that connection closes)
-- Auto-delete (queue that has had at least one consumer is deleted when last consumer unsubscribes)
-- Arguments (optional; used by plugins and broker-specific features such as message TTL, queue length limit, etc)
+| 속성 | 설명 |
+| :-- | :-- |
+| Name | |
+| Durable | the queue will survive a broker restart |
+| Exclusive | used by only one connection and the queue will be deleted when that connection closes |
+| Auto-delete | queue that has had at least one consumer is deleted when last consumer unsubscribes |
+| Arguments | optional; used by plugins and broker-specific features such as message TTL, queue length limit, etc |
 
 큐가 사용되려면 먼저 선언되어야 함. 큐가 선언되면, 이미 있는 이름의 큐인지를 확인 후 없으면 새로 생성. 이미 존재하는 이름이고 속성들이 같으면 아무 일도 일어나지 않음. 이름은 같은데 속성이 다르면 406 코드(`PRECONDITION_FAILED`)와 함께 채널 레벨의 예외가 발생함.
 
 ### Queue Names
 
-TBD
+- 애플리케이션은 큐 이름을 고르거나, 브로커에게 만들어 달라고 요청할 수도.
+- 큐 이름으로는 UTF-8로 255 바이트까지 사용 가능.
+- 큐 이름 인자를 빈문자열로 전달하면 브로커가 애플리케이션을 대신해 고유한 큐 이름을 생성함. 이렇게 생성된 이름은 클라이언트에게 큐 선언에 대한 응답으로 반환됨.
+- `amq.`은 예약어. 브로커 내부의 사용 때문. 이를 사용하려고 하면 채널 레벨에서 403 코드(ACCESS_REFUSED) 예외가 일어남.
+
+### Queue Durability
+
+- 큐는 druable 또는 transient로 선언 가능.
+- durable 큐의 메타데이터는 디스크에 저장됨.
+- transient 큐의 것은 메모리에 저장.
+- 이 구분은 발송 시점의 메시지에 대해서도 마찬가지.
+- [여기](https://www.rabbitmq.com/queues.html#durability)에 따르면, 애플리케이션이 durable 큐를 사용해야 할 뿐만 아니라 메시지도 persisted로 표기해서 보내야 함.
+
+## Bindings
+
+- 바인딩은 익스체인지가 메시지를 큐에 라우팅하기 위해 사용하는 규칙.
+- 익스체인지 E가 큐 Q에게 메시지를 라우팅하기 위해서는, Q가 E에 연결되어<sup>bound to</sup> 있어야 함.
+- 조금 헷갈릴 수 있는데, binding은 규칙이며 엔티티. 고유명사. bound는 말 그대로 일반적인 연결의 의미.
+- 바인딩은 선택적으로 *라우팅 키* 속성을 가질 수 있음. 일부 익스체인지 타입에서 사용.
+- 라우팅 키의 역할은 메시지를 필터링하는 것.
+- 이런 레이어를 둠으로써, 퍼블리서가 큐에 바로 연결되면 하기 어려운 일들을 가능하게 해주고(연결을 여러 개 둘 수도 있으니 그런 듯) 애플리케이션 개발의 중복된 작업도 덜어줌.
+- 만약 일치하는 바인딩이 없어 어떤 큐에도 메시지가 전달될 수 없다면, 제거되거나<sup>dropped</sup> 퍼블리셔에게 다시 반환됨. 이는 [퍼블리셔가 설정한 메시지 속성](https://www.rabbitmq.com/publishers.html#unroutable)에 따름.
+- [여기 스프링 가이드](https://spring.io/guides/gs/messaging-rabbitmq/)를 보면 간단한 예시가 나옴.
+
+```java
+@Bean
+Binding binding(Queue queue, TopicExchange exchange) {
+  return BindingBuilder
+      .bind(queue)
+      .to(exchange)
+      .with("foo.bar.#");
+}
+```
+
+이에 대한 설명은 아래와 같이 하고 있음..
+
+> In this case, we use a topic exchange, and the queue is bound with a routing key of `foo.bar.#`, which means that any messages sent with a routing key that begins with `foo.bar.` are routed to the queue.
+
+## Consumers
+
+- 애플리케이션의 소비가 있어야 큐에 메시지 저장하는 것이 의미 있음.
+- 소비에는 2가지 방법이 존재. push API와 poll API.
+- 그런데, pull을 가리켜 대부분의 경우에 "highly inefficient and should be avoided"라고 함.
+- 메시지 소비와 생산의 속도를 일치시키지 않아도 되기 때문에 pull이 유리한 것 아니었나!
+- 별다른 후속 설명이 없어 의문만 남아 있는 상태.
+- push API 사용 시에는 애플리케이션이 특정 큐의 메시지 소비를 하겠다고 명시해야 함.
+- 이를 가리켜 "register a conumser" 또는 "subscribe to a queue"라고 표현.
+- 독점적 컨슈머<sup>exclusive consumer</sup> 등록도 가능하고 하나의 큐에 대해 여러 컨슈머 등록도 가능.
+- 각 컨슈머는 컨슈머 태그<sup>consumer tag</sup>라고 하는 식별자를 가짐.
+- 이 식별자는 단순 문자열이며, 구독 취소 등에 사용.
+
+### Message Acknowledgements
+
+- 컨슈머 애플리케이션은 실패할 수 있음.
+- 네트워크 이슈로 문제가 생길 수도 있음.
+- 브로커는 언제 큐에서 메시지를 제거해야 하는 질문으로 귀결.
+- 이를 위해 2가지 acknowledgement 모드를 제공함.
+- 하나는 애플리케이션에 메시지를 전달한 뒤. `basic.deliver` 또는 `basic.get-ok` 메서드 이용.
+- 다른 하나는 애플리케이션이 acknowledgement를 응답. `basic.ack` 메서드 이용.
+- 전자는 자동 acknowledgement 모델.
+- 후자는 명시적 acknowledgement 모델.
+- 만약, acknowledgement를 보내지 못하고 컨슈머가 죽으면, 브로커는 다른 컨슈머에게 재전달. 다른 컨슈머가 없다면 새로운 컨슈머가 등록될 때까지 기다림.
+
+### Rejecting Messages
+
+- 애플리케이션은 메시지 처리가 실패했음을 메시지 거절<sup>rejecting a message</sup>을 통해 브로커에게 알려줄 수 있음.
+- 이 때, 메시지를 버릴지<sup>discard</sup> 다시 큐에 적재<sup>requeue</sup> 할지를 브로커에게 요청할 수 있음.
+- 큐에 컨슈머가 하나 뿐일때는, 거절과 재적재로 인한 무한 루프가 생기지 않도록 유의.
+
+### Negative Acknowledgements
+
+- 메시지 거절에는 `basic.reject` 메서드가 사용됨.
+- 이 메서드에는 한 가지 제약이 있음.
+- 한 번에 다수의 메시지에 대해 거절할 수 없는 것.
+- 하지만 acknowledgement 메서드에는 `multiple` 필드를 가질 수 있고,
+- 이를 통해 다수에게 acknowledgement를 보낼 수 있는데,
+- `basic.nack`(negative acknowledgement)이 이 필드를 가짐.
+- 과거에 만들어진 `basic.reject`는 불가.
+- 좀 더 자세한 내용은 [여기](https://www.rabbitmq.com/confirms.html#consumer-acks-multiple-parameter) 참고.
+
+### Prefetching Messages
+
+- 설명이 어려워서 [Channel Prefetch Setting (QoS)](https://www.rabbitmq.com/confirms.html#channel-qos-prefetch)와 [Consumer Prefetch](https://www.rabbitmq.com/consumer-prefetch.html) 문서를 참고.
+- 요약하면, "limit the number of unacknowledged messages on a channel".
+- pull이 아닌 push와 같이 사용됨에 유의.
+- 사용 목적은 주로 컨슈머 측의 unbounded buffer 문제를 피하기 위함.
+- `basic.qos` 메서드를 통해 "prefetch count" 설정함.
+
+## Message Attributes and Payload
+
+- 메시지는 *속성<sup>attribute</sup>*을 가짐.
+- 몇몇 속성은 자주 사용되어 AMQP 명세가 아예 정의를 해 두었음.
+- 문서에 몇 가지 예시를 들었는데, 이보다는 [Message Properties](https://www.rabbitmq.com/publishers.html#message-properties)를 참고하는 게 도움될 것.
+- 일부는 브로커에 의해 사용되지만, 대부분은 메시지를 받는 애플리케이션에서 사용되는 것들.
+- 일부 속성들은 선택적이며, 헤더라고 알려져 있음.
+- 메시지가 보내질 때 속성들이 설정됨.
+- 당연하게도 메시지는 페이로드를 가짐.
+- 브로커는 이를 불투명한 바이트 배열로 간주.
+- 보지도 않고 수정하지도 않는 것.
+- 속성만 가지고 페이로드는 없는 메시지도 가능.
+
+끝.
