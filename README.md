@@ -60,4 +60,5 @@
 - [Spring Metrics, Prometheus](https://github.com/codehumane/what-i-learned/blob/master/document/spring-metrics-prometheus.md)
 - [java.util.Deque w/ ArrayDeque](https://github.com/codehumane/what-i-learned/blob/master/document/java-util-deque.md)
 - ["How-to" Guides - Batch Applications](document/spring-boot-reference-batch-applications.md)
+- [AMQP 0-9-1 Model Explained](https://github.com/codehumane/what-i-learned/blob/master/document/amqp-conecpts.md)
 
