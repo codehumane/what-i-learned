@@ -105,6 +105,148 @@ public interface ConsumerTagStrategy {
 
 ## Annotation-driven Listener Endpoints
 
-TBD
+- 비동기로 메시지를 받는 가장 쉬운 방법.
+- 애노테이션으로 된 리스너 엔드포인트 인프라를 이용하는 것.
 
+일단 가장 간단한 예시부터 살펴봄.
+
+```java
+@Component
+public class MyService {
+  @RabbitListener(queues = "myQueue")
+  public void processOrder(String data) {
+    ...
+  }
+}
+```
+
+위 코드에 대한 설명은 아래와 같음.
+
+1. `myQueue`라는 이름의 큐에 메시지를 사용할 수 있으면<sup>available</sup>,
+2. `processOrder` 메서드가 적절히(여기서는 메시지의 페이로드와 함께) 호출됨.
+3. 애노테이션이 달린 각 메서드 별로 메시지 리스너 컨테이너가 뒷단에서 생성됨.
+4. 이 때 `RabbitListenerContainerFactory`가 사용됨.
+5. 위 예시에서는 `myQueue`가 반드시 미리 존재해야 함.
+6. 그리고 익스체인지에 연결되어 있어야 함.
+7. `RabbitAdmin`이 애플리케이션 컨텍스트에 존재하면 자동으로 큐가 선언되고 연결될 수 있음.
+
+댜음으로 3가지 예시 나옴. 자세한 내용은 원문과 [RabbitListener](https://docs.spring.io/spring-amqp/docs/current/api/org/springframework/amqp/rabbit/annotation/RabbitListener.html) 참고.
+
+```java
+@Component
+public class MyService {
+
+  @RabbitListener(bindings = @QueueBinding(
+    value = @Queue(value = "myQueue", durable = "true"),
+    exchange = @Exchange(value = "auto.exch", ignoreDeclarationExceptions = "true"),
+    key = "orderRoutingKey")
+  )
+  public void processOrder(Order order) {
+    ...
+  }
+
+  @RabbitListener(bindings = @QueueBinding(
+    value = @Queue,
+    exchange = @Exchange(value = "auto.exch"),
+    key = "invoiceRoutingKey")
+  )
+  public void processInvoice(Invoice invoice) {
+    ...
+  }
+
+  @RAbbitListener(queuesToDeclare = @Queue(name = "${my.queue}", durable = "true))
+  public String handleWithSimpleDeclare(String data) {
+    ...
+  }
+
+}
+```
+
+2.0 이후부터는 여러 라우팅 키로 큐를 익스체인지에 연결할 수 있다고 함.
+
+```java
+key = { "red", "yellow" }
+```
+
+`@QueueBinding`을 이용해 큐에 인자를 지정할 수도 있음.
+
+```java
+@RabbitListener(
+  bindings = @QueueBinding(
+    value = @Queue(
+      value = "auto.headers",
+      autoDelete = "true",
+      arguments = @Argument(
+        name = "x-message-ttl",
+        value = "10000",
+        type = "java.lang.Integer"
+      )
+    ),
+    exchange = @Exchange(
+      value = "auto.headers",
+      type = ExchangeTypes.HEADERS,
+      autoDelete = "true"
+    ),
+    arguments = {
+      @Argument(name = "x-match", value = "all"),
+      @Argument(name = "thing1", value = "somevalue"),
+      @Argument(name = "thing2")
+    }
+  )
+)
+public String handleWithHeadersExchange(String foo) {
+  ...
+}
+```
+
+간단히 기록하면 아래와 같음.
+
+1. `x-message-ttl` 지정할 때 10초를 지정.
+2. 인자 타입이 문자열이 아니므로 `Integer` 타입을 따로 명시.
+3. 만약, 같은 이름의 큐가 이미 존재한다면, 선언된 인자들이 기존 큐의 것과 모두 일치해야 함.
+4. 헤더 익스체인지를 사용하기 위해, 바인딩 인자들을 지정함.
+5. `thing1` 헤더 값은 `somevalue`여야 하며, `thing2` 헤더는 어느 값이든 존재하기만 하면 됨.
+6. `x-match`가 `all`이므로 모든 인자 조건이 만족해야 함.
+
+### Meta-annotations
+
+여러 리스너에 대해 동일한 설정을 사용하고 싶을 때가 있음. 보일러플레이트 설정을 줄이고자 할 때, meta-annotations를 사용.
+
+```java
+@Target({
+  ElementType.TYPE,
+  ElementType.METHOD,
+  ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@RabbitListener(
+  bindings = @QueueBinding(
+    value = @Queue,
+    exchange = @Exchange(
+      value = "metaFanout",
+      type = ExchangeTypes.FANOUT
+    )
+  )
+)
+public @interface MyAnonFanoutListener {
+}
+
+public class MetaListener {
+
+  @MyAnonFanoutListener
+  public void handle1(String foo) {
+    ...
+  }
+
+  @MyAnonFanoutListener
+  public void handle2(String foo) {
+    ...
+  }
+
+}
+```
+
+프로퍼티 오버라이딩을 위한 `@AliasFor`, 하나의 메서드에 대해 여러 컨테이너를 지정하도록 돕는 `@Repeatable` 설명도 하고 있음.
+
+### Enable Listener Endpoint Annotations
 
