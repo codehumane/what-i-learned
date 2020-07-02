@@ -250,3 +250,59 @@ public class MetaListener {
 
 ### Enable Listener Endpoint Annotations
 
+```java
+@Configuration
+@EnableRabbit
+public class AppConfig {
+
+  @Bean
+  public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
+    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+    factory.setConnectionFactory(connectionFactory());
+    factory.setConcurrentConsumers(3);
+    factory.setMaxConcurrentConsumers(10);
+    factory.setContainerCustomizer(container -> /* customize the container */);
+    return factory;
+  }
+}
+```
+
+- `@RabbitListener` 애노테이션을 위해 `@EnableRabbit` 선언.
+- `SimpleRabbitListenerContainerFactory` 대신 2.0부터는 `DirectMessageListenerContainerFactory` 사용도 가능.
+- 둘의 차이는 [Choosing a Container](https://docs.spring.io/spring-amqp/reference/html/#choose-container) 참고.
+  - 기존 버전은 큐의 각 컨슈머 별로 스레드가 할당 되었음.
+  - 다수의 동시 전송이 불가능한 구조.
+  - 새로운 버전은 동시성 지원.
+  - 리스너는 RabbitMQ Client 스레드에서 직접 호출됨.
+  - 따라서 더 간단하고 효율성도 증대.
+  - 하지만 이로 인한 한계들도(기능적 한계도 포함).
+- `setContainerCustomizer`를 통해 `ContainerCustomizer` 구현체 제공 가능. 컨테이너 팩토리에서 할 수 없던 프로퍼티들의 조작이 가능.
+- 인프라스트럭처(라고 계속 표현하는 게 잼있음)는 `rabbitListenerContainerFactory` 빈을 먼저 찾고, 이를 메시지 리스너 컨테이너 생성하는 데 사용.
+- 이렇게 되면 RabbitMQ 인프라스트럭처 셋업은 무시됨.
+- 위 예시에서는 `processOrder` 메서드가 3~10개의 스레드 풀에서 호출.
+- `MessagePostProcessor` 추가가 가능하고, 이는 메시지를 받고난 뒤(하지만 리스너 호출 전) 그리고 replies를 보내기 전에 적용.
+- `RetryTemplate`과 `RecoveryCallback` 추가도 가능. 그런데 이는 replies를 보내는 데 사용된다고 함.
+- `@RabbitListener`는 `concurrency` 프로퍼티를 가지는데, `DirectMessageListenerContainer`가 사용될 때는 `consumerPerQueue` 프로퍼티가 설정되고, `SimpleRabbitListenerContainer`가 사용될 때는 `concurrentConsumers` 프로퍼티가 설정됨.
+- `autoStartup`과 `taskExecutor`, `ackMode` 프로퍼티 설정도 가능.
+
+### Message Conversion for Annotated Methods
+
+### Programmatic Endpoint Registration
+
+### Annotated Endpoint Method Signature
+
+### Listening to Multiple Queues
+
+### Reply Management
+
+### Multi-method Listeners
+
+### `@Repeatable` `@RabbitListener`
+
+### Proxy `@RabbitListener` and Generics
+
+### Handling Exceptions
+
+### Container Management
+
+### 
