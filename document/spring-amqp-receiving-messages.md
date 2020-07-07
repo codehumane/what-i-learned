@@ -287,22 +287,131 @@ public class AppConfig {
 
 ### Message Conversion for Annotated Methods
 
-### Programmatic Endpoint Registration
+- 파이프라인에는 리스너를 호출하기 전에 두 개의 변환 단계를 거침.
+- 첫 번째는 `MessageConverter`.
+  - Spring AMQP `Message`를 Spring messaging `Message`로 변환.
+  - `SimpleMessageConverter`를 이용해 `String`과 `java.io.Serializable` 객체로의 변환.
+- 두 번째는 `GenericMessageConverter`.
+  - conversion service(`DefaultFormattingConversionService` 인스턴스)로 위임하는 역할.
+- 메시지 컨버터를 바꾸려면 컨테이너 팩토리 빈을 설정(`setMessageConverter`).
+- `ContentTypeDelegationMessageConverter`도 있음.
 
 ### Annotated Endpoint Method Signature
 
+엔드포인트에는 여러가지 메서드 시그니처를 사용할 수 있음.
+
+```java
+@Component
+public class MyService {
+
+  @RabbitListener(queues = "myQueue")
+  public void processOrder(
+    Order order,
+    @Header("order_type") String orderType) {
+      ...
+  }
+}
+```
+
+리스너 엔드포인트에 주입할 수 있는 주요 엘리먼트는 아래와 같음.
+
+- 로우한 `org.springframework.amqp.core.Message`.
+- 메시지를 받은 `com.rabbitmq.client.Channel`.
+- 들어온 AMQP 메시지를 나타내는 `org.springframework.messaging.Message`
+- 특정 헤더(표준 AMQP 헤더를 포함)의 값을 추출하는 `@Header`, `@Headers`
+
+만약 애노테이션 붙지 않고, 위 타입 중 어느 것도 아니라면, 페이로드로 인식함. 혹은 `@Payload`라고 명시해 줄 수도. 여기에 `@Valid` 지정도 가능.
+
 ### Listening to Multiple Queues
+
+```java
+@Component
+public class MyService {
+
+  @RabbitListener(queues = { "queue1", "queue2" } )
+  public void processOrder(
+    String data,
+    @Header(AmqpHeaders.CONSUMER_QUEUE) String queue) {
+      ...
+  }
+
+}
+```
 
 ### Reply Management
 
+기록은 생략.
+
 ### Multi-method Listeners
 
-### `@Repeatable` `@RabbitListener`
+클래스에 `@RabbitListener` 지정 가능. 그리고 메서드에는 `@RabbitHandler` 지정. 클래스에 지정된 1개의 리스너가 서로 다른 여러 메서드를 호출하는 것. 들어온 메시지의 페이로드 타입에 기반하여 메서드를 찾음.
 
-### Proxy `@RabbitListener` and Generics
+```java
+@RabbitListener(id="multi", queues = "someQueue")
+@SendTo("my.reply.queue")
+public class MultiListenerBean {
+
+  @RabbitHandler
+  public String thing2(Thing2 thing2) {
+      ...
+  }
+
+  @RabbitHandler
+  public String cat(Cat cat) {
+      ...
+  }
+
+  @RabbitHandler
+  public String hat(
+    @Header("amqp_receivedRoutingKey") String rk,
+    @Payload Hat hat) {
+      ...
+  }
+
+  @RabbitHandler(isDefault = true)
+  public String defaultMethod(Object object) {
+      ...
+  }
+
+}
+```
 
 ### Handling Exceptions
 
+기본적으로, 애노테이션 붙은 리스너 메서드가 예외를 던지면, 컨테이너에게 전달되고 메시지는 다시 큐에 적재되어 다시 전달되거나, 버려지거나, dead letter exchange(DLQ가 아닌 DLX네. DLX는 [여기](https://www.rabbitmq.com/dlx.html) 참고)에 보내짐. 컨테이너와 브로커 설정에 따라 다름. 전송자에게는 아무 것도 반환되지 않음.
+
+2.0 버전 이후부터는 `@RabbitListener` 애노테이션이 두 개의 속성을 가짐. `errorHandler`와 `returnExceptions`. `errorHandler` 속성에는 `RabbitListenerErrorHandler` 구현체의 이름을 지정. 이 구현체에서는 reply가 보내지도록 결과를 리턴할 수도 있고, 예외를 던질 수도 있음. 던져진 예외는 `returnExceptions` 설정에 따라 컨테이너로 보내질 수도 있고(값이 false인 경우), 전송자에게로 반환될 수도 있음(값이 true인 경우). 전송자에게는 예외가 `RemoteInvocationResult` 객체로 한 번 감싸져서 전달되고, `RabbitTemplate`에 설정된 `RemoteInvocationAwareMessageConverterAdapter`를 통해 받을 수 있음. 이 메커니즘에서는 오로지 `SimpleMessageConverter`만 사용할 수 있음에 유의.
+
+```java
+@FunctionalInterface
+public interface RabbitListenerErrorHandler {
+
+    Object handleError(Message amqpMessage, org.springframework.messaging.Message<?> message,
+              ListenerExecutionFailedException exception) throws Exception;
+
+}
+```
+
+2.1.7 이후로 메시징 메시지 헤더에서 `Channel` 사용 가능. 이를 통해 실패한 메시지에 대해 ack 또는 nack 지정 가능. 단, `AcknowledgeMode.MANUAL` 사용하는 경우에 한함.
+
+```java
+public Object handleError(
+  Message amqpMessage,
+  org.springframework.messaging.Message<?> message,
+  ListenerExecutionFailedException exception) {
+    ...
+    message
+      .getHeaders()
+      .get(AmqpHeaders.CHANNEL, Channel.class)
+      .basicReject(
+        message
+          .getHeaders()
+          .get(AmqpHeaders.DELIVERY_TAG, Long.class),
+        true
+      );
+  }
+```
+
 ### Container Management
 
-### 
+애노테이션을 위해 생성된 컨테이너는 애플리케이션 컨텍스트에 없음. `RabbitListenerEndpointRegistry#getListenerContainers()`를 통해 가져와야 함. 혹은 `getListenerContainer(String id)`, `getListenerContainerIds()` 메서드를 이용. 컨테이너에 `group` 속성을 지정하여 관리 편의성을 높일 수도.
