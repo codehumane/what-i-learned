@@ -63,4 +63,4 @@
 - ["How-to" Guides - Batch Applications](document/spring-boot-reference-batch-applications.md)
 - [AMQP 0-9-1 Model Explained](https://github.com/codehumane/what-i-learned/blob/master/document/amqp-conecpts.md)
 - [Spring AMQP > Receiving Messages](https://github.com/codehumane/what-i-learned/blob/master/document/spring-amqp-receiving-messages.md)
-
+- [Spring AMQP > Resilience](https://github.com/codehumane/what-i-learned/blob/master/document/spring-amqp-resilience.md)
