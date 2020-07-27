@@ -64,3 +64,4 @@
 - [AMQP 0-9-1 Model Explained](https://github.com/codehumane/what-i-learned/blob/master/document/amqp-conecpts.md)
 - [Spring AMQP > Receiving Messages](https://github.com/codehumane/what-i-learned/blob/master/document/spring-amqp-receiving-messages.md)
 - [Spring AMQP > Resilience](https://github.com/codehumane/what-i-learned/blob/master/document/spring-amqp-resilience.md)
+- [Spring AMQP > Connection and Resource Management](https://github.com/codehumane/what-i-learned/blob/master/document/spring-connection-and-resource-management.md)
