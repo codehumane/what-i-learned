@@ -44,3 +44,19 @@ https://redis.io/topics/data-types
 
 ## Sets
 
+### 개념
+
+- 정렬되지 않은 문자열 컬렉션.
+- O(1) 시간에 추가, 삭제, 키 존재 여부 확인(원소 갯수 상관 없음).
+- 당연한 얘기지만 중복 허용 X.
+- 삽입 시 중복 체크도 필요 없음.
+- union(합집합), intersection(교집합), difference(차집합) 연산 빠른 시간 내에 수행.
+- 최대 길이는 2^32 - 1.
+
+### 활용
+
+- 사이트 고유 방문자 수 등의 고유 여부 추적. [SADD](https://redis.io/commands/sadd) 활용.
+- 관계를 표현하는 데에도 유용. 예컨대 태깅. 각 블로그 글의 아이디를 키로 하여 해당 태그들을 셋에 넣어둠. [SINTER](https://redis.io/commands/sinter)를 이용해서, 임의의 3가지 태그를 가진 글들만을 추려낼 수 있음.
+- [SPOP](https://redis.io/commands/spop)과 [SRANDMEMBER](https://redis.io/commands/srandmember)를 이용해서 무작위로 원소 추출 가능.
+
+## Hashes
