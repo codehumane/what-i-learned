@@ -60,3 +60,58 @@ https://redis.io/topics/data-types
 - [SPOP](https://redis.io/commands/spop)과 [SRANDMEMBER](https://redis.io/commands/srandmember)를 이용해서 무작위로 원소 추출 가능.
 
 ## Hashes
+
+### 설명
+
+- 문자열 필드와 문자열 값들 간의 맵<sup>map</sup>
+- 따라서, 객체를 표현하기에 적합한 데이터 타입.
+
+```
+HMSET user:1000 username antirez password P1pp0 age 34
+HGETALL user:1000
+HSET user:1000 password 12345
+HGETALL user:1000
+```
+
+- 얼마 안 되는 필드를 가진 해시는 매우 적은 공간을 차지.
+- 여기서의 '얼마 안 되는'은 100개 정도까지를 나타냄.
+- 작은 레디스 인스턴스에 수백만 객체를 저장할 수 있는 정도.
+- 모든 해시는 2^32 - 1 쌍의 필드-값 짝을 가질 수 있음.
+
+### 활용
+
+- 기본적으로 객체를 표현하는 데 사용.
+- 여러 요소들을 담을 수 있는 데이터 타입이므로 다른 여러 방식으로도 활용 가능.
+
+## Sorted sets
+
+### 개념
+
+- 중복을 허용하지 않는 점에서 레디스 셋과 유사.
+- 하지만, Sorted Set 모든 멤버는 점수가 매겨져 있음.
+- 이 점수는 정렬을 위해 사용됨. 작은 값에서 큰 값 순으로.
+- 멤버는 고유하지만, 점수는 반복될 수 있음.
+- 원소의 추가, 삭제, 수정이 매우 빠르게 수행됨.
+- 원소 수의 로그에 비례하는 시간이라고 함(왜 O(N)이라고 안 하고 이렇게 길게 표현했을까)
+- 점수나 랭킹(포지션)으로 범위 내의 원소를 조회하는 것도 빠름.
+- 그 이유를 아래와 같이 설명하고 있는데 처음엔 이해하기 어려웠음.
+
+> Since elements are taken in order and not ordered afterwards, ...
+
+- 관련 내용을 좀 더 찾아봤고 [이 글](https://scalegrid.io/blog/introduction-to-redis-data-structures-sorted-sets/)이 위 문장을 설명해 주는 듯.
+    - Sorted set은 내부적으로 이중 데이터 구조체.
+    - 하나는 hash, 다른 하나는 skip list.
+    - hash는 객체들을 점수에 대응.
+    - skip list는 점수를 객체에 대응.
+- [여기](http://redisgate.kr/redis/configuration/internal_skiplist.php) 글에서는 zip list에 대한 설명도 나와 있음. skip list에 대한 친절한 그림도 포함.
+- 중간 원소에 접근하는 것도 매우 빠름.
+
+### 활용
+
+- 대규모 온라인 게임의 리더보드. 새로운 점수가 제출될 때마다 [ZADD](https://redis.io/commands/zadd)를 이용해서 업데이트. [ZRANGE](https://redis.io/commands/zrange)를 통해 상위 사용자들을 추출할 수도 있음. [ZRANK](https://redis.io/commands/zrank)를 이용하면 사용자 이름을 키로 하여 랭킹을 알 수도. ZRANK와 ZRANGE를 함께 이용하면 비슷한 점수 대의 사용자들을 매우 빠르게 가져올 수도. 
+- 레디스에 저장된 데이터에 대한 인덱스로도 많이 사용. 예를 들어, 사용자를 표현하는 여러 해시를 가지고 있다면, 사용자의 나이를 키로 하고 사용자의 ID를 값으로 하는 sorted set을 관리할 수도. 그리고 [ZRANGEBYSCORE](https://redis.io/commands/zrangebyscore)를 통해 주어진 범위의 사용자들을 조회.
+
+## Bitmaps and HyperLogLogs
+
+- 이런 게 있다고만 언급.
+- 좀 더 자세한 내용은 [An introduction to Redis data types and abstractions](https://redis.io/topics/data-types-intro) 참고.
