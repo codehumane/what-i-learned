@@ -39,4 +39,59 @@
 - 스키마를 지키자. `object-type:id`와 같은 형태를 사용. 그리고 마침표나 대시를 사용해서 여러 단어로 이뤄진 필드에 사용. `comment:1234:reply.to` 또는 `comment:1234:reply-to`와 같이.
 - 키 사이즈의 최대치는 512 MB.
 
-## Reis Strings
+## Redis Strings
+
+- 레디스 키에 대응해서 사용하는 가장 단순한 타입.
+- Memcahced에서의 유일한 데이터 타입.
+- 레디스 키가 문자열이므로, 값으로도 문자열을 사용하면, 문자열을 다른 문자열에 매핑하는 것.
+- 문자열 타입은 HTML 프래그먼트나 페이지 캐싱 등의 여러 경우에 유용.
+
+```
+> set mykey somevalue
+OK
+> get mykey
+"somevalue"
+```
+
+- `SET`과 `GET` 커맨드를 이용해서 문자열 값을 설정하고 불러옴.
+- 이미 있는 키에 대한 `SET`이면 값을 덮어 씀.
+- 기존 값이 문자열이 아닌 값이라고 하더라도 대체 됨에 유의.
+- 어떤 종류의 문자열(바이너리 데이터 포함)이든 값으로 저장할 수 있음.
+- 예컨대 JPEG 이미지도 저장 가능.
+- 값은 512 MB를 넘을 수 없음.
+- `SET` 옵션 중에 `NX`는 키가 없는 경우에만,
+- `XX`는 값이 이미 있는 경우에만 값을 설정함을 가리킴.
+
+```
+> set mykey newval nx
+(nil)
+> set mykey newval xx
+OK
+```
+
+- 문자열에 대해 `INCR`, `INCRBY`, `DECR`, `DECRBY`를 사용하기도.
+- 이들 커맨드는 모두 원자적<sup>atomic</sup>.
+
+```
+> set counter 100
+OK
+> incr counter
+(integer) 101
+> incr counter
+(integer) 102
+> incrby counter 50
+(integer) 152
+```
+
+- `GETSET` 커맨드는 새로운 값을 할당하면서 기존의 값을 반환.
+- 이 커맨드의 사용 예시는 다음과 같음. 웹 사이트에 매번 새로운 방문자가 들어올 때마다 `INCR` 명령어로 카운팅을 하고, 한 시간에 한 번씩 `GETSET`을 통해 갯수를 수집하고 동시에 값을 초기화.
+- `MSET`, `MGET`은 여러 값을 한 번에 설정하고 조회.
+
+```
+> mset a 10 b 20 c 30
+OK
+> mget a b c
+1) "10"
+2) "20"
+3) "30"
+```
