@@ -95,3 +95,36 @@ OK
 2) "20"
 3) "30"
 ```
+
+## Altering and querying the key space
+
+- 어떤 키의 타입에 대해서도 쓰일 수 있는,
+- 키 스페이스와 상호작용하기 위한 커맨드들이 있음.
+- 특정 타입에 대해 정의된 것은 아님.
+- 예를 들어 [EXISTS](https://redis.io/commands/exists) 커맨드는 키의 존재 여부를 1과 0으로 알려줌.
+- 한편 [DEL](https://redis.io/commands/del) 커맨드는 값(어떤 값이든 상관 없음)과 함께 키를 지워줌.
+
+```
+> set mykey hello
+OK
+> exists mykey
+(integer) 1
+> del mykey
+(integer) 1
+> exists mykey
+(integer) 0
+```
+
+- 위 예시에서 `DEL`이 키 존재 여부에 따라 1과 0을 반환함을 확인할 수 있음.
+- [TYPE](https://redis.io/commands/type) 커맨드는 주어진 키의 값이 어떤 타입인지를 반환.
+
+```
+> set mykey x
+OK
+> type mykey
+string
+> del mykey
+(integer) 1
+> type mykey
+none
+```
