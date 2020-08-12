@@ -128,3 +128,42 @@ string
 > type mykey
 none
 ```
+
+## Redis expires: keys with limited time to live
+
+- Redis expires.
+- 이 또한 값의 타입에 상관 없는 기능.
+- 키에 대해 타임아웃(살아 있는 시간을 제한)을 지정하는 것.
+- 약속된 시간이 지나면 키는 자동으로 없어짐.
+- `DEL` 커맨드를 호출한 것과 동일한 결과.
+- 초나 밀리세컨드 단위로 만료 시간 지정 가능.
+- 하지만 만료 시간 체크는 1 밀리세컨드 단위로 이루어짐.
+- 만료 정보는 디스크에 복제되고 영속됨.
+
+```
+> set key some-value
+OK
+> expire key 5
+(integer) 1
+> get key (immediately)
+"some-value"
+> get key (after some time)
+(nil)
+```
+
+- 위 예시에서 두 번의 `GET` 사이에 키는 사라짐.
+- 이를 위해 `EXPIRE` 커맨드 사용.
+- 만료 시간 업데이트를 위해, 만료 시간이 이미 지정된 키에 대해서도 다시 `EXPIRE` 사용 가능.
+- `PERSIST`는 만료 시간 지정을 무효화.
+
+- `SET`의 `ex` 옵션처럼, 다른 커맨드에서도 타임아웃 지정 가능.
+
+```
+> set key 100 ex 10
+OK
+> ttl key
+(integer) 9
+```
+
+- 위 예시에서 `TTL` 커맨드는 남아 있는 TTL 시간을 확인.
+- 밀리세컨드 단위로 만료를 지정하고 확인하고 싶다면, `PEXPIRE`와 `PTTL` 커맨드 사용.
