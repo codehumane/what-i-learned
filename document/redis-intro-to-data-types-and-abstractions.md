@@ -189,3 +189,12 @@ OK
 - `LRANGE`의 두 인자는 모두 음수일 수 있음. -1은 마지막 원소. -2는 끝에서 두 번째.
 - 레디스 리스트에서 중요한 연산 하나는 `pop`.
 - 이는 리스트에서 원소를 제거함과 동시에 조회하는 것.
+
+## Common use cases for lists
+
+- 아래의 2가지가 리스트의 대표적 사용 사례.
+- 소셜 네트워크에서 사용자의 최근 업데이트를 기억.
+- 컨슈머-프로듀서 패턴을 이용한, 프로세스들 간의 커뮤니케이션.
+- Ruby 라이브러리인 [resque](https://github.com/resque/resque)와 [sidekiq](https://github.com/mperham/sidekiq) 참고.
+- 트위터의 [takes the latest tweets] 영상도 참고.
+
