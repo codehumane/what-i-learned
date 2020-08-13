@@ -180,3 +180,12 @@ OK
 > Another strong advantage, as you'll see in a moment, is that Redis Lists can be taken at constant length in constant time.
 
 - 만약, 규모가 큰 컬렉션에서 중간 원소의 접근이 빨라야 한다면, sorted set 구조체 사용을 권장.
+
+## First steps with Redis Lists
+
+- `LPUSH`는 왼쪽(head)에, `RPUSH`는 오른쪽(tail)에 원소 삽입하는 커맨드.
+- 두 커맨드 모두 *variadic*. 삽입할 원소를 한 번에 여러 개 지정할 수 있음을 의미.
+- `LRANGE`는 목록에서 특정 범위 내의 원소들 추출.
+- `LRANGE`의 두 인자는 모두 음수일 수 있음. -1은 마지막 원소. -2는 끝에서 두 번째.
+- 레디스 리스트에서 중요한 연산 하나는 `pop`.
+- 이는 리스트에서 원소를 제거함과 동시에 조회하는 것.
