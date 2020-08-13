@@ -198,3 +198,29 @@ OK
 - Ruby 라이브러리인 [resque](https://github.com/resque/resque)와 [sidekiq](https://github.com/mperham/sidekiq) 참고.
 - 트위터의 [takes the latest tweets] 영상도 참고.
 
+## Capped lists
+
+- 리스트를 사용해서 최신 아이템들을 저장하는 경우가 많음.
+- 소셜 네트워크 업데이트나 로그 등.
+- 레디스를 이런 capped 컬렉션을 지원.
+- 즉, 최근 N개의 아이템만을 기억하고, 오래된 나머지는 버리는 것.
+- [LTRIM](https://redis.io/commands/ltrim) 커맨드를 이용.
+- `LRANGE`와 유사하지만, 단지 범위 내의 원소들을 보여주는 것이 아니라, 이 범위의 원소들을 새로운 리스트 값으로 설정. 범위 밖의 원소들은 버려짐.
+
+```
+> rpush mylist 1 2 3 4 5
+(integer) 5
+> ltrim mylist 0 2
+OK
+> lrange mylist 0 -1
+1) "1"
+2) "2"
+3) "3"
+```
+
+주로 아래의 명령어 짝으로 사용.
+
+```
+LPUSH mylist <some element>
+LTRIM mylist 0 999
+```
