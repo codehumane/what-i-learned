@@ -224,3 +224,25 @@ OK
 LPUSH mylist <some element>
 LTRIM mylist 0 999
 ```
+
+## Blocking operations on lists
+
+- `LPUSH`와 `RPOP`을 통해 프로듀서-컨슈머를 위한 큐를 만들 수 있음.
+- 하지만 종종 큐가 비어 있을 수 있음.
+- 이 때 `RPOP`은 NULL 반환.
+- 그러면 컨슈머는 일정 시간 대기한 뒤 `RPOP`을 재시도.
+- 이는 폴링 방식.
+- 2가지 면에서 안 좋음.
+    - 큐가 비어 있는 동안 레디스와 클라이언트가 불필요한 커맨드를 반복적으로 처리.
+    - 지연이 더 길어짐. NULL이 반환되면 어느 정도 시간을 두고 대기해야 하기 때문.
+    - 지연을 줄이려면 불필요 커맨드가 늘어나고, 불필요 커맨드를 줄이려면 대기가 늘어남.
+- 그래서 `BRPOP`과 `BLPOP`을 제공.
+- `RPOP`과 `LPOP`과 기본적으로 동일.
+- 하지만 리스트가 비어 있는 경우 블럭킹.
+- 혹은 주어진 타임아웃 만큼 블럭킹. (타임아웃이 0이면 무제한)
+- 그리고 명령어 인자로 여러 리스트를 지정할 수 있음.
+- 이렇게 하면 주어진 리스트 목록 중 비어 있지 않은 가장 첫 번째 리스트의 원소 반환. [BLPOP non-blocking behavior](https://redis.io/commands/blpop#non-blocking-behavior) 참고.
+- 만약 모든 리스트가 비어 있다면 대기하다가 리스트 중 하나라도 새로운 원소가 생기면 바로 반환. [BLPOP blocking behavior](https://redis.io/commands/blpop#blocking-behavior) 참고.
+- [RPOPLPUSH](https://redis.io/commands/rpoplpush)라는 커맨드도 있음.
+- 블럭킹 버전인 [BRPOPLPUSH](https://redis.io/commands/brpoplpush)도.
+
