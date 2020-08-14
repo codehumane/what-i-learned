@@ -246,3 +246,37 @@ LTRIM mylist 0 999
 - [RPOPLPUSH](https://redis.io/commands/rpoplpush)라는 커맨드도 있음.
 - 블럭킹 버전인 [BRPOPLPUSH](https://redis.io/commands/brpoplpush)도.
 
+## Automatic creation and removal of keys
+
+- 기본적으로는 빈 리스트를 생성하거나 제거할 필요가 없음.
+- 원소 제거 시 빈 목록이면 자동으로 지워지거나, 원소 추가 시 리스트가 없으면 자동으로 생성되기 때문.
+- 이는 리스트에만 국한된 특징이 아니라, 여러 원소로 이루어지는 모든 레디스 데이터 타입에 대해서도 마찬가지.
+- Stream, Set, Sorted Set, Hash 말이다.
+
+```
+// 존재하지 않는 키에 대한 삽입 연산
+> del mylist
+(integer) 1
+> lpush mylist 1 2 3
+(integer) 3
+
+// 이미 존재하는 키에 대한 연산들
+> exists mylist
+(integer) 1
+> lpop mylist
+"3"
+> lpop mylist
+"2"
+> lpop mylist
+"1"
+
+// 아래는 존재하지 않는 키에 대한 연산들
+> exists mylist
+(integer) 0
+> del mylist
+(integer) 0
+> llen mylist
+(integer) 0
+> lpop mylist
+(nil)
+```
