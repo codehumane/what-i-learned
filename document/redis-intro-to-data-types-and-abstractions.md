@@ -323,3 +323,109 @@ OK
 ```
 
 - 작은 해시(몇 안 되는 갯수의 원소와 작은 값들)는 특수한 방식으로 인코딩 되므로 메모리 효율에 유리.
+
+## Redis Sets
+
+- 순서 없는 문자열 집합.
+- `SADD` 커맨드로 새로운 원소 추가.
+- 그 외에 값이 존재하지는지 여부 확인이나, 여러 셋에 대한 교집합, 합집합, 차집합 등의 연산도 가능.
+
+```
+> sadd myset 1 2 3
+(integer) 3
+> smembers myset
+1. 3
+2. 1
+3. 2
+```
+
+- 아래와 같이 멤버십을 확인하는 커맨드도 존재.
+
+```
+> sismember myset 3
+(integer) 1
+> sismember myset 30
+(integer) 0
+```
+
+- 셋은 객체들 간의 관계를 표현하기에 적합.
+- 예를 들어, 태그 기능 구현을 위해 셋을 사용할 수도.
+- 아래 예시는 ID가 1000인 뉴스에 1, 2, 5, 77 태그가 달려 있음을 표현.
+
+```
+> sadd news:1000:tags 1 2 5 77
+(integer) 4
+> smembers news:1000:tags
+1. 5
+2. 1
+3. 77
+4. 2
+```
+
+- 혹은 반대 방향으로 관계를 표현할 수도.
+
+```
+> sadd tag:1:news 1000
+(integer) 1
+> sadd tag:2:news 1000
+(integer) 1
+> sadd tag:5:news 1000
+(integer) 1
+> sadd tag:77:news 1000
+(integer) 1
+```
+
+- 참고로, 위 예시들에서는 각 ID에 대응하는 객체들이 해시에 저장되어 있으리라 가정.
+- 다음은 태그 1, 2, 10, 27에 관련된 객체들을 모두 반환하는 예시.
+
+```
+> sinter tag:1:news tag:2:news tag:10:news tag:27:news
+... results here ...
+```
+
+- 원소를 추출하는 `SPOP`도 유용한 경우가 있음.
+- 예컨대, 웹 기반의 포커 게임에서, 셋으로 덱<sup>deck</sup>을 표현하고, `SPOP`을 통해 임의의 카드를 추출. 아래 예시에서 각 문자는 카드의 앞 글자임. (C)lubs, (D)iamonds, (H)earts, (S)pades.
+
+```
+>  sadd deck C1 C2 C3 C4 C5 C6 C7 C8 C9 C10 CJ CQ CK
+   D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 DJ DQ DK H1 H2 H3
+   H4 H5 H6 H7 H8 H9 H10 HJ HQ HK S1 S2 S3 S4 S5 S6
+   S7 S8 S9 S10 SJ SQ SK
+   (integer) 52
+```
+
+- 하지만, `deck`에 대해 직접 추출을 하면, 다음 게임에 카드의 덱을 다시 만들어야 함.
+- 따라서, 게임을 시작할 때 `deck`을 복사하는 것이 좋음.
+- 매 게임의 `deck` 키는 `game:1:deck` 같은 식으로 명명.
+- 이 때 [SUNIONSTORE](https://redis.io/commands/sunionstore) 활용.
+- 여러 셋에 대한 합집합을 구하는 연산이고, 그 결과를 다른 셋에 저장.
+- 하지만, 여기서는 단일 셋이므로 단지 복사하는 용도.
+
+```
+> sunionstore game:1:deck deck
+(integer) 52
+```
+
+- 이제 아래와 같은 식으로 카드 추출.
+
+```
+> spop game:1:deck
+"C6"
+> spop game:1:deck
+"CQ"
+> spop game:1:deck
+"D1"
+> spop game:1:deck
+"CJ"
+> spop game:1:deck
+"SJ"
+```
+
+- [SCARD](https://redis.io/commands/scard)는 원소의 갯수를 반환.
+- 셋 이론의 문맥에서 *cardinality of a set*이라는 용어가 사용되므로 `SCARD`라 명명.
+- 52개에서 5개가 추출되었으므로 47을 반환.
+
+```
+> scard game:1:deck
+(integer) 47
+```
