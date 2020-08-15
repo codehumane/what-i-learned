@@ -280,3 +280,46 @@ LTRIM mylist 0 999
 > lpop mylist
 (nil)
 ```
+
+## Redis Hashes
+
+- 필드와 값의 짝으로 구성된, "hash"라는 말 그대로의 모습.
+
+```
+> hmset user:1000 username antirez birthyear 1977 verified 1
+OK
+> hget user:1000 username
+"antirez"
+> hget user:1000 birthyear
+"1977"
+> hgetall user:1000
+1) "username"
+2) "antirez"
+3) "birthyear"
+4) "1977"
+5) "verified"
+6) "1"
+```
+
+- 해시가 객체 표현에 유용하긴 하지만,
+- 해시에 넣을 수 있는 필드의 수에는 특별한 제한이 없음.
+- 따라서, 애플리케이션에서 해시를 다양한 방식으로 사용할 수 있음.
+- `HSET`, `HGET`, `HMGET` 등의 커맨드 사용.
+
+```
+> hmget user:1000 username birthyear no-such-field
+1) "antirez"
+2) "1977"
+3) (nil)
+```
+
+- `HINCRBY`와 같은 개별 필드에 대한 커맨드도 있음.
+
+```
+> hincrby user:1000 birthyear 10
+(integer) 1987
+> hincrby user:1000 birthyear 10
+(integer) 1997
+```
+
+- 작은 해시(몇 안 되는 갯수의 원소와 작은 값들)는 특수한 방식으로 인코딩 되므로 메모리 효율에 유리.
