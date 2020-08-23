@@ -554,3 +554,50 @@ OK
 > zrank hackers "Anita Borg"
 (integer) 4
 ```
+
+## Lexicographical scores
+
+- 레디스 2.8부터 도입된 기능.
+- 점수가 같을 때 사전적 순서로 원소를 반환.
+- 주요 명령어는 [ZRANGEBYLEX](https://redis.io/commands/zrangebylex), [ZREVRANGEBYLEX](https://redis.io/commands/zrevrangebylex), [ZREMRANGEBYLEX](https://redis.io/commands/zremrangebylex), [ZLEXCOUNT](https://redis.io/commands/zlexcount)가 있음.
+- 일단 아래와 같이 점수를 0으로 해서 유명 해커 목록을 만듦.
+
+```
+> zadd hackers 0 "Alan Kay" 0 "Sophie Wilson" 0 "Richard Stallman" 0
+  "Anita Borg" 0 "Yukihiro Matsumoto" 0 "Hedy Lamarr" 0 "Claude Shannon"
+  0 "Linus Torvalds" 0 "Alan Turing"
+```
+
+- 정렬된 셋의 정렬 규칙에 따라 이들은 사전적 순서로 정렬되어 있음.
+
+```
+> zrange hackers 0 -1
+1) "Alan Kay"
+2) "Alan Turing"
+3) "Anita Borg"
+4) "Claude Shannon"
+5) "Hedy Lamarr"
+6) "Linus Torvalds"
+7) "Richard Stallman"
+8) "Sophie Wilson"
+9) "Yukihiro Matsumoto"
+```
+
+- `ZRANGEBYLEX`를 이용해서 사전적 순서로 범위 질의 가능.
+
+```
+> zrangebylex hackers [B [P
+1) "Claude Shannon"
+2) "Hedy Lamarr"
+3) "Linus Torvalds"
+```
+
+- 범위는 (첫 번째 문자가 무엇이냐에 따라) inclusive 또는 exclusive일 수 있음.
+- 그리고 +와 - 부호로 무한 범위 지정 가능.
+- 이 기능이 중요한 이유는 정렬된 셋을 제너릭 인덱스로 사용할 수 있게 해주기 때문.
+- 예를 들어, 원소들을 부호가 없는 128 비트 정수형 인자로 인덱스를 하고 싶다고 가정.
+- 이를 위해 정렬된 셋에 동일한 스코어로 원소들을 추가.
+- 단, 빅 엔디안 128 비트 숫자를 원소의 접두사로 사용해야 함.
+- 빅 엔디안 방식이므로 사전적 순서로 정렬되는 것이 실질적으로 숫자 정렬과 같음.
+- 그리고 128 비트 공간에 대해서 범위 질의. 그리고 나서 접두사를 버리고 실제 원소 값을 사용.
+
