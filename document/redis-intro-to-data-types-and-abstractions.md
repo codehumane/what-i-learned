@@ -429,3 +429,98 @@ OK
 > scard game:1:deck
 (integer) 47
 ```
+
+## Redis Sorted sets
+
+- 정렬된 셋<sup>sorted set</sup>은 셋<sup>set</sup>과 해시<sup>hash</sup>를 섞어 놓은 것과 비슷.
+- 셋과 유사하게 고유한, 반복되지 않은 문자열 원소로 구성.
+- 하지만 정렬된 셋 안의 원소들은 모두 부동소수점 점수 값에 대응.
+- 이 점수는 스코어<sup>score</sup>라고 불림.
+- 모든 원소들이 어떤 값에 대응되어 있다는 점에서 해시랑 유사.
+- 게다가, 정렬된 셋 안의 원소들은 모두 정렬되어 있는 상태를 유지.
+- 정렬 규칙은 아래와 같음.
+    - A와 B가 서로 다른 점수를 가지고, 만약 A.점수 > B.점수라면 A > B이다.
+    - A와 B가 같은 점수를 가지고, A가 B에 대해 사전 상으로<sup>lexicographically</sup> 앞선다면 A > B이다.
+    - A와 B는 절대 같을 수 없음. 정렬된 셋은 고유한 원소들을 가지기 때문.
+
+```
+> zadd hackers 1940 "Alan Kay"
+(integer) 1
+> zadd hackers 1957 "Sophie Wilson"
+(integer) 1
+> zadd hackers 1953 "Richard Stallman"
+(integer) 1
+> zadd hackers 1949 "Anita Borg"
+(integer) 1
+> zadd hackers 1965 "Yukihiro Matsumoto"
+(integer) 1
+> zadd hackers 1914 "Hedy Lamarr"
+(integer) 1
+> zadd hackers 1916 "Claude Shannon"
+(integer) 1
+> zadd hackers 1969 "Linus Torvalds"
+(integer) 1
+> zadd hackers 1912 "Alan Turing"
+(integer) 1
+```
+
+- [ZADD](https://redis.io/commands/zadd)는 `SADD`와 유사하지만 한 가지 인자를 더 받음.
+- 바로 점수.
+- `ZADD`는 *variadic*이므로 여러 스코어-값 짝을 지정할 수 있음.
+- 구현 노트.
+    - 정렬된 셋은 두 개의 데이터 구조체로 이뤄져 있음.
+    - 하나는 스킵 리스트, 나머지 하나는 해시 테이블.
+    - 따라서, 원소 추가에 O(log(N)) 소요됨.
+    - 대신, 이미 정렬되어 있으므로 정렬된 목록 반환시에는 별다른 일을 하지 않음.
+
+```
+> zrange hackers 0 -1
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+6) "Richard Stallman"
+7) "Sophie Wilson"
+8) "Yukihiro Matsumoto"
+9) "Linus Torvalds"
+```
+
+- [ZRANGE](https://redis.io/commands/zrange) 대신 [ZREVRANGE](https://redis.io/commands/zrevrange)를 사용해서 반대 순으로도 반환할 수 있음.
+
+```
+> zrevrange hackers 0 -1
+1) "Linus Torvalds"
+2) "Yukihiro Matsumoto"
+3) "Sophie Wilson"
+4) "Richard Stallman"
+5) "Anita Borg"
+6) "Alan Kay"
+7) "Claude Shannon"
+8) "Hedy Lamarr"
+9) "Alan Turing"
+```
+
+- `WITHSCORES` 인자로 점수를 같이 반환할 수도.
+
+```
+> zrange hackers 0 -1 withscores
+1) "Alan Turing"
+2) "1912"
+3) "Hedy Lamarr"
+4) "1914"
+5) "Claude Shannon"
+6) "1916"
+7) "Alan Kay"
+8) "1940"
+9) "Anita Borg"
+10) "1949"
+11) "Richard Stallman"
+12) "1953"
+13) "Sophie Wilson"
+14) "1957"
+15) "Yukihiro Matsumoto"
+16) "1965"
+17) "Linus Torvalds"
+18) "1969"
+```
