@@ -524,3 +524,33 @@ OK
 17) "Linus Torvalds"
 18) "1969"
 ```
+
+## Operating on ranges
+
+- 정렬된 셋은 범위에 대한 연산도 제공.
+- 아래 예시는 [ZRANGEBYSCORE](https://redis.io/commands/zrangebyscore)를 이용해 출생년도가 1950년 이하인 대상만을 추출한 것.
+
+```
+> zrangebyscore hackers -inf 1950
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+```
+
+- 좀 더 정확히 말하면, negative infinity와 1950 사이 점수의 원소들을 반환한 것.
+- [ZREMRANGEBYSCORE](https://redis.io/commands/zremrangebyscore)를 이용해 범위에 대한 제거도 가능.
+
+```
+> zremrangebyscore hackers 1940 1960
+(integer) 4
+```
+
+- get-rank 연산도 매우 유용. 이는 원소가 몇 번째에 위치했는지를 질의.
+- [ZREVRANK](https://redis.io/commands/zrevrank)도 함께 참고.
+
+```
+> zrank hackers "Anita Borg"
+(integer) 4
+```
