@@ -1309,3 +1309,58 @@ If-Modified-Since: Sat, 20 Jun 2002, 14:30:00 GMT
 - 한편 강한 검사기는 언제나 고유하게 식별함. 컨텐츠에 대한 암호 체크섬이 그 예.
 - 최종 변경 시각은 약한 검사기. 정확도가 최대 1초에 불과하기 때문.
 - 예상했듯이 ETag는 강한 검사기.
+
+## 범위 요청
+
+- 클라이언트가 문서의 일부분이나 특정 범위만 요청할 수 있게 함.
+- 특정 데이터를 3/4만 받은 상태에서 네트워크 문제로 커넥션이 끊어졌다고 가정.
+- 다시 네트워크가 정상이 되었을 때 처음부터 다시 받는 대신 범위 요청을 통해 다운로드 중단 시점부터 다시 받을 수 있음.
+- 아래는 문서의 처음 4,000 바이트 이후만을 요청하는 예시.
+
+```
+GET /bigfile.html HTTP/1.1
+Host: www.aaa.com
+Range: bytes=4000-
+User-Agent: Mozilla/4.61 [en] (WinNT; I)
+```
+
+- 아래와 같이 Range 헤더를 지정할 수도 있음.
+- 같은 문서의 다운로드 시간을 줄이고자, 동시에 여러 서버에 접속해서 같은 문서의 서로 다른 범위를 요청.
+- 범위를 여러 개 지정한 요청의 응답 헤더에는 Content-Type: multipart/byteranges가 명시됨.
+- [MDN 문서에 자세히 소개되어 있음](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests).
+
+```
+curl http://www.example.com -i -H "Range: bytes=0-50, 100-150"
+
+HTTP/1.1 206 Partial Content
+Content-Type: multipart/byteranges; boundary=3d6b6a416f9b5
+Content-Length: 282
+
+--3d6b6a416f9b5
+Content-Type: text/html
+Content-Range: bytes 0-50/1270
+
+<!doctype html>
+<html>
+<head>
+    <title>Example Do
+--3d6b6a416f9b5
+Content-Type: text/html
+Content-Range: bytes 100-150/1270
+
+eta http-equiv="Content-type" content="text/html; c
+--3d6b6a416f9b5--
+```
+
+## 델타 인코딩
+
+- 문서의 서로 다른 버전은 각각 다른 인스턴스.
+- 클라이언트가 만료된 사본을 갖고 있다면 서버에게 최신 인스턴스를 요청.
+- 새로운 인스턴스가 기존에 비해 일부만 변경되었더라도 전체 인스턴스를 다시 받게 됨.
+- 델타 인코딩은 객체 전체가 아닌 변경된 부분에 대해서만 통신하는 HTTP 프로토콜의 확장.
+- 클라이언트가 조건부 헤더를 보낼 때 A-IM(Accept-Instance-Manipulation) 헤더를 명시하면,
+- "아 그런데 나는 인스턴스 조작의 몇몇 형태를 받아들일 수 있으므로, 만약 그 중 하나를 사용하겠다면 문서 전체를 보내지 않아도 된다"의 의미를 전달하는 것.
+- A-IM 헤더 안에는 델타를 이용해 최신 버전의 문서를 생성할 수 있는 알고리즘을 명시.
+- 서버는 226(IM Used)를 통해 객체가 아닌 인스턴스 조작(Instance Manipulation)을 응답하고 있음을 알려주고,
+- 델타 계산을 위해 사용한 알고리즘을 IM 헤더에 명시하며,
+- 새로운 ETag 헤더와 기존 문서의 ETag를 Delta-Base 헤더에 담아서 응답함.
