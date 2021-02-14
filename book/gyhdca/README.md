@@ -62,7 +62,3 @@
 - 더 많은 사람이 함께 일할 때 더 빠를 수 있으려면,
 - 병렬 작업이 가능한 아키텍처이어야 함.
 - 넓은 서비스는 이를 어렵게 만듦.
-
-## How Does This Help Me Build Maintainable Software?
-
-- 
