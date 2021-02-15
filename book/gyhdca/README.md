@@ -62,3 +62,69 @@
 - 더 많은 사람이 함께 일할 때 더 빠를 수 있으려면,
 - 병렬 작업이 가능한 아키텍처이어야 함.
 - 넓은 서비스는 이를 어렵게 만듦.
+
+# Inverting Dependencies
+
+- 이제 대안을 다룰 차례.
+- 먼저, SRP와 DIP 이야기로 시작.
+
+## The Single Responsibility Principle
+
+> A component should have only one reason to change.
+
+- "책임"는 "한 번에 한 가지만 하라"가 아니라 "변화의 이유"로 해석되어야 함.
+- SRP를 "Single Reason to Change Principle"로 바꾸고 싶다는 언급도.
+- 하지만 한 가지 이유로 인한 변경은 여러 의존성들로 퍼져나가기 쉬움.
+- 점점 더 많은 변경의 이유들을 가지게 됨.
+
+## A Tale about Side Effects
+
+- 과거 오래된 코드 베이스에서 일할 때,
+- 사용자가 다소 이상하고 비용이 큰 요구사항을 가져왔는데,
+- 좀 더 좋은 방식으로 설득해도 계속 완고하길래 좀 더 얘기를 나눠보니,
+- 이전 개발팀이 변경을 반영하면 항상 부수 효과가 일어났기 때문이라고.
+
+## The Dependency Inversion Principle
+
+- 레이어드 아키텍처에서 레이어 간 의존성은 항상 아래쪽으로 향함.
+- 상위 레이어일수록 더 많은 변경의 이유를 가짐.
+- 도메인 레이어 아래 영속성 레이어가 존재한다면,
+- 영속 레이어의 변경은 도메인 레이어의 변경을 수반.
+- 하지만, 도메인 코드가 어플리케이션에서 가장 중요한 부분.
+- 다른 이유로 도메인도 변경되게 하고 싶지 않음.
+- 이 때 DIP가 도움이 됨.
+
+> We can turn around (invert) the direction of any dependency within our codebase.
+
+![Figure 2.2: By introducing an interface in the domain layer, we can invert the dependency so that the persistence layer depends on the domain layer](https://lh3.googleusercontent.com/-PtbCR5JCMpk/X20qOQRMciI/AAAAAAAAWEA/E-y6vzTc07su4Z4jj6XBWP6OJCbjQM0BwCLcBGAsYHQ/image.png)
+
+- 위 그림은 도메인이 영속 레이어에 의존하던 문제를 DIP를 통해 극복한 결과.
+- 영속 레이어에서 순수 엔티티를 분리해내고, 리포지토리에 인터페이스를 도입한 것.
+- 참고로, 양쪽 의존성에 대한 제어권이 있어야 의존성 역전이 가능.
+- 만약 써드 파티 라이브러리를 쓴다면 불가할 수도.
+
+## Clean Architecture
+
+> In clean architecture, in his opinion, the business rules are testable by design and independent of frameworks, databases, UI technologies, and other external applications or interfaces.
+
+![Clean Architecture](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
+
+- 내용 정리는 [엉클 밥의 클린 아키텍처 글](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) 링크로 대체.
+- 좀 특이한 건, 앞에서도 언급된 것처럼, 도메인 레이어가 영속 레이어에 의존하지 않도록, 엔티티 클래스가 도메인 레이어와 영속 레이어에 각각 별도로 존재한다는 것.
+- 영속 레이어 엔티티에는 ORM 프레임워크를 위한 기본 생성자, 컬럼명 등의 메타 데이터, 로딩 타입 등이 명시됨.
+- 도메인 엔티티는 이러한 영속 관련 규칙들로부터 자유로움.
+- 물론, 이로 인한 비용이 뒤따름. 하지만 디커플링으로 인한 이점이 더 크다고 주장.
+- fine-grained 또는 narrow 유스 케이스(서비스들) 언급도 잊지 않음.
+
+## Hexagonal Architecture
+
+- https://alistair.cockburn.us/hexagonal-architecture/
+- 흔히 알려진 헥사고날 아키텍처 그리고 포트 앤 어댑터 이야기.
+
+## How Does This Help Me Build Maintainable Software?
+
+- 클린 아키텍처, 헥사고날 아키텍처, 포트 앤 어댑터 아키텍처 모두 의존성을 역전시킴.
+- 이를 통해 도메인 코드가 바깥으로의 어떤 의존성도 갖지 않게 함.
+- 다시 말해, 도메인 로직을 영속이나 UI 문제로부터 분리하고,
+- 불필요한 변경의 이유를 제거하는 것.
+- 이는 결국 더 나은 유지보수성으로 이어짐.
