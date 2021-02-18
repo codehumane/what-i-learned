@@ -128,3 +128,119 @@
 - 다시 말해, 도메인 로직을 영속이나 UI 문제로부터 분리하고,
 - 불필요한 변경의 이유를 제거하는 것.
 - 이는 결국 더 나은 유지보수성으로 이어짐.
+
+# Organizing Code
+
+## Organizing by Layer
+
+아래 그림 방식.
+
+```
+buckpal
+|-- domain
+|   |-- Account
+|   |-- Activity
+|   |-- AccountRepository
+|   |-- AccountService
+|-- persistence
+|   |-- AccountRepositoryImpl
+ㄴ-- web
+    ㄴ-- AccountController
+```
+
+- 도메인에서 `AccountRepository` 인터페이스를 바라보게 함으로써 제어 역전.
+- 하지만, 3가지 이유로 이 패기지 구조는 최적이 아님.
+- 먼저, 기능 또는 피처 간 패키지 경계가 없음.
+    - 점점 더 많은 클래스가 같은 패키지 안에 생기며 서로 엮임.
+    - 관련 없는 기능 간 부수 효과를 일으킬 수도.
+- 다음으로, 애플리케이션이 어떤 유스 케이스를 제공하는지 드러나지 않음.
+    - `AccountService`, `AccountController` 클래스 이름만 보고는 어떤 유스케이스 제공하는지 알기 어려움.
+    - 특정 기능을 찾을 때, 일일이 서비스 안을 열어서 메서드들을 확인해 봐야 함.
+    - 이건 레이어 기반 패키지 구조로 인한 문제는 아님. 저자의 의도는 뭘지.
+- 마지막으로, 패키지 구조만으로는 목표 아키텍처를 알기 어려움.
+    - 물론 패키지 구조로 헥사고날 아키텍처 스타일을 따르는 유추할 수 있음.
+    - 하지만 어떤 기능이 웹 어댑터에서 호출되는지,
+    - 어떤 기능이 영속 어댑터를 사용하는지는 알 수 없음.
+    - 들어오고 나가는 포트는 코드 안에 숨겨짐.
+
+## Organizing by Feature
+
+```
+buckpal
+ㄴ-- account
+    |-- Account
+    |-- AccountController
+    |-- AccountRepository
+    |-- AccountRepositoryImpl
+    ㄴ-- SendMoneyService
+```
+
+- 계좌와 관련된 코드를 모두 `account`라는 상위 수준의 패키지에 몰아 둠.
+- 새로운 기능 그룹이 추가될 때도, `account`와 같은 상위 수준의 패키지가 추가됨.
+- 또한 레이어 패키지는 제거함.
+- 피처 간 불필요한 의존성은 package-private 접근 제한자로 보호.
+- 한편, `AccountService`를 `SendMoneyService`로 리네임.
+- 책임을 좁혀둔(narrow) 것.
+- 이제 클래스 이름만으로 역할을 유추할 수 있음.
+- 이렇게 코드에서 의도가 드러나게 하는 것을 로버트 마틴은 "screaming architecture"라 부름.
+- 하지만 이 접근법을 even less visibile이라 표현. 레이어 패키지 방식에 비해서.
+- 어댑터를 식별할 수 있는 어떤 패키지 명도 없고,
+- 들어오고 나가는 포트도 여전히 드러나지 않음.
+- 게다가 도메인 코드가 `AccountRepositoryImpl`을 의존할 수 있게 되어 제어 역전 위반 가능성 잠재.
+
+## An Architecturally Expressive Package Structure
+
+- 헥사고날 아키텍처에서는 엔티티, 유스 케이스, in/out 포트, in/out 어댑터가 주요 요소.
+- 이에 맞는 패키지 구조는 아래와 같음.
+
+```
+buckpal
+ㄴ-- account
+    |-- adapter
+    |    |-- in
+    |    |    ㄴ-- web
+    |    |         ㄴ-- AccountController
+    |    |-- out
+    |    |    ㄴ-- persistence
+    |    |         |-- AccountPersistenceAdapter
+    |    |         ㄴ-- SpringDataAccountRepository
+    |-- domain
+    |    |-- Account
+    |    ㄴ-- Activity
+    ㄴ-- application
+         ㄴ-- SendMoneyService
+         ㄴ-- port
+             |-- in
+             |    ㄴ-- SendMoneyUseCase
+             ㄴ-- out
+                  |-- LoadAccountPort
+                  ㄴ-- UpdateAccountStatePort
+```
+
+- 위에서 언급한 주요 요소들이 각각 하나의 패키지에 대응.
+- 그리고 최상위는 `account` 패키지로 계좌의 유스 케이스들을 구현하는 모듈임을 드러냄.
+- `domain`패키지는 도메인 모델을 포함.
+- `application` 패키지는 도메인을 둘러싼 서비스 레이어.
+- `SendMoneyService`는 들어오는 포트 인터페이스인 `SendMoneyUseCase`의 구현체.
+- 그리고 나가는 포트 인터페이스인 `LoadAccountPort`와 `UpdateAccountStatePort`를 사용하며, 이 둘은 영속 어댑터에서 구현.
+- `adapter` 패키지는 들어오는 어댑터(애플리케이션 레이어의 들어오는 포트 호출)와 나가는 어댑터(애플리케이션 레이어의 나가는 포트를 구현)를 포함.
+- 아키텍처가 코드에 그대로 녹아 있기에 커뮤니케이션과 실제 개발 시 용이함.
+- 혼란스럽기보다는 오히려 도움이 됨을 주장.
+- 한편, 너무 많은 패키지 경계로 인해 불필요하게 public 접근자가 설정 될 수도.
+- 하지만 어댑터 패키지 같은 경우 제어 역전이 적용되어 있으니 큰 위험은 X.
+- 이는 추후 데이터베이스 계층의 변경 등에도 유연.
+- 또한 상위 레벨 패키지는 DDD의 바운디드 컨텍스를 대응 시키는 데도 적합.
+
+## The Role of Dependency Injection
+
+- 도메인에서 영속 레이어로 데이터가 흘러가지만,
+- 의존은 역전 시킨 것에 대해 다시 한 번 설명.
+- 그리고 이를 위해 의존성 주입이 필요함도.
+- 의존성 주입이 없다면 제어의 역전은 일어나지 못함.
+
+## How Does This Help Me Build Maintainable Software?
+
+- 헥사고날 아키텍처를 위한 패키지 구조를 살펴봤음.
+- 목표 아키텍처와 실제 코드 구조를 최대한 일치시킨 것.
+- 아키텍처 요소들을 찾아가는 것은 패키지 구조를 따라가는 것으로 가능.
+- 이는 커뮤니케이션과 개발과 유지보수를 도움.
