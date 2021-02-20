@@ -244,3 +244,116 @@ buckpal
 - 목표 아키텍처와 실제 코드 구조를 최대한 일치시킨 것.
 - 아키텍처 요소들을 찾아가는 것은 패키지 구조를 따라가는 것으로 가능.
 - 이는 커뮤니케이션과 개발과 유지보수를 도움.
+
+# Implementing a Use Case
+
+앞서 설명한 아키텍처를 코드로 살펴볼 차례.
+
+## Implementing the Domain Model
+
+- 계좌 간 돈을 보내는 유스 케이스를 구현.
+- 객체지향 방식에서 이를 모델링하는 한 방식은, 입출금을 지원하는 `Account` 엔티티를 만드는 것.
+- 코드는 [여기](https://github.com/thombergs/buckpal/blob/master/buckpal-application/src/main/java/io/reflectoring/buckpal/domain/Account.java) 참고.
+- 이 엔티티는 계좌의 현재 스냅샷을 제공.
+- 모든 입출금은 `Activity` 엔티티 안에 캡처 됨.
+- 모든 activities를 매번 메모리에 로드하지 않고,
+- `Account` 엔티티는 몇 일 또는 몇 주 동안의 activities만을 보유.
+- 그리고 현재 잔고 계산을 위해 `baselineBalance`를 함께 가짐.
+- 이는 윈도우 안의 첫 액티비티가 일어나기 직전의 잔고.
+- 그리고 입출금을 위한 `withdraw`와 `deposit` 메서드를 가짐.
+- 출금 시에는 초과 인출을 막기 위해 비즈니스 룰을 검사.
+
+## A Use Case in a Nutshell
+
+- 이제 유스 케이스를 살펴 볼 차례.
+- 보통 아래 5가지 절차를 밟음.
+    - Take input
+    - Validates business rules
+    - Manipulates the model state
+    - Returns output
+- 가장 먼저 incoming 어댑터로부터 입력을 받음.
+- "Validate input"이 아니라 "Take input"이라 표현.
+    - 유스 케이스 코드는 도메인 로직을 다뤄야지,
+    - 입력 유효성 검증을 다루면 안 된다고 생각하기 때문이라고.
+    - 입력 검증은 다른 어딘가에서 해야 함. (바로 뒤이어 다룸)
+    - 대신, 비즈니스 룰을 검사할 책임을 가짐.
+- 다음으로 비즈니스 룰 검사. 도메인 엔티티와 함께 수행.
+- 비즈니스 룰이 만족되면, 입력에 기반해서 모델(보통은 도메인 객체)의 상태를 조작.
+- 그리고 이 새로운 상태를 포트(영속 어댑터)로 전달. 또는 다른 outgoing 어댑터 호출.
+- 호출한 어댑터로부터 반환 된 값을 출력 객체로 변환해서, 유스 케이스를 호출한 어댑터로 반환.
+- 구현 모습은 아래 링크 참고.
+
+https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/application/service/SendMoneyService.java
+
+## Validating Input
+
+- 입력 값 검증이 유스 케이스의 역할이 아니라고 했지만,
+- 여전히 애플리케이션 레이어에 속하는 일이라고 주장.
+- 유스 케이스를 호출하는 어댑터가 입력 검증을 할 수도 있겠지만,
+- 여러 어댑터가 잘못된 검증을 하거나 누락할 수도 있음.
+- 따라서, input model이 이를 하도록 함.
+- "Send Money" 유스 케이스에서 입력 모델은 `SendMoneyCommand` 클래스.
+- 더 정확하게는 생성자 내에서 이 역할을 수행.
+
+```java
+@Value
+@EqualsAndHashCode(callSuper = false)
+class SendMoneyCommand extends SelfValidating<SendMoneyCommand> {
+
+    @NotNull
+    private final AccountId sourceAccountId;
+
+    @NotNull
+    private final AccountId targetAccountId;
+
+    @NotNull
+    private final Money money;
+
+    public SendMoneyCommand(
+            AccountId sourceAccountId,
+            AccountId targetAccountId,
+            Money money) {
+        this.sourceAccountId = sourceAccountId;
+        this.targetAccountId = targetAccountId;
+        this.money = money;
+        this.validateSelf();
+    }
+}
+```
+
+- 값 검증이 빠진 것 같지만 `Money` 클래스 안에 녹아 있음. [여기](https://github.com/thombergs/buckpal/blob/02256fa5439b90a665446c10621bf64feadf1a76/src/main/java/io/reflectoring/buckpal/domain/Money.java) 참고.
+- 또한 `SelfValidating`을 열어 보면 아래와 같은 모습.
+
+```java
+public abstract class SelfValidating<T> {
+
+  private Validator validator;
+
+  public SelfValidating() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
+
+  /**
+   * Evaluates all Bean Validations on the attributes of this
+   * instance.
+   */
+  protected void validateSelf() {
+    Set<ConstraintViolation<T>> violations = validator.validate((T) this);
+    if (!violations.isEmpty()) {
+      throw new ConstraintViolationException(violations);
+    }
+  }
+}
+```
+
+- 송금에 있어, 보내고 받는 각 계좌 ID가 필요하며, 금액 또한 필수.
+- 따라서, 모든 값이 null이면 안 된다고 검증하고 있음.
+- 또한 금액은 0보다 커야 함.
+- 이 중 하나라도 위반되면 객체 생성을 중단하고 예외를 던짐.
+- `SendMoneyCommand` 필드들을 final로 선언하여 불변으로 만듦.
+- 따라서, 한 번 생성이 성공하면 상태가 유효하며 뭔가 잘못 변경될 일은 없다고 보장.
+- `SendMoneyCommand`는 유스 케이스 API의 일부이므로, incoming 포트 패키지 안에 위치.
+- 유스 케이스 코드를 더럽히지 않으면서 어플리케이션 핵심부에 남아있게 됨.
+- 이런 검사를 좀 더 잘 할 수 있도록 Bean Validation API를 사용했고 `SelfValidating`를 만들어 재사용 (개인적으로는 상속 말고 객체를 인자로 받는 정적 메서드가 더 좋아 보임)
+
