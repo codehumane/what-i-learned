@@ -357,3 +357,140 @@ public abstract class SelfValidating<T> {
 - 유스 케이스 코드를 더럽히지 않으면서 어플리케이션 핵심부에 남아있게 됨.
 - 이런 검사를 좀 더 잘 할 수 있도록 Bean Validation API를 사용했고 `SelfValidating`를 만들어 재사용 (개인적으로는 상속 말고 객체를 인자로 받는 정적 메서드가 더 좋아 보임)
 
+## The Power of Constructors
+
+- 결론: 빌더의 사용은 피하고 생성자 활용하자.
+- 지금은 파라미터가 3개지만 점점 늘어날 수 있음.
+- 편의를 위해 빌더 패턴을 고려할 수도.
+- 전체 인자를 받는 긴 생성자는 private으로 선언하고,
+- 빌더의 `build` 메서드 안에서만 호출되도록 함.
+- 그리고 여전히 private 생성자 안에서 유효성 검사를 진행.
+
+```java
+new SendMoneyCommandBuilder()
+    .sourceAccountId(new AccountId(41L))
+    .targetAccountId(new AccountId(42L))
+    // ... initialize many other fields
+    .build();
+```
+
+- 이 상태에서 필드가 추가된다고 해보자.
+- 그러면 생성자와 빌더에 모두 반영해 주어야 함.
+- 하지만 빌더에는 이 추가를 누락할 수 있음.
+- 생성자만 사용한 경우와 다르게 컴파일 타임에 이 문제가 드러나지 않음.
+- 단위 테스트로도 발견이 어려울 수 있음.
+- IDE를 사용하면 긴 파라미터 목록도 예쁘게 단장할 수 있음.
+- 생성자 사용을 적극 고려.
+
+## Different Input Models for Different Use Cases
+
+- 서로 다른 유스 케이스에 같은 입력 모델을 사용하고 싶을 수 있음.
+- 예를 들어, "계좌 등록"과 "계좌 상세 수정" 유스 케이스가 있다고 해보자.
+- 이름에서 알 수 있듯이 처음에는 거의 모든 입력이 동일할 수 있음.
+- 차이점은 수정 유스 케이스는 대상 계좌의 ID가 필요하고,
+- 등록 유스 케이스에는 계좌 보유자의 ID가 필요하다는 것.
+- 이러한 차이 때문에 계좌 ID와 보유자 ID에 모두 null을 허용해야 함.
+- 이렇게 되면 유효성 검증 로직이 유스 케이스 별로 각각 존재해야 하고,
+- 이는 비즈니스 코드에 유효성 검증 관심사를 섞어버리는 일.
+- 각 유스 케이스로 용도가 한정된 입력 모델은 유스 케이스를 좀 더 깨끗하게 유지시킴.
+- 또한 다른 유스 케이스들과 결합도를 낮추어 의도치 않은 영향으로부터 보호.
+
+## Validating Business Rules
+
+먼저, 입력 유효성 검증과 비즈니스 규칙 검증의 차이 이야기.
+
+- 입력 유효성 검증과 다르게 비즈니스 규칙 검증은 유스 케이스 역할.
+- 입력 검증과 비즈니스 규칙 검증의 차이는,
+- 도메인 모델의 현재 상태에 접근할 필요가 있느냐의 여부.
+- 또한, 입력 검증은 `@NotNull`처럼 선언적 구현이 가능함.
+- 이에 반해, 비즈니스 검증은 좀 더 많은 문맥이 필요.
+- 입력 검증을 문법적 검증이라고 하고, 비즈니스 검증을 의미적 검증이라 부르기도.
+- "원천 계좌는 초과 인출되면 안 된다"는 비즈니스 규칙 검증.
+- 원천 계좌와 대상 계좌가 있는지, 그리고 현재 잔고가 얼마인지 등 도메인 모델의 현재 상태가 필요.
+- "이체 금액은 0보다 커야 한다"는 단지 입력값만을 선언적으로 검사 가능.
+- 이런 쉽고 일관된 규칙은 구현된 코드를 찾거나 추가할 위치를 찾는 데 도움이 됨.
+
+다음으로, 비즈니스 규칙 검증을 어떻게 구현할지에 대한 이야기.
+
+- 가장 좋은 방법은 도메인 엔티티에 맡기는 것.
+
+```java
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Account {
+
+    public boolean withdraw(Money money, AccountId targetAccountId) {
+		if (!mayWithdraw(money)) {
+			return false;
+		}
+
+		// ...
+	}
+}
+```
+
+- 적당한 도메인 엔티티가 보이지 않는다면 유스 케이스에 맡길 수도.
+
+```java
+@RequiredArgsConstructor
+@UseCase
+@Transactional
+public class SendMoneyService implements SendMoneyUseCase {
+
+    @Override
+	public boolean sendMoney(SendMoneyCommand command) {
+        requireAccountExists(command.getSourceAccountId());
+        requireAccountExists(command.getTargetAccountId());
+        // ...
+    }
+}
+```
+
+## Rich versus Anemic Domain Model
+
+- 도메인 로직을 엔티티에 많이 둘 것이냐,
+- 아니면 엔티티는 단지 데이터만 가지는 얇은 "anemic"으로 두고,
+- 유스 케이스에 도메인 로직을 많이 둘 것이냐 이야기.
+- 여기에 어떤 제약은 없다면서 필요에 맞게 사용하라고.
+- 참고로, 위에서 다룬 예제들은 "rich" 엔티티.
+
+## Different Output Models for Different Use Cases
+
+- 유스 케이스가 자신의 일을 완료했다면, 호출자에게 무엇을 넘겨줘야 할까?
+- 입력과 마찬가지로 출력 역시 유스 케이스에 가능한 특화된 것이 좋음.
+- 출력은 호출자에게 꼭 필요한 것들만을 담고 있어야 함.
+- "Send Money" 유스 케이스에서는 `boolean`만을 반환.
+- 만약, 호출자가 잔고에 관심 있어 한다면 어떨까?
+- `Account`를 그대로 반환하고 싶을 수도 있음.
+- 그러나 계좌를 조회하는 다른 유스 케이스를 만드는 것도 고려.
+- 이는 다른 곳에서도 사용될 수도 있고 말이다.
+- 정답은 없지만 유스 케이스를 가능한 특화시키는 것이 좋음.
+- 의구심이 들 때는 최소한을 반환.
+- 입력과 마찬가지로 출력 모델을 여러 유스 케이스에서 공유하게 되면,
+- 유스 케이스 간의 불필요한 결합도를 낳음.
+- 예컨대, 필드가 하나 추가된다면, 다른 유스 케이스에서는 관심 없더라도 알고 있어야 함.
+- 공유된 모델은 시간이 지날수록 점점 커지는 여러 이유를 가짐.
+- SRP.
+
+## WHat about Read-Only Use Cases?
+
+- "계좌의 잔고 확인"도 역시 구현이 필요한 하나의 유스 케이스.
+- 하지만, 데이터 수정이 일어나는 유스 케이스와 구분되는, 단순한 쿼리로 바라볼 수도 있음.
+- 이 경우에는 전용 "쿼리 서비스"를 만들면 됨.
+
+```java
+@RequiredArgsConstructor
+class GetAccountBalanceService implements GetAccountBalanceQuery {
+
+	private final LoadAccountPort loadAccountPort;
+
+	@Override
+	public Money getAccountBalance(AccountId accountId) {
+		return loadAccountPort.loadAccount(accountId, LocalDateTime.now())
+				.calculateBalance();
+	}
+}
+```
+
+- 단지 outgoing 포트로 쿼리를 전달하는 일만을 하고 있음.
+- 이런 경우는 클라이언트가 outgoing 포트를 직접 호출하게 할 수도.
+- 이는 뒤의 "Taking Shortcuts Consciously"에서 다룬다고 함.
