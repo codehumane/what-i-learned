@@ -585,3 +585,61 @@ class SendMoneyController {
 - `CreateAccount` 보다 `RegisterAccount`가 더 나은 이름.
 - 이 애플리케이션에서는 계좌를 생성하는 유일한 방법은 사용자가 이를 등록하는 것.
 - 따라서, 이 이름이 더 의미를 잘 드러냄. (왜지? 예시는 와 닿지 않음)
+
+# Implementing a Persistence Adapter
+
+## Dependency Inversion
+
+- 도메인 코드가 영속 관련 문제를 신경쓰지 않고도 변화할 수 있도록,
+- 애플리케이션 서비스는 포트 인터페이스로 영속 기능을 호출.
+- 그리고 이 인터페이스는 영속 어댑터 클래스가 구현.
+- 이 어댑터를 헥사고날 아키텍처에서는 "driven" 또는 "outgoing"이라 부름.
+
+## The Responsibilities of a Persistence Adapter
+
+- Takes input
+- Maps input into a database format
+- Sends input to the database
+- Maps database output into an application format
+- Returns output
+- 입력 모델은 도메인 엔티티가 될 수도 있고, 특정 작업에 특화된 객체일 수도.
+- 그리고 이를 JPA 엔티티로 변환.
+- 매번 매핑하는 것은 얻는 것에 비해 큰 작업일 수 있으므로,
+- 뒤의 "Mapping between Boundaries"에서 매핑 없는 전략을 다룸.
+- 한편, 꼭 ORM을 사용해야 하는 것은 아님.
+- SQL로 변환해서 실행시킬 수도 있고,
+- 파일에 데이터를 저장할 수도 있음.
+- 핵심은 영속 어댑터가 핵심부에 영향 주지 않는 구조를 유지하는 것.
+
+## Slicing Port Interfaces
+
+- 포트 인터페이스는 어떻게 나누어야 할까.
+- 너무 큰 포트 인터페이스는 불필요한 의존성을 가져옴.
+- 불필요한 의존성은 코드를 이해하고 테스트하기 어렵게 만듦.
+- 예를 들어, `RegisterAccountService` 단위 테스트를 만든다고 해보자.
+- 이는 `AccountRepository` 인터페이스에 의존하는데, 수 많은 메서드 중 어떤 것을 mocking 해야 할까?
+- 일단 찾아내는 데도 시간이 걸리는 게 문제.
+- 그리고 일단 찾아서 mock으로 감쌌다고 하더라도,
+- 다음 사람은 어느 정도까지 mocking 되어 있는지 파악해야 하고,
+- 단위테스트가 동작하고 있기에 정상적으로 간주하고 mocking 안 된 부분을 사용할 수도 있음.
+- ISP(Interface Segregation Principle)은 이 문제에 답을 제공.
+- 인터페이스는 클라이언트가 오직 필요한 메서드만을 알 수 있도록 충분히 구체적이어야 한다고.
+
+> Depending on something that carries baggage that you don't need can cause you troubles that you didn't expect."
+
+## Slicing Persistence Adapters
+
+- 하나의 단일 클래스로 모든 포트 인터페이스를 구현할 수도.
+- 도메인 클래스, 그 중에서도 애그리거트를 기준으로 나눌 수도.
+- 좀 더 나아가서 하나의 애그리거트지만, JPA 등의 ORM을 사용했냐 아니면 성능을 위해 평문 SQL을 사용했느냐로 나눌수도.
+- "one persistence adapter per aggregate" 접근법을 시작점으로 잡는 것은 괜찮아 보임.
+- 향후의 바운디드 컨텍스트로 세분화를 돕는 측면.
+- 미리 나누어 두면 서로 의존할 가능성도 낮으니 분리가 좀 더 쉽기에.
+
+## Example with Spring Data JPA
+
+- [Account](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/domain/Account.java)
+- [AccountJpaEntity](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountJpaEntity.java)
+- [LoadAccountPort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/LoadAccountPort.java)
+- [UpdateAccountStatePort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/UpdateAccountStatePort.java)
+- [AccountPersistenceAdapter](https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountPersistenceAdapter.java)
