@@ -471,7 +471,7 @@ public class SendMoneyService implements SendMoneyUseCase {
 - 공유된 모델은 시간이 지날수록 점점 커지는 여러 이유를 가짐.
 - SRP.
 
-## WHat about Read-Only Use Cases?
+## What about Read-Only Use Cases?
 
 - "계좌의 잔고 확인"도 역시 구현이 필요한 하나의 유스 케이스.
 - 하지만, 데이터 수정이 일어나는 유스 케이스와 구분되는, 단순한 쿼리로 바라볼 수도 있음.
@@ -494,3 +494,94 @@ class GetAccountBalanceService implements GetAccountBalanceQuery {
 - 단지 outgoing 포트로 쿼리를 전달하는 일만을 하고 있음.
 - 이런 경우는 클라이언트가 outgoing 포트를 직접 호출하게 할 수도.
 - 이는 뒤의 "Taking Shortcuts Consciously"에서 다룬다고 함.
+
+# Implementing a Web Adapter
+
+## Dependency Inversion
+
+- 웹 어댑터 패키지의 컨트롤러가 유스 케이스를 직접 호출하지 않고,
+- 애플리케이션 포트 in 패키지의 인터페이스를 호출. DIP.
+- 왜 이렇게 한 번 거쳐가는 게 좋을까?
+- 외부 세상과의 어떤 커뮤니케이션이 있는지 명확히 알 수 있음.
+- 이는 레거시 코드베이스의 유지보수 주체에게는 의미 있는 정보.
+- 뒤의 "Taking Shortcuts Consciously"에서도 다루겠지만, 유스 케이스를 직접 호출하기도.
+- 하지만, 웹 소켓 처럼, 애플리케이션 코어에서 웹 어댑터로 데이터를 보내야 하는 경우도 존재.
+- 이 경우에는 분명하게 포트가 필요.
+
+## Respnsibilities of a Web Adapter
+
+- Maps HTTP requests to Java objects
+- Performs authorization checks
+- Validates input
+- Maps input to the input model of the use case
+- Calls the use case
+- Maps the output of the use case back to HTTP
+- Returns an HTTP response
+- 여기서의 입력 검증은 유스 케이스에서의 입력 검증, 그리고 비즈니스 규칙 검증과는 다름.
+- 웹 어댑터의 입력 모델을 유스 케이스의 입력 모델로 변환할 수 있는지를 검증.
+
+## Slicing Controllers
+
+- 컨트롤러를 얼마나 잘게 나눌지에 대한 이야기.
+- 저자는 가능한 적게 만들기 보다는 가능한 많이 나누라고 함.
+- 가능한 적은 책임을 가진 좁은<sup>narrow</sup> 웹 어댑터를 만들라고.
+- 일반적으로는 계좌에 관련된 모든 연산들을 담은 `AccountController`를 만들 것.
+- 아래와 같은 식.
+
+```java
+@RestController
+@RequiredArgsConstructor
+class AccountController {
+    @GetMapping("/accounts")
+    List<AccountResource> listAccounts() {}
+
+    @GetMapping("/accounts/id")
+    AccountResource getAccount(@PathVariable("accountId") Long accountId)  {}
+
+    @GetMapping("/accounts/{id}/balance")
+    long getAccountBalance(@PathVariable("accountId") Long accountId) {}
+
+    @PostMapping("/accounts") AccountResource createAccount(@RequestBody AccountResource account){}
+
+    @PostMapping("/accounts/send/{sourceAccountId}/{targetAccountId}/{amount}") void sendMoney( @PathVariable("sourceAccountId") Long sourceAccountId, @PathVariable("targetAccountId") Long targetAccountId, @PathVariable("amount") Long amount) {}
+}
+```
+
+- 하나의 클래스에서 계좌와 관련된 것만 다루고 있어 괜찮아 보임.
+- 그러나 몇 가지 단점을 가짐.
+- 커지면 커질수록 이해하기 힘듦.
+- 테스트하기도 어려움. 테스트 코드는 프로덕션 코드보다 일반적으로 양도 더 많고 이해하기도 어려움. 
+- 데이터 구조가 의도치 않게 재사용 될 가능성도 내포.
+- 같은 클래스에서는 private 접근자도 여러 연산이 같이 사용 가능하니.
+- 추가로, 여러 사람이 병렬 작업을 하더라도 충돌이 적음.
+- 대신, 아래와 같은 구조를 언급.
+
+```java
+@WebAdapter
+@RestController
+@RequiredArgsConstructor
+class SendMoneyController {
+
+	private final SendMoneyUseCase sendMoneyUseCase;
+
+	@PostMapping(path = "/accounts/send/{sourceAccountId}/{targetAccountId}/{amount}")
+	void sendMoney(
+			@PathVariable("sourceAccountId") Long sourceAccountId,
+			@PathVariable("targetAccountId") Long targetAccountId,
+			@PathVariable("amount") Long amount) {
+
+		SendMoneyCommand command = new SendMoneyCommand(
+				new AccountId(sourceAccountId),
+				new AccountId(targetAccountId),
+				Money.of(amount));
+
+		sendMoneyUseCase.sendMoney(command);
+	}
+
+}
+```
+
+- 서비스와 컨트롤러의 이름에 대해서도 깊게 생각해야 함.
+- `CreateAccount` 보다 `RegisterAccount`가 더 나은 이름.
+- 이 애플리케이션에서는 계좌를 생성하는 유일한 방법은 사용자가 이를 등록하는 것.
+- 따라서, 이 이름이 더 의미를 잘 드러냄. (왜지? 예시는 와 닿지 않음)
