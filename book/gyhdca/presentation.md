@@ -71,10 +71,10 @@ buckpal
 
 # Validate input
 
-- 유스 케이스의 역할은 아님
-- 하지만, 여전히 애플리케이션 레이어의 책임
 - 유스 케이스를 호출하는 어댑터(컨트롤러 등)가 할 수도 있음
 - 그러나 잘못되거나 누락 문제를 겪을 수 있음
+- 그렇다고, 유스 케이스의 역할은 아님.
+- 하지만, 여전히 애플리케이션 레이어의 책임
 - 그렇다면?
 
 ---
@@ -185,6 +185,12 @@ new SendMoneyCommandBuilder()
 - 생성자만 사용하면 추가가 누락된 문제가 컴파일 타임에 드러남
 - 빌더까지 사용한 경우엔 런타임에 발견됨
 - 단위 테스트로도 발견 어려울 수 있음
+
+---
+
+# The Power of Constructors
+
+- Builder < Constructor
 - IDE 포맷팅과 값 객체의 활용도 고려
 
 ---
@@ -193,17 +199,26 @@ new SendMoneyCommandBuilder()
 
 - 같은 input model을 여러 유스 케이스에 재사용 할 수 있음
 - "계좌 등록"과 "계좌 수정" 유스 케이스가 있다고 해보자
-- 등록 시에는 계좌 보유자 ID, 수정 시에는 계좌 ID가 필요
+- `AccountCommand`를 하나 만들어 재사용?
+
+---
+
+# Different Input Models for Different Use Cases
+
+- 하지만 차이가 발생
+- 등록에는 계좌 보유자 ID, 수정에는 계좌 ID 필요
 - 보유자 ID나 계좌 ID에 `null`을 허용하게 됨
-- 결국 유스 케이스에 유효성 검증 관심사가 섞임
+- input model 스스로 검증 불가
+- 결국 유스 케이스에 입력 검증 관심사 섞임
 - 또한 유스 케이스들 간의 결합도를 높이고 의도치 않은 영향 야기
-- `AgreementChannelInquire`
+
+*`AgreementChannelInquire`
 
 ---
 
 # Validating Business Rules
 
-- 입력 유효성 검증과 비즈니스 규칙 검증의 차이는?
+입력 유효성 검증과 비즈니스 규칙 검증의 차이는?
 
 ---
 
@@ -217,6 +232,24 @@ new SendMoneyCommandBuilder()
 
 사례 1. "원천 계좌는 초과 인출되면 안 된다"
 사례 2. "이체 금액은 0보다 커야 한다"
+
+---
+
+# Validating Business Rules
+
+각각의 차이를 생각해보자.
+
+1. validate input
+2. validate business rules
+3. validate adapter(controller, ...) input
+
+---
+
+# Validating Business Rules
+
+- 꼭 이 규칙을 따르지 않아도 됨
+- 하지만 쉽고 일관된 규칙은 코드를 찾고 이해하고 변경하는 데 도움이 됨
+- 유지보수, 사업의 확장을 도움
 
 ---
 
@@ -285,3 +318,33 @@ public class SendMoneyService implements SendMoneyUseCase {
 - SRP
 
 > 공유된 모델은 시간이 지날수록 점점 커지는 여러 이유를 갖게 된다
+
+---
+
+# Use Case vs. Application Service
+
+- 유스 케이스 ([application/port/in](https://github.com/thombergs/buckpal/tree/master/src/main/java/io/reflectoring/buckpal/account/application/port/in))
+- 애플리케이션 서비스 ([application/service](https://github.com/thombergs/buckpal/tree/master/src/main/java/io/reflectoring/buckpal/account/application/service))
+- 인터페이스 도출이 주는 이점?
+
+---
+
+# 정리
+
+- 유스 케이스에서 하는 일
+- validate input vs. business rules vs. adapter input
+- 쉽고 일관된 규칙이 가져다 주는 이점
+- 생성자와 빌더 이야기
+- 모델의 재사용 vs. 낮은 결합도
+- 최소한의 원칙 (나중엔 ISP도 언급. 서비스도 narrow 한 것이 좋음)
+- 인터페이스 도출의 의미
+
+---
+
+# 끝
+
+고생하셨습니다.
+
+[SendMoneyService](https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/account/application/service/SendMoneyService.java)
+
+> *궁극적인 목적은 사업 잘 성장시키기
