@@ -638,8 +638,36 @@ class SendMoneyController {
 
 ## Example with Spring Data JPA
 
-- [Account](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/domain/Account.java)
-- [AccountJpaEntity](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountJpaEntity.java)
-- [LoadAccountPort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/LoadAccountPort.java)
-- [UpdateAccountStatePort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/UpdateAccountStatePort.java)
-- [AccountPersistenceAdapter](https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountPersistenceAdapter.java)
+[Account](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/domain/Account.java)
+
+- `Account`는 게터 세터를 갖는 단순한 데이터 클래스가 아니라,
+- 가능한 불변이려는 노력을 하고 있고,
+- 팩토리 메서드로만 유효한 상태의 엔티티를 생성할 수 있고,
+- 상태를 조작하는 메서드는 잔고 확인 등의 유효성 검사를 항상 수행.
+- 유효하지 않은 도메인 모델이 없도록 유지하는 것.
+- `Account`를 JPA `@Entity`로 선언하는 것이 좋은지에 대해서는 뒤이은 "Mapping between Boundaries"에서 다룰 예정.
+- 일단 분명한 건, JPA 엔티티가 되는 순간 도메인 모델에 제약이 가해진다는 것.
+- 예컨대, JPA는 인자가 없는 기본 생성자를 가지는 것을 필요로 함.
+- 또한 성능 관점에서 `ManyToOne`이 이치에 맞지만, 현재 도메인 모델의 요건에서는 관계가 반대로 되길 원함.
+- 이러한 불일치나 타협으로부터 자유롭고자 한다면 도메인 모델과 영속 모델 간의 매핑은 필요할 것.
+
+[AccountJpaEntity](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountJpaEntity.java), [ActivityJpaEntity](https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/ActivityJpaEntity.java)
+
+- `Account`를 DB에 영속시키기 위해 영속 계층에서 만들어지는 JPA 엔티티들.
+- 계좌 JPA 엔티티에는 단지 ID만이 있음. 추후 사용자 ID 정도가 추가될 수 있음.
+- 대신, `ActivityJpaEntity`에 모든 계좌 활동이 담김.
+- 이 둘은 서로 `@OneToMany` 등의 관계를 갖지 않음.
+- 부하를 주는 쿼리가 발생할 수 있기 때문.
+
+[UpdateAccountStatePort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/UpdateAccountStatePort.java), [LoadAccountPort](https://github.com/thombergs/buckpal/blob/f5a9be50771e77ca66a153bc83c383b32cab738e/src/main/java/io/reflectoring/buckpal/account/application/port/out/LoadAccountPort.java), [AccountPersistenceAdapter](https://github.com/thombergs/buckpal/blob/master/src/main/java/io/reflectoring/buckpal/account/adapter/out/persistence/AccountPersistenceAdapter.java)
+
+- 주어진 날짜 이전으로는 입출금 sum으로 잔고를 계산하고,
+- 주어진 날짜 이후로는 `Activity` 목록으로 관리.
+- `updateActivities`에서는 신규 활동만 저장해야 하므로 ID가 빈 것들만 저장.
+
+## What abount Database Transactions?
+
+- 영속 어댑터 입장에서는 어떤 다른 데이터들이 같은 유스 케이스에서 사용되는지 모름.
+- 이 역할은 서비스가 오케스트레이션 할 수밖에 없음.
+- 가장 쉬운 방법은 애플리케이션 서비스에 `@Transactional` 선언.
+- 서비스가 좀 더 순수한 상태로 유지되길 원한다면 AOP를 사용할 수도.
