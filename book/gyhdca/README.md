@@ -737,3 +737,83 @@ class SendMoneyController {
     - 애플리케이션 -> 영속: "no mapping"으로 시작 후 관심사가 멀어지기 시작하면 "two-way"
 - 쿼리 유스 케이스
     - 모두: "no mapping"으로 시작 후 관심사가 멀어지기 시작하면 "two-way"
+
+# Assembling the Application
+
+- 의존성이 바깥에서 안쪽으로만 향하게 했음.
+- 도메인이 영속 레이어에 의존 X.
+- 하지만 도메인에서 영속 레이어로 호출은 여전히 일어남.
+- 그렇다고 도메인이 영속 레이어 객체들을 직접 생성하게 되면 결국 의존 발생.
+- 인터페이스에만 의존하던 것과 달리 알아야 할 것이 많아짐.
+- 생성의 복잡도와 의존성이 추가되니 유지보수나 단위 테스트 등이 어려워짐.
+- 따라서, 이런 객체들을 조합해주는 설정 컴포넌트가 필수.
+- 이를 표현하는 책의 그림이 참 재미있음.
+
+## Assembling via Plain Code
+
+- 설정을 위한 가장 기본적인 방법은 코드로 일일이 작성하는 것.
+- 직접 객체 생성 등을 해야 하므로 접근 제한자가 `public`이 되어 버림.
+- 또한, 어느 정도 규모 있는 애플리케이션에서는 매우 힘든 일.
+
+## Assembling via Spring's Classpath Scanning
+
+- 직접 다 작성하는 대신, 스프링의 애플리케이션 컨텍스트 활용.
+- 그 중에서도 클래스 패스 스캐닝 방식 먼저 이야기.
+- 이는 `@Component`로 애노테이션 선언된 모든 클래스를 스캐닝 하는 것.
+- 그리고 이 클래스들의 객체를 생성(몇 가지 규칙만 지켜줘야 함).
+- 아래와 같이 직접 stereotype 애노테이션을 만들어 선언해 줄 수도.
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface PersistenceAdapter {
+    @AliasFor(annotation = Component.class)
+    String value() default "";
+}
+```
+
+- 하지만 이 방식은 클래스에 프레임워크 전용 애노테이션이 침투하게 됨.
+- 다만 저자는 한 개의 애노테이션 정도는 큰 문제는 아니며, 필요하면 언제든 쉽게 리팩토링 할 수 있다고 함.
+- 물론, 라이브러리나 프레임웍을 만들 경우는 스프링에 대한 의존성을 강제하긴 어려움.
+- 또 다른 단점으로 이 접근법은 "마법"이 일어난다는 것.
+- 스프링에 익숙하지 않다면 문제가 생겼을 때 한참을 걸려 파악할 수도 있다는 의미.
+
+## Assembling via Spring's Java Config
+
+- 클래스패스 스캔을 몽둥이로, 스프링 자바 컨피그를 수술용 메스에 비유.
+- 직접 다 만드는 방식에 비해 편하면서도, 클래스패스 스캔의 위험을 상쇄.
+- 아래는 영속 레이어에 관한 것들을 일괄 설정하는 설정 클래스.
+- 여기서 리포지토리 객체 생성은 `@EnableJpaRepositories`를 통해 스프링에 위임.
+
+```java
+@Configuration
+@EnableJpaRepositories
+class PersistenceAdapterConfiguration {
+
+    @Bean
+    AccountPersistenceAdapter accountPersistenceAdapter(
+            AccountRepository accountRepository,
+            ActivityRepository activityRepository,
+            AccountMapper accountMapper){
+
+        return new AccountPersistenceAdapter(
+            accountRepository,
+            activityRepository,
+            accountMapper
+        );
+
+    }
+    
+    @Bean
+    AccountMapper accountMapper() {
+        return new AccountMapper();
+    }
+
+}
+```
+
+- 이런 식으로 웹 레이어 등을 위한 설정 클래스를 작성.
+- 모든 클래스에 `@Component` 애노테이션이 선언할 필요 없으므로 애플리케이션 레이어를 스프링 프레임워크 의존성으로부터 떨어뜨릴 수도 있음.
+- 한편, 설정 때문에 클래스가 `public`이 되는 것을 막으려면 각 패키지 안에 이런 설정 클래스가 존재해야 함(뒤에서 다룰 예정).
