@@ -817,3 +817,71 @@ class PersistenceAdapterConfiguration {
 - 이런 식으로 웹 레이어 등을 위한 설정 클래스를 작성.
 - 모든 클래스에 `@Component` 애노테이션이 선언할 필요 없으므로 애플리케이션 레이어를 스프링 프레임워크 의존성으로부터 떨어뜨릴 수도 있음.
 - 한편, 설정 때문에 클래스가 `public`이 되는 것을 막으려면 각 패키지 안에 이런 설정 클래스가 존재해야 함(뒤에서 다룰 예정).
+
+# Enforcing Architecture Boundaries
+
+- 아키텍처는 시간이 지날수록 침식하는 경향이 있음.
+- 레이어 간 경계는 약해지고, 코드는 테스트하기 어려워지고, 새로운 기능 개발에 더 많은 시간이 소요.
+- 이런 침식에 맞설 수 있는 몇 가지 방법들을 다룰 예정.
+
+## Boundaries and Dependencies
+
+- 우선 "enforcing a boundary"의 의미를 이야기.
+- 각 레이어 간에는 경계가 있고, 의존 방향은 바깥 쪽에서 안 쪽으로만 향해야 함.
+- 이 의존성 규칙을 강제하는 것.
+
+## Visibility Modifiers
+
+- 가장 기본적인 도구부터 얘기.
+- 바로 접근 제한자<sup>visibility modifier</sup>.
+- 그 중에서도 `package-private`.
+- 이는 같은 패키지 안의 클래스들을 응집력 있는 "모듈" 그룹으로 만들 수 있게 함.
+- 패키지 내의 클래스들 끼리만 접근할 수 있고 외부에서는 막힘.
+- 그리고 이 모듈의 엔트리 포인트로 삼을 대상만 `public`으로 선언.
+- 의도치 않게 의존성 규칙이 위배되는 위험을 줄일 수 있음.
+- `adapter.in.web`, `adapter.out.persistence`, `application`이 그 대상.
+- 이 방식은 클래스패스 스캐닝 접근법에서만 동작함.
+- 한 패키지 안에 너무 많은 클래스가 생기는 문제도 발생.
+
+## Post-Compile Checks
+
+- 컴파일 타임 이후인 자동화 된 테스트나 통합 빌드 시 검사하는 방법.
+- [ArchUnit](https://github.com/TNG/ArchUnit)이 하나의 도구.
+- 의존성이 예상된 방향과 일치하는지를 검사해 줌.
+
+```java
+class DependencyRuleTests {
+    
+    @Test
+    void domainLayerDoesNotDependOnApplicationLayer() {
+        noClasses()
+            .that()
+            .resideInPackage("buckpal.domain..")
+            .should()
+            .dependOnClassesThat()
+            .resideInAnyPackage("buckpla.application..")
+            .check(new ClassFileImporter()
+                .importPackages("buckpal.."));
+    }
+}
+```
+
+- 하지만 이 방식은 "fail-safe"하지 않다고 함.
+- 예를 들어 패키지 이름을 잘못 쓰거나, 이름이 바뀔 때 함께 바꿔주지 않으면, 문제가 드러나지 않음.
+
+## Build Artifacts
+
+- 모듈을 나눠서 build artifact를 각각 가져가는 것.
+- 그리고 모듈 간에 꼭 참조해야 하는 것만을 의존.
+- 방법은 여러가지.
+
+![](enforcing-architecture-boundaries-by-multiple-build-artifact.jpg)
+
+- 패키지 방식에 비해 빌드 스크립트 작성의 부담은 더 들지만,
+- 의존 규칙을 해치지 않으면서도 `public` 사용이 가능하고,
+- 클래스패스 스캐닝을 안 써도 되며,
+- 모듈의 변경이 다른 모듈의 영향으로부터 자유로움.
+- 예를 들어, 애플리케이션 레이어 변경이 웹 어댑터의 컴파일 오류를 가져온다고 해보자.
+- 이 둘이 같은 모듈 내에 있다면, 애플리케이션 레이어 변경을 검증하기 위해 테스트를 돌리고 싶어도, 어댑터 컴파일 오류로 막힘.
+- 이 둘이 서로 다른 모듈이라면, 어댑터 컴파일 오류를 해결하기 전에, 일단 애플리케이션 모듈의 단위테스트까지 먼저 다 확인해 볼 수 있음.
+- 물론, 빌드 스크립트에서 의존성이 위험하게 선언될 수도 있지만, 클래스가 `public`으로 선언된 것에 비해 개발자들은 한 번 더 숙고하게 될 것.
