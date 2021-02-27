@@ -950,3 +950,28 @@ class DependencyRuleTests {
 - 하지만 이는 incoming과 outgoing 어댑터 간 모델 공유를 가져옴.
 - 이 경우엔 엔티티가 공유 모델이 될 것.
 - 이는 위에서 언급한 문제들을 마찬가지로 가지게 됨.
+
+# Deciding on an Architecture Style
+
+- 지금까지 여러 질문들을 다루었음.
+- 마지막으로 "언제 헥사고날 아키텍처를 사용해야 하는지?"를 다룸.
+
+## The Domain is King
+
+> Evolving domain code free from external influence is the single most important argument for the hexagonal architecture style.
+
+- 도메인 코드가 가장 중요한 부분인지 아닌지가 중요.
+- 중요하지 않다면 이 아키텍처 스타일은 필요 없을 수도.
+
+## Experience is Queen
+
+- 작은 모듈에 적용해 보고,
+- 익숙해 지고 괜찮다고 느낀다면,
+- 그 다음에 이 아이디어를 적용해보고 수정하고 자신만의 아이디어를 추가.
+
+## It Depends
+
+- 어떤 소프트웨어를 만드는지,
+- 도메인 코드의 역할은 뭔지,
+- 팀의 경험은 어떤지,
+- 이 결정에 익숙한지 등에 따라 다름.
