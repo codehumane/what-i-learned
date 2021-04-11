@@ -56,6 +56,7 @@
 - [코딩 인터뷰 완전 분석](book/ctci/README.md)
 - [마이크로서비스 구축](book/building-microservices/README.md)
 - [MySQL 퍼포먼스 최적화](book/mysql-performance-optimization/README.md)
+- [엘레강트 오브젝트](book/elegant-objects/README.md)
 
 # DOCUMENT
 
