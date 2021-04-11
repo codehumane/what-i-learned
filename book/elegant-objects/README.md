@@ -26,3 +26,49 @@ Apple biggest = sorted.get(0);
 
 > Never name your objects with the names of software design patterns
 
+# Constructors Must Be Code-Free
+
+https://www.yegor256.com/2015/05/07/ctors-must-be-code-free.html
+
+```java
+public final class EnglishName implements Name {
+  private final String name;
+  public EnglishName(final CharSequence text) {
+    this.name = text.toString().split(" ", 2)[0];
+  }
+  @Override
+  public String first() {
+    return this.name;
+  }
+}
+```
+
+- 객체를 인스턴스화 하는 일과 객체가 일을 하게 하는 것은 서로 다른 일.
+- 인스턴스화 중에 객체 호출자가 요청하지도 않은 일을 하는 것은 사이드 이펙트.
+- 위 코드에서는 줘진 문자열 할당 외에 문자열 자르기를 함께 수행.
+- 객체만 생성되고 `name`은 생명주기 동안 쓰이지 않을 수도 있으므로 성능 면에서도 비효율일 수도.
+- 만약, 객체가 생성되면 `name`은 무조건 호출되며 여러 번일 수 있다고 하더라도, 아래와 같이 [composable decorator](https://www.yegor256.com/2015/02/26/composable-decorators.html)로 극복 가능.
+
+```java
+public final class CachedName implements Name {
+  private final Name origin;
+  public CachedName(final Name name) {
+    this.origin = name;
+  }
+  @Override
+  @Cacheable(forever = true)
+  public String first() {
+    return this.origin.first();
+  }
+}
+
+final Name name = new CachedName(
+  new EnglishName(
+    new NameInPostgreSQL(/*...*/)
+  )
+);
+```
+
+- 하지만, 객체 생성 시 validation은 큰 이점을 가져다 줌.
+- 저자의 [다른 글](https://www.yegor256.com/2018/05/29/object-validation.html)에서도 이와 관련된 내용을 찾을 수 있음.
+- 그러나 validation 코드를 생성자에 넣는 것에 동의하면서도, connecting과 talking을 구분하며, connecting만을 생성자 validation에 허용.
