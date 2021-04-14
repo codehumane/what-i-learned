@@ -57,6 +57,7 @@
 - [마이크로서비스 구축](book/building-microservices/README.md)
 - [MySQL 퍼포먼스 최적화](book/mysql-performance-optimization/README.md)
 - [엘레강트 오브젝트](book/elegant-objects/README.md)
+- [레거시 코드 활용 전략](book/wewlc/README.md)
 
 # DOCUMENT
 
