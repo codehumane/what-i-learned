@@ -72,3 +72,8 @@ final Name name = new CachedName(
 - 하지만, 객체 생성 시 validation은 큰 이점을 가져다 줌.
 - 저자의 [다른 글](https://www.yegor256.com/2018/05/29/object-validation.html)에서도 이와 관련된 내용을 찾을 수 있음.
 - 그러나 validation 코드를 생성자에 넣는 것에 동의하면서도, connecting과 talking을 구분하며, connecting만을 생성자 validation에 허용.
+
+# Encapsulate as Little as Possible
+
+- 객체 안에 객체를 캡슐화 할 때, 최대 4개까지만 하라는 이야기.
+- 우리의 사고방식이 4개 이상의 요소로 구성된 객체를 이해하기 어렵다는 것을 근거로 삼고 있음.
