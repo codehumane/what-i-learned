@@ -77,3 +77,30 @@ final Name name = new CachedName(
 
 - 객체 안에 객체를 캡슐화 할 때, 최대 4개까지만 하라는 이야기.
 - 우리의 사고방식이 4개 이상의 요소로 구성된 객체를 이해하기 어렵다는 것을 근거로 삼고 있음.
+
+# Encapsulate something at the very least
+
+https://www.yegor256.com/2014/12/15/how-much-your-objects-encapsulate.html
+
+- "최소한 뭔가는 캡슐화하세요"보다는 위 링크가 좀 더 균형잡힌 글.
+- 위 링크에서는 객체가 어떨 때 값을 캡슐화 해야 하는지,
+- 그리고 어떨 때 값을 캡슐화 하지 말아야 할지 언급.
+- 실 생활에서의 엔티티를 표현하고 있다면 전자를 선택.
+- Universe를 나타낸다면 후자를 선택.
+- Universe가 적절한 예시는 아래 참고.
+
+```java
+class HTTP {
+  public String read(String url) {
+    // read via HTTP and return
+  }
+  public boolean online() {
+    // check whether we're online
+  }
+}
+```
+
+- Universe에 해당하는 이 `HTTP` 객체는,
+- 어떤 웹 페이지든 읽어들일 수 있고,
+- 어떤 웹 페이지든 접근이 가능한지 여부를 판별할 수 있음.
+- 하지만 이런 Universe는 대부분의 경우 필요치 않다고 주장.
