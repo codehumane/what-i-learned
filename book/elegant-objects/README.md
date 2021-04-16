@@ -104,3 +104,41 @@ class HTTP {
 - 어떤 웹 페이지든 읽어들일 수 있고,
 - 어떤 웹 페이지든 접근이 가능한지 여부를 판별할 수 있음.
 - 하지만 이런 Universe는 대부분의 경우 필요치 않다고 주장.
+
+# Public Static Literals ... Are Not a Solution for Data Duplication
+
+- `new String(array, "UTF-8")` 코드가 여러 군데 있다고 해보자.
+- 매번 바이트 배열을 `String`으로 만들기 위해 "UTF-8"을 사용.
+- Apache Commons가 그랬던 것처럼, `CharEncoding.UTF_8`을 정의해 두는 것이 편할 수도.
+
+```java
+package org.apache.commons.lang3;
+public class CharEncoding {
+  public static final String UTF_8 = "UTF-8";
+  // some other methods and properties
+}
+
+// byte array -> String 변환
+import org.apache.commons.lang3.CharEncoding;
+String text = new String(array, CharEncoding.UTF_8);
+
+// String -> byte array 변환
+import org.apache.commons.lang3.CharEncoding;
+byte[] array = text.getBytes(CharEncoding.UTF_8);
+```
+
+- 하지만 `public static` 프로퍼티는 결합도를 높이고 응집도를 낮춘다고 주장.
+- [유틸리티 클래스](https://www.yegor256.com/2014/05/05/oop-alternative-to-utility-classes.html) 만큼 나쁘다고 이야기.
+- `CharEncoding.UTF_8`이 바뀔 때 문자열과 바이트 배열의 변환부는 즉각 영향 받음.
+- 물론, 잘 바뀌지 않는다면, 그리고 단순한 경우라면 문제가 되지 않을 것.
+- 그러나 기능이 확장될 수 있다거나, 대체될 수 있다거나, 복잡한 경우 등에는 문제가 될 수도.
+- 응집력은 위 예시로 설명은 어려움. UTF8 상수와 함께 UTF8로의 로직이 한 곳에 있어야 함을 의미.
+- 그래서 아래와 같이 바꿀 수 있음.
+
+```java
+String text = new UTF8String(array); // 하지만 Java는 String을 final로 선언
+String text = new UTF8String(array).toString(); // 따라서 이렇게 해야 함
+```
+
+- 상수에 대한 낮은 응집도와 높은 결합도가 문제되는 경우가 개인적으로 흔치는 않다고 생각.
+- 하지만, 관련된 로직과 캡슐화 되지 않아서, 기능 확장과 변경에 어려움을 겪었던 일이 떠오르는 것도 사실.
