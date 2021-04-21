@@ -187,3 +187,66 @@ https://www.yegor256.com/2014/04/18/jcabi-http-server-mocking.html
 - 테스트 대상 객체가, mocking된 행위가 아닌 다른 행위를 사용하도록 바뀌어도, 테스트 코드를 일일이 바꿔주지 않을 수도 있음.
 - 하지만 fake 클래스를 만드려면 인터페이스가 있어야 한다는 제약이.
 - 그리고 여전히 우리가 듣고 싶은 것을 말해주는 것에서 자유롭진 못함.
+
+# Keep interfaces short; use smarts
+
+https://www.yegor256.com/2016/04/26/why-inputstream-design-is-wrong.html
+
+- 인터페이스 크다면 SRP가 깨진 것은 아닌지 의심.
+- 정말 이 인터페이스를 사용하는 곳에서 이 모든 메서드들 필요로 할까?
+
+```java
+interface Exchange {
+  float rate(String target); // 환율을 알 수 없을 경우 기본 환율을 사용하여 변환
+  float rate(String source, String target);
+}
+```
+
+- 위 예제에서 `rate(String target)`은 필요 없고 오히려 구현체들에게 너무 많은 것을 강요한다고 이야기.
+- 그렇다고 또 다른 인터페이스를 만드는 것도 비효율.
+- 그래서 아래와 같이 하라고 함.
+
+```java
+interface Exchange {
+  float rate(String source, String target);
+
+  final class Smart {
+    private final Exchange origin;
+    public float toUsd(String source) {
+      return this.origin.rate(source, "USD");
+    }
+  }
+}
+```
+
+- 구현체들에게 너무 많은 것을 강요하지도 않고,
+- 구현체들의 중복 구현도 피할 수 있음.
+- 조금 다른 예시는 아래와 같음.
+
+```java
+interface Exchange {
+  float rate(String source, String target);
+
+  final class Fast implements Exchange {
+    private final Exchange origin;
+
+    @Override
+    public float rate(String source, String target) {v
+      final float rate;
+
+      if (source.equals(target)) {
+        rate = 1.0f;
+      } else {
+        rate = this.origin.rate(source, target);
+      }
+
+      return rate;
+    }
+
+    public float toUsd(String source) {
+      return this.origin.rate(source, "USD");
+    }
+  }
+```
+
+- [Why InputStream Design is Wrong](https://www.yegor256.com/2016/04/26/why-inputstream-design-is-wrong.html)에서는 `InputStream`을 예시로 들고 있음.
