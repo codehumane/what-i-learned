@@ -170,3 +170,20 @@ http://goo.gl/z1XGjO
 - 더 작고 더 단순한 객체
   - 단순함.
   - 이것이 부수효과 제거와 함께 갖는 가장 큰 이점이라 생각.
+
+# Don't mock; use fakes
+
+https://www.yegor256.com/2014/04/18/jcabi-http-server-mocking.html
+
+- mock을 쓰면 여러 곳에서 코드가 반복됨.
+- 이 mock 대상이 바뀌면 이 여러 곳을 같이 바꿔줘야 함.
+- 그리고 mock은 실제 코드를 모델링하는 정확도가 낮음. 대신 우리가 듣고 싶은 것을 말해줄 뿐.
+- 이로 인해, 테스트는 성공하지만, 프로덕션 환경에서 문제가 발견.
+- [tl;dw: Stop mocking, start testing](https://nedbatchelder.com/blog/201206/tldw_stop_mocking_start_testing.html) 글에 나오는 교훈 중 아래 2가지가 인상적.
+  1. Share mocks among test modules.
+  2. Maybe you don’t need a mock: if an object is cheap, then don’t mock it.
+- 대신, fake 클래스를 사용할 것을 권장.
+- 단위 테스트가 좀 더 간결해지고(그러나 그만큼 정보가 숨겨지기도),
+- 테스트 대상 객체가, mocking된 행위가 아닌 다른 행위를 사용하도록 바뀌어도, 테스트 코드를 일일이 바꿔주지 않을 수도 있음.
+- 하지만 fake 클래스를 만드려면 인터페이스가 있어야 한다는 제약이.
+- 그리고 여전히 우리가 듣고 싶은 것을 말해주는 것에서 자유롭진 못함.
