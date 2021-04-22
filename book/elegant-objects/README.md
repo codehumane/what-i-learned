@@ -250,3 +250,125 @@ interface Exchange {
 ```
 
 - [Why InputStream Design is Wrong](https://www.yegor256.com/2016/04/26/why-inputstream-design-is-wrong.html)에서는 `InputStream`을 예시로 들고 있음.
+
+# Don't use static methods
+
+https://www.yegor256.com/2014/05/05/oop-alternative-to-utility-classes.html
+
+- 일단, Apache Commons의 [`FileUtils`](http://commons.apache.org/proper/commons-io/javadocs/api-2.5/org/apache/commons/io/FileUtils.html)를 이용한 절차적 예시.
+
+```java
+void transform(File in, File out) {
+  Collection<String> src = FileUtils.readLines(in, "UTF-8");
+  Collection<String> dest = new ArrayList<>(src.size());
+  for (String line : src) {
+    dest.add(line.trim());
+  }
+  FileUtils.writeLines(out, dest, "UTF-8");
+}
+```
+
+- 그리고 아래는 똑같은 기능을 객체지향 스타일로 구현한 것.
+
+```java
+void transform(File in, File out) {
+  Collection<String> src = new Trimmed(
+    new FileLines(new UnicodeFile(in))
+  );
+  Collection<String> dest = new FileLines(
+    new UnicodeFile(out)
+  );
+  dest.addAll(src);
+}
+```
+
+- 절차적 방식에서는 세부적인 것들까지 직접 관여하는 반면,
+- 객체지향 방식에서는 세부적인 것들은 다른 객체들을 생성해서 위임하고 조합.
+- 이는 좀 더 이해하기 쉽고 유지보수하기 쉬우며 단위테스트 하기에도 좋음.
+- 실제로 `FileUtils`는 3,000라인이 넘어가며 80개가 넘는 메서드를 갖고 있다고.
+- 그리고 객체지향 방식에서는 게으른 수행<sup>lazy execution</sup>이 가능.
+
+## declarative vs. imperative style
+
+- 명령형에서는 '프로그램의 상태를 변경하는 문장을 사용해서 계산 방식을 서술'
+- 선언형에서는 '제어 흐름을 서술하지 않고 계산 로직을 표현'
+- 표현이라 함은 아래 예시처럼 정의하는 것. CPU에게 할 일을 지시하지 않음.
+
+```
+// max의 행위를 정의
+(defun max (a b)
+  (if (> a b) a b)
+
+// 그리고 이를 활용해서 x를 (max 5 9)에 바인딩
+// 최댓값을 계산하라고 CPU에게 명령하지 않고 있음
+(def x (max 5 9))
+```
+
+- 이번엔 Java 예시. 먼저 명령형 스타일.
+
+```java
+public static int between(int l, int r, int x) {
+  return Math.min(Math.max(l, x), r);
+}
+```
+
+- `between`을 호출하자마자 계산이 되고 9라는 결과를 반환 받음.
+- 한편, 아래는 선언형 스타일.
+
+```java
+class Between implements Number {
+  private final Number num;
+  
+  Between(Number left, Number right, Number x) {
+    this.num = new Min(new Max(left, x), right);
+  }
+
+  @Override
+  public int intValue() {
+    return this.num.intValue();
+  }
+}
+
+// 이를 사용할 땐 아래처럼
+Number y = new Between(5, 9, 13);
+```
+
+- `y.intValue()`는 실제 결과가 필요한 시점까지 실행을 미룰 수 있음.
+
+## declarative 방식이 주는 이점
+
+먼저, 빠름.
+
+- 명령형은 객체를 생성하지 않고 바로 연산을 수행하므로 어떤 경우엔 빠를 수도.
+- 그러나 선언형은 성능 최적화를 제어할 수 있음.
+- 제어권을 객체에게 넘겼기에, 조건에 따라 필요한 경우에만, 필요한 메서드만을 선택적으로 호출할 수 있음.
+- 명령형은 9라는 값이 필요 없는 경우에도 계산을 수행.
+
+다음으로, 다형성이 가능.
+
+- 앞선 예제의 `between`을 다른 알고리즘으로 해결하고 싶을 수도.
+- 이 경우 아래와 같이 생성자 추가 후 다른 클래스를 조합해서 사용할 수 있음.
+- 하지만 명령형에서는 메서드를 새로 추가해야 하고 일일이 관련 부분을 바꿔줘야 함.
+
+```java
+class Between implement Number {
+  ...
+  Between(Number number) {
+    this.num = number;
+  }
+}
+
+// 사용
+Integer x = new Between(new OtherAlgorithm(5, 9, 13));
+```
+
+세 번째로 표현력이 좋음.
+
+- 어느 정도는 동의하지만, 개인적으로는 저자가 더 중요한 것을 놓친다고 생각.
+- 기록도 생략.
+
+마지막 네 번째는 응집도.
+
+- 관련된 것들끼리 모아두므로,
+- 변경이 일어날 때 관련 없는 것은 보지 않아도 되며,
+- 문제가 될 가능성도 줄어듦.
