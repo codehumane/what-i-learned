@@ -437,3 +437,15 @@ Class ImutableList<T> {
   }
 }
 ```
+
+# Never use getters and setters
+
+https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
+
+- Tell, Don't Ask.
+- getter, setter는 로직이 이곳 저곳에 산재하게 함.
+- 이는 변경의 영향범위를 크게 만들고, 충돌과 빠뜨림과 더 많은 테스트와 버그 등을 야기.
+- 자율적인 대상으로 간주하고 커뮤니케이션에 초점.
+- 위 링크에서의 Object Thinking에는 개인적으로 반대.
+- 살아있는 유기체는 생애 주기 동안 상태가 바뀔 수 있음. 불변 객체가 이를 잘 반영하는 것일지.
+- 이 보다는 유지보수와 시스템 확장의 용이함 등의 실용적 이유로 접근하는 것이 좋아 보임.
