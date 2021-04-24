@@ -372,3 +372,28 @@ Integer x = new Between(new OtherAlgorithm(5, 9, 13));
 - 관련된 것들끼리 모아두므로,
 - 변경이 일어날 때 관련 없는 것은 보지 않아도 되며,
 - 문제가 될 가능성도 줄어듦.
+
+# Never accept NULL arguments
+
+https://www.yegor256.com/2014/05/13/why-null-is-bad.html
+
+- 위 링크에 보면, 'Computer Thinking vs. Object Thinking' 내용이 있는데, 여기에 나오는 대화가 흥미로움.
+
+> - Hello, is it a software department?
+> - Yes.
+> - Let me talk to your employee "Jeffrey" please.
+> - Hold the line please...
+> - Hello.
+> - Are you NULL?
+
+- 마지막 질문이 참 어색하지 않냐는.
+- 대신, Jeffrey가 없다면 전화가 끊어지게 할 수도 있음(Exception).
+- 그럼 다시 전화를 걸거나, 관리자에게 전화를 걸어 다른 대응을 할 수도.
+- 혹은, Jeffrey는 아니지만 다른 사람을 연결해 줄 수 있음.
+- 대신해서 도움을 주거나, Jeffrey가 아니면 할 수 없는 경우 요청을 거절하는(Null Object).
+- "Ad-hoc Error Handling"도 이야기.
+- null이 반환되면 곳곳에서 null 체크를 해야함. 코드가 점점 오염됨.
+- "Ambiguous Semantic"은 null을 반환하는 `getByName()` 메서드가 `getByNameOrNullIfNotFound()`로 바뀌어야 함.
+- 이런 네이밍이 많은 메서드에 적용된다면 그 모습은 끔찍.
+- 그 외 "Slow Failing"과 "Mutabe and Incomplete Objects"는 다소 논란의 여지가 있어 보여 기록 생략.
+- NULL의 대안은 2가지. Null Object를 사용하거나, 빠른 null 체크로 예외를 던지라고 이야기.
