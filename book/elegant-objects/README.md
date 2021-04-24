@@ -397,3 +397,43 @@ https://www.yegor256.com/2014/05/13/why-null-is-bad.html
 - 이런 네이밍이 많은 메서드에 적용된다면 그 모습은 끔찍.
 - 그 외 "Slow Failing"과 "Mutabe and Incomplete Objects"는 다소 논란의 여지가 있어 보여 기록 생략.
 - NULL의 대안은 2가지. Null Object를 사용하거나, 빠른 null 체크로 예외를 던지라고 이야기.
+
+# Be loyal and immutable, or constant
+
+https://www.yegor256.com/2014/12/22/immutable-objects-not-dumb.html
+
+- 모든 것을 불변객체로 만들 수 있는 방법들에 대해 이야기.
+- 값을 변경해야 할 때는 바뀌는 값과 함께 객체를 새로 만드는 방법을 여기서는 상수 방식이라 부름.
+- 불변은 우리가 흔히 아는 방식. 아래 2개 예시는, 실제 세상에서는 상태가 변하는 것을, 객체는 불변으로 표현한 것.
+
+```java
+@Immutable
+class Page {
+  private final URI uri;
+  Page(URI addr) {
+    this.uri = addr;
+  }
+  public String load() {
+    return new JdkRequest(this.uri)
+      .fetch().body();
+  }
+  public void save(String content) {
+    new JdkRequest(this.uri)
+      .method("PUT")
+      .body().set(content).back()
+      .fetch();
+  }
+}
+
+Class ImutableList<T> {
+  private final List<T> items = LinkedList<T>();
+
+  void add(T number) {
+    this.items.add(number);
+  }
+
+  Iterable<T> iterate() {
+    return Collections.unmodifiableList(this.items);
+  }
+}
+```
