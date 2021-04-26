@@ -85,3 +85,164 @@
 > 봉합은 코드를 편집하지 않고도 동작을 변화시킬 수 있는 위치를 말한다.
 
 # 2부. 소프트웨어 변경
+
+## 고칠 것은 많고 시간은 없고
+
+- 코드 변경을 위해 의존 관계를 제거하고 테스트를 작성하는 것은 분명 시간이 드는 일.
+- 하지만 '결국은' 개발 시간과 시행착오를 줄여준다고.
+- 그런데 여기서 결국은 언제일까?
+- 최악의 경우에는 몇 년 후가 될 수도.
+- 그러나 일반적으로는 코드가 변경되는 위치는 시스템의 특정 부분에 집중됨.
+- 오늘 바뀐 코드의 주변은 가까운 시일 내에 변경될 가능성이 높음.
+
+### 발아 메서드
+
+- 원서에서는 Sprout Method라고 표기.
+- 먼저 아래 코드가 있음.
+
+```java
+public class TransactionGate {
+  public void postEntries(List entries) {
+    for (Iterator it = entries.iterator(); it.hasNext(); ) {
+      Entry entry = (Entry) it.next();
+      entry.postDate();
+    }
+    transactionBundle.getListManager().add(entries);
+  }
+}
+```
+
+- 이제, 신규 항목인 경우에만 transactionBundle에 추가해야 한다면?
+
+```java
+public class TransactionGate {
+  public void postEntries(List entries) {
+    List entriesToAdd = new LinkedList();
+    for (Iterator it = entries.iterator(); it.hasNext(); ) {
+      Entry entry = (Entry) it.next();
+      if (!transactionBundle.getListManager().hasEntry(entry)) {
+        entry.postDate();
+        entriesToAdd.add(entry);
+      }
+    }
+    transactionBundle.getListManager().add(entriesToAdd);
+  }
+}
+```
+
+- 이렇게 변경하는 것은 무리가 있음.
+- 제대로 변경됐는지를 확인하기가 어렵게 때문.
+- 또한, 날짜 설정과 중복 검사라는 2개의 동작이 섞임.
+- 그리고 임시 변수가 추가되었는데(항상 나쁜 것은 아님), 이후에 추가 될 동작도 이 임시 변수에 대해 이뤄질 가능성이 높고, 따라서 코드가 점점 더 복잡해 질 수 있음.
+- 이 대신, sprout method 방식에서는 아래와 같이 함.
+
+```java
+public class TransactionGate {
+  public void postEntries(List entries) {
+    
+    // 여기가 sprout method
+    List entriesToAdd = uniqueEntries(entries);
+
+    for (Iterator it = entries.iterator(); it.hasNext(); ) {                
+      entry.postDate();
+      entriesToAdd.add(entry); 
+    }
+
+    transactionBundle.getListManager().add(entriesToAdd);
+  }
+}
+```
+
+- 하지만 기존의 `TransactionGate`가 테스트하기에는 너무 의존성이 심한 클래스일 수 있음.
+- 이 때는 새로운 발아 메서드를 public static으로 선언하기도 한다고 함.
+- 이렇게 static 메서드가 몇 개가 추가되고, 만약 공유되는 변수들이 발견되면 새로운 클래스로 추출.
+
+### 발아 클래스
+
+- 기존 클래스가 의존성이 커서 테스트하기 어렵다면 생각해 볼 수 있는 방식.
+- 새로운 메서드와 함께 클래스도 새로 생성하는 것.
+- 하지만, 작은 변경에도 클래스를 무작정 새로 생성되는 것은 문제가 될 수도.
+- 충분히 의미가 있는 클래스인지 고민해 보고, 또는 어쩔 수 없는 경우에 사용.
+
+### 포장 메서드
+
+- wrap method
+- 먼저 아래와 같은 코드가 있음.
+
+```java
+public class Employee {
+  ...
+  public void pay() {
+    Money amount = new Money();
+    for (Iterator it = timecards.iterator(); it.hasNext(); ) {
+      Timecard card = (Timecard) it.next();
+      if (payPeriod.contains(date)) {
+        amount.add(card.getHours() * payRate);
+      }
+    }
+    payDispatcher.pay(this, date, amount);
+  }
+  ...
+}
+```
+
+- 이제, 금액 지불 시, 직원 이름의 파일도 갱신해야 한다고 해보자.
+- 아래와 같이 기존 `pay` 메서드를 `dispatchPayment`로 바꾸고,
+- `pay` 메서드에서 `dispatchPayment`와 더불어 새 요구사항을 수행하는 `logPayment`를 함께 호출.
+
+```java
+public class Employee {
+  ...
+  public void pay() {
+    Money amount = new Money();
+    for (Iterator it = timecards.iterator(); it.hasNext(); ) {
+      Timecard card = (Timecard) it.next();
+      if (payPeriod.contains(date)) {
+        amount.add(card.getHours() * payRate);
+      }
+    }
+    payDispatcher.pay(this, date, amount);
+  }
+  
+  public void pay() {
+    logPayment();
+    dispatchPayment();
+  }
+
+  private void logPayment() { 
+    ...
+  }
+}
+```
+
+- 한편 아래와 같이 할 수도.
+
+```java
+public class Employee {
+  ...
+  public void makeLoggedPayment() {
+    logPayment();
+    pay();
+  }
+  
+  public void pay() {
+    ...
+  }
+
+  private void logPayment() { 
+    ...
+  }
+}
+```
+
+- 신규 기능을 추가할 수 있는 좋은 방법.
+- 발아 메서드/클래스는 기존 메서드가 변경되어야 하지만,
+- 포장 방식에서는 기존 것을 바꾸지 않아도 되기 때문.
+- 하지만, 포장 메서드에 다소 부적절한 이름을 짓기가 쉬움.
+
+### 포장 클래스
+
+- 데코레이터 생각하면 됨.
+- 포장 클래스는 엄격한 조건하에서만 고려하라고 주장.
+- 첫 번째로, 추가하려는 동작이 완전히 독립적이며, 기존 클래스가 상관 없는 동작으로 오염되게 하고 싶지 않을 때.
+- 두 번째로, 기존 클래스가 너무 비대한 경우.
