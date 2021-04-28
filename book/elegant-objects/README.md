@@ -467,3 +467,13 @@ https://www.yegor256.com/2014/05/13/why-null-is-bad.html
 - 또한, 컬렉션은 집합을 의미하기에 `Optional`보다 더 혼란을 일으킬 가능성이 큼.
 - 그래서 Optional을 사용하거나, 널 객체 패턴을 사용하거나, null이 필요 없도록 만들고 혹여나 발생하면 예외를 던지게 하는 방법들이 좋다고 생각.
 - 그리고 어쩔 수 없는 상황에는 null 사용하되 `@Notnull`로 명시하는 것이 불필요한 클라이언트 코드의 방어 로직을 제거.
+
+# Throw only checked exceptions
+
+https://www.yegor256.com/2015/07/28/checked-vs-unchecked-exceptions.html
+
+- 저자의 의견에 반대하는 부분이 많음. 개인적 생각 적고 마무리.
+- Unchecked는 고통스러움. 따라서, 이 비용을 뛰어넘는 이유(예컨대 finally에서 리소스 해제를 꼭 해야 한다던가)가 있을 때만 사용해야.
+- 하나의 예외 타입으로 절대 충분할 수 없음. AOP 등에서 상황에 따라 적절히 처리하기 위해서는 구체적인 에외 타입을 구분할 수 있어야 함.
+- 일반적으로는 런타임 예외로 충분.
+- https://stackoverflow.com/questions/6115896/understanding-checked-vs-unchecked-exceptions-in-java
