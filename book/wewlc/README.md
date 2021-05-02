@@ -192,8 +192,14 @@ public class Employee {
 
 ```java
 public class Employee {
-  ...
+  
+  // ...
   public void pay() {
+    logPayment();
+    dispatchPayment();
+  }
+  
+  public void dispatchPayment() {
     Money amount = new Money();
     for (Iterator it = timecards.iterator(); it.hasNext(); ) {
       Timecard card = (Timecard) it.next();
@@ -202,11 +208,6 @@ public class Employee {
       }
     }
     payDispatcher.pay(this, date, amount);
-  }
-  
-  public void pay() {
-    logPayment();
-    dispatchPayment();
   }
 
   private void logPayment() { 
@@ -246,3 +247,29 @@ public class Employee {
 - 포장 클래스는 엄격한 조건하에서만 고려하라고 주장.
 - 첫 번째로, 추가하려는 동작이 완전히 독립적이며, 기존 클래스가 상관 없는 동작으로 오염되게 하고 싶지 않을 때.
 - 두 번째로, 기존 클래스가 너무 비대한 경우.
+
+## 어떻게 기능을 추가할까?
+
+- 많은 레거시 코드가 테스트 코드를 갖지 않음.
+- 심지어 테스트 코드 추가가 어려울 수도.
+- 이 경우 앞서 소개한 발아/포장 기법을 적용할 수 있으나,
+- 이는 기존 코드를 많이 수정하지 않기에 당장은 코드 개선 효과를 보기 어려움.
+- 또한, 새로 추가되는 코드가 기존 코드와 중복된 부분이 있으면 잠재적 위험.
+- 그리고 큰 개선이 없을 거라는 두려움과 이것이 반복되어 생기는 체념도 이야기.
+
+### 테스트 주도 개발
+
+- 예시와 함께 TDD 소개.
+- 이렇게 하면, 위 문제들을 극복할 수 있음.
+- 레거시 코드에 TDD를 하고자 한다면, 기존 코드 주위에 테스트 루틴을 작성하는 것이 중요.
+
+### 차이에 의한 프로그래밍
+
+- 클래스를 직접 수정하지 않고 기능을 추가하는 또 다른 방법.
+- 바로 상속 이야기.
+- 물론 상속의 남용으로 인한 문제들은 경계.
+- LSP 얘기를 하며 상속이 주는 문제점을 예시로 보여주기도.
+- 하지만 일단 테스트를 빠르게 통과시키고 목적지로 가기 위한 임시처로는 괜찮다고.
+- 이것을 `MessageForwarder` 예시로 보여줌.
+- 기능 추가를 하며 `MailingConfiguration`이 추가되고,
+- 이것이 다시 `MailingList`로 변경되는 전체적인 과정이 재미있음.
