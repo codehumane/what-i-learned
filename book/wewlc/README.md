@@ -354,3 +354,31 @@ public class Employee {
 > In the previous example, we tried to deduce the set of objects that affect values at a particular point in code. When we are writing characterization tests, we invert this process. We look at a set of objects and try to figure out what will change downstream if they stop working.
 
 - 전자는 영향 주는 객체들을 조사한 것이고, 후자는 영향 받는 객체들을 조사한 것.
+
+## 클래스 의존 관계, 반드시 없애야 할까?
+
+### 교차 지점
+
+- 변경에 의한 영향을 감지할 수 있는 프로그램 내의 위치.
+- 말은 어렵지만 이 역시 우리가 흔히 하는 일에 대한 이야기.
+- 책에서는 `getValue`가 여기에 해당.
+
+### 상위 수준의 교차 지점
+
+- 한 가지 변경을 위해 몇 개의 클래스를 같이 고치는 대신,
+- 상위 수준에서 한 번에 테스트를 작성할 수도 있음을 이야기.
+- 이 지점이 변경의 영향을 검출하기 위한 유일한 곳일 수도 있음.
+- 이 때는 이 상위 교차 지점을 저자는 조임 지점이라고 부른다고 함.
+- 하지만 이것이 개별 단위 테스트를 대체하는 것은 아님.
+- 단지 변경/리팩토링과 개별 단위 테스트 작성을 위한 첫 단계.
+
+### 조임 지점을 이용한 설계 판단
+
+- 조임 지점은 자연적인 [캡슐화](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming))의 경계이기도 함.
+- 같이 바뀌는 것들의 접점이며, 이 접점의 호출부는 바뀌는 것들의 세부 사항은 몰라도 됨.
+
+### 조임 지점의 함정
+
+- 단위 테스트가 소규모 통합 테스트로 점점 커질 수 있음.
+- 테스트 규모가 커지면 수행 시간이 오래 걸림.
+- 가능한 좀 더 작은 단위로 테스트를 분리하는 것이 바람직.
