@@ -343,3 +343,14 @@ public class Employee {
   - `setDescription`
 - 결국엔 `detailDisplay` 변수만을 사용하는 `getAccountsymbol`, `setDescription`은 `SymbolSource`라는 새로운 클래스로 추출하고,
 - `display`만을 사용하는 `setDisplayText`는 `AccountDetailDisplay`라는 새로운 클래스로 추출.
+
+## 코드를 변경해야 한다. 어느 메서드를 테스트해야 할까?
+
+- Reasoning About Effects, Reasoning Forward, Effect Propagation 언급.
+- 흔히 변경의 영향 범위 파악할 때의 과정을 글로 나타낸 것.
+- 참고로, Reasoning About Effects와 Reasoning Forward의 차이는 아래와 같이 설명.
+- previous가 가리키는 게 Reasoning About Effetcs.
+
+> In the previous example, we tried to deduce the set of objects that affect values at a particular point in code. When we are writing characterization tests, we invert this process. We look at a set of objects and try to figure out what will change downstream if they stop working.
+
+- 전자는 영향 주는 객체들을 조사한 것이고, 후자는 영향 받는 객체들을 조사한 것.
