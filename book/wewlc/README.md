@@ -310,3 +310,36 @@ public class Employee {
 - 싱글톤에 대한 비판 한참 한 뒤,
 - `getInstance`에 대응하는 `setInstance`를 만들어 테스트에 활용하라고.
 - 또는 인터페이스 추출과 상속을 통한 우회.
+
+## 테스트 하네스에서 이 메서드를 실행할 수 없다
+
+- 잠시 test harness의 정의를 다시 돌아봄.
+- 쉬운 설명으로는 [여기 StackOverflow의 답변](https://stackoverflow.com/questions/11625351/what-is-test-harness/11628329)을 참고.
+
+### 숨어 있는 메서드
+
+- 메서드를 변경해야 하는데(그리고 테스트 해야 하는데) 그 메서드가 private일 수도.
+- private 메서드를 테스트해야 한다면, 이는 public으로 만들어야 한다는 신호.
+- 혹시 public으로 만들기 꺼려진다면 클래스가 너무 많은 책임을 갖기 때문일 것이며 분리를 고려해야.
+- 좋은 설계 = 테스트 가능한 설계
+- 다만, 무작정 public으로 바꾸기엔 위험한 경우도 있음(책 예시: `setSnapRegion`).
+- 그리고 기한이나 주변 위험 요소 등을 고려할 때 리팩토링이 어려운 경우도.
+- 이 때는 대상 메서드를 protected로 만들고 상속을 이용해서 테스트 하기도.
+- 캡슐화 위반 등의 문제가 있지만 임시 거처로는 괜찮음.
+
+### 탐지 불가능한 부작용
+
+- 리턴값이 void인 경우 테스트를 어떻게 해야 할까.
+- 책에서는 아래의 `AccountDetailFrame#actionPerformed` 예시로 설명. ([코드](https://gist.github.com/codehumane/885be1735d45f86fb7ce0c8e8e36eb50))
+- 가장 먼저, 이벤트에 대한 처리와 그렇지 않은 것을 분리. ([코드](https://gist.github.com/codehumane/305f0bf00a8bbba0048d2e536c57f4b7))
+- 다음으로 프레임(`DetailDisplay`)에 접근하는 코드 부분을 메서드로 추출. ([코드](https://gist.github.com/codehumane/c14a9ede77e84f0b58308f120979d305))
+- 다음으로 `AccountDetailFrame`의 컴포넌트에 접근하는 코드를 추출. ([코드](https://gist.github.com/codehumane/e986da876d4ce4c9807074baf2f63f14))
+- 그리고 서브클래스화와 메서드 재정의를 이용해 테스트. ([코드](https://gist.github.com/codehumane/214b81d837ff0b256a34e6a8f217912e))
+- 이제 `AccountdetailFrame`은 5개의 메서드를 가짐. 이는 임시 단계.
+  - `performAction`
+  - `performCommand`
+  - `getAccountSymbol`
+  - `setDisplayText`
+  - `setDescription`
+- 결국엔 `detailDisplay` 변수만을 사용하는 `getAccountsymbol`, `setDescription`은 `SymbolSource`라는 새로운 클래스로 추출하고,
+- `display`만을 사용하는 `setDisplayText`는 `AccountDetailDisplay`라는 새로운 클래스로 추출.
