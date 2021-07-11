@@ -175,6 +175,17 @@
 - 처음이 갖는 리스크를 줄이는 일.
 - "Fail early, fail fast, fail often"
 
+### The Bus Factor
+
+> the number of people that need to get hit by a bus before your project is completely doomed.
+
+- 프로젝트의 지식과 노하우가 프로젝트에 얼마나 잘 분산되어 있는가?
+- 만약, 당신이 프로토타입 코드가 동작하는 원리를 이해하는 유일한 사람이라면,
+- 당신이 버스에 치이게 되었을 때 프로젝트는 위험.
+- 두 명이서 같이 만들고 있다면 버스 팩터는 2배가 됨.
+- 여러 명으로 된 팀으로 일한다면 더 나아짐.
+- 영역 별로 2명 이상의 소유자를 갖는 것 외에도 좋은 문서를 두는 것이 프로젝트의 성공을 도움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
