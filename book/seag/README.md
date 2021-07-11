@@ -186,6 +186,22 @@
 - 여러 명으로 된 팀으로 일한다면 더 나아짐.
 - 영역 별로 2명 이상의 소유자를 갖는 것 외에도 좋은 문서를 두는 것이 프로젝트의 성공을 도움.
 
+### Pace of Progress
+
+- 컴파일하고 일할 때를 생각해보자.
+- 한 번에 10,000 라인의 코드를 작성하고 컴파일 버튼을 누르는가?
+- 결과는 재앙일 것.
+- 프로그래머의 작업은 빽빽한 피드백 루프가 함께 할 때 제일 좋음.
+- get feedback as early as possible, test as early as possible, and think about security and production environments as early as possible.
+- 모두 "shifting left" 아이디어.
+- 이는 코드 레벨 뿐만아니라 전체 프로젝트 레벨에서 필요한 이야기.
+- 잘 되는 프로젝트는 빠르게 진화하며 시간이 지남에 따라 바뀌는 환경에 적응해야 함.
+- 예상치 못한 설계 장애물이나 정치적 위험을 마주치거나, 단지 계획한 것이 제대로 되지 않기도.
+- 요구사항은 계속 변경.
+- 이렇게 계획이나 설계가 바로 바로 바뀌어야 한다는 피드백 루프를 어떻게 구성할 수 있을까?
+- 답은 팀으로 일하는 것.
+- "Many eyes make sure your project stays relevant and on track"
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
