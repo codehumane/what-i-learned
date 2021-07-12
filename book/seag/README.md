@@ -232,6 +232,11 @@
 - 일이 되게 하기 위해 관계를 맺는 것에 관함.
 - 관계는 프로젝트보다 오래 지속됨.
 
+### Humility, Respect, and Trust in Practice
+
+- 구체적인 행동과 예시들을 다룸.
+- 이 내용들을 보면 당연해 보일지도 모르나, 잘 안지켜지는 부분들일 것.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
