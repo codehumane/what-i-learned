@@ -259,6 +259,10 @@
 - 이를 위해 코드와 당신을 너무 동일시 여기지 않는 노력도 필요.
 - "you are not your code"
 
+#### FAIL FAST AND ITERATE
+
+TBD
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
