@@ -202,6 +202,15 @@
 - 답은 팀으로 일하는 것.
 - "Many eyes make sure your project stays relevant and on track"
 
+## It's All About the Team
+
+> software engineering is a team endeavor
+
+- 숨어서 비밀 발명품을 준비하는 것으로 세상을 바꾸는 것이 아님.
+- 다른 사람들과 함께 일해야 함.
+- 비전을 공유하고, 일을 나누고, 서로를 배우며, 훌륭한 팀을 만들어야 함.
+- 혼자 만든 소프트웨어 중에 널리 사용되며 성공한 것은 없음.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
