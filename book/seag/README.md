@@ -460,6 +460,24 @@
 - 실수를 인정하면 오히려 존중 받을 수도.
 - 상황을 냉정하게 인식할 수 있으며 상식적이고 겸손하다는 것을 드러내기 때문.
 
+### Be a Zen Master
+
+- 엔지니어로써 회의와 냉소 감각을 잘 키워왔을 것.
+- 하지만 팀을 이끌 때는 이것이 장애가 될 수 있음.
+- 모든 일에 낙관하라는 것은 아님.
+- 일의 장애물을 인식하고 있음을 알리면서도 덜 회의적이어야 한다는 것.
+- 반응을 잘 조절하고 평정심을 유지해야 함.
+- 동료들이 당신의 반응을 보며 어떤 행위를 해야 하는지에 대한 단서를 찾기 때문.
+- 아래 내용이 좋아서 그대로 가져와 적음.
+- 말이나 행동 하나에도 책임감 있어야 함을 다시금 반성하는 중 @.@
+
+> Another way of thinking about this is the maxim that the leader is always on stage. This means that if you’re in an overt leadership position, you are always being watched: not just when you run a meeting or give a talk, but even when you’re just sitting at your desk answering emails. Your peers are watching you for subtle clues in your body language, your reactions to small talk, and your signals as you eat lunch. Do they read confidence or fear? As a leader, your job is to inspire, but inspiration is a 24/7 job. Your visible attitude about absolutely everything—no matter how trivial—is unconsciously noticed and spreads infectiously to your team.
+
+- 간혹 팀원들이 조언을 구하러 올 수도 있음.
+- 해결책을 제시해 주는 것은 도움이 X. 오히려 역효과일 수도.
+- 겸손, 존중, 신뢰를 갖고 그들 스스로 문제를 해결하도록 문제를 같이 재정의하고 탐색.
+- 결국 문제를 해결할 가능성도 높고, 업무의 주도성을 유지하는 데도 도움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
