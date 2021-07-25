@@ -562,6 +562,28 @@
 - 이런 암묵적이 목표들을 이끌어 내고 명시화하면, 경력 조언 시 지금의 상황이나 기회를 평가 할 지표가 될 수 있음.
 - 경력 모니터링 외에도, 그들이 성장할 수 있게 하고, 인정 받게 하고, 약간의 재미를 얻게 하는 것도 필요.
 
+## Other Tips and Tricks
+
+- Delegate, but get your hands dirty
+  - 직접 하는 것 보다 오래 걸리더라도 위임.
+  - 팀이 배울 기회이며 당신이 제정신(?)을 유지하게 해 줌.
+  - 팀의 존경을 얻고 다른 이들의 생산성을 올려주는 한 가지 방법은,
+  - 아무도 하고 싶어하지 않는 일들을 직접 처리하는 것.
+  - 아무리 화려한 이력이 있더라도 직접 하는 것이 역량과 헌신을 보여주는 유일한 방법.
+- Seek to replace yourself
+- Know when to make waves
+- Shield your team from chaos
+  - 처음 리더 역할을 맡았을 때 이전엔 없었던 혼란과 불확실들이 닥치기 시작.
+  - 하지만 이는 원래부터 있던 회사의 일상적 일들.
+  - 그 동안 이전 관리자가 보호해 주고 있던 것.
+- Give your team air cover
+  - 팀 외부의 불확실성과 경솔한 요구사항으로부터의 보호만큼이나,
+  - 회사 내의 팀 바깥에서 일어나는 일들을 알려주는 것이 중요.
+  - 가능한 많은 정보들을 공유.
+  - 하지만 팀원들에게 실제로는 영향을 줄 가능성이 극도로 낮은 조직의 미침(?)들로 주의 분산 X.
+- Let your team know when they're doing well
+- It's easy to say "yes" to something that's easy to undo
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
