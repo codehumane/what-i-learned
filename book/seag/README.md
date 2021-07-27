@@ -584,6 +584,19 @@
 - Let your team know when they're doing well
 - It's easy to say "yes" to something that's easy to undo
 
+## People Are Like Plants
+
+- 저자의 부인은 서로 너무나 다른 6형제 중 막내.
+- 장모님은 각각을 서로 다르게 대해 주었다고 함.
+- 이는 식물 키우기와 비슷.
+- 서로 다른 종류의 식물에 똑같은 햇빛과 물을 준다면 모두 죽게 될 지도.
+- 팀원들도 마찬가지.
+- 매너리즘에 빠질 수 있는 동료에겐 동기부여를,
+- 뭘 해야할지 모르는 동료에겐 명확한 방향 제시를 해 주는 것이 좋음.
+- 물론 지나친 수준으로 하는 것은 동료에게 괴로움.
+- 방향 제시는 간단. 무엇을 해야 하는지에 대한 기본적 이해, 간단한 조직 기술, 관리 가능한 수준으로 작업 쪼개기 정도.
+- 동기부여는 이보다 어려움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
