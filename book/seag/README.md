@@ -702,6 +702,13 @@
   - 결과가 나온다면 이 조치를 취할지는 누가 언제 결정하는가?
 - 이 질문들을 통해 대부분은 측정이 의미 없음을 알게 됨.
 
+## Selecting Meaningful Metrics with Goals and Signals
+
+- 구글에선 Goals/Signals/Metrics (GSCM) 프레임워크를 메트릭 생성 가이드로 사용.
+- goal: 원하는 최종 결과. 상위 수준에서 이해되길 기대하고, 측정 방법에 대한 언급이 포함되어 있으면 안 됨.
+- signal: 목표를 달성했는지 알 수 있는 방법. 측정하고 싶지만, 측정이 어려움.
+- metric: 시그널을 위한 프록시. 우리가 실제로 측정할 수 있는 것. 이상적인 측정은 아니겠지만 충분히 가까운 수준.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
