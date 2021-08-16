@@ -723,6 +723,14 @@
   - Tempo and velocity
   - Satisfaction
 
+## Signals
+
+- 시그널은 목표를 달성했는지를 알게 해 줌.
+- 모든 시그널이 측정 가능하지는 않음.
+- 하지만 이 단계에서는 괜찮음.
+- 가독성을 예로 들며 각 목표에 대한 시그널 사례를 들고 있음.
+- 썩 와닿지는 않음.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
