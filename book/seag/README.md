@@ -682,6 +682,12 @@
   - Always Be Leaving
   - Always Be Scaling
 
+## Always Be Deciding
+
+- 팀들의 팀을 관리하는 것은 더 상위 수준의 결정을 더 많이 내리게 되는 것을 의미.
+- 구체적인 엔지니어링 문제 해결 대신 상위 수준이 전략들을 다룸.
+- 대부분의 결정들은 올바른 트레이드 오프 집합을 찾는 것.
+
 # 7. Measuring Engineering Productivity
 
 - 구글은 데이터 주도 회사.
