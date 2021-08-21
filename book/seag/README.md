@@ -744,6 +744,14 @@
 - 이에 대한 안티패턴은 당신이 SPOF가 되는 것.
 - 책 앞 부분에서 버스 팩터 언급한 것도 같은 맥락.
 
+### Your Mission: Build a "Self-Driving" Team
+
+- 어려운 문제를 스스로 해결하는 조직을 만들어야 함.
+- 이에는 3가지가 필요.
+  - 문제 영역을 나누기.
+  - 나눈 문제들을 위임.
+  - 필요한 만큼 반복.
+
 # 7. Measuring Engineering Productivity
 
 - 구글은 데이터 주도 회사.
