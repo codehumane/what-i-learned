@@ -771,6 +771,8 @@
 - 따라서 우리는 지연을 예방하는 일도 함께 해결해야 했음.
 - 이렇게 원인과 증상 모두에 팀을 할당함으로써 지연을 장기적 관점에서 통제할 수 있었음.
 
+#### Delegating subproblems to leaders
+
 # 7. Measuring Engineering Productivity
 
 - 구글은 데이터 주도 회사.
