@@ -1031,6 +1031,23 @@
 - "What goal are we trying to advance?"가 핵심.
 - 목적에 초점을 두면 어떤 규칙이 유용한지 판별하기 쉬움.
 
+### Guiding Principles
+
+- 구글에는 3만명의 엔지니어들이 있음.
+- 그만큼 다양한 기술과 배경들이 함께 존재.
+- 각 조직에 맞게 가치를 다르게 산정하긴 하지만,
+- 시간과 규모의 확장에도 엔지니어링 환경을 지속시키는 것이 공통된 목표.
+- 이런 맥락에서 규칙의 목적은, 개발 환경의 복잡성을 다루고, 코드베이스를 관리 가능한 상태로 유지시키며, 개발자의 생산성을 보호하는 것.
+- 여기서 트레이드 오프가 발생.
+- 규칙이 많으면 선택의 제약이 많아짐.
+- 하지만 충돌을 줄이고 일관성을 얻을 수 있음.
+- 이런 것들을 고려할 때, 아래 5가지가 규칙 개발에 도움이 됨을 발견.
+  - Pull their weight
+  - Optimize for the reader
+  - Be consistent
+  - Avoid error-prone and surprising constructs
+  - Concede to practicalities when necessary
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
