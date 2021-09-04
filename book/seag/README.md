@@ -1025,6 +1025,12 @@
 - 잘 정착된 규칙과 가이드는 코딩의 공통 어휘 모습을 갖춰나감.
 - 이는 엔지니어로 하여금 그들이 말하고 싶은 것 대신 코드가 말해야 하는 것에 집중하게 도와줌.
 
+## Creating the Rules
+
+- "What rules should we have?"는 핵심 질문이 아님.
+- "What goal are we trying to advance?"가 핵심.
+- 목적에 초점을 두면 어떤 규칙이 유용한지 판별하기 쉬움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
