@@ -1048,6 +1048,15 @@
   - Avoid error-prone and surprising constructs
   - Concede to practicalities when necessary
 
+#### Rules must pull their weight
+
+- 스타일 가이드로 추가되는 모든 것에는 비용이 따름.
+- 새로 배워야 하고 적응해야 하며 기억해야 함.
+- 따라서, 자명한 것들은 규칙에서 제외시키려 노력.
+- 예를 들어 C++의 `goto` 사용 금지를 규칙으로 삼지는 않음.
+- 이미 개발자들은 이를 피하려는 경향이 있는데, 굳이 규칙으로 넣는 것은 오버헤드.
+- 한 두명의 잘못으로 만드는 규칙은 전체의 정신적 부담으로 이어짐. 이는 스케일링에 걸림돌.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
