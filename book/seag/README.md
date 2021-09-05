@@ -1087,6 +1087,32 @@
 - 엔지니어의 팀 간 이동에도 도움. 좀 더 빠르고 쉽게 코드에 적응.
 - 시간이 흐름(엔지니어가 프로젝트를 떠나고, 새로운 사람이 들어오고, 오너십이 바뀌고, 프로젝트가 병합되거나 쪼개지고, ...)에도 탄력성을 유지.
 
+#### Avoid error-prone and surprising constructs
+
+- 구글 스타일 가이드는 언어에서 다소 놀랍거나 일반적이지 않거나 교모한 문법 사용을 제한함.
+- 복잡한 피처는 종종 한 눈에 파악하기 어려운 함정을 가지고 있음.
+- 이를 깊이 생각하지 않고 작성하는 것은 버그를 만들어 낼 수도.
+- 작성 시에는 잘 고려가 되었더라도 이후에 이를 다루는 엔지니어에게도 문제.
+- 파이썬 스타일 가이드의 경우 리플렉션 같은 [power features](https://google.github.io/styleguide/pyguide.html#219-power-features)를 금지.
+- 파이썬에서의 `hasattr()`과 `getattr()`은 문자열로 객체의 속성에 접근할 수 있게 함.
+
+```py
+// some_file.py:
+A_CONSTANT = [
+'foo',
+'bar',
+'baz',
+]
+
+// other_file.py:
+values = []
+for field in some_file.A_CONSTANT:
+values.append(getattr(my_object, field))
+```
+
+- `foo`, `bar`, `baz` 필드에 접근한다는 사실을 어떻게 알 수 있겠는가?
+- 독자를 위한 어떠한 명확한 증거도 없음. 따라서 검증도 어려움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
