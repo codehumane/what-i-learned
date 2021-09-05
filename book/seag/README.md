@@ -1119,6 +1119,13 @@ values.append(getattr(my_object, field))
 - C++ 스타일 가이드가 익셉션 사용을 금하고 있지만, 컴파일러 최적화를 위해 `noexcept`의 사용을 허용하기도.
 - 성능 외에도 상호호환성 케이스도 존재.
 
+### The Style Guides
+
+- 언어 스타일 가이드에는 크게 3가지 범주가 있음.
+- Rules to avoid dangers
+- Rules to enforce best practices
+- Rules to ensure consistency
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
