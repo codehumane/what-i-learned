@@ -1126,6 +1126,13 @@ values.append(getattr(my_object, field))
 - Rules to enforce best practices
 - Rules to ensure consistency
 
+#### Avoiding danger
+
+- 스타일 가이드에는 언어 특징에 관련하여 기술적 이유로 해야 하는 것과 하지 말아야 할 것을 명시.
+- 정적 멤버나 변수 사용, 람다 표현식 사용, 예외 처리, 스레딩 생성, 접근 제어, 클래스 상속 등.
+- 사용하기 어렵거나 제대로 사용하기 어려운 것에 대한 규칙들도 포함.
+- 각각의 규칙에는 장단점과 함께 결론에 이르기까지의 설명도 포함.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
