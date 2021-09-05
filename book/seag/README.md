@@ -1113,6 +1113,12 @@ values.append(getattr(my_object, field))
 - `foo`, `bar`, `baz` 필드에 접근한다는 사실을 어떻게 알 수 있겠는가?
 - 독자를 위한 어떠한 명확한 증거도 없음. 따라서 검증도 어려움.
 
+#### Concede to practicalities
+
+- 가끔 필요하다면 최적화나 실용성에 규칙을 포기하기도.
+- C++ 스타일 가이드가 익셉션 사용을 금하고 있지만, 컴파일러 최적화를 위해 `noexcept`의 사용을 허용하기도.
+- 성능 외에도 상호호환성 케이스도 존재.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
