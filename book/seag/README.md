@@ -1268,6 +1268,15 @@ values.append(getattr(my_object, field))
   - Enables knowledge sharing
   - Provides a historical record of the code review itself
 
+### Code Correctness
+
+- 다른 내용은 일반적인 것들이었고 아래 내용이 기억에 남음.
+- 정확성 평가가 주관적이 되는 것을 막기 위해, 저자의 접근 방식을 존중해야 함.
+- 리뷰어는 개인적 의견 때문에 대안을 제시할 수 없음.
+- 대안은 표현력(덜 복잡하게 하는 등)나 기능성(더 효율적이게 하는 등)을 향상시킬 수 있는 경우에만 제시.
+- 일반적으로 엔지니어들은 완벽한 해결책에 대한 동의를 기다리기보다, 코드베이스를 향상시키는 변경에 대해 승인하도록 권장됨.
+- 이는 코드 리뷰의 속도를 높임.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
