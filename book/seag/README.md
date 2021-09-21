@@ -1255,6 +1255,19 @@ values.append(getattr(my_object, field))
 - 보통은 2가지 단계를 거침. 동료 엔지니어로부터 1개의 LGTM을 얻고, 코드 소유자나 가독성 리뷰어에게 승인을 얻는 것.
 - 이렇게 하면 코드리뷰를 2가지 관점에서 살펴볼 수 있게 하면서도 시간을 절약해 줌.
 
+## Code Review Benefits
+
+- 구글에서 코드 리뷰는 아무리 작은 변경이라고 하더라도 필수.
+- 코드리뷰가 코드 변경의 속도를 늦추기도 하지만 그래도 필수.
+- 장기적으로 더 큰 이점을 가져다 준다고 생각하기 때문.
+- 아래의 6가지.
+  - Checks code correctness
+  - Ensures the code change is comprehensible to other engineers
+  - Enforces consistency across the codebase
+  - Psychologically promotes team ownership
+  - Enables knowledge sharing
+  - Provides a historical record of the code review itself
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
