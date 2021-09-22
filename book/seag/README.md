@@ -1429,6 +1429,12 @@ values.append(getattr(my_object, field))
 - 잠재적 롤백 가능성을 가진 어떤 변경이든 가능한 작고 원자적이어야 함.
 - 그래야 롤백 시 추가적 문제를 일으킬 가능성이 적고, 빠르게 롤백 수행도 가능.
 
+### Refactorings and Large-Scale Changes
+
+- 제목이랑 내용이랑 매칭이 잘 안 됨.
+- 사람이 아닌 기계가 만들어 내는 코드 변경들이 있으며,
+- 이 경우에도 비슷하게 코드리뷰를 진행한다는 이야기.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
