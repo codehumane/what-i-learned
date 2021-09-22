@@ -1382,6 +1382,15 @@ values.append(getattr(my_object, field))
 - 문제가 없는지를 감지하고 필요하면 변경을 거절. 그리고 저자에게 이 문제를 해결하라고 알림.
 - 이는 코드리뷰 프로세스 자체를 돕기도 하지만, 리뷰어들이 보다 중요한 것에 집중할 수 있게 도와줌.
 
+## Types of Code Reviews
+
+- 코드리뷰 마다 유형이 있으며, 각각에 맞는 방식을 취해야 함.
+- 보통 아래 유형 중 하나.
+  - Greenfield reviews and new feature development
+  - Behavioral changes, improvements, and optimizations
+  - Bug fixes and rollbacks
+  - Refactorings and large-scale changes
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
