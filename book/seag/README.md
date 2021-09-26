@@ -1493,6 +1493,12 @@ values.append(getattr(my_object, field))
 - 하지만 이 테스트가 없다면 각 엔지니어들은 반복적으로 디버거와 함께 문제를 찾아내야 함.
 - 때로는 문제 자체를 뒤늦게 감지하거나 아예 못할 수도.
 
+### Testing at the Speed of Modern Development
+
+- 사람이 매번 직접 시스템 행위를 검증하는 것은,
+- 기능과 플랫폼의 폭발적 증가를 따라잡을 수 없음.
+- 자동화 없이는 스케일링에 어려움.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
