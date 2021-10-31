@@ -1638,6 +1638,33 @@ values.append(getattr(my_object, field))
 - 같은 맥락으로, 조건문이나 루프 같은 흐름 제어 명령문을 테스트에서는 사용하지 않기를 강하게 권장.
 - 테스트 흐름이 복잡할수록 버그를 담기 쉽고 테스트 실패 원인 분석에 어려움.
 
+### Test Scope
+
+- 테스트 규모 외에 또 다른 중요 고려 요소는 테스트 범위.
+- 여기서 범위는 얼마나 많은 코드를 검증하려는지를 가리킴.
+- 좁은 범위의 테스트(보통 단위 테스트라 부름)는 개별 클래스나 메서드처럼 작고 집중된 코드베이스 부분의 로직을 검증.
+- 중간 범위의 테스트(보통 통합 테스트라 부름)는 서버와 데이터베이스 사이의 연동처럼 적은 갯수의 컴포넌트들의 상호작용을 검증.
+- 큰 범위의 테스트(기능 테스트, 종단간 테스트, 시스템 테스트 등으로 부름)는 몇 개의 구별된 시스템 부분들의 상호작용을 검증.
+- 한 가지 중요한 것은 범위라는 게 실행되는 코드의 양이 아니고, 검증하려는 코드의 크기라는 것.
+- 구글에서는 테스트 더블을 사용하기 보다, 가능하다면 진짜 의존성을 사용하는 것을 선호.
+- 보통 좁은 범위의 테스트는 작은 테스트이고, 넓은 범위의 테스트는 중간 또는 큰 규모의 테스트인 경향이 있음.
+- 작은 범위의 테스트와 마찬가지로 좁은 범위의 테스트를 권장.
+- 대략적인 가이드라인에서는 이 테스트들의 조합 비율을 아래와 같이 추구.
+  - 80%: 대부분의 비즈니스 로직을 검증하는 좁은 범위의 단위 테스트.
+  - 15%: 두 개 이상의 컴포넌트 간 상호작용을 검증하는 중간 범위의 통합 테스트.
+  - 5%: 전체 시스템을 검증하는 종단간 테스트.
+
+![The Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid/testPyramid.png)
+
+- 이 그림에 반하는 안티패턴은 "아이스크림 콘"과 "모래시계".
+
+![Software Testing Icre Cream Cone Antipattern](http://i.imgur.com/vybOi1x.jpg)
+
+![Software Testing Hourglass Antipattern](https://1.bp.blogspot.com/-e6bsyqU1yt8/X48dcQU9uLI/AAAAAAAAAbM/Ct-p0T6Y728g_gyHYZ_DWT6Ks2MPhrgfwCLcBGAsYHQ/s320/Copy%2Bof%2BGoogle%2BTesting%2BBlog_%2BFixing%2Ba%2BTest%2BHourglass%2B%25281%2529%2B-%2BEdited.jpg)
+
+- 이 테스트 조합 비율은 2가지 목적에 따라 결정지어짐.
+- 바로 엔지니어 생산성과 엔지니어 안정감.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
