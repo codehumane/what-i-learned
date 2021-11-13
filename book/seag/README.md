@@ -2018,6 +2018,68 @@ public void shouldPerformAddition() {
 }
 ```
 
+### Test Behaviors, Not Methods
+
+메서드마다 테스트를 두는 것의 문제점을 이야기.
+
+- 프로덕션 메서드마다 테스트 코드를 작성하는 경우가 많음.
+- 이 패턴이 처음에는 편할지 모르지만 시간이 지날수록 문제가 됨.
+- 메서드가 복잡해 질수록 테스트 역시 복잡해지고 이해하기 어려워짐.
+- 아래 코드가 바로 그 예.
+- 아마도 처음에는 첫 번째 메시지만을 다루는 테스트 였을 수 있음.
+- 나중에 두 번째 메시지 기능을 추가하면서 기존 테스트를 수정했을 것.
+- 이는 관련 없는 테스트 변경을 야기함.
+- 이런 식이라면 메서드가 복잡해 질수록 테스트도 점점 더 복잡해짐.
+- 하나의 테스트가 여러 가지 서로 다른 검증을 하면 이해하기 어려움.
+
+```java
+public void displayTransactionResults(User user, Transaction transaction) {
+  ui.showMessage("You bought a " + transaction.getItemName());
+  if (user.getBalance() < LOW_BANKACE_THRESHOLD) {
+    ui.showMessage("Warning: your balance is low!");
+  }
+}
+
+@Test
+public void testDisplayTransactionResults() {
+  transactionProcessor.displayTransactionResults(
+    newUserWithBalance(LOW_BALANCE_THRESHOLD.plus(dollars(2))),
+    new Transaction("Some Item", dollars(3))
+  );
+
+  assertThat(ui.getText()).contains("You bought a Some Item");
+  assertThat(ui.getText()).contains("your balance is low");
+}
+```
+
+그래서 메서드 대신 행위를 검증하는 것이 좋음.
+
+- 행위는 보통 given, when, then으로 설명할 수 있음.
+- 메서드와 행위의 대응은 many-to-many.
+- 코드는 아래와 같음.
+- 이 과정에서 보일러플레이트 코드가 좀 더 필요해 졌는데 이는 충분히 가치 있는 일.
+- 테스트 코드는 이제 좀 더 자연스럽게 이해되고, 범위가 제한되었기에 원인과 결과가 명확히 드러남.
+
+```java
+@Test
+public void displayTransactionResults_showsItemName() {
+  transactionProcessor.displayTransactionResults(
+    new User(),
+    new Transaction("Some Item")
+  );
+  assertThat(ui.getText()).contains("You bought a Some Item");
+}
+
+@Test
+public void displayTransactionResults_showsLowBalanceWarning() {
+  transactionProcessor.displayTransactionResults(
+    newUserWithBalance(LOW_BALANCE_THRESHOLD.plus(dollars(2))),
+    new Transaction("Some Item", dollars(3))
+  );
+  assertThat(ui.getText()).contains("your balance is low");
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
