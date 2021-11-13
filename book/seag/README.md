@@ -2203,6 +2203,36 @@ public void shouldNavigateToPhotosPage() {
 
 베이스 URL의 중복은 테스트를 좀 더 기술적<sup>descriptive</sup>이고 의미있게 만드는 데 비해 작은 비용. 테스트에 연산자, 루프, 조건문 같은 로직을 넣으면 안 됨.
 
+### Write Clear Failure Messages
+
+- 테스트가 실패하면, 테스트 코드를 읽지 않아도, 실패 메시지만을 읽고 문제를 파악할 수 있어야 함.
+- 좋은 실패 메시지는 테스트 이름처럼 충분한 정보를 담고 있어야 함.
+- 아래는 안 좋은 실패 메시지.
+
+```
+Test failed: account is closed
+```
+
+- 테스트 실패 이유가 계좌가 해지되었기 때문인가,
+- 아니면 계좌가 해지되어 있어야 하는데 해지되어 있지 않아서인가?
+- 실패 메시지에는 기대한 결과, 실제 결과, 그리고 관련된 파라미터들이 드러나야 함.
+
+```
+Exepected an account in state CLOSED, but got account: <{name: "my-account", state: "OPEN"}
+```
+
+- 좋은 라이브러리는 유용한 실패 메시지 작성을 도움.
+- 아래 예시에서의 `assertTrue`는 오직 불리언 값을 받기에 일반적인 메시지 밖에 제공 못함.
+- "expected <true> but was <false>" 처럼.
+- 두 번째 도구에 의한 실패 메시지는 아래와 같음.
+- "<[red, green, blue]> should have contained <orange>."
+
+```java
+Set<String> colors = ImmutableSet.of("red", "green", "blue");
+assertTrue(colors.contains("orange"));  // JUnit
+assertThat(colors).contains("orange");  // Truth
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
