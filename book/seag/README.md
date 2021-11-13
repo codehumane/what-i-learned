@@ -1929,6 +1929,35 @@ public void shouldNotPerformInvalidTransactions() {
 - 코드가 전체 시스템에 미치는 영향을 파악하기 보다는, 본인이 작성한 코드에 대해서만 초점을 두고 테스트하는 것이 쉽기 때문에 이런 경향이 이해가 되기도 함.
 - 하지만, 이런 프랙틱스를 권장하는 것이 충분히 비용을 상쇄하고도 남을 정도로 가치 있음.
 
+### Test State, Not Interactions
+
+- 깨지기 쉬운 테스트를 피하는 또 한 가지 방법으로,
+- 상호작용<sup>interaction</sup>이 이니라 상태<sup>state</sup>를 테스트하라는 이야기.
+- 상호작용을 테스트해서 깨지기 쉬운 테스트의 예는 아래와 같음.
+
+```java
+@Test
+public void shouldWriteToDatabase() {
+  accounts.createUser("foobar");
+  verify(database).put("foobar");
+}
+```
+
+- 만약, 데이터베이스에 저장된 직후에 레코드가 삭제되는 버그가 생기더라도 위 테스트는 여전히 성공함.
+- 레코드를 저장하는 다른 API를 사용하도록 리팩토링 된다면 위 테스트 코드는 실제 버그가 없더라도 실패함.
+- 대신 아래와 같이 상태를 테스트.
+
+```java
+@Test
+public void shouldCreateUsers() {
+  accounts.createUser("foobar");
+  assertThat(accounts.getUser("foobar")).isNotNull();
+}
+```
+
+- 이런 테스트가 만들어지는 흔한 이유는 목 프레임워크에 과도한 의존 때문.
+- 그래서 구글에서는 목 객체보다 실제 객체를 선호하는 경향을 가짐.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
