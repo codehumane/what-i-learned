@@ -2175,6 +2175,34 @@ multiply_postiveAndNegative_returnsNegative
 divide_byZero_throwsException
 ```
 
+### Don't Put Logic in Tests
+
+아래 테스트 코드에 로직이라고는 단지 문자열 연결 연산만 있음.
+
+```java
+@Test
+public void shouldNavigateToAlbumsPage() {
+  String baseUrl = "http://photos.google.com/";
+  Navigator nav = new Navigator(baseUrl);
+  nav.goToAlbumPage();
+  assertThat(nav.getCurrentUrl()).isEqualTo(baseUrl + "/albums");
+}
+```
+
+하지만 테스트를 좀 더 단순화 해보면 바로 버그가 드러남.
+
+```java
+@Test
+public void shouldNavigateToPhotosPage() {
+  Navigator nav = new Navigator("http://photos.google.com/");
+  nav.goToPhotosPage();
+  assertThat(nav.getCurrentUrl()))
+      .isEqualTo("http://photos.google.com//albums"); // Oops!
+}
+```
+
+베이스 URL의 중복은 테스트를 좀 더 기술적<sup>descriptive</sup>이고 의미있게 만드는 데 비해 작은 비용. 테스트에 연산자, 루프, 조건문 같은 로직을 넣으면 안 됨.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
@@ -2298,7 +2326,7 @@ divide_byZero_throwsException
 - Phoenix Project의 "reducing work-in-progress" 교훈은 개발 브랜치에 적용한 것.
 - 트렁크에 작은 증분만이 이뤄져야 하고, 정기적으로 커밋 되어야 함.
 - 그리고 준비 되기 전까지는 런타임에 비활성화 되어야 함.
-- 더불어, 가능하다면 가시성을 통해 다른 개발자에게 숨겨져야.
+- 더불어, 가능하다면 가시성을 통해 다른 개발자에게 숨겨져야.
 - 혹은 두 의존성이 하나의 프로그램 내에서 공존할 수 있도록 설계되어야(패키지/클래스 명 등의 충돌이 없어야 한다는 의미로 들림).
 - 구글에서는 1,000개 팀에서 이런 개발 브랜치를 가진 곳은 2군데.
 - 흔한 일이 아니며 매우 특수한 이유를 가짐.
