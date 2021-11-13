@@ -1981,6 +1981,43 @@ public void shouldCreateUsers() {
 - 최악의 경우 이런 테스트가 삭제되는 것으로 끝남. 커버리지 구멍이 생길 뿐만 아니라 테스트가 그동안 아무런 가치를 제공하지 않고 있음을 드러냄.
 - 이런 이유로 테스트는 명확해야 하고 그 중요성은 큼.
 
+### Make Your Tests Complete and Concise
+
+테스트 명확성을 위한 2가지 상위 수준의 속성은 완결성<sup>completeness</sup>과 간결성<sup>conciseness</sup>.
+
+- 독자에게 필요한 모든 정보가 테스트 그 자체에 담겨져 있다면 이는 완결성 있는 테스트.
+- 테스트에 관련 없거나 주의를 분산 시키는 것들이 없다면 이는 간결성 있는 테스트.
+
+아래 코드는 완결성도 없고 간결하지도 않은 테스트. 생성자에 관련 없는 많은 정보들을 넘기고 있으며, 실제로 테스트에 중요한 부분이 헬퍼 메서드에 의해 숨겨져 있음.
+
+```java
+@Test
+public void shouldPerformAddition() {
+  Calculator calculator = new Calculator(
+    new RoundingStrategy(), 
+    "unused",
+    ENABLE_COSINE_FEATURE,
+    0.01,
+    calculusEngine,
+    false
+  );
+
+  int result = calculator.calculate(newTestCalculation());
+  assertThat(result).isEqualTo(5); // Where did this number come from?
+}
+```
+
+아래 코드처럼, 헬퍼 메서드의 입력값을 명확히 하여 완결성을 높이고, 관련 없는 calculator 생성의 세부사항은 다른 헬퍼로 숨김으로써 간결성을 높일 수 있음. 좀 더 명확한 테스트를 위해서라면 DRY를 위반하는 것이 더 가치 있음.
+
+```java
+@Test
+public void shouldPerformAddition() {
+  Calculator calculator = newCalculator();
+  int result = calculator.calculate(newCalculation(2, Operation.PLUS, 3));
+  assertThat(result).isEqualTo(5);
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
