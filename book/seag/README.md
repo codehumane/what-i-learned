@@ -2233,6 +2233,108 @@ assertTrue(colors.contains("orange"));  // JUnit
 assertThat(colors).contains("orange");  // Truth
 ```
 
+## Tests and Code Sharing: DAMP, Not DRY
+
+깨지기 쉬움을 피하고 명확한 테스트 코드를 위한 마지막 노력은 코드 공유. 일단, 테스트 코드에서의 DRY 위험에 대해 이야기.
+
+- 대부분의 소프트웨어는 DRY 원칙을 지키려 함.
+- 한 번에 한 곳만 바꾸는 것이 쉽기 때문.
+- 하지만 코드를 덜 명확하게 만든다는 단점이 있음.
+- 프로덕션 코드에서는 편익이 크지만, 테스트 코드에서는 반대.
+- 좋은 테스트는 안정적이어야 하고 테스트 대상이 되는 행위가 바뀔 때만 테스트가 깨져야 함.
+- 또한 테스트에서의 복잡성은 그 비용이 더 큼.
+- 프로덕션 코드는 복잡해져도 테스트 코드를 통해 정상 동작을 보장할 수 있지만, 테스트는 홀로 살아가야 함.
+
+그래서 DRY 대신 DAMP(Descriptive And Meaningful Phrases)를 제시.
+
+- 테스트에서 약간의 중복은 괜찮음.
+- 그것이 테스트를 간단하고 명료하게 한다면.
+- 아래 코드는 다소 과한 DRY 테스트.
+- 테스트 몸체가 매우 간결해 보일지 모르지만 완결성이 떨어짐.
+- 중요한 세부사항이 헬퍼 메서드로 숨겨져 버림.
+- 게다가 헬퍼들은 한 눈에 파악하기 어렵게 로직을 갖고 있음.
+
+```java
+@Test
+public void shouldAllowMultipleUsers() {
+  List<User> users = createUsers(false, false);
+  Forum forum = createForumAndRegisterUsers(users);
+  validateForumAndUsers(forum, users);
+}
+
+@Test
+public void shouldNotAllowBannedUsers() {
+  List<User> users = createUsers(true);
+  Forum forum = createForumAndRegisterUsers(users);
+  validateForumAndUsers(forum, users);
+}
+
+// Lots more tests...
+
+private static List<User> createUsers(boolean... banned) {
+  List<User> users = new ArrayList<>();
+  for (boolean isBanned : banned) {
+    users.add(newUser()
+        .setState(isBanned ? State.BANNED : State.NORMAL)
+        .build());
+  }
+  return users;
+}
+
+private static Forum createForumAndRegisterUsers(List<User> users) {
+  Forum forum = new Forum();
+  for (User user : users) {
+    try {
+      forum.register(user);
+    } catch(BannedUserException ignored) {}
+  }
+  return forum;
+}
+
+private static void validateForumAndUsers(Forum forum, List<User> users) {
+  assertThat(forum.isReachable()).isTrue();
+  for (User user : users) {
+    assertThat(forum.hasRegisteredUser(user))
+        .isEqualTo(user.getState() == State.BANNED);
+  }
+}
+```
+
+- DAMP를 사용한 코드는 아래와 같음.
+- 좀 더 중복된 코드를 가지고, 테스트 몸체는 좀 더 길어짐.
+- 하지만 개별 테스트가 훨씬 이해하기 쉽고, 몸체만 보고도 완전히 이해 가능.
+- DAMP는 DRY의 대체재가 아니라 보완재.
+- 헬퍼 메서드와 테스트 인프라는 여전히 의미 있음.
+- 반복적이고 별로 중요하지 않은 세부사항을 담당하며, 테스트를 간결하게 만들고 명확성을 높여줌.
+- 주의할 점은 단지 반복을 줄인다는 목적으로 만들어지는 게 아니라는 것.
+
+```java
+@Test
+public void shouldAllowMultipleUsers() {
+  User user1 = newUser().setState(State.NORMAL).build();
+  User user2 = newUser().setState(State.NORMAL).build();
+
+  Forum forum = new Forum();
+  forum.register(user1);
+  forum.register(user2);
+
+  assertThat(forum.hasRegisteredUser(user1)).isTrue();
+  assertThat(forum.hasRegisteredUser(user2)).isTrue();
+}
+
+@Test
+public void shouldNotRegisterBannedUsers() {
+  User user = newUser().setState(State.BANNED).build();
+
+  Forum forum = new Forum();
+  try {
+    forum.register(user);
+  } catch(BannedUserException ignored) {}
+
+  assertThat(forum.hasRegisteredUser(user)).isFalse();
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
