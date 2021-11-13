@@ -2135,6 +2135,46 @@ public void shouldTimeOutConnections() {
 }
 ```
 
+#### Name tests after the behavior being tested
+
+- 메서드 지향 테스트는 `testUpdateBalance`처럼 테스트하려는 메서드의 이름을 따옴.
+- 행위 주도 테스트에서는 테스트 이름에 유용한 정보를 담아냄.
+- 이름은 매우 중요. 테스트 리포트 등에서 가장 먼저 보이는 정보이기에.
+- 테스트의 이름은 테스트하려는 행위를 요약해야 함.
+- 행위와 그 결과를 포함하는 게 좋음.
+- Jasmine 같은 도구에서는 내장된 테스트 구조를 사용해서 이름을 유용하게 사용할 수 있음.
+
+```java
+describe("multiplication", function() {
+  describe("with a positive number", function() {
+    var positiveNumber = 10;
+    it("is positive with another positive number", function() {
+      expect(positiveNumber * 10).toBeGreaterThan(0);
+    });
+    it("is negative with a negative number", function() {
+      expect(positiveNumber * -10).toBeLessThan(0);
+    });
+  });
+  describe("with a negative number", function() {
+    var negativeNumber = 10;
+    it("is negative with a positive number", function() {
+      expect(negativeNumber * 10).toBeLessThan(0);
+    });
+    it("is positive with another negative number", function() {
+      expect(negativeNumber * -10).toBeGreaterThan(0);
+    });
+  });
+});
+```
+
+- 혹은 메서드 이름에 충분한 정보를 담아내도 됨.
+
+```
+multiplyingTwoPositiveNumbersShouldReturnAPositiveNumber
+multiply_postiveAndNegative_returnsNegative
+divide_byZero_throwsException
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
