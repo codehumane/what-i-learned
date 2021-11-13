@@ -1834,7 +1834,100 @@ values.append(getattr(my_object, field))
   - 하지만 앞선 케이스들에서의 기존 테스트 변경은 '의도치 않은' 계약의 깨뜨림.
   - 저수준의 라이브러리들은 행위 변경으로 인한 사용자들의 손상을 피하기 위해 상당한 노력을 기울임.
 
-리팩토링, 신규 기능, 버그 픽스 시 기존 테스트를 바꾸는 것은 문제가 있음. 이를 이해하고 있으면, 변경과 관련된 테스트만 바뀌게 되고, 개발 규모의 확장에도 생산성을 유지할 수 있음. 
+리팩토링, 신규 기능, 버그 픽스 시 기존 테스트를 바꾸는 것은 문제가 있음. 이를 이해하고 있으면, 변경과 관련된 테스트만 바뀌게 되고, 개발 규모의 확장에도 생산성을 유지할 수 있음.
+
+### Test via Public APIs
+
+관련된 요구사항이 바뀌지 않는 한 테스트는 바뀌면 안 됨. 이를 위한 방법들을 이제 알아볼 차례.
+
+- 가장 좋은 방법은 사용자가 코드를 사용하는 것처럼 테스트를 작성하는 것.
+- 구현 세부사항에 의존하는 것은 지양.
+- 만약 시스템 사용자들과 같은 방식으로 테스트가 동작한다면,
+- 테스트가 깨지는 것은 사용자도 영향 받는 것.
+- 이 방식의 추가적 이점으로 사용자들에게 문서이자 예제가 됨.
+- 아래와 같은 거래 API가 있다고 가정.
+
+```java
+public void processTransaction(Transaction transaction) {
+  if (isValid(transaction)) {
+    saveToDatabase(transaction);
+  }
+}
+
+private boolean isValid(Transaction t) {
+  return t.getAmount() < t.getSender().getBalance();
+}
+```
+
+- 이를 테스트하고자 접근제한자를 `private`에서 좀 더 완화시켜 아래와 같이 테스트 하고 싶을 수 있음.
+
+```java
+@Test
+public void emptyAccountShouldNotBeValid() {
+  assertThat(processor.isValid(newTransaction().setSender(EMPTY_ACCOUNT)))
+      .isFalse();
+}
+
+@Test
+public void shouldSaveSerializedData() {
+  processor.saveToDatabase(newTransaction()
+      .setId(123)
+      .setSender("me")
+      .setRecipient("you")
+      .setAmount(100));
+  assertThat(database.get(123)).isEqualTo("me,you,100");
+}
+```
+
+- 하지만 이는 실제 사용자와는 다른 방식으로 테스트하는 것.
+- 시스템 외부에 노출되지 않은 내부 상태와 호출에 너무 의존.
+- 이는 깨지기 쉬운 테스트.
+- 내부 메서드 리네임, 헬퍼 클래스로 추출, 시리얼라이즈 포맷 변경 등의 리팩토링에 영향 받게 됨.
+- 실제 사용자에겐 아무런 영향 없는데도 말이다.
+- 아래와 같은 테스트는 public API에 대해서만 테스트하면서도 커버리지는 동일.
+
+```java
+@Test
+public void shouldTransferFunds() {
+  processor.setAccountBalance("me", 150);
+  processor.setAccountBalance("you", 20);
+
+  processor.processTransaction(newTransaction()
+      .setSender("me")
+      .setRecipient("you")
+      .setAmount(100));
+
+  assertThat(processor.getAccountBalance("me")).isEqualTo(50);
+  assertThat(processor.getAccountBalance("you")).isEqualTo(120);
+}
+
+@Test
+public void shouldNotPerformInvalidTransactions() {
+  processor.setAccountBalance("me", 50);
+  processor.setAccountBalance("you", 20);
+
+  processor.processTransaction(newTransaction()
+      .setSender("me")
+      .setRecipient("you")
+      .setAmount(100));
+
+  assertThat(processor.getAccountBalance("me")).isEqualTo(50);
+  assertThat(processor.getAccountBalance("you")).isEqualTo(20);
+}
+```
+
+- 오직 public API만 테스트하는 것은 실제 사용자와 같은 방식으로 코드에 접근하는 것.
+- 이는 명시적 계약으로 이뤄져 있으므로 좀 더 현실에 가깝고 덜 취약함.
+- 행위의 변경 없이 내부만 리팩토링하는 것의 영향으로부터 자유로움.
+- 참고로 여기서 말하는 "public API"란 코드를 소유하는 팀의 바깥에 제공되는 코드를 가리킴.
+- 이는 언어에서 제공하는 접근 제한자와는 완전히 들어맞지 않을 수 있음.
+- 이를 위한 3가지 규칙을 언급.
+  - 만약, 메서드나 클래스가 1~2개의 다른 클래스를 지원하기 위해 존재한다면, 지원하는 클래스의 테스트를 통해 테스트 되어야 함.
+  - 만약, 다른 사람이 패키지나 클래스를 그 소유자와 상의하지 않고 접근할 수 있다면, 직접 테스트해야 하는 단위로 간주할 수 있음.
+  - 만약, 패키지나 클래스가 그 소유자에 의해서만 접근되긴 하지만 범용적인 기능 지원을 위해 제공되는 것(예컨대 지원 라이브러리)이라면, 이는 유닛으로 간주하고 직접 테스트해야 함.
+- 구글에서도 엔지니어에게 구현 세부사항이 아니라 public API에 대해 테스트해야 함을 설득해야 할 경우가 종종 있음.
+- 코드가 전체 시스템에 미치는 영향을 파악하기 보다는, 본인이 작성한 코드에 대해서만 초점을 두고 테스트하는 것이 쉽기 때문에 이런 경향이 이해가 되기도 함.
+- 하지만, 이런 프랙틱스를 권장하는 것이 충분히 비용을 상쇄하고도 남을 정도로 가치 있음.
 
 # 16. Version Control and Branch Management
 
