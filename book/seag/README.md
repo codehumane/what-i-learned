@@ -2080,6 +2080,61 @@ public void displayTransactionResults_showsLowBalanceWarning() {
 }
 ```
 
+#### Structure tests to emphasize behaviors
+
+- 테스트를 행위에 묶는 사고는 테스트를 어떻게 구조화하는지에 큰 영향을 줌.
+- 결국 given, when, then 이야기이고 예시 코드는 아래와 같음.
+
+```java
+@Test
+public void transferFundsShouldMoveMoneyBetweenAccounts() {
+  // Given two accounts with initial balances of $150 and $20
+  Account account1 = newAccountWithBalance(usd(150));
+  Account account2 = newAccountWithBalance(usd(20));
+
+  // When transferring $100 from the first to the second account
+  bank.transferFunds(account1, account2, usd(100));
+
+  // Then the new account balances should reflect the transfer
+  assertThat(account1.getBalance()).isEqualTo(usd(50));
+  assertThat(account2.getBalance()).isEqualTo(usd(120));
+}
+```
+
+- 이 설명 수준이 매우 작은 테스트에도 꼭 필요한 것은 아님.
+- 띄어쓰기 만으로 충분할 때도 있으나 주석은 좀 더 이해를 돕는 도구.
+- 여러 단계의 프로세스에서 각 단계를 검증하고자 할 때는 when/then 블럭을 번갈아 가며 정의할 수도 있음.
+- 물론, 이 경우에도 한 번에 한 가지 행위만을 다뤄야 함.
+
+```java
+@Test
+public void shouldTimeOutConnections() {
+  // Given two users
+  User user1 = newUser();
+  User user2 = newUser();
+
+  // And an empty connection pool with a 10-minute timeout
+  Pool pool = newPool(Duration.minutes(10));
+
+  // When connecting both users to the pool
+  pool.connect(user1);
+  pool.connect(user2);
+
+  // Then the pool should have two connections
+  assertThat(pool.getConnections()).hasSize(2);
+
+  // When waiting for 20 minutes
+  clock.advance(Duration.minutes(20));
+
+  // Then the pool should have no connections
+  assertThat(pool.getConnections()).isEmpty();
+
+  // And each user should be disconnected
+  assertThat(user1.isConnected()).isFalse();
+  assertThat(user2.isConnected()).isFalse();
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
