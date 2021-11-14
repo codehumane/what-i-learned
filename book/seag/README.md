@@ -2335,6 +2335,83 @@ public void shouldNotRegisterBannedUsers() {
 }
 ```
 
+### Shared Values
+
+테스트에서 공유 값을 사용하는 것의 문제를 이야기.
+
+- 일단, 공유 값을 사용하는 테스트의 예시는 아래의 코드.
+- 공유 값을 사용하는 게 간결해 보일지 몰라도 여러 문제를 가짐.
+- 첫 번째로, 왜 특정 값이 테스트에 사용되었는지 이해하기 어려움.
+- `ACCOUNT_1`과 `ACCOUNT_2`가 뭔지를 스크롤해서 직접 확인해야 함.
+- 좀 더 설명적인 `CLOSED_ACCOUNT`, `ACCOUNT_WITH_LOW_BALANCE`가 좀 더 적절.
+- 그러나, 이 역시 테스트 되는 값의 세부사항을 알려주지는 못함.
+- 게다가 나중에 다른 엔지니어가 이 이름이 적절하지 않을 수 있는 곳에도 재사용할 가능성이 큼.
+
+```java
+private static final Account ACCOUNT_1 = Account.newBuilder()
+    .setState(AccountState.OPEN).setBalance(50).build();
+
+private static final Account ACCOUNT_2 = Account.newBuilder()
+    .setState(AccountState.CLOSED).setBalance(0).build();
+
+private static final Item ITEM = Item.newBuilder()
+    .setName("Cheeseburger").setPrice(100).build();
+
+// Hundreds of lines of other tests...
+
+@Test
+public void canBuyItem_returnsFalseForClosedAccounts() {
+  assertThat(store.canBuyItem(ITEM, ACCOUNT_1)).isFalse();
+}
+
+@Test
+public void canBuyItem_returnsFalseWhenBalanceInsufficient() {
+  assertThat(store.canBuyItem(ITEM, ACCOUNT_2)).isFalse();
+}
+```
+
+대안으로 헬퍼 메서드의 사용을 권장하고 있음.
+
+- 공유 상수를 사용하는 이유는 각 테스트에서 매번 값을 생성하는 게 산만할 수 있기 때문.
+- 아래 예시처럼 헬퍼 메서드를 사용하면 공유 값의 문제를 해결하면서도 산만함을 피할 수 있음.
+- 테스트의 관심사 파라미터만을 헬퍼 메서드로 넘기고, 그와 관련 없는 것들을 기본 값을 활용.
+
+```java
+# A helper method wraps a constructor by defining arbitrary defaults for
+# each of its parameters.
+def newContact(
+    firstName="Grace", lastName="Hopper", phoneNumber="555-123-4567"):
+  return Contact(firstName, lastName, phoneNumber)
+
+# Tests call the helper, specifying values for only the parameters that they 
+# care about.
+def test_fullNameShouldCombineFirstAndLastNames(self):
+  def contact = newContact(firstName="Ada", lastName="Lovelace")
+  self.assertEqual(contact.fullName(), "Ada Lovelace")
+
+// Languages like Java that don’t support named parameters can emulate them
+// by returning a mutable "builder" object that represents the value under
+// construction.
+private static Contact.Builder newContact() {
+  return Contact.newBuilder()
+    .setFirstName("Grace")
+    .setLastName("Hopper")
+    .setPhoneNumber("555-123-4567");
+}
+
+// Tests then call methods on the builder to overwrite only the parameters
+// that they care about, then call build() to get a real value out of the
+// builder.
+@Test
+public void fullNameShouldCombineFirstAndLastNames() {
+  Contact contact = newContact()
+      .setFirstName("Ada")
+      .setLastName("Lovelace")
+      .build();
+  assertThat(contact.getFullName()).isEqualTo("Ada Lovelace");
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
