@@ -2412,6 +2412,38 @@ public void fullNameShouldCombineFirstAndLastNames() {
 }
 ```
 
+### Shared Setup
+
+Junit의 `@BeforeEach`와 같은 공유된 셋업도 잘 사용해야 한다는 이야기.
+
+- 적절하게 쓰면 관련 없는 반복적인 코드를 숨겨 간결함에 도움.
+- 그러나 테스트에서 중요한 세부사항이 셋업에 가릴 수 있고 이는 완결성에 문제가 됨.
+- 셋업 메서드는 테스트에 필요한 협력객체나 값객체를 생성하되, 이들의 생성 방법이 테스트에서 중요하지 않을 때 유용함.
+- 여기서 주의해야 할 점은 셋업에서 명시된 값을 테스트 본체에서 의존하게 되는 것.
+- 이러면 이해하기 어려워지고 깨지기 쉬움.
+- 아래 코드가 바로 그 안 좋은 예.
+
+```java
+private NameService nameService;
+private UserStore userStore;
+
+@Before
+public void setUp() {
+  nameService = new NameService();
+  nameService.set("user1", "Donald Knuth");
+  userStore = new UserStore(nameService);
+}
+
+// [... hundreds of lines of tests ...]
+
+@Test
+public void shouldReturnNameFromService() {
+  // nameService.set("user1", "Margaret Hamilton"); // 숨겨진 의존성을 없애고 싶다면 이 주석을 해제
+  UserDetails user = userStore.get("user1");
+  assertThat(user.getName()).isEqualTo("Donald Knuth");
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
