@@ -2444,6 +2444,29 @@ public void shouldReturnNameFromService() {
 }
 ```
 
+### Shared Helpers and Validation
+
+- 헬퍼 메서드가 테스트에 필요한 값을 생성해 주면서,
+- 관심사가 아닌 것들은 숨겨줄 수 있다는 점에서 도움이 됨.
+- 하지만 다른 종류의 헬페 메서드는 위험.
+- 예를 들어 공통의 assertion을 해주는 검증 헬퍼 메서드.
+- 행위 검증과 거리도 있는 방식이고,
+- 테스트가 실제로 의도했던 것은 무엇인지 파악이 어려울 수도 있으며,
+- 한 가지 변경이 여러 테스트를 한 번에 깨뜨릴 수 있기도 함.
+- 대신, 한 번에 한 가지만 검증해 주는 헬퍼 validation은 유용.
+- 검증을 위해 조건문 등의 복잡성이 필요할 때 이를 헬퍼로 숨겨 테스트를 간결하게 유지.
+
+```java
+private void assertUserHasAccessToAccount(User user, Account account) {
+  for (long userId : account.getUsersWithAccess()) {
+    if (user.getId() == userId) {
+      return;
+    }
+  }
+  fail(user.getName() + " cannot access " + account.getName());
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
