@@ -2611,6 +2611,28 @@ class PaymentProcessorTest {
 - 테스트 더블을 사용하는 3가지 기법 소개.
 - 이들 차이를 알고 있으면 테스트 더블이 필요할 때 좀 더 적절하게 사용할 수 있음.
 
+### Faking
+
+- 실제 구현과 비슷하지만 프로덕션에서는 적합하지 않은 API의 가벼운 구현체.
+- 테스트 더블이 필요할 때 가장 좋은 접근법이 되곤 함.
+- 하지만 실제 구현체와 유사한 동작을 하는 페이크를 직접 만들어야 한다는 부담.
+- 작성할 당시 뿐만 아니라 행위가 바뀔 때도 함께 챙겨줘야 함.
+
+```java
+// Creating the fake is fast and easy.
+AuthorizationService fakeAuthorizationService =
+    new FakeAuthorizationService();
+AccessManager accessManager = new AccessManager(fakeAuthorizationService):
+
+// Unknown user IDs shouldn’t have access.
+assertFalse(accessManager.userHasAccess(USER_ID));
+
+// The user ID should have access after it is added to
+// the authorization service.
+fakeAuthorizationService.addAuthorizedUser(new User(USER_ID));
+assertThat(accessManager.userHasAccess(USER_ID)).isTrue();
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
