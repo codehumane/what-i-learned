@@ -2606,6 +2606,11 @@ class PaymentProcessorTest {
 }
 ```
 
+## Techniques for Using Test Doubles
+
+- 테스트 더블을 사용하는 3가지 기법 소개.
+- 이들 차이를 알고 있으면 테스트 더블이 필요할 때 좀 더 적절하게 사용할 수 있음.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
