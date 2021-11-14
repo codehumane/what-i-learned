@@ -2516,6 +2516,10 @@ private void assertUserHasAccessToAccount(User user, Account account) {
 - 하지만 이를 유지보수 하는 데 큰 노력이 필요했고, 버그는 잘 발견하지 못함.
 - 지금은 많은 엔지니어들이 목 객체 대신 실제를 사용하길 선호함.
 
+## Basic Conecepts
+
+테스트 더블의 효과적 사용법에 앞서, 기본적인 개념들 이야기.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
