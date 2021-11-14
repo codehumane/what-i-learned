@@ -2576,6 +2576,36 @@ PaymentProcessor paymentProcessor =
     new PaymentProcessor(new TestDoubleCreditCardService());
 ```
 
+### Mocking Frameworks
+
+- 모킹 프레임워크들은 테스트에서 테스트 더블을 만들기 쉽게 도와줌.
+- 객체를 목으로 대체할 수 있게 해주고, 테스트 안에서 인라인으로 행위를 지정할 수 있음.
+- 또한 매번 새로운 클래스를 정의하지 않아도 되므로 보일러플레이트 코드도 줄어듦.
+
+```java
+class PaymentProcessorTest {
+  ...
+  PaymentProcessor paymentProcessor;
+
+  // Create a test double of CreditCardService with just one line of code.
+  @Mock CreditCardService mockCreditCardService;
+  @Before public void setUp() {
+    // Pass in the test double to the system under test.
+    paymentProcessor = new PaymentProcessor(mockCreditCardService);
+  }
+  @Test public void chargeCreditCardFails_returnFalse() {
+    // Give some behavior to the test double: it will return false
+    // anytime the chargeCreditCard() method is called. The usage of
+    // “any()” for the method’s arguments tells the test double to
+    // return false regardless of which arguments are passed.
+    when(mockCreditCardService.chargeCreditCard(any(), any())
+       .thenReturn(false);
+    boolean success = paymentProcessor.makePayment(CREDIT_CARD, AMOUNT);
+    assertThat(success).isFalse();
+  }  
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
