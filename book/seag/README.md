@@ -2653,6 +2653,25 @@ when(mockAuthorizationService.lookupUser(USER_ID)).thenReturn(USER);
 assertThat(accessManager.userHasAccess(USER_ID)).isTrue();
 ```
 
+### Interaction Testing
+
+- 실제 함수의 구현체를 호출하지 않으면서,
+- 함수가 어떻게 호출되었는지를 검증하는 방법.
+- 함수가 올바르게 호출되지 않았다면 테스트는 실패해야 함.
+- 전혀 호출되지 않았다거나, 너무 많이 호출됐거나, 잘못된 인자로 호출되었는지 등을 검사.
+- stubbing과 비슷하게 목킹 프레임워크를 통해 이뤄짐.
+- 제한적으로 쓰지 않으면 깨지기 쉬운 테스트가 만들어짐.
+
+```java
+// Pass in a test double that was created by a mocking framework.
+AccessManager accessManager = new AccessManager(mockAuthorizationService);
+accessManager.userHasAccess(USER_ID);
+
+// The test will fail if accessManager.userHasAccess(USER_ID) didn’t call
+// mockAuthorizationService.lookupUser(USER_ID).
+verify(mockAuthorizationService).lookupUser(USER_ID);
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
