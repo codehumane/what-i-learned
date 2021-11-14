@@ -2520,6 +2520,39 @@ private void assertUserHasAccessToAccount(User user, Account account) {
 
 테스트 더블의 효과적 사용법에 앞서, 기본적인 개념들 이야기.
 
+### An Example Test Double
+
+이커머스 서비스에서 신용 카드 결제를 처리한다고 가정.
+
+```java
+class PaymentProcessor {
+  private CreditCardService creditCardService;
+  ...
+  boolean makePayment(CreditCard creditCard, Money amount) {
+    if (creditCard.isExpired()) { return false; }
+    boolean success =
+        creditCardService.chargeCreditCard(creditCard, amount);   
+    return success;
+  }
+}
+```
+
+테스트에서 실제 결제를 실행할 수는 없으니, 아래와 같이 테스트 더블을 만들고 테스트를 작성.
+
+```java
+class TestDoubleCreditCardService implements CreditCardService {
+ @Override
+ public boolean chargeCreditCard(CreditCard creditCard, Money amount) {
+   return true;
+ }
+}
+
+@Test public void cardIsExpired_returnFalse() {
+  boolean success = paymentProcessor.makePayment(EXPIRED_CARD, AMOUNT);
+  assertThat(success).isFalse();
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
