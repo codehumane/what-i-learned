@@ -2553,6 +2553,29 @@ class TestDoubleCreditCardService implements CreditCardService {
 }
 ```
 
+### Seams
+
+- 일단 testable은 단위 테스트를 작성할 수 있는 코드를 가리킴.
+- 그리고 seam은 테스트 더블을 사용해서 코드를 testable 하게 만드는 것을 가리킴.
+- 프로덕션 환경에서 사용되는 의존성 대신 다른 의존성을 사용할 수 있는 것.
+- DI는 seam을 위한 흔한 기법.
+- testable 코드를 위해서는 미리 고민이 필요함.
+- 처음에 고민하는 것이 나중에 testable을 위한 리팩토링보다 비용 적음.
+
+```java
+class PaymentProcessor {
+  private CreditCardService creditCardService;
+
+  PaymentProcessor(CreditCardService creditCardService) {
+    this.creditCardService = creditCardService;
+  }
+  ...
+}
+
+PaymentProcessor paymentProcessor =
+    new PaymentProcessor(new TestDoubleCreditCardService());
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
