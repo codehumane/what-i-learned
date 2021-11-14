@@ -2633,6 +2633,26 @@ fakeAuthorizationService.addAuthorizedUser(new User(USER_ID));
 assertThat(accessManager.userHasAccess(USER_ID)).isTrue();
 ```
 
+### Stubbing
+
+- `when(...).thenReturn(...)`을 생각하면 됨.
+- 어떤 값을 리턴하는지를 정확히 명시하는 것(리턴 값을 stub).
+- 새로운 클래스를 생성하지 않고 목킹 프레임워크를 활용해 작업.
+- 적용하기 쉬운 장점이 있는 반면 뒤에서 다루겠지만 제약 또한 가짐.
+
+```java
+// Pass in a test double that was created by a mocking framework.
+AccessManager accessManager = new AccessManager(mockAuthorizationService):
+
+// The user ID shouldn’t have access if null is returned.
+when(mockAuthorizationService.lookupUser(USER_ID)).thenReturn(null);
+assertThat(accessManager.userHasAccess(USER_ID)).isFalse();
+
+// The user ID should have access if a non-null value is returned.
+when(mockAuthorizationService.lookupUser(USER_ID)).thenReturn(USER);
+assertThat(accessManager.userHasAccess(USER_ID)).isTrue();
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
