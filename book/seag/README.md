@@ -2683,6 +2683,14 @@ verify(mockAuthorizationService).lookupUser(USER_ID);
 - 구글에서는 mockist가 스케일링을 어렵게 만든다고 판단.
 - classical testing에 대한 엄격한 가이드라인이 있다고 함.
 
+### Prefer Realism Over Isolation
+
+- 의존성들을 실제 구현체로 사용하는 것이 테스트를 좀 더 현실에 가깝게 만듦.
+- 이는 테스트 되고 있는 시스템이 정상적으로 동작할 것이라는 자신감으로 이어짐.
+- 만약 테스트 더블에 너무 많이 의존하고 있다면, 엔지니어는 통합테스트 또는 수동 기능 검증을 통해 이와 비슷한 수준의 확신을 얻을 수 있음.
+- 이런 부수적인 작업들은 개발을 느리게 만듦.
+- 느리다는 이유로 생략하거나 깜빡하고 빠뜨린다면 버그로 이어지기도.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
