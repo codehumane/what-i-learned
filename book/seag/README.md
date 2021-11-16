@@ -2691,6 +2691,19 @@ verify(mockAuthorizationService).lookupUser(USER_ID);
 - 이런 부수적인 작업들은 개발을 느리게 만듦.
 - 느리다는 이유로 생략하거나 깜빡하고 빠뜨린다면 버그로 이어지기도.
 
+#### CASE STUDY: @DONOTMOCK
+
+- 구글에서는 `@DoNotMock`이란 애노테이션이 선언된 클래스나 인터페이스가,
+- 목킹 되어있다면 정적 검사에서 알려준다고 함.
+- API 소유자가 이렇게 선언해 두는 것인데, 이는 소유자가 계속 변경을 안정적으로 하고 싶기 때문.
+
+```java
+@DoNotMock("Use SimpleQuery.create() instead of mocking.")
+public abstract class Query {
+  public abstract String getQueryValue();
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
