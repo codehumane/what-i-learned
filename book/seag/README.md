@@ -2704,6 +2704,13 @@ public abstract class Query {
 }
 ```
 
+### How to Decide When to Use a Real Implementation
+
+- 빠르고, 결정적이고<sup>deterministic</sup>, 단순한 의존성을 가진다면 실제 구현체를 선호.
+- 예컨대, 값 객체는 실제 구현체가 사용되어야 함.
+- 하지만 실제 구현체를 사용하는 게 불가능할 때가 있음.
+- 그리고 실행 시간, 결정성, 의존성 복잡도를 고려해야 함.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
