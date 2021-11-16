@@ -2672,6 +2672,17 @@ accessManager.userHasAccess(USER_ID);
 verify(mockAuthorizationService).lookupUser(USER_ID);
 ```
 
+## Real Implementations
+
+테스트 더블 보다 실제 구현체를 테스트에서 사용하는 것을 우선적으로 고려.
+
+- 테스트 더블은 물론 좋은 테스팅 도구.
+- 하지만, 프로덕션 환경에서 실행되는 구현체를 사용할 때, 테스트의 정확성은 더 올라감.
+- 구글에서 한 때 목킹 프레임워크의 과도한 사용으로, 테스트가 반복적인 코드로 오염되고, 이 반복적 코드는 실제 구현체와의 동기화가 점점 안 되고, 리팩토링 역시 점점 어려워짐.
+- 테스트에서 실제 구현체 사용을 선호하는 것을 classical testing, 목을 선호하는 것을 mockist testing이라 부르고 있음.
+- 구글에서는 mockist가 스케일링을 어렵게 만든다고 판단.
+- classical testing에 대한 엄격한 가이드라인이 있다고 함.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
