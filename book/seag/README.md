@@ -2803,6 +2803,29 @@ public class FakeFileSystem implements FileSystem {
 - 데이터베이스 API를 호출하는 각 클래스가 아니라,
 - 데이터베이스 API 그 자체에 대한 페이크가 존재해야 함.
 
+### The Fidelity of Fakes
+
+페이크의 중요한 고려 요소는 정확성<sup>fidelity</sup>.
+
+- 만약 페이크가 실제 구현체와 다르게 동작한다면, 페이크를 사용하는 테스트의 유용함을 떨어짐.
+- 페이크를 사용하는 테스트는 통과하지만 실제 구현체를 사용할 땐 실패할 것.
+- 물론 완벽한 정확도는 언제나 불가능.
+- 예를 들어, 페이크 데이터베이스는 메모리에 데이터를 저장하고,
+- 실제 데이터베이스는 하드 드라이브 저장소를 사용.
+- 하지만 정확도는 최대한 유지되어야 함.
+- 주어진 입력 값에 대해 동일한 결과를 반환하고 동일한 상태 변경을 해야 함.
+- 예컨대, `database.save(itemId)`을 호출했을 때, 존재하지 않는 ID라면 저장이 성공해야 하고, 존재하는 ID라면 에러를 일으켜야 함.
+
+그리고 이 정확성에 관해서 아래와 같이 이야기.
+
+> One way to think about this is that the fake must have perfect fidelity to the real implementation, but only from the perspective of the test.
+
+- 이와 관련해서 해싱 API를 사례로 들고 있음.
+- 테스트에서의 해싱 페이크는 실제 구현체와 동일한 값을 반환할 필요는 없음.
+- 그러나 반환 값이 고유해야 하는 계약은 지켜야 함.
+- 지키지 않아도 되는 정확성의 또 다른 사례로는 지연과 리소스 소비.
+- 물론 이런 제약을 테스트해야 하는 경우라면 페이크를 쓸 수 없을 수도.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
