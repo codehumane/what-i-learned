@@ -2750,7 +2750,36 @@ Foo foo = new Foo(new A(new B(new C()), new D()), new E(), ..., new Z());
 
 - 위와 같이 테스트 더블을 사용해서 간소화 시킬 수 있음.
 - 그러나 실제 구현체 사용이 단순함에 비해 더 큰 이점을 가져다 줌을 강조.
-- 그래서 프로덕션 코드에서와 같이 팩토리 메서드나 자동화된 의존성 주입을 
+- 그래서 프로덕션 코드에서와 같이 팩토리 메서드나 자동화된 의존성 주입을 활용하라고 함.
+
+## Faking
+
+```java
+// This fake implements the FileSystem interface. This interface is also
+// used by the real implementation.
+public class FakeFileSystem implements FileSystem {
+  // Stores a map of file name to file contents. The files are stored in
+  // memory instead of on disk since tests shouldn’t need to do disk I/O.
+  private Map<String, String> files = new HashMap<>();
+  @Override
+  public void writeFile(String fileName, String contents) {
+    // Add the file name and contents to the map.
+    files.add(fileName, contents);
+  }
+  @Override
+  public String readFile(String fileName) {
+    String contents = files.get(fileName);
+    // The real implementation will throw this exception if the
+    // file isn’t found, so the fake must throw it too.
+    if (contents == null) { throw new FileNotFoundException(fileName); }
+    return contents;
+  }
+}
+```
+
+- 실제 구현체를 테스트에서 사용할 수 없다면 페이크<sup>fake</sup> 사용이 종종 최선.
+- 페이크가 선호되는 이유는 실제 구현체와 비슷하게 동작하기 때문.
+- 즉, 테스트에서 상호작용하는 대상이 실제 구현체인지 페이크인지 알 수 없음.
 
 # 16. Version Control and Branch Management
 
