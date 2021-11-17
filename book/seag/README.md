@@ -2838,6 +2838,14 @@ public class FakeFileSystem implements FileSystem {
 - 실제 구현체의 결과와 페이크의 결과를 서로 비교하는 것으로 페이크 테스트가 가능.
 - 실제 구현체 사용의 단점이 페이크에 대한 테스트로만 한정되니 괜찮음.
 
+### What to Do If a Fake Is Not Available
+
+- 페이크가 없다면 일단 API 소유자에게 만들어 달라고 요청.
+- 그럴 수 없다면 직접 작성. API의 모든 호출을 감싸는 클래스를 하나 만들고, 여기에 대응하는 페이크 클래스를 만들면 됨.
+- 또는 실제 구현체를 사용한다고 결정할 수도 있음.
+- 또는 다른 테스트 더블 기법을 사용.
+- 트레이드 오프와 선택의 문제.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
