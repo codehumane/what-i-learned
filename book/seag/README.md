@@ -2781,6 +2781,11 @@ public class FakeFileSystem implements FileSystem {
 - 페이크가 선호되는 이유는 실제 구현체와 비슷하게 동작하기 때문.
 - 즉, 테스트에서 상호작용하는 대상이 실제 구현체인지 페이크인지 알 수 없음.
 
+### Why Are Fakes Important?
+
+- 실제 구현체를 사용할 때의 단점을 피하면서, 테스트를 효과적이고 빠르게 실행시킬 수 있음.
+- 또한, 다른 테스트 더블들에 비해 상대적으로 더 명확하고 덜 깨지기 쉬우며 더 효과적인 방법.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
