@@ -2846,6 +2846,21 @@ public class FakeFileSystem implements FileSystem {
 - 또는 다른 테스트 더블 기법을 사용.
 - 트레이드 오프와 선택의 문제.
 
+## Stubbing
+
+- 테스트를 위해 함수의 행위를 하드코딩하는 것.
+- 실제 구현체를 대체하는 빠르고 쉬운 방법.
+
+```java
+@Test public void getTransactionCount() {
+  transactionCounter = new TransactionCounter(mockCreditCardServer);
+  // Use stubbing to return three transactions.
+  when(mockCreditCardServer.getTransactions()).thenReturn(
+      newList(TRANSACTION_1, TRANSACTION_2, TRANSACTION_3));
+  assertThat(transactionCounter.getTransactionCount()).isEqualTo(3);
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
