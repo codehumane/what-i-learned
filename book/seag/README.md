@@ -2861,6 +2861,74 @@ public class FakeFileSystem implements FileSystem {
 }
 ```
 
+### The Dangers of Overusing Stubbing
+
+- 테스트에 스텁을 적용하는 것이 매우 쉬워서,
+- 실제 구현체를 쓰기 어려울 때 스텁을 쓰고 싶은 욕구가 커짐.
+- 하지만 스텁의 남용은 테스트 유지보수에 있어 심각한 생산성 손실을 가져옴.
+
+#### Tests become unclear
+
+- 일단, 스텁을 위한 별도의 코드를 작성해야 함.
+- 이는 테스트의 의도를 흐리게 만들고,
+- 테스트 대상이 되는 시스템 구현체에 익숙하지 않은 사람에겐 이해하기 어려움.
+- 스텁이 적절하지 않음을 알려주는 한 가지 신호는,
+- 특정 함수가 왜 스텁이 됐는지 이해하기 위해 시스템을 하나씩 살펴봐야 할 때.
+
+#### Tests become brittle
+
+- 스텁은 테스트 코드에 구현체의 세부사항을 누출시킴.
+- 프로덕션 코드가 바뀌면 테스트 코드 또한 함께 바꿔줘야 함.
+- 좋은 테스트란 이상적으로 테스트 대상의 행위가 바뀔 때만 바뀌어야 함.
+
+#### Tests become less effective
+
+- 스텁을 사용하면 스텁 된 함수가 실제 구현체와 유사한 행위를 하는지 보장할 방법이 없음.
+- 계약 세부사항이 중복되는 것이고 중복은 제대로 된 건지 확인이 어려움.
+- `when(stubCalculator.add(1, 2)).thenReturn(3);`
+- 또한 상태를 저장할 수 있는 방법도 없음. 어떤 경우에는 이것이 테스트를 어렵게 만듦.
+
+#### An example of overusing stubbing
+
+과도하게 스텁이 사용된 예.
+
+```java
+@Test public void creditCardIsCharged() {
+  // Pass in test doubles that were created by a mocking framework.
+  paymentProcessor =
+      new PaymentProcessor(mockCreditCardServer, mockTransactionProcessor);
+  // Set up stubbing for these test doubles.
+  when(mockCreditCardServer.isServerAvailable()).thenReturn(true);
+  when(mockTransactionProcessor.beginTransaction()).thenReturn(transaction);
+  when(mockCreditCardServer.initTransaction(transaction)).thenReturn(true);
+  when(mockCreditCardServer.pay(transaction, creditCard, 500))
+      .thenReturn(false);
+  when(mockTransactionProcessor.endTransaction()).thenReturn(true);
+  // Call the system under test.
+  paymentProcessor.processPayment(creditCard, Money.dollars(500));
+  // There is no way to tell if the pay() method actually carried out the
+  // transaction, so the only thing the test can do is verify that the
+  // pay() method was called.
+  verify(mockCreditCardServer).pay(transaction, creditCard, 500);
+}
+```
+
+그리고 스텁을 사용하지 않은 테스트로 재작성하면 아래와 같음. 테스트가 좀 더 간결해지고, 구현 세부사항이 테스트에 드러나지 않음. 특별한 준비 작업도 필요 없음.
+
+```java
+@Test public void creditCardIsCharged() {
+  paymentProcessor = 
+      new PaymentProcessor(creditCardServer, transactionProcessor);
+  // Call the system under test.
+  paymentProcessor.processPayment(creditCard, Money.dollars(500));
+  // Query the credit card server state to see if the payment went through.
+  assertThat(creditCardServer.getMostRecentCharge(creditCard))
+      .isEqualTo(500);
+}
+```
+
+하지만 우리는 실제 신용 카드 서버가 호출되길 원하지 않으므로, 페이크 신용 카드 서버가 더 적절한 선택이 될 수 있음. 페이크를 쓸 수 없다면 실제 구현체 사용을 고려. 다만, 목 서버 같은 것을 두면 됨(실행 시간이 다소 늘어나긴 할 것).
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
