@@ -2939,6 +2939,11 @@ public class FakeFileSystem implements FileSystem {
 - 하지만, 스텁이 적절한 경우라고 하더라도, 실제 구현체나 페이크 객체를 여전히 선호해야 함.
 - 이들은 구현 세부사항을 노출시키지 않고 높은 정확성을 보장함.
 
+## Interaction Testing
+
+- 실제 구현체 함수를 호출하지 않으면서, 그 함수가 어떻게 호출되는지를 검사하는 테스트.
+- 목 프레임워크를 활용하면 이것이 매우 쉽지만 필요한 경우에 제한해서 사용하는 것이 중요.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
