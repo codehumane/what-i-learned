@@ -2984,6 +2984,13 @@ public class FakeFileSystem implements FileSystem {
 - 그리고 이런 노출들이 테스트를 깨지기 쉽게 만듦.
 - 이런 이유로 이를 농담처럼 [change-detector tests](https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html)라고 부르기도.
 
+### When Is Interaction Testing Appropriate?
+
+- 실제 구현체나 페이크를 쓸 수 없는 경우라면, 상호작용 테스팅을 통해 기본적인 수준의 안정감이라도 얻을 수 있음.
+- 호출 횟수나 순서가 달라지면 행위가 바뀌지만 상태를 통해 검사하기는 어려운 경우에도 유용할 수 있음.
+- 예컨대, 캐싱을 통해 DB로의 호출을 줄이고 싶을 때, DB 객체가 딱 1번만 호출되고 말았는지 검사할 수 있음.
+- 하지만 상호작용 테스팅이 적절해 보이는 경우라고 하더라도, 혹시 통합 테스트처럼 좀 더 큰 범위의 테스트를 통해 검사할 수 없는지 검토.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
