@@ -2991,6 +2991,72 @@ public class FakeFileSystem implements FileSystem {
 - 예컨대, 캐싱을 통해 DB로의 호출을 줄이고 싶을 때, DB 객체가 딱 1번만 호출되고 말았는지 검사할 수 있음.
 - 하지만 상호작용 테스팅이 적절해 보이는 경우라고 하더라도, 혹시 통합 테스트처럼 좀 더 큰 범위의 테스트를 통해 검사할 수 없는지 검토.
 
+### Best Practices for Interaction Testing
+
+#### Prefer to perform interaction testing only for state-changing functions
+
+함수 호출은 크게 2가지 종류.
+
+- State-changing: `sendEmail()`, `saveRecord()`와 같이 부수 효과를 가지는 것.
+- Non-state-changing: `getUser()`, `readFile()`처럼 부수 효과가 없는 것. 단지 정보를 반환.
+
+일반적으로 상태가 바뀌는 함수에 대해서만 상호작용 테스팅을 해야 함. 이런 저런 설명을 하고 있는데 어찌보면 당연한 이야기.
+
+```java
+@Test public void grantUserPermission() {
+  UserAuthorizer userAuthorizer =
+      new UserAuthorizer(mockUserService, mockPermissionDatabase);
+  when(mockPermissionService.getPermission(FAKE_USER)).thenReturn(EMPTY);
+  
+  // Call the system under test.
+  userAuthorizer.grantPermission(USER_ACCESS);
+  
+  // addPermission() is state-changing, so it is reasonable to perform
+  // interaction testing to validate that it was called.
+  verify(mockPermissionDatabase).addPermission(FAKE_USER, USER_ACCESS);
+  
+  // getPermission() is non-state-changing, so this line of code isn’t
+  // needed. One clue that interaction testing may not be needed:
+  // getPermission() was already stubbed earlier in this test.
+  verify(mockPermissionDatabase).getPermission(FAKE_USER);
+}
+```
+
+#### Avoid overspecification
+
+- 한 번에 한 가지 행위만 검사하라는 행위 기반 테스팅 다시 언급.
+- 이는 상호작용 테스팅에서도 마찬가지.
+- 간결함과 명확성을 가져다 줄 뿐만 아니라, 행위가 바뀔 때 테스트로의 영향을 국소화.
+
+```java
+// Overspecified interaction tests
+@Test public void displayGreeting_renderUserName() {
+  when(mockUserService.getUserName()).thenReturn("Fake User");
+  userGreeter.displayGreeting(); // Call the system under test.
+  
+  // The test will fail if any of the arguments to setText() are changed.
+  verify(userPrompt).setText("Fake User", "Good morning!", "Version 2.1");
+  
+  // The test will fail if setIcon() is not called, even though this
+  // behavior is incidental to the test since it is not related to
+  // validating the user name.
+  verify(userPrompt).setIcon(IMAGE_SUNSHINE);
+}
+
+// Well-specified interaction tests
+@Test public void displayGreeting_renderUserName() {
+  when(mockUserService.getUserName()).thenReturn("Fake User");
+  userGreeter.displayGreeting(); // Call the system under test.
+  verify(userPrompter).setText(eq("Fake User"), any(), any());
+}
+@Test public void displayGreeting_timeIsMorning_useMorningSettings() {
+  setTimeOfDay(TIME_MORNING);
+  userGreeter.displayGreeting(); // Call the system under test.
+  verify(userPrompt).setText(any(), eq("Good morning!"), any());
+  verify(userPrompt).setIcon(IMAGE_SUNSHINE);
+}
+```
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
