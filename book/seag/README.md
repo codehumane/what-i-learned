@@ -2944,6 +2944,46 @@ public class FakeFileSystem implements FileSystem {
 - 실제 구현체 함수를 호출하지 않으면서, 그 함수가 어떻게 호출되는지를 검사하는 테스트.
 - 목 프레임워크를 활용하면 이것이 매우 쉽지만 필요한 경우에 제한해서 사용하는 것이 중요.
 
+### Prefer State Testing Over Interaction Testing
+
+- 상태 테스팅을 통해 코드를 테스트하는 것을 선호한다는 반복되는 이야기.
+- 반환 되는 값이나 다른 상태를 통해 대상을 검사하는 것.
+
+```java
+// State Testing
+@Test public void sortNumbers() {
+  NumberSorter numberSorter = new NumberSorter(quicksort, bubbleSort);
+  // Call the system under test.
+  List sortedList = numberSorter.sortNumbers(newList(3, 1, 2));
+  // Validate that the returned list is sorted. It doesn’t matter which
+  // sorting algorithm is used, as long as the right result was returned.
+  assertThat(sortedList).isEqualTo(newList(1, 2, 3));
+}
+
+// Interaction Testing
+@Test public void sortNumbers_quicksortIsUsed() {
+  // Pass in test doubles that were created by a mocking framework.
+  NumberSorter numberSorter =
+      new NumberSorter(mockQuicksort, mockBubbleSort);
+
+  // Call the system under test.
+  numberSorter.sortNumbers(newList(3, 1, 2));
+
+  // Validate that numberSorter.sortNumbers() used quicksort. The test
+  // will fail if mockQuicksort.sort() is never called (e.g., if
+  // mockBubbleSort is used) or if it’s called with the wrong arguments.
+  verify(mockQuicksort).sort(newList(3, 1, 2));
+}
+```
+
+- 위 예제는 `sortNumbers`에 대한 상태 테스팅과 상호작용 테스팅.
+- 상호작용 테스트팅에서는 숫자들이 정렬이 됐는지 확인할 수 없음.
+- 상호작용 테스팅에서는 함수의 행위를 가정할 뿐이지만,
+- 상태 테스팅에서는 그 가정을 실제로 검증할 수 있음.
+- 한편, 스텁과 마찬가지로, 구현 세부사항이 테스트에 노출된다는 단점도 있음.
+- 그리고 이런 노출들이 테스트를 깨지기 쉽게 만듦.
+- 이런 이유로 이를 농담처럼 [change-detector tests](https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html)라고 부르기도.
+
 # 16. Version Control and Branch Management
 
 - VCS는 필수라고 생각.
