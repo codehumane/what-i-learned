@@ -2051,3 +2051,10 @@ public class FakeFileSystem implements FileSystem {
   verify(userPrompt).setIcon(IMAGE_SUNSHINE);
 }
 ```
+
+# 14. Larger Testing
+
+- 구글에서는 실제로 큰 규모의 테스트가 많이 있음.
+- 이는 소프트웨어 엔지니어링 건강에 있어 필수인, 리스크 완화 전략의 중요한 부분을 차지함.
+- 하지만 이 세트스들이 가치있고 리소스 잡아 먹는 하마가 되지 않기 위한 일이 쉬운 것은 아님.
+- 이 챕터에서는 큰 규모의 테스트가 무엇이고, 언제 수행해야 하며, 이들을 유지하는 베스트 프랙틱스들을 다룸.
