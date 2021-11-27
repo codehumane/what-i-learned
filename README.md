@@ -61,6 +61,7 @@
 - [엘레강트 오브젝트](book/elegant-objects/README.md)
 - [레거시 코드 활용 전략](book/wewlc/README.md)
 - [Software Engineering at Google](book/seag/README.md)
+- [Netty in Action](https://github.com/codehumane/what-i-learned/blob/master/book/netty-in-action/README.md)
 
 # DOCUMENT
 
