@@ -21,3 +21,41 @@ Java의 스레딩 모델.
 - 불필요한 생성/삭제 비용을 줄이긴 했지만, 컨텍스트 스위칭 비용까지 줄이지는 못함.
 - 이 컨텍스트 스위칭 비용은 스레드가 늘어나고 큰 부하 상황에서 문제가 됨.
 - 이에 더해, 전체적인 복잡성이나 애플리케이션의 동시성 요구사항으로 스레드 관련 문제들이 종종 일어났음.
+
+## 7.2 Interface EventLoop
+
+이벤트 루프는 커넥션 생애주기 동안 일어나는 이벤트를 다루기 위해 작업들을 실행. 네티에서는 `io.netty.channel.EventLoop` 인터페이스에 대응하며, 기본 아이디어를 코드로 표현하면 아래와 같음.
+
+```java
+while (!terminated) {
+    // blocks until there are events that are ready to run
+    List<Runnable> readyEvents = blockUntilEventsReady();
+
+    // loops over and runs all the events
+    for (Runnable ev: readyEvents) {
+        ev.run();
+    }
+}
+```
+
+네티의 `EventLoop`는 2가지 핵심 API인 동시성과 네트워킹을 사용.
+
+- `io.netty.util.concurrent`: JDK의 `java.util.concurrent` 패키지를 기반으로 해서, 스레드 익스큐터들을 제공.
+- `io.netty.channel`: 첫 번째 클래스들을 확장해서 Channel 이벤트들과 상호작용.
+
+이 `EventLoop` 클래스 계층을 그림으로 나타내면 아래와 같음.
+
+![EventLoop class hierarchy](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/07fig02_alt.jpg)
+
+`EventLoop` 동작 좀 더 설명.
+
+- 이 모델에서 `EventLoop`는 정확히 1개의 스레드를 이용.
+- 작업(`Runnable` 또는 `Callable`)들은 그것이 즉각적인 실행이든 스케쥴링된 실행이든 `EventLoop` 구현체에게 직접 제출됨.
+- 설정과 가용한 코어에 따라, 리소스 사용의 최적화를 목적으로 여러 `EventLoop`들이 생성될 수 있음.
+- 그리고 하나의 `EventLoop`는 여러 `Channel`들을 서비스함.
+
+이벤트/작업 실행 순서 이야기.
+
+- 이벤트와 작업들은 FIFO 순서로 실행됨.
+- 이는 바이트 컨텐츠들을 정확한 순서로 처리되게 하여,
+- 데이터 충돌의 가능성을 줄여줌.
