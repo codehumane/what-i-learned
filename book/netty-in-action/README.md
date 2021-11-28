@@ -130,3 +130,42 @@ executor.shutdown();
 ```
 
 `ScheduledExecutorService` API가 직관적이긴 하나, 큰 부하에서는 성능 비용을 감수해야 함. 다음 절에서는 Netty가 어떻게 같은 작업을 더 효율적으로 하는지 보여줌.
+
+### 7.3.2 Scheduling tasks using EventLoop
+
+`ScheduledExecutorService`는 한계가 있음.
+
+- 풀 관리의 일환으로 추가 스레드들이 생성될 수 있음.
+- 많은 작업들이 공격적으로 스케쥴링 된 경우 이것이 병목이 될 수 있음.
+- Netty는 채널의 `EventLoop`를 이용해서 이 문제를 극복함.
+
+```java
+Channel ch = ...
+ScheduledFuture<?> future = ch.eventLoop().schedule(
+    new Runnable() {
+        @Override
+        public void run() {
+            System.out.prinlnt("60 seconds later");
+        }
+    },
+    60,
+    TimeUnit.SECONDS
+);
+```
+
+`EventLoop`을 통한 스케쥴링 설명.
+
+- 채널에 할당된 `EventLoop`가 60초 경과 후 `Runnable` 인스턴스를 실행.
+- Netty `EventLoop`는 `ScheduledExecutorService`를 확장했으므로,
+- `schedule()`과 `scheduleAtFixedRate()`과 같은 JDK의 모든 메서드 사용 가능.
+- 실행을 취소하거나 확인하고 싶으면 반환된 `ScheduledFuture`를 사용.
+
+```java
+// 작업을 스케쥴링하고 ScheduledFuture를 획득
+ScheduledFuture<?> future = ch.eventLoop().scheduleAtFixedRate(...);
+boolean mayInterruptIfRunning = false;
+// 작업을 취소해서 다시 실행되는 것을 방지
+future.cancel(mayInterruptIfRunning);
+```
+
+코드만 봐서는 어떻게 성능적 이점을 얻는지 잘 알 수 없음. 이는 뒤이어 설명.
