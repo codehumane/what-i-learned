@@ -191,3 +191,31 @@ future.cancel(mayInterruptIfRunning);
 
 - 블럭킹 호출 또는 오래 걸리는 작업을 반드시 수행해야 한다면,
 - 전담 `EventExecutor`를 사용할 것을 권장.
+
+### 7.4.2 EventLoop/thread allocation
+
+- 채널을 위한 I/O와 이벤트를 서비스하는 `EventLoop`들은 `EventLoopGroup`에 속함.
+- `EventLoop`들이 생성되고 할당되는 방식은 전송 구현체에 따라 달라짐.
+
+**Asynchronous transports**
+
+- 비동기 구현체들은 단지 몇 개의 `EventLoop`들을 사용.
+- 그리고 현재 모델에서는 이들이 `Channel`들 간에 공유됨.
+- 이는 많은 `Channel`들을 가능한 적은 수의 `Thread`로 지원할 수 있게 함.
+- `Channel` 별로 `Thread`를 할당하지 않음.
+
+![EventLoop allocation for non-blocking transports](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/07fig04_alt.jpg)
+
+- `EventLoopGroup`은 새로 생성된 `Channel`을 `EventLoop`로 할당하는 책임을 짐.
+- 현재 구현에서는 라운드 로빈으로 분배를 조정하고 있음.
+- 같은 `EventLoop`가 여러 `Channel`에 할당됨.
+- `Channel`이 일단 한 번 `EventLoop`에 할당되면, `Channel`은 자신의 생애 동안 같은 `EventLoop`를 사용.
+- 이는 `ChannelHandler` 구현체들의 스레드 안정성이나 동기화 문제로부터 자유롭게 함.
+
+**Blocking transports**
+
+![EventLoop allocation of blocking transports](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/07fig05_alt.jpg)
+
+- OIO(old blocking I/O) 같은 다른 전송의 설계는 조금 다름.
+- 하나의 `EventLoop`(그리고 그것의 `Thread`)가 각 `Channel`에 할당됨.
+- 각 채널의 I/O 이벤트들은 단지 하나의 스레드(`Channel`의 `EventLoop`)에 의해 처리됨을 보장.
