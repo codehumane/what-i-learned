@@ -88,3 +88,45 @@ while (!terminated) {
 - 흔한 사례 중 하나는 커넥션이 살아있는지 확인을 위해 주기적으로 heartbeat를 보내는 것.
 - 이어지는 절에서 Java API와 netty `EventLoop`를 통해 어떻게 작업을 스케쥴링 하는지 알아봄.
 - 그리고 Netty 구현체의 내부를 알아보며 이것의 단점과 한계도 논의.
+
+### 7.3.1 JDK scheduling API
+
+Java 스케쥴링 방식의 변화.
+
+- Java 5 이전에는 작업 스케쥴링이 `java.util.Timer` 위에 이뤄짐.
+- 이는 백그라운드 `Thread`를 사용하며 표준 스레드의 한계를 그대로 가짐.
+- 이후 JDK는 `java.util.concurrent`를 제공함.
+- 여기에는 `ScheduledExecutorService` 인터페이스를 정의하고 있음.
+
+아래는 `java.util.concurrent.Executors`의 팩터리 메서드들. 앞의 2개는 스레드 갯수를 지정하여 스레드 풀을 사용하고, 뒤의 것들은 단일 스레드를 사용.
+
+- `newScheduledThreadPool(int corePoolSize`
+- `newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory)`
+- `newSingleThreadScheduledExecutor()`
+- `newSingleThreadScheduledExecutor(ThreadFactory threadFactory)`
+
+다음은 `ScheduledExecutorService`를 이용해서 60초 지연 뒤에 작업을 수행하는 코드.
+
+```java
+// 10개 스레드 풀로 ScheduledExecutorService 생성
+ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
+
+// Runnable을 생성하고 이를 나중에 실행하도록 스케쥴링
+ScheduledFuture<?> future = executor.schedule(
+    new Runnable() {
+        @Override
+        public void run() {
+            // 스택에 찍힐 메시지
+            System.out.println("60 seconds later");
+        }
+    },
+    // 60초 뒤로 작업을 스케쥴링
+    60,
+    TimeUnit.SECONDS
+);
+...
+// 작업이 완료되면 ScheduledExecutorService를 종료하여 리소스 해제
+executor.shutdown();
+```
+
+`ScheduledExecutorService` API가 직관적이긴 하나, 큰 부하에서는 성능 비용을 감수해야 함. 다음 절에서는 Netty가 어떻게 같은 작업을 더 효율적으로 하는지 보여줌.
