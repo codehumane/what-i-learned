@@ -1,3 +1,55 @@
+# Chapter 1. Netty-asynchronous and event-driven
+
+## 1.1 Networking in Java
+
+처음의 `java.net` API는 아래처럼 블럭킹 함수만 지원했음.
+
+```java
+// A new ServerSocket listenes for connection request on the specified port.
+ServerSocket serverSocket = new ServerSocket(portNumber);
+
+// accept() call blocks until a connection is established.
+Socket clientSocket = serverSocket.accept();
+
+// Stream objects are derived from those of the Socket.
+BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+String request, response;
+// Processing loop begins.
+while ((request = in.readLine()) != null) {
+
+    // If the client has sent "Done", the processing loop is exited.
+    if ("Done".equals(request) {
+        break;
+    }
+
+    // The request is passed to the server's processing method.
+    response = processRequest(request);
+
+    // The server's response is sent to the client.
+    out.println(response);
+
+// The processing loop continues.
+}
+```
+
+- 위 코드는 한 번에 한 커넥션만 다룸.
+- 동시에 여러 클라이언트를 다루기 위해서는, 새로운 클라이언트 `Socket` 마다 새로운 스레드를 할당해야 함.
+
+![Multiple connections using blocking I/O](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/01fig01.jpg)
+
+- 이 방식에서는 많은 스레드들이 휴면 상태일 수 있음.
+- 단지 입출력 데이터가 나타나길 기대하면서 말이다.
+- 이는 리소스의 낭비.
+- 한편, 각 스레드는 스택 메모리 할당을 필요로 함.
+- 이는 OS에 따라서 64KB에서 1MB까지 그 기본 크기가 다양.
+- 그리고 JVM이 많은 스레드를 물리적으로 지원할 수 있다 하더라도 컨텍스트 스위칭 비용이 문제가 됨.
+- 만약, 동시에 많은 클라이언트를 대응해야 하는 경우라면 이 문제들은 심각해짐.
+
+## 1.2 Introducing Netty
+
+
 
 # Chapter 7. EventLoop and threading model
 
