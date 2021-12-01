@@ -54,6 +54,17 @@ while ((request = in.readLine()) != null) {
 - 시스템 이벤트 통지 API를 이용해서 논블럭킹 소켓 집합을 등록해 두면, 읽기나 쓰기 준비가 된 데이터가 있는지 알 수 있음.
 - 자바는 2002년에 JDK 1.4 패키지 `java.nio`를 통해 논블럭킹 I/O를 지원하기 시작.
 
+### 1.1.2 Selectors
+
+![Non-blocking I/O using Selector](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/01fig02.jpg)
+
+- 위 그림은 소켓 별로 하나씩 스레드가 할당될 때의 단점을 극복한 논블럭킹 설계.
+- `java.nio.channels.Selector` 클래스는 자바 논블럭킹 I/O 구현의 핵심.
+- 이는 이벤트 통지 API를 이용해서 논블럭킹 소켓들 중 I/O 준비가 된 것을 식별함.
+- 읽기/쓰기 연산의 완료 상태를 언제든 확인할 수 있으므로 단일 스레드가 여러 커넥션을 동시에 다룰 수 있는 것.
+- 이렇게 적은 스레드만으로 여러 커넥션을 관리할 수 있으므로, 메모리 관리나 컨텍스트 스위칭 면에서 부하를 줄일 수 있음.
+- 다뤄야 하는 I/O가 없을 때 스레드들은 다른 작업에 할당 될 수 있음.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
