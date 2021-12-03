@@ -78,6 +78,14 @@ while ((request = in.readLine()) != null) {
 - `Future`s
 - Events and handlers
 
+### 1.3.1 Channels
+
+> A channel represents an open connection to an entity such as a hardware device, a file, a network socket, or a program component that is capable of performing one or more distinct I/O operations, for example reading or writing. As specified in the Channel interface, channels are either open or closed, and they are both asynchronously closeable and interruptible.
+
+- [javadoc의 channel description](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/package-summary.html#package.description)으로 설명하고 있음.
+- 그리고 책에서는 `Channel`을 인바운드/아웃바운드 데이터의 운송 수단이라고 생각하자고 함.
+- 열리거나 닫힐 수 있고, 연결되거나 연결이 끊어진 상태일 수 있음.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
@@ -103,7 +111,7 @@ Java의 스레딩 모델.
 
 ## 7.2 Interface EventLoop
 
-이벤트 루프는 커넥션 생애주기 동안 일어나는 이벤트를 다루기 위해 작업들을 실행. 네티에서는 `io.netty.channel.EventLoop` 인터페이스에 대응하며, 기본 아이디어를 코드로 표현하면 아래와 같음.
+이벤트 루프는 커넥션 생애주기 동안 일어나는 이벤트를 다루기 위해 작업들을 실행. Netty에서는 `io.netty.channel.EventLoop` 인터페이스에 대응하며, 기본 아이디어를 코드로 표현하면 아래와 같음.
 
 ```java
 while (!terminated) {
@@ -117,7 +125,7 @@ while (!terminated) {
 }
 ```
 
-네티의 `EventLoop`는 2가지 핵심 API인 동시성과 네트워킹을 사용.
+Netty의 `EventLoop`는 2가지 핵심 API인 동시성과 네트워킹을 사용.
 
 - `io.netty.util.concurrent`: JDK의 `java.util.concurrent` 패키지를 기반으로 해서, 스레드 익스큐터들을 제공.
 - `io.netty.channel`: 첫 번째 클래스들을 확장해서 Channel 이벤트들과 상호작용.
