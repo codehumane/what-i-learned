@@ -155,6 +155,18 @@ future.addListener(new ChannelFutureListener() {
 });
 ```
 
+### 1.3.4 Events and handlers
+
+- Netty는 I/O 연산의 상태 변화를 알리기 위해 구별된 이벤트를 사용.
+    - Active or inactive connections
+    - Data reads
+    - User events
+    - Error events
+    - Opening or closing a connection to a remote peer
+    - Writing or flushing data to a socket
+- 그리고 사용자는 핸들러 구현체를 만들어 등록하면 이벤트를 전달 받을 수 있음.
+- Netty는 미리 정의된 다양한 핸들러들을 제공하고 있음.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
