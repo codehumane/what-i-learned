@@ -65,6 +65,19 @@ while ((request = in.readLine()) != null) {
 - 이렇게 적은 스레드만으로 여러 커넥션을 관리할 수 있으므로, 메모리 관리나 컨텍스트 스위칭 면에서 부하를 줄일 수 있음.
 - 다뤄야 하는 I/O가 없을 때 스레드들은 다른 작업에 할당 될 수 있음.
 
+## 1.2 Introducing Netty
+
+일반적인 이야기들
+
+## 1.3 Netty's core components
+
+아래 4가지 컴포넌트 다룸. 이들은 리소스, 로직, 통지 등 서로 다른 타입의 구성 요소.
+
+- `Channel`s
+- Callbacks
+- `Future`s
+- Events and handlers
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
