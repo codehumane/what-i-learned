@@ -102,6 +102,59 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 }
 ```
 
+### 1.3.3 Futures
+
+- 연산이 완료되면 애플리케이션에 이를 통지할 수 있는 방법을 제공함.
+- 비동기 연산 결과에 대한 placeholder 처럼 동작하는 객체.
+- 즉, 미래의 언젠가 완료가 될 것이고 결과에 접근하게 해 줄 것을 의미.
+- Netty는 자바의 `java.util.concurrent.Future` 대신 직접 구현체를 만들어 제공.
+- `ChannelFuture`는 1개 이상의 `ChannelFutureListener` 인스턴스를 등록할 수 있는 메서드를 추가로 제공.
+- 리스너의 콜백 메서드인 `operationComplete()`은 연산이 완료될 때 호출됨.
+- 이 때 리스너는 연산이 성공했는지 실패했는지 판별할 수 있음.
+- 후자라면 `Throwable`을 얻을 수 있음.
+- 요컨대, `ChannelFutureListener` 통지 메커니즘을 활용하면, 연산 완료 여부를 수동으로 확인하지 않아도 됨.
+- Netty의 각 아웃바운드 I/O 연산은 `ChannelFuture`를 반환함.
+- 즉, 어떤 것도 블럭 되지 않음.
+
+```java
+Channel channel = ...;
+// 비동기로 원격에 연결하며 블럭되지 않는다.
+ChannelFuture future = channel.connect(
+    new InetSocketAddress("192.xxx", 25)
+);
+```
+
+- 아래는 `ChannelFutureListener`를 이용한 예시 코드.
+
+```java
+Channel channel = ...;
+// 비동기로 원격에 연결하며 블럭되지 않는다
+ChannelFuture future = channel.connect(
+    new InetSocketAddress("192.xxx", 25)
+);
+
+// ChannelFutureListener를 등록해서 연산 완료됐을 때 통지받고자 함
+future.addListener(new ChannelFutureListener() {
+
+    @Override
+    public void operationComplete(ChannelFuture future) {
+        // 연산의 상태를 확인
+        if (future.isSuccess()) {
+            // 성공이라면 ByteBuf를 만들어 데이터를 담는다
+            ByteBuf buffer = Unpooled.copiedBuffer("Hello", Charset.defaultCharset());
+            // 원격으로 데이터를 비동기로 보내고 ChannelFuture를 얻음
+            ChannelFuture wf = future.channel().writeAndFlush(buffer);
+            // ...
+        } else {
+            // 에러가 있다면 원인을 명시하기 위해 Throwable에 접근한다
+            Throwable cause = future.cause();
+            cause.printStackTrace();
+        }
+    }
+
+});
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
