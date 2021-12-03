@@ -86,6 +86,22 @@ while ((request = in.readLine()) != null) {
 - 그리고 책에서는 `Channel`을 인바운드/아웃바운드 데이터의 운송 수단이라고 생각하자고 함.
 - 열리거나 닫힐 수 있고, 연결되거나 연결이 끊어진 상태일 수 있음.
 
+### 1.3.2 Callbacks
+
+- 쉽게 말하면 메서드.
+- 다른 메서드에 참조로 제공됨.
+- Netty는 이벤트 핸들링에 콜백들을 사용.
+
+```java
+public class ConnectHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // 새로운 커넥션이 맺어지면 `channelActive`가 호출된다.
+        System.out.println("Client " + ctx.channel().remoteAddres() + " connected");
+    }
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
