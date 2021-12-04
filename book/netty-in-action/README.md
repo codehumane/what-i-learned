@@ -336,6 +336,68 @@ public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 }
 ```
 
+### 2.4.2 Bootstrapping the client
+
+- 서버 부트스트랩핑과 매우 유사한데, 리스닝 포트를 바인딩하는 대신 호스트와 포트 파라미터를 이용해서 원격 주소에 연결함.
+
+```java
+public class EchoClient {
+
+    private final String host;
+    private final int port;
+
+    public EchoClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    public void start() throws Exception {
+        EventLoopGroup group = new NioEventLoopGroup();
+
+        try {
+            // Creates Bootstrap
+            final Bootstrap b = new Bootstrap();
+
+            // Specifies EventLoopGroup to handle client events; NIO implementation is needed
+            b.group(group)
+                    // Channel type is the one for NIO transport
+                    .channel(NioSocketChannel.class)
+                    // Sets the server's InetSocketAddress
+                    .remoteAddress(new InetSocketAddress(host, port))
+                    // Adds and EchoClientHandler to the pipeline when a Channel is created
+                    .handler(new ChannelInitializer<SocketChannel>() {
+
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new EchoClientHandler());
+                        }
+                    });
+
+            // Connects to the remote peer; waits until the connect completes
+            final ChannelFuture f = b.connect().sync();
+
+            // Blocks until the Channel closes
+            f.channel().closeFuture().sync();
+        } finally {
+            // Shuts down the thread pools and the release of all resources
+            group.shutdownGracefully().sync();
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.err.println("Usage: " + EchoClient.class.getSimpleName() + " <host> <port>");
+            return;
+        }
+
+        final String host = args[0];
+        int port = Integer.parseInt(args[1]);
+        new EchoClient(host, port).start();
+    }
+    
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
