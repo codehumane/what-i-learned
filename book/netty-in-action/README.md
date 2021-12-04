@@ -180,6 +180,13 @@ future.addListener(new ChannelFutureListener() {
 - 클라이언트가 연결을 맺으면, 서버로 1개 이상의 메시지를 전송.
 - 그러면 다시 각 클라이언트로 동일한 메시지가 다시 돌아옴.
 
+## 2.3 Writing the Echo server
+
+모든 Netty 서버는 다음을 필요로 함.
+
+- 적어도 1개의 `ChannelHandler`: 클라이언로부터 받은 데이터를 처리하는 서버측 컴포넌트.
+- 부트스트랩핑: 서버를 구성하는 초기 구동 코드. 서버를 특정 포트로 바인딩하고, 연결 요청을 기다리게 됨(listen).
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
