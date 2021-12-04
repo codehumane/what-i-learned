@@ -227,6 +227,75 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 - 애플리케이션은 `ChannelHandler`를 구현하거나 상속해서, 이벤트 생애주기를 훅킹해서 커스텀 애플리케이션 로직을 실행시킬 수 있음.
 - 아키텍처 적으로, `ChannelHandler`는 비즈니스 로직을 네트워킹 코드와 디커플링 할 수 있게 도와줌.
 
+### 2.3.2 Bootstrapping the server
+
+이제 다음을 포함하는 서버 부트스트랩핑을 할 수 있음.
+
+- 포트를 바인딩해서 서버가 들어오는 연결 요청을 받아줄 준비를 한다.
+- `Channel` 설정을 통해 `EchoServerHandler` 인스턴스에게 인바운드 메시지를 통지한다.
+
+```java
+public class EchoServer {
+
+    private final int port;
+
+    public EchoServer(int port) {
+        this.port = port;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 1) {
+            System.err.println("Usage: " + EchoServer.class.getSimpleName() + " <port>");
+        }
+
+        int port = Integer.parseInt(args[0]);
+        new EchoServer(port).start();
+    }
+
+    public void start() throws Exception {
+        final EchoServerHandler serverHandler = new EchoServerHandler();
+
+        // Creates the EventLoopGroup
+        final NioEventLoopGroup group = new NioEventLoopGroup();
+
+        try {
+            // Creates the ServerBootstrap
+            final ServerBootstrap b = new ServerBootstrap();
+
+            b.group(group)
+                    // Specifies the use of an NIO transport Channel
+                    .channel(NioServerSocketChannel.class)
+                    // Sets the socket address using the specified port
+                    .localAddress(new InetSocketAddress(port))
+                    // Adds an EchoServerHandler to the Channel's ChannelPipeline
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        // EchoServerHandler is @Sharable so we can always use the same one
+                        @Override
+                        protected void initChannel(SocketChannel sc) throws Exception {
+                            sc.pipeline().addLast(serverHandler);
+                        }
+                    });
+
+            // Binds the server asynchronously;
+            // sync() waits for the bind to complete
+            final ChannelFuture f = b.bind().sync();
+
+            // Gets the CloseFuture of the Channel and blocks the current thread until it's complete
+            f.channel().closeFuture().sync();
+        } finally {
+            // Shuts down the EventLoopGroup, releasing all resources
+            group.shutdownGracefully().sync();
+        }
+    }
+}
+```
+
+- 위 코드에서 `ChannelInitializer`가 핵심이라고 함.
+- 새로운 연결이 수락되면, 새로운 자식 `Channel`이 만들어지고,
+- `ChannelInitializer`는 `EchoServerHandler`의 인스턴스를 `Channel`의 `ChannelPipeline`으로 추가.
+- 앞서 얘기한 것처럼, 핸들러는 인바운드 메시지에 대한 통지를 받게 됨.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
