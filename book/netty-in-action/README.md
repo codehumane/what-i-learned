@@ -296,6 +296,15 @@ public class EchoServer {
 - `ChannelInitializer`는 `EchoServerHandler`의 인스턴스를 `Channel`의 `ChannelPipeline`으로 추가.
 - 앞서 얘기한 것처럼, 핸들러는 인바운드 메시지에 대한 통지를 받게 됨.
 
+## 2.4 Writing an Echo client
+
+Echo 클라이언트는 아래의 일들을 함.
+
+1. 서버에 연결
+2. 1개 이상의 메시지 전송
+3. 각 메시지에 대해 서버로부터 똑같은 메시지를 수신
+4. 연결 해제
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
