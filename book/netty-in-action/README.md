@@ -305,6 +305,37 @@ Echo 클라이언트는 아래의 일들을 함.
 3. 각 메시지에 대해 서버로부터 똑같은 메시지를 수신
 4. 연결 해제
 
+### 2.4.1 Implementing the client logic with ChannelHandlers
+
+- 서버처럼 클라이언트도 `ChannelInboundHandler`를 이용해서 데이터를 처리함.
+- 여기서는 `SimpleChannelInboundHandler`의 `channelActive()`, `channelRead()`, `exceptionCaught()`를 오버라이딩.
+
+```java
+@ChannelHandler.Sharable // Marks this class as one whose instances can be shared among channels
+public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // When notified that the channel is active, sends a message
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!", StandardCharsets.UTF_8));
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        // Logs a dump of the received message
+        System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        // On exception, logs the error and closes channel
+        cause.printStackTrace();
+        ctx.close();
+    }
+
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
