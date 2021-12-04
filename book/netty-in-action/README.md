@@ -187,6 +187,46 @@ future.addListener(new ChannelFutureListener() {
 - 적어도 1개의 `ChannelHandler`: 클라이언로부터 받은 데이터를 처리하는 서버측 컴포넌트.
 - 부트스트랩핑: 서버를 구성하는 초기 구동 코드. 서버를 특정 포트로 바인딩하고, 연결 요청을 기다리게 됨(listen).
 
+### 2.3.1 ChannelHandlers and business logic
+
+- Echo 서버는 들어오는 메시지에 응답해야 하므로,
+- `ChannelInboundHandler` 인터페이스를 구현해야 함.
+- 이 인터페이스는 인바운드 이벤트에 대해 동작하는 메서드들을 정의.
+- 우리가 작성할 애플리케이션에서는 이 중 몇 개의 메서드만 필요하므로,
+- `ChannelInboundHandlerAdapter`만을 서브클래싱하는 것으로 충분.
+- 이 클래스는 `ChannelInboundHandler`의 기본 구현들을 제공하고 있음.
+- 우리가 관심 있는 메서드는 `channelRead()`, `channelReadComplete()`, `exceptionCaught()`.
+
+```java
+@ChannelHandler.Sharable
+public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        final ByteBuf in = (ByteBuf) msg;
+        System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8));
+        ctx.write(in); // Writes the received message to the sender without flushing the outbound messages
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER) // Flushes pending messages to the sender without flushing the outbound messages
+                .addListener(ChannelFutureListener.CLOSE);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        // Closes the channel
+        ctx.close();
+    }
+}
+```
+
+- `ChannelHandler`들은 서로 다른 종류의 이벤트에 의해 작동됨.
+- 애플리케이션은 `ChannelHandler`를 구현하거나 상속해서, 이벤트 생애주기를 훅킹해서 커스텀 애플리케이션 로직을 실행시킬 수 있음.
+- 아키텍처 적으로, `ChannelHandler`는 비즈니스 로직을 네트워킹 코드와 디커플링 할 수 있게 도와줌.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
