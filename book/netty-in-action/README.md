@@ -167,6 +167,19 @@ future.addListener(new ChannelFutureListener() {
 - 그리고 사용자는 핸들러 구현체를 만들어 등록하면 이벤트를 전달 받을 수 있음.
 - Netty는 미리 정의된 다양한 핸들러들을 제공하고 있음.
 
+# Chapter 2. Your first Netty application
+
+## 2.2 Netty client/server overview
+
+![Echo client and server](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/02fig01.jpg)
+
+- 위 그림의 동작을 할 Echo 클라이언트와 서버를 작성할 예정.
+- 여러 클라이언트가 동시에 서버로 연결됨.
+- 지원하는 클라이언트의 수 제한은 시스템 리소스 가용성에 달려 있음.
+- 클라이언트와 서버의 동작은 단순.
+- 클라이언트가 연결을 맺으면, 서버로 1개 이상의 메시지를 전송.
+- 그러면 다시 각 클라이언트로 동일한 메시지가 다시 돌아옴.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
