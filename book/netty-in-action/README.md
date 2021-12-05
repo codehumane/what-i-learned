@@ -425,6 +425,22 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
     - `NioSctpChannel`
     - `NioSocketChannel`
 
+### 3.1.2 Interface EventLoop
+
+- `EventLoop`는 Netty의 핵심 추상화.
+- 커넥션 생애주기 동안 일어나는 이벤트들을 핸들링 함.
+- 아래 그림은 `Channel`, `EventLoop`, `Thread`, `EventLoopGroup` 간의 관계를 표현.
+
+![Channels, EventLoops, and EventLoopGroup](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/03fig01.jpg)
+
+- `EventLoopGroup`은 1개 이상의 `EventLoop`를 가짐.
+- `EventLoop`는 자신의 생애주기 동안 1개의 `Thread`에 바인딩 됨.
+- `EventLoop`는 모든 I/O 이벤트를 자신에게 할당 된 스레드에서 처리함.
+- `Channel`은 자신의 생애주기 동안 1개의 `EventLoop`에 등록됨.
+- 1개의 `EventLoop`는 1개 이상의 `Channel`에 할당됨.
+- 여기서 주목할 점은, `Channel`의 I/O가 같은 스레드에서 실행된다는 것.
+- 이는 동기화의 필요를 가상적으로 제거해 줌.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
