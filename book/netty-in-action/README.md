@@ -398,6 +398,14 @@ public class EchoClient {
 }
 ```
 
+# Chapter 3. Netty components and design
+
+- 좀 더 추상화 된 수준에서 바라보면, Netty는 2가지 관심사를 다루고 있음.
+- 이는 기술<sup>technical</sup>, 아키텍처<sup>architectural</sup>라고 부를 수도 있음.
+- 첫 번째로, Java NIO에 기반한 비동기 그리고 이벤트 주도 구현으로, 높은 부하 속에서도 애플리케이션의 성능과 확장성을 보장.
+- 두 번째로, 애플리케이션 로직을 네트워크 로직으로부터 디커플링하는 디자인 패턴을 수용함. 이는 개발을 쉽게 만드는 한편, 코드의 테스트성, 모듈화, 재사용성을 극대화 함.
+- 이번 장에서는 개별 모듈을 좀 더 자세히 살펴보면서, 이런 관심사가 어떻게 녹아졌는지도 다룰 예정.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
