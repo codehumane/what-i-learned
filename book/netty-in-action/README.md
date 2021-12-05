@@ -449,6 +449,10 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - 이 클래스의 `addListener()` 메서드는 `ChannelFutureListener`를 등록할 수 있게 해주며,
 - 이 리스너를 통해 연산 완료를 통지받을 수 있음.
 
+## 3.2 ChannelHandler and ChannelPipeline
+
+데이터의 흐름을 관리하고, 애플리케이션 로직을 실행시키는 컴포넌트들을 살펴볼 차례.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
