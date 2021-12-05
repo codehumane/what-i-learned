@@ -441,6 +441,14 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - 여기서 주목할 점은, `Channel`의 I/O가 같은 스레드에서 실행된다는 것.
 - 이는 동기화의 필요를 가상적으로 제거해 줌.
 
+### 3.1.3 Interface ChannelFuture
+
+- Netty의 모든 I/O 연산은 비동기.
+- 연산이 즉각 반환을 안 할 수 있기에, 나중에 따로 결과를 받을 수 있는 방법이 필요.
+- 이를 위해 Netty는 `ChannelFuture`를 제공.
+- 이 클래스의 `addListener()` 메서드는 `ChannelFutureListener`를 등록할 수 있게 해주며,
+- 이 리스너를 통해 연산 완료를 통지받을 수 있음.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
