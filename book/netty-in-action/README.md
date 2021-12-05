@@ -461,6 +461,51 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - 이는 인바운드 이벤트를 수신하고 애플리케이션의 비즈니스 로직이 이 데이터를 핸들링 할 수 있게 해 줌.
 - 또한, 연결된 클라이언트에 응답 데이터를 바로 전송할 수도 있음.
 
+### 3.2.2 Interface ChannelPipeline
+
+`ChannelPipeline` 간단 소개.
+
+- `ChannelHandler` 체인의 컨테이너를 제공.
+- 체인을 따라 인바운드/아웃바운드 이벤트를 전파시키는 API를 정의.
+
+`ChannelHandler`가 `ChannelPipeline`에 설치되는 과정은 아래와 같음.
+
+- `ChannelInitializer` 구현체가 `ServerBootstrap`에 등록됨.
+- `ChannelInitializer.initChannel()`이 호출되면, `ChannelInitializer`가 커스텀 `ChannelHandler` 집합을 파이프라인에 설치.
+- `ChannelInitializer`는 스스로를 `ChannelPipeline`에서 제거함.
+
+`ChannelHandler` 좀 더 설명.
+
+- `ChannelHandler`는 광범위한 용법을 지원하기 위해 설계됨.
+- `ChannelPipeline`의 이벤트를 처리하는 코드라면 어느 것이든 담을 수 있는 범용적 컨테이너.
+- 애플리케이션의 부트스트랩핑이나 초기화 시 `ChannelHandler`들이 등록됨.
+- 이들은 이벤트를 받고, 자신들의 로직을 실행하고, 체인의 다음 핸들러에게 데이터를 넘겨줌.
+- 이런 식으로 파이프라인에 이벤트들이 흘러다님.
+- 실행되는 핸들러의 순서는 등록된 순서와 동일.
+
+인바운드/아웃바운드 데이터 흐름 속에서 `ChannelHandler`와 `ChannelPipeline`의 관계.
+
+![ChannelPipeline with inbound and outbound ChannelHandlers](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/03fig03_alt.jpg)
+
+- 위 그림은 Netty 애플리케이션에서의 인바운드/아웃바운드 데이터 흐름을 구별해서 보여줌.
+- 같은 파이프라인 안에 인바운드와 아웃바운드 핸들러 모두가 등록될 수 있음도 보여줌.
+- 인바운드 이벤트가 읽히면, 파이프라인 head 부터 시작해서 첫 번째 `ChannelInboundHandler`에게 전달됨.
+- 이 핸들러는 데이터를 수정할 수도 있고 아닐 수도 있음.
+- 그리고 다음 핸들러에게도 차례로 전달됨.
+- 마지막으로 데이터는 파이프라인의 tail에 다다르게 되며, 모든 처리는 종료됨.
+- 아웃바운드 데이터 이동도 이와 유사하게 생각하면 됨.
+
+`ChannelHandlerContext` 소개.
+
+- `ChannelHandler`가 `ChannelPipeline`에 추가될 때, `ChannelHandlerContext`가 전달됨.
+- 이는 `ChannelHandler`와 `ChannelPipeline` 간의 바인딩을 나타냄.
+- 주로 아웃바운드 데이터를 쓰기 위해 활용됨.
+- Netty에는 메시지를 보내는 방법이 2가지가 있는데,
+- 그 중 1가지가 바로 `ChannelHandler`에 연결된 `ChannelHandlerContext`에게 데이터를 쓰는 것.
+- 나머지 1가지는 `Channel`에 직접적으로 데이터를 쓰는 것.
+- `ChannelHandlerContext`에 대한 쓰기는 파이프라인의 다음 핸들러에게 메시지가 전달되고,
+- `Channel`에 대한 쓰기는 파이프라인의 tail로 메시지가 전달되게 함.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
