@@ -406,6 +406,14 @@ public class EchoClient {
 - 두 번째로, 애플리케이션 로직을 네트워크 로직으로부터 디커플링하는 디자인 패턴을 수용함. 이는 개발을 쉽게 만드는 한편, 코드의 테스트성, 모듈화, 재사용성을 극대화 함.
 - 이번 장에서는 개별 모듈을 좀 더 자세히 살펴보면서, 이런 관심사가 어떻게 녹아졌는지도 다룰 예정.
 
+## 3.1 Channel, EventLoop, and ChannelFuture
+
+Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세히 다룸.
+
+- **Channel** - 소켓
+- **EventLoop** - 제어 흐름, 멀티스레딩, 동시성
+- **ChannelFuture** - 비동기 통지
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
