@@ -414,6 +414,17 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - **EventLoop** - 제어 흐름, 멀티스레딩, 동시성
 - **ChannelFuture** - 비동기 통지
 
+### 3.1.1 Interface Channel
+
+- Java 기반의 네트워킹에서 가장 핵심 요소는 `Socket` 클래스.
+- Netty의 `Channel` 인터페이스는 `Socket`을 직접 다룰 때의 복잡성을 크게 감소시켜 줌.
+- 더불어, `Channel`은 미리 정의된 여러 클래스 계층들의 최상위 루트.
+    - `EmbeddedChannel`
+    - `LocalServerChannel`
+    - `NioDatagramChannel`
+    - `NioSctpChannel`
+    - `NioSocketChannel`
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
