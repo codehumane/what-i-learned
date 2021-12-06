@@ -518,6 +518,18 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
     - `ChannelOutboundHandlerAdapter`
     - `ChannelDuplexHandlerAdapter`
 
+### 3.2.4 Encoders and decoders
+
+- Netty에서 메시지를 주고 받을 때 데이터 변환이 일어남.
+- 인바운드 메시지는 byte에서 다른 포맷으로 디코드 되고, 아웃바운드 메시지는 반대로 인코드 됨.
+- 다양한 요구에 맞게 여러 추상 클래스들이 기본으로 제공됨.
+- 일반적으로 베이스 클래스들은 `ByteToMessageDecoder`나 `MessageToByteEncode`의 이름과 비슷함.
+- 조금 특이한 것으로는 구글 프로토콜 버퍼를 지원하기 위한 `ProtobufEncode`, `ProtobufDecoder` 정도.
+- 인바운드 데이터를 위해서 `channelRead` 메서드와 이벤트가 오버라이딩 됨.
+- 이 메서드는 인바운드 채널로부터 각 메시지가 읽힐 때마다 호출됨.
+- 그리고 나서 제공된 디코더의 `decode()` 메서드를 실행시키고, 디코딩 된 바이트를 다음 `ChannelInboundHandler`에게 전달.
+- 아웃바운드 메시지는 반대 방향으로 처리됨.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
