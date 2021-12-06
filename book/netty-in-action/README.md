@@ -530,6 +530,13 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - 그리고 나서 제공된 디코더의 `decode()` 메서드를 실행시키고, 디코딩 된 바이트를 다음 `ChannelInboundHandler`에게 전달.
 - 아웃바운드 메시지는 반대 방향으로 처리됨.
 
+### 3.2.5 Abstract class SimpleChannelInboundHandler
+
+- 일반적으로는 애플리케이션이 핸들러를 사용해서 디코딩 된 메시지를 수신하고 이 데이터에 대해 비즈니스 로직을 적용함.
+- 이런 `ChannelHandler`를 만들기 위해서는 단지 `SimpleChannelInboundHandler<T>` 베이스 클래스를 상속하면 됨.
+- 제일 중요한 메서드는 `channelRead0(ChannelHandlerContext,T)`임.
+- 구현은 온전히 구현자에게 달려 있긴 하지만 현재 I/O 스레드가 블럭킹 되면 안되는 제약이 있음.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
