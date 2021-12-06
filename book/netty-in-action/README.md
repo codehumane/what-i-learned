@@ -506,6 +506,18 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 - `ChannelHandlerContext`에 대한 쓰기는 파이프라인의 다음 핸들러에게 메시지가 전달되고,
 - `Channel`에 대한 쓰기는 파이프라인의 tail로 메시지가 전달되게 함.
 
+### 3.2.3 A closer look at ChannelHandlers
+
+- `ChannelHandler`은 여러 타입이 있으며, 슈퍼 클래스가 누구냐에 따라 그 기능이 결정됨.
+- Netty는 어댑터 클래스의 형태로 기본 핸들러 구현체들을 제공.
+- 이들은 체인의 다음 핸들러에게 이벤트를 전달해 주는 일을 함.
+- 어플리케이션의 프로세싱 로직 개발을 쉽게 만들어 주는 것이 목적.
+- 아래의 4가지는 커스텀 핸들러를 만들 때 주로 사용하는 어댑터들.
+    - `ChannelHandlerAdapter`
+    - `ChannelInboundHandlerAdapter`
+    - `ChannelOutboundHandlerAdapter`
+    - `ChannelDuplexHandlerAdapter`
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
