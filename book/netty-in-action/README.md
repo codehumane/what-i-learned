@@ -635,6 +635,22 @@ executor.execute(writer);
 executor.execute(writer);
 ```
 
+## 4.3 Included transports
+
+- 기본으로 제공되는 전송들로 NIO, Epoll, OIO, Local, Embedded가 있음.
+- 다른 것은 관심 없고 Epoll만 정리.
+
+### 4.3.2 Epoll - native non-blocking transport for Linux
+
+- 고성능 네트워킹 플랫폼으로써의 리눅스 중요성이 커짐에 따라,
+- 확장성 높은 I/O 이벤트-통지를 지원하는 epoll 등이 개발됨.
+- 이 API는 2002년부터 사용 가능했고,
+- 기존의 POSIX select와 poll 시스템 호출보다 더 나은 성능을 보임.
+- 지금은 리눅스에서 논블럭킹 네트워킹의 표준으로 자리 잡음.
+- 아래 그림은 NIO의 셀렉트와 상태 변경 처리 과정인데, Epoll에서도 개념적으로 동일.
+
+![Selecting and processing state changes](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/04fig02_alt.jpg)
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
