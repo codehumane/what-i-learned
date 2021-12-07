@@ -556,6 +556,85 @@ Netty의 네트워킹 추상화를 표현하는 아래 3개 클래스를 상세�
 
 ![Server with two EventLoopGroups](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/03fig04_alt.jpg)
 
+# Chapter 4. Transports
+
+## 4.2 Transport API
+
+전송 API에서 핵심은 `Channel` 인터페이스이며, 모든 I/O 연산에 사용됨. [javadoc에서 Netty의 Channel 페이지](https://javadoc.io/static/io.netty/netty/4.0.0.Alpha3/io/netty/channel/Channel.html)에 보면 아래 그림이 나옴.
+
+![](https://javadoc.io/static/io.netty/netty/4.0.0.Alpha3/io/netty/channel/Channel.png)
+
+- `Channel`은 `ChannelPipeline`과 `ChannelConfig`를 가짐.
+- `ChannelConfig`는 `Channel`에 관한 모든 설정을 가지며, hot changes를 지원.
+- `Channel`은 고유하므로, `java.lang.Comparable`의 서브인터페이스로 선언하는 것은, 순서를 보장하기 위한 의도.
+- `Channel`이 반환하는 해시코드가 겹치면 `AbstractChannel`에서의 `compareTo()`가 에러를 던짐.
+- `ChannelPipeline`은 여러 `ChannelHandler` 인스턴스들을 가짐.
+- 이들은 상태 변경을 처리하고 데이터를 프로세싱하는 애플리케이션 로직들을 담고 있음.
+
+`ChannelHandler`의 일반적 쓰임은 아래의 것들.
+
+- 데이터 형태 변환
+- 예외 알림
+- `Channel`의 활성화/비활성화 상태 알림
+- `Channel`이 `EventLoop`에 등록되거나 제거될 때 알림
+- 사용자 정의 이벤트 알림
+
+`Channel`의 메서드로는 다음의 것들이 제공됨.
+
+| Method name | Description |
+| ----------- | ----------- |
+| eventLoop | 채널에 할당된 이벤트루프 반환 |
+| pipeline | 채널에 할당된 채널 파이프라인 반환 |
+| isActive | 채널의 활성화 상태 여부. 여기서 활성화는 전송이 구체적으로 뭔지에 따라 다름. 소켓 전송의 경우, 원격으로의 연결이 성공하면 활성화로 간주함 |
+| localAddress | 로컬 소켓 주소 반환 |
+| remoteAddres | 원격 소켓 주소 반환 |
+| write | 원격으로 데이터 쓰기. 이 데이터는 채널 파이프라인으로 전달되고 플러시 되기 전까지 큐에 적재됨 |
+| flush | 쓰여진 데이터를 전송 |
+| writeAndFlush | write, flush를 함께 호출하는 편의성 메서드 |
+
+Channel에 쓰기 작업 예시.
+
+```java
+Channel channel = ...
+// ByteBuf를 생성하고 쓰기를 위한 데이터를 담아둠.
+ByteBuf buf = Unpooled.copiedBuffer("your data", CharsetUtil.UTF_8);
+// 데이터를 쓰고 플러시.
+ChannelFuture cf = channel.writeAndFlush(buf);
+// ChannelFutureListener를 추가해서 쓰기 완료 시 알림 받음.
+cf.addListener(new ChannelFutureListener() {
+    @Override
+    public void operationComplete(ChannelFuture channelFuture) {
+        if (future.isSuccess()) {
+            // 에러 없이 연산 성공했음을 로깅
+            println("Write successful");
+        } else {
+            // 에러 로깅
+            println("Write error");
+            future.cause().printStacktrace();
+        }
+    }
+});
+```
+
+`Channel` 구현체는 스레드 세이프. 아래 예시 코드처럼, 여러 스레드에서 쓰기 가능.
+
+```java
+final Channel channel = ...
+final ByteBuf buf = Unpooled
+    .copiedBuffer("your data", UTF_8)
+    .retain();
+
+Runnable writer = new Runnable() {
+    @Override
+    public void run() {
+        channel.write(buf.duplicate());
+    }
+};
+Executor executor = Executors.newCachedThreadPool();
+executor.execute(writer);
+executor.execute(writer);
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
