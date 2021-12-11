@@ -676,6 +676,11 @@ Netty의 데이터 핸들링을 위한 API는 아래 2가지를 통해 이뤄짐
 - 레퍼런스 카운팅 지원.
 - 풀링 지원.
 
+## 5.2 Class ByteBuf-Netty's data container
+
+- 모든 네트워크 통신은 순차적 바이트들의 이동을 포함.
+- Netty의 `ByteBuf`는 이런 데이터를 효율적이고 쉽게 다루게 도와줌.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
