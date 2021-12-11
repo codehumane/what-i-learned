@@ -786,6 +786,14 @@ for (int i = 0; i < buffer.capacity(); i++) {
 }
 ```
 
+### 5.3.2 Sequential access indexing
+
+- 읽기와 쓰기용 인덱스를 가지는 `ByteBuf`와 다르게, JDK의 `ByteBuffer`는 인덱스를 1개만 가짐.
+- 이것이 읽기와 쓰기 모드 간의 전환 시 `filp()`을 호출해야 하는 이유.
+- 아래 그림은 2개 인덱스로 `ByteBuf`를 3영역으로 나눈 것.
+
+![ByteBuf internal segmentation](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/05fig03_alt.jpg)
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
