@@ -771,6 +771,21 @@ for (ByteBuf buf : messageBuf) {
 }
 ```
 
+## 5.3 Byte-level operations
+
+### 5.3.1 Random access indexing
+
+- `ByteBuf`의 인덱싱도 0부터 시작.
+- 아래는 인덱스를 통해 바이트를 얻어내는 기본 접근.
+
+```java
+ByteBuf buffer = ...;
+for (int i = 0; i < buffer.capacity(); i++) {
+    byte b = buffer.getByte(i);
+    System.out.println((char) b);
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
