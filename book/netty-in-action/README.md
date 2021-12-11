@@ -695,6 +695,82 @@ Netty의 데이터 핸들링을 위한 API는 아래 2가지를 통해 이뤄짐
 - 이 때 더 읽기를 시도한다면 `IndexOutOfBoundsException` 발생.
 - `ByteBuf`의 최대 용량도 지정할 수 있음. 기본 값은 `Integer.MAX_VALUE`.
 
+### 5.2.2 ByteBuf usage patterns
+
+- `ByteBuf`의 몇 가지 용법들을 소개.
+- 읽기/쓰기 인덱스를 가진 바이트의 배열이라는 점을 상기하며 보는 것이 도움이 될 것.
+
+**Heap buffers**
+
+- 가장 많이 쓰이는 `ByteBuf` 패턴.
+- JVM 힙 영역에 데이터를 저장하는 것.
+- backing array라고도 불림.
+- 빠른 할당/해제 가능.
+- 레거시 데이터를 다룰 때 적합.
+
+```java
+ByteBuf heapBuf = ...;
+
+// Cheks whether ByteBuf has a backing array...
+if (heapBuf.hasArray()) {
+    // ...if so, gets a reference to the array
+    byte[] array = heapBuf.array();
+    // Calculates the offset of the first byte
+    int offset = heapBuf.arrayOffset() + heapBuf.readerIndex();
+    // Gets the number of readable bytes
+    int length = heapBuf.readableBytes();
+    // Calls your method using array, offset, and length as parameters
+    handleArray(array, offset, length);
+}
+```
+
+**Direct buffers**
+
+- JDK 1.4부터 NIO는 JVM 구현체가 메모리를 네이티브 호출로 할당할 수 있게 함.
+- 버퍼 컨텐츠를 중간 단계의 버퍼로 복제하는 것을 피하게 해줌.
+- [ByteBuffer javadoc](https://docs.oracle.com/javase/8/docs/api/java/nio/ByteBuffer.html)에는 아래와 같이 명시되어 있음.
+
+> The contents of direct buffers will reside outside of the normal garbage-collected heap
+
+- 따라서 네트워크 데이터 전송에서 이상적인 방법.
+- 주요 단점은 힙 기반 버퍼에 비해 할당과 해제 비용이 더 크다는 것.
+- 또한, 레거시 코드에서는 데이터 복제를 피할 수 없기도 함.
+
+**Composite buffers**
+
+- 여러 `ByteBuf`들에 대한 애그리거트 뷰를 제공.
+- Netty에서 `CompositeByteBuf`가 여기에 해당.
+- 이를 통해 `ByteBuf` 인스턴스를 필요할 때 추가/삭제할 수 있음.
+- 설명을 위해, 헤더와 바디, 이렇게 두 부분으로 구성된 메세지가 있다고 해보자.
+- 이들은 각각 애플리케이션의 서로 다른 모듈에서 생산되며, 메시지가 전송될 때 합쳐진다.
+- 만약, 여러 메시지 전송에 같은 바디가 재사용된다면, `CompositeByteBuf`를 이용해 중복된 버퍼 할당을 줄일 수 있음.
+- 같은 상황을 JDK의 `ByteBuffer`를 이용하면 아래와 같음.
+
+```java
+ByteBuffer[] message = new ByteBuffer[]{header, body};
+ByteBuffer message2 = ByteBuffer.allocate(header.remaining() + body.remaining());
+message2.put(header);
+message2.put(Body);
+message2.flip();
+```
+
+- `CompositeByteBuf`를 이용하면 아래와 같음.
+
+```java
+CompositeByteBuf messageBuf = Unpooled.compositeBuffer();
+ByteBuf headerBuf = ...;
+ByteBuf bodyBuf = ...;
+// Appends ByteBuf instances to the CompositeByteBuf
+messageBuf.addComponents(headerBuf, bodyBuf);
+....
+// Removes ByteBuf at index 0 (first component) = remove the header
+messageBuf.removeComponent(0);
+// Loops over all the ByteBuf instances;
+for (ByteBuf buf : messageBuf) {
+    System.out.println(buf.toString());
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
