@@ -681,6 +681,20 @@ Netty의 데이터 핸들링을 위한 API는 아래 2가지를 통해 이뤄짐
 - 모든 네트워크 통신은 순차적 바이트들의 이동을 포함.
 - Netty의 `ByteBuf`는 이런 데이터를 효율적이고 쉽게 다루게 도와줌.
 
+### 5.2.1 How it works
+
+- `ByteBuf`는 2개의 구별된 인덱스들을 관리.
+- 각각은 읽기와 쓰기용.
+- `ByteBuf`에 대한 읽기를 할 때, 읽어들인 바이트 만큼 `readerIndex` 값이 증가.
+- 마찬가지로 쓰기를 할 때 `writerIndex` 값이 증가.
+- 아래 그림은 비어 있는 상태의 `ByteBuf`를 나타냄.
+
+![A 16-byte ByteBuf with its indices set to 0](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/05fig01.jpg)
+
+- `writerIndex`와 `readerIndex`가 같다면 더 이상 읽을 데이터가 없다는 것.
+- 이 때 더 읽기를 시도한다면 `IndexOutOfBoundsException` 발생.
+- `ByteBuf`의 최대 용량도 지정할 수 있음. 기본 값은 `Integer.MAX_VALUE`.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
