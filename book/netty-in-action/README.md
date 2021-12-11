@@ -822,6 +822,20 @@ while (buffer.isRedable()) {
 }
 ```
 
+### 5.3.5 Writable bytes
+
+- writable 바이트 구역은 정의되지 않은 컨텐츠의 메모리 영역.
+- 새로 할당된 버퍼의 `writableIndex` 기본 값은 0.
+- `write`로 시작하는 모든 메서드는 현재 인덱스부터 데이터를 쓰고 인덱스를 증가시킴.
+- 아래는 저장 공간이 꽉 찰 때까지 랜돔 정수 값으로 버퍼를 채우는 예시.
+
+```java
+ByteBuf buffer = ...;
+while (buffer.writableBytes() >= 4) {
+    buffer.writeInt(random.nextInt());
+}
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
