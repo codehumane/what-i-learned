@@ -796,7 +796,7 @@ for (int i = 0; i < buffer.capacity(); i++) {
 
 ### 5.3.3 Discardable bytes
 
-- 위 그림에서, 2개의 인덱스로 나뉜 3개 영역 중, 버려도 되는 바이트라고 표기된 영역이 있었음.
+- 위 그림에서, 2개의 인덱스로 나뉜 3개 영역 중, discardable 바이트라고 표기된 영역이 있었음.
 - 언제든 버려질 수 있으며 `discardReadBytes()` 호출을 통해 공간이 비워짐.
 - 최초의 사이즈는 `readerIndex`에 저장된 0과 같고, `read` 연산이 실행될 때마다 증가.
 - 아래 그림은 `discardReadBytes()`가 호출된 결과. 위 그림과 비교해서 보면 됨.
@@ -805,6 +805,22 @@ for (int i = 0; i < buffer.capacity(); i++) {
 
 - `discardReadBytes()`를 자주 호출하는 것이 좋아보일 수도 있으나,
 - 이는 메모리 복제가 일어나기에, 실제로 필요한 시점에만 호출하기를 권장.
+
+### 5.3.4 Redable bytes
+
+- readable 바이트 영역은 실제 데이터를 저장.
+- `readerIndex`의 기본 값은 0.
+- read나 skip으로 시작하는 연산에 의해, 현재 `readerIndex`의 데이터가 읽어들여지거나 생략됨.
+- 동시에 인덱스 값은 증가.
+- 버퍼에 더 이상 readable 바이트가 없는데 읽기가 시도되면 `IOOBE` 발생.
+- 아래 코드는 모든 바이트를 읽어들이는 예시.
+
+```java
+ByteBuf buffer = ...;
+while (buffer.isRedable()) {
+    System.out.println(buffer.readByte()));
+}
+```
 
 # Chapter 7. EventLoop and threading model
 
