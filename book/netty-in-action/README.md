@@ -836,6 +836,16 @@ while (buffer.writableBytes() >= 4) {
 }
 ```
 
+### 5.3.6 Index management
+
+- JDK의 `InputStream`은 `mark(int readlimit)`과 `reset()` 메서드를 정의하고 있음.
+- 이는 스트림에서 특정 값의 현재 포지션 표기하고, 그 포지션을 초기화하는 역할을 함.
+- 유사하게, `ByteBuf`의 `readerIndex`와 `writeIndex`를 설정하고 재조정할 수 있음.
+- `readerIndex(int)`와 `writerIndex(int)`를 통해 특정 포지션을 설정할 수도 있음.
+- 유효치 않은 포지션으로의 설정은 `IOOBE`을 일으킴.
+- `clear()`는 쓰기/읽기 포지션을 모두 0으로 설정함.
+- 이는 메모리의 컨텐츠를 초기화하는 것은 아님에 유의.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
