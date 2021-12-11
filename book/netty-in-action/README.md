@@ -658,6 +658,24 @@ executor.execute(writer);
 - 하지만 다소 사용하기 어려움.
 - Netty는 대안으로 `ByteBuf`를 제공.
 
+## 5.1 The ByteBuf API
+
+Netty의 데이터 핸들링을 위한 API는 아래 2가지를 통해 이뤄짐.
+
+- `abstract class ByteBuf`
+- `ByteBufHolder`
+
+`ByteBuf`를 사용할 때의 이점은 다음과 같음.
+
+- 사용자 정의 버퍼 타입으로 확장 가능.
+- 내장된 컴포짓 버퍼 타입을 통해 투명한 zero-copy 가능(zero-copy 설명은 [여기](https://soft.plusblog.co.kr/7) 참고).
+- 용량이 필요한 만큼 늘어남.
+- `ByteBuffer`의 `flip()` 메서드를 호출하지 않고도 읽기/쓰기 모드 스위칭이 가능.
+- 읽기와 쓰기가 서로 구별된 인덱스들을 사용.
+- 메서드 체이닝 지원.
+- 레퍼런스 카운팅 지원.
+- 풀링 지원.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
