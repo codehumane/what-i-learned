@@ -651,6 +651,13 @@ executor.execute(writer);
 
 ![Selecting and processing state changes](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/04fig02_alt.jpg)
 
+# Chapter 5. ByteBuf
+
+- 네트워크의 기본 단위는 항상 바이트.
+- Java NIO는 바이트 컨테이너로 `ByteBuffer`를 제공함.
+- 하지만 다소 사용하기 어려움.
+- Netty는 대안으로 `ByteBuf`를 제공.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
