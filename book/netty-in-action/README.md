@@ -876,6 +876,33 @@ int index = buffer.forEachByte(ByteBufProcessor.FIND_CR);
 - 이를 통해 파생된 버퍼들의 생성 비용을 줄이긴 하지만,
 - 내용을 수정하면 모든 인스턴스의 것들에도 영향을 줌.
 
+### 5.3.9 Read/write operations
+
+read/write 연산에는 2가지 부류가 있음.
+
+- get()과 set() 연산은 주어진 인덱스부터 시작하며 인덱스를 바꾸지는 않음.
+- read()와 write() 연산은 주어진 인덱스부터 시작하고 접근한 바이트 수만큼 인덱스 값이 조정됨.
+
+아래는 get()과 set()을 이용한 예시.
+
+```java
+Charset utf8 = Charset.forName("UTF-8");
+// Creates a new ByteBuf to hold the bytes for the given String
+ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+// Prints the first char, 'N'
+System.out.println((char) buf.getByte(0));
+// Stores the current readerIndex and writerIndex
+int readerIndex = buf.readerIndex();
+int writerIndex = buf.writerIndex();
+// Updates the byte at index 0 with the char 'B'
+buf.setByte(0, (byte)'B');
+// Prints the first char, now 'B'
+System.out.println((char) buf.getByte(0));
+// Succeeds because these operations don't modify the indices
+assert readerIndex == buf.readerIndex();
+assert writerIndex == buf.writerIndex();
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
