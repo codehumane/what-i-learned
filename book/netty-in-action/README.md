@@ -846,6 +846,21 @@ while (buffer.writableBytes() >= 4) {
 - `clear()`는 쓰기/읽기 포지션을 모두 0으로 설정함.
 - 이는 메모리의 컨텐츠를 초기화하는 것은 아님에 유의.
 
+### 5.3.7 Search operations
+
+- `ByteBuf`에는 값의 인덱스를 알아낼 수 있는 몇 가지 방법이 있음.
+- 가장 쉬운 방법은 `indexOf()` 메서드.
+- 좀 더 복잡한 검색은 `ByteBufProcessor` 인자를 받는 메서드들의 실행으로 가능.
+- 이 인터페이스는 `boolean process(byte value)`이라는 1개의 메서드를 가짐.
+- 이는 입력 값이 찾으려는 값인지 여부를 반환.
+- `ByteBufProcess`는 몇 가지 편의 상수를 제공해서 아래와 같이 자주 검색되는 값을 찾는데 도움을 줌.
+- 최신 버전에서 `ByteBufProcessor`는 deprecated 되었고 `ByteProcessor` 사용을 권장하긴 함.
+
+```java
+ByteBuf buffer = ...;
+int index = buffer.forEachByte(ByteBufProcessor.FIND_CR);
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
