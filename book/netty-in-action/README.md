@@ -861,6 +861,21 @@ ByteBuf buffer = ...;
 int index = buffer.forEachByte(ByteBufProcessor.FIND_CR);
 ```
 
+### 5.3.8 Derived buffers
+
+- 파생된 버퍼들은 `ByteBuf`의 뷰(컨텐츠를 특수한 방식으로 표현)를 제공.
+- 이런 뷰들은 아래 메서드들을 통해 생성됨.
+    - duplicate()
+    - slice()
+    - slice(int, int)
+    - Unpooled.unmodifiableBuffer(...)
+    - order(ByteOrder)
+    - readSlice(int)
+- 각각은 새로운 `ByteBuf` 인스턴스를 반환.
+- 내부 저장공간은 JDK의 `ByteBuffer` 같은 곳에서 공유됨.
+- 이를 통해 파생된 버퍼들의 생성 비용을 줄이긴 하지만,
+- 내용을 수정하면 모든 인스턴스의 것들에도 영향을 줌.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
