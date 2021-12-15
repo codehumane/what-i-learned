@@ -923,6 +923,30 @@ assert writerIndex == buf.writerIndex();
 - 후자는 풀링을 하지 않고, 요청이 들어올 때마다 새로운 인스턴스를 만들어 반환.
 - Netty는 기본으로 `PooledByteBufAllocator`를 사용.
 
+## 5.6 Reference counting
+
+- 레퍼런스 카운팅은 메모리 사용과 성능 최적화를 위한 기법.
+- 다른 객체에 의해 더 이상 참조되지 않을 때 오브젝트가 가지고 있는 리소스를 해제함.
+- `ByteBuf`와 `ByteBufHolder`는 모두 `ReferenceCounted` 인터페이스를 구현.
+- `ReferenceCounted` 구현체 인스턴스는 보통 활성화 된 레퍼런스 카운팅을 1로 시작.
+- 이 값이 0보다 클 경우는 리소스가 해제 되지 않음을 보장. 그리고 0이 되면 해제.
+- 리소스 해제라는 말은 구현체마다 다르긴 하지만, 적어도 객체가 해제가 되면 더 이상 사용할 수 없음을 의미.
+- 이미 해제된 객체를 사용하려 하면 `IllegalReferenceCountException` 발생.
+- 레퍼런스 카운팅은 풀링 구현체에 있어 필수. 메모리 할당 오버헤드를 줄이기 때문.
+
+```java
+Channel channel = ...;
+// Gets ByteBufAllocator from a channel
+ByteBufAllocator allocator = channel.alloc();
+...
+// Allocates a BteBuf from the ByteBufAllocator
+ByteBuf buffer = allocator.directBuffer();
+// Checks for the expected reference count of 1
+assert buffer.refCnt() == 1;
+// Decrements the active references to the object. At 0, the object is released and the method returns true.
+boolean released = buffer.release();
+```
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
