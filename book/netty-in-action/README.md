@@ -910,6 +910,19 @@ assert writerIndex == buf.writerIndex();
 - Netty는 `ByteBufHolder`를 통해 이 유스 케이스를 지원함.
 - 더불어, `ByteBuf`의 풀링도 지원.
 
+## 5.5 ByteBuf allocation
+
+### 5.5.1 On-demand: interface ByteBufAllocator
+
+- 메모리 할당과 해제의 오버헤드를 줄이고자,
+- Netty는 `ByteBufAllocator` 인터페이스를 통해 풀링을 구현.
+- `ByteBufAllocator`의 참조는 `Channel` 또는 `ChannelHandlerContext`를 통해 얻을 수 있음.
+- Netty는 `ByteBufAllocator` 구현체로 2가지를 제공.
+- 바로 `PooledByteBufAllocator`와 `UnpooledByteBufAllocator`.
+- 전자는 성능 향상과 메모리 파편화를 줄이고자 `ByteBuf`를 풀링.
+- 후자는 풀링을 하지 않고, 요청이 들어올 때마다 새로운 인스턴스를 만들어 반환.
+- Netty는 기본으로 `PooledByteBufAllocator`를 사용.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
