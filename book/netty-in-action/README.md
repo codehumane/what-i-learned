@@ -903,6 +903,13 @@ assert readerIndex == buf.readerIndex();
 assert writerIndex == buf.writerIndex();
 ```
 
+## 5.4 Interface ByteBufHolder
+
+- 실제 데이터 페이로드 외에 추가적인 프로퍼티 값들을 저장하고 싶을 때가 있음.
+- HTTP 응답에 실제 응답 컨텐츠 외에도 상태 코드나 쿠키 등의 정보가 담겨 있는 것처럼.
+- Netty는 `ByteBufHolder`를 통해 이 유스 케이스를 지원함.
+- 더불어, `ByteBuf`의 풀링도 지원.
+
 # Chapter 7. EventLoop and threading model
 
 ## 7.1 Threading model overview
