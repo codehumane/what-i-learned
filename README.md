@@ -62,7 +62,7 @@
 - [레거시 코드 활용 전략](book/wewlc/README.md)
 - [Software Engineering at Google](book/seag/README.md)
 - [Netty in Action](https://github.com/codehumane/what-i-learned/blob/master/book/netty-in-action/README.md)
-- [The Pragmatic Programmer, 2nd Edition](book/tpp-2e/README.md)
+- [The Pragmatic Programmer, 2E](book/tpp-2e/README.md)
 
 # DOCUMENT
 
