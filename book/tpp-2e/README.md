@@ -526,3 +526,43 @@ def validate_quantity(value):
 - 하나는 주문에 앞서 나이를 검사하는 것.
 - 다른 하나는 주문 수량을 검사하는 것.
 - 이들이 같은 모습을 하고 있는 것은 중복이 아니라 우연.
+
+### Duplication in Documentation
+
+```python
+# Calculate the fees for this account.
+#
+# * Each returned check costs $20
+# * If the account is in overdraft for more than 3 days,
+#   charge $10 for each day
+# * If the average account balance is greater that $2,000
+#   reduce the fees by 50%
+
+def fees(a)
+    f = 0
+    if a.returned_check_count > 0
+        f += 20 * a.returned_check_count
+    end
+    if a.overdraft_days > 3
+        f += 10*a.overdraft_days
+    end
+    if a.average_balance > 2_000
+        f /= 2
+    end
+    f
+end
+```
+
+- 위 코드에서 주석은 중복.
+- 요금이 바뀌면 코드와 주석 모두 바꿔줘야 함.
+- 여기서 주석의 역할은 코드의 가독성이 떨어지는 것을 보완하는 정도.
+- 차라리 아래와 같이 하는 것이 어떨지.
+
+```python
+def calculate_account_fees(account)
+    fees  = 20 * account.returned_check_count
+    fees += 10 * account.overdraft_days  if account.overdraft_days > 3
+    fees /= 2                            if account.average_balance > 2_000
+    fees
+end
+```
