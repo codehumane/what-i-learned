@@ -409,3 +409,10 @@ Tip 14) Good Design Is Easier to Change Than Bad Design
 ```
 Tip 15) DRY-Don't Repeat Yourself
 ```
+
+### DRY Is More Than Code
+
+- 1판에서 설명이 부족했는지,
+- 많은 사람들이 DRY를 코드에 한정해서 생각함.
+- 하지만, DRY는 지식<sup>knowledge</sup>과 의도<sup>intent</sup>의 중복에 관한 것.
+
