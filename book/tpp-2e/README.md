@@ -416,3 +416,95 @@ Tip 15) DRY-Don't Repeat Yourself
 - 많은 사람들이 DRY를 코드에 한정해서 생각함.
 - 하지만, DRY는 지식<sup>knowledge</sup>과 의도<sup>intent</sup>의 중복에 관한 것.
 
+### Duplication in Code
+
+아래는 코드 중복 예시.
+
+```python
+def print_balance(account)
+    printf "Debits:  %10.2f\n", account.debits
+    printf "Credits: %10.2f\n", account.credits
+    if account.fees < 0
+        printf "Fees:    %10.2f-\n", -account.fees
+    else
+        printf "Fees:    %10.2f\n", account.fees
+    end
+    printf "         ———-\n"
+    if account.balance < 0
+        printf "Balance: %10.2f-\n", -account.balance
+    else
+        printf "Balance: %10.2f\n", account.balance
+    end
+end
+```
+
+일단, 음수 처리를 DRY한 결과.
+
+```python
+def format_amount(value)
+    result = sprintf("%10.2f", value.abs)
+    if value < 0
+        result + "-"
+    else
+        result + " "
+    end
+end
+  
+def print_balance(account)
+    printf "Debits:  %10.2f\n", account.debits
+    printf "Credits: %10.2f\n", account.credits
+    printf "Fees:    %s\n",     format_amount(account.fees)
+    printf "         ———-\n"
+    printf "Balance: %s\n",     format_amount(account.balance)
+end
+```
+
+이제, `10.2f`로 변환하는 부분을 DRY.
+
+```python
+def format_amount(value)
+    result = sprintf("%10.2f", value.abs)
+    if value < 0
+        result + "-"
+    else
+        result + " "
+    end
+end
+  
+def print_balance(account)
+    printf "Debits:  %s\n", format_amount(account.debits)
+    printf "Credits: %s\n", format_amount(account.credits)
+    printf "Fees:    %s\n", format_amount(account.fees)
+    printf "         ———-\n"
+    printf "Balance: %s\n", format_amount(account.balance)
+end
+```
+
+만약, 고객이 레이블과 숫자 사이의 추가 공간을 요구한다면 어떻게 될까? 5개 라인을 일일이 고쳐야 함. 따라서 아래와 같이 DRY.
+
+```python
+def format_amount(value)
+    result = sprintf("%10.2f", value.abs)
+    if value < 0
+        result + "-"
+    else
+        result + " "
+    end
+end
+  
+def print_line(label, value)
+    printf "%-9s%s\n", label, value
+end
+  
+def report_line(label, amount)
+    print_line(label + ":", format_amount(amount))
+end
+  
+def print_balance(account)
+    report_line("Debits",  account.debits)
+    report_line("Credits", account.credits)
+    report_line("Fees",    account.fees)
+    print_line("",         "———-")
+    report_line("Balance", account.balance)
+end
+```
