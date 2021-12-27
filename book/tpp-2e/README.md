@@ -508,3 +508,21 @@ def print_balance(account)
     report_line("Balance", account.balance)
 end
 ```
+
+### Not All Code Duplication Is Knowledge Duplication
+
+```python
+def validate_age(value):
+    validate_type(value, :integer)
+    validate_min_integer(value, 0)
+
+def validate_quantity(value):
+    validate_type(value, :integer)
+    validate_min_integer(value, 0)
+```
+
+- 위 코드는 DRY 위배가 아님.
+- 코드는 같지만 이들이 표현하는 지식이 서로 다름.
+- 하나는 주문에 앞서 나이를 검사하는 것.
+- 다른 하나는 주문 수량을 검사하는 것.
+- 이들이 같은 모습을 하고 있는 것은 중복이 아니라 우연.
