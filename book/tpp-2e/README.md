@@ -566,3 +566,63 @@ def calculate_account_fees(account)
     fees
 end
 ```
+
+### DRY Violations in Data
+
+- 데이터 구조 역시 지식의 표현.
+- 여기에도 DRY 원칙이 적용됨.
+
+```java
+class Line {
+    Point start;
+    Point end;
+    double length;
+}
+```
+
+- `legnth`는 중복.
+- `start`나 `end`가 바뀔 때 같이 바꿔줘야 함.
+- 따라서 아래와 같이 중복을 제거.
+
+```java
+class Line {
+    Point start;
+    Point end;
+    double length() {
+        return start.distanceTo(end);
+    }
+}
+```
+
+- 하지만, 성능 상의 이유로 일부로 DRY를 위배할 수도.
+- 만약 `length`를 매번 구하는 것이 비용이 크다면,
+- 한 번 계산된 값을 변수로 가지고 있을 수 있음.
+- 하지만 이로 인한 영향은 국소화해야 함.
+- 이 위반이 바깥 세상으로 나가면 안 됨.
+
+```java
+class Line {
+    private double length;
+    private Point  start;
+    private Point  end;
+ 
+    public Line(Point start, Point end) {
+        this.start = start;
+        this.end   = end;
+        calculateLength();
+    }
+ 
+    // public
+    void setStart(Point p) { this.start = p; calculateLength(); }
+    void setEnd(Point p)   { this.end   = p; calculateLength(); }
+
+    Point getStart()       { return start; }
+    Point getEnd()         { return end;   }
+
+    double getLength()     { return length; }
+
+    private void calculateLength() {
+        this.length  = start.distanceTo(end);
+    }
+ };
+```
