@@ -869,3 +869,13 @@ Tip 21) Prototype to Learn
 
 - 시작에 앞서 지금 작성하는 코드가 버려질 것임을 모두에게 명확히 이해시킬 것.
 - 만약 그럴 수 없는 상황이라면 예광탄 방식을 고려.
+
+## Topic 14. Domain Languages
+
+```
+Tip 22) Program Close to the Problem Domain
+```
+
+- 우리는 애플리케이션의 도메인 용어들을 이용해서 코드를 작성하려 노력.
+- 나아가면 문법과 시멘틱도 도메인의 것을 사용.
+- sytanx와 semantics의 차이는 [여기](https://stackoverflow.com/questions/17930267/what-is-the-difference-between-syntax-and-semantics-in-programming-languages) 참고.
