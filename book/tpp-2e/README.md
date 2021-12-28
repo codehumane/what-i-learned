@@ -853,3 +853,14 @@ Tip 20) Use Tracer Bullets to Find the Target
 ```
 Tip 21) Prototype to Learn
 ```
+
+### How to Use Prototypes
+
+프로토타이핑 시 무시해야 하는 세부 사항들.
+
+- 정확성<sup>correctness</sup>
+- 완전성<sup>completness</sup>
+- 강건함<sup>robustness</sup>
+- 스타일<sup>style</sup>
+
+대신, 고려하고 있는 시스템의 특정 관심사에 집중해야 함.
