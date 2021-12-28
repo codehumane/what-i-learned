@@ -914,3 +914,9 @@ end
 - 절약되는 시간 보다 더 많은 노력을 쏟지 않기를 권장.
 - 그래서 가능한 외부 언어로는 YAML, JSON, CSV 같은 기성품을 사용.
 - 그럴 수 없다면 내부 언어를 살펴보라.
+
+### An Internal Domain Language on the Cheap
+
+- 너무 많은 메타프로그래밍을 하지 말라고 권고.
+- 대신, 그냥 그 일을 하는 함수를 작성하라고.
+- RSpec의 경우 `describe`, `it`, `expect`, `to`, `eq` 같은 루비 메서드를 그대로 사용.
