@@ -719,7 +719,7 @@ Tip 17) Eliminate Effects Between Unrelated Things
 
 ### Toolkits and Libraries
 
-- 서드 파티 툴킷이나 라이브러리 도입 시에도 직교성을 고려.
+- 써드 파티 툴킷이나 라이브러리 도입 시에도 직교성을 고려.
 - 이 도구들에 관한 세부사항은 격리 시켜 두어야 함.
 - 애노테이션을 선언적으로 명시하거나, 데코레이터 패턴이 적용된 것이 그 예.
 - 만약 격리되어 있지 않다면, 도구의 변경이 애플리케이션에 미치는 영향이 상당할 것.
@@ -776,4 +776,17 @@ Tip 17) Eliminate Effects Between Unrelated Things
 
 ```
 Tip 18) There Are No Final Decisions
+```
+
+### Flexible Architecture
+
+- 서버 사이드 아키텍처의 베스트 프랙틱스는 정말 많이 바뀜.
+- 우리가 이 변동성을 예측할 수 있을까? X
+- 우리가 할 수 있는 것은 바꾸기 쉽게 만들기.
+- 써드 파티 API를 추상화 레이어 뒤로 숨겨라.
+- 코드를 컴포넌트로 세분화 시켜 두어라(지금은 한 서버로 배포를 한다고 해도).
+- 그리고 유행을 따르지 말라고도 조언.
+
+```
+Tip 19) Forgo Following Fads
 ```
