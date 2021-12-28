@@ -864,3 +864,8 @@ Tip 21) Prototype to Learn
 - 스타일<sup>style</sup>
 
 대신, 고려하고 있는 시스템의 특정 관심사에 집중해야 함.
+
+### How Not to Use Prototypes
+
+- 시작에 앞서 지금 작성하는 코드가 버려질 것임을 모두에게 명확히 이해시킬 것.
+- 만약 그럴 수 없는 상황이라면 예광탄 방식을 고려.
