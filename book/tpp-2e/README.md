@@ -712,3 +712,7 @@ Tip 17) Eliminate Effects Between Unrelated Things
 - 시스템이 잘 깨지지 않음. 변경의 영향이 적기 때문.
 - 테스트하기에도 좋음.
 - 특정 벤더, 제품, 플랫폼과의 결합도가 그리 높지 않음.
+
+### Design
+
+특별한 얘기는 없어서 기록 생략.
