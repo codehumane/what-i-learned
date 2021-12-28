@@ -892,3 +892,14 @@ scope "/", HelloPhoenix do
     resources "/users", UserController
 end
 ```
+
+### Characteristics of Domain Languages
+
+- RSpec과 Phoenix 라우터는 호스트 언어(ruby, elixir)로 작성됨.
+- 이들은 메타프로그래밍과 매크로를 사용하긴 하지만(책에서 이를 devious 코드라 표현),
+- 궁극적으로는 보통의 코드처럼 컴파일 되고 실행됨.
+- Cucumber 테스트와 Ansible 설정은 자신만의 언어로 작성됨.
+- Cucumber 테스트는 실행될 코드나 데이터구조체로 변환되고,
+- Ansible은 언제나 데이터 구조체로 변환됨.
+- 참고로 RSpec과 라우터는 내부 도메인 언어의 예시이고,
+- Cucumber와 Ansible은 외부 언어를 사용.
