@@ -790,3 +790,10 @@ Tip 18) There Are No Final Decisions
 ```
 Tip 19) Forgo Following Fads
 ```
+
+## Topic 12. Tracer Bullets
+
+- 복잡하고 시시각각 변하는 세상에서 과녁을 어떻게 명중시킬 수 있는가?
+- 심호흡하고 집중해서 단 한 번의 기회로 총알을 발사할 수도 있음.
+- 그러나 예광탄<sup>tracer bulllet</sup>으로 조준을 계속 조정해 나갈 수도.
+- 실용적인 실시간 피드백을 가리킴.
