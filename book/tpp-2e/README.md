@@ -879,3 +879,16 @@ Tip 22) Program Close to the Problem Domain
 - 우리는 애플리케이션의 도메인 용어들을 이용해서 코드를 작성하려 노력.
 - 나아가면 문법과 시멘틱도 도메인의 것을 사용.
 - sytanx와 semantics의 차이는 [여기](https://stackoverflow.com/questions/17930267/what-is-the-difference-between-syntax-and-semantics-in-programming-languages) 참고.
+
+### Some Real-World Domain Languages
+
+책에서는 RSpec, Cucumber, Phoenix Routes, Ansible을 예로 들고 있음. 익숙치 않은 Phoenix Routes 코드만 기록.
+
+```ruby
+scope "/", HelloPhoenix do
+    pipe_through :browser # Use the default browser stack
+
+    get "/", PageController, :index
+    resources "/users", UserController
+end
+```
