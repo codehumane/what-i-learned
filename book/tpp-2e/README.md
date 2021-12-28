@@ -675,3 +675,8 @@ class Line {
 ```
 Tip 16) Make It Easy to Reuse
 ```
+
+## Topic 10. Orthogonality
+
+- 설계/빌드/테스트/확장이 쉬운 시스템을 만드는 데 있어,
+- 직교성<sup>orthogonality</sup>은 매우 중요한 개념.
