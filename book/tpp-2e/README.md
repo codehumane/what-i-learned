@@ -1020,3 +1020,9 @@ Tip 23) Estimate to Avoid Surprises
 ```
 Tip 24) Iterate the Schedule with the Code
 ```
+
+### What to Say When Asked for an Estimate
+
+- "금방 올께요"
+- 바로 답변하기 보다는 어느 정도 시간을 갖고,
+- 위에서 언급한 단계들을 밟아간다면 좋은 결과를 얻을 수도.
