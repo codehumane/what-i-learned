@@ -993,3 +993,30 @@ Tip 23) Estimate to Avoid Surprises
 - 의외로 추정치가 정확하다는 것을 발견.
 - 혹 틀렸더라도 피드백으로 여기고 오답 이유를 분석.
 - 모델이 잘못된 건지, 파라미터를 잘못 선정한 건지.
+
+### Estimating Project Schedules
+
+- 얼마나 걸릴 것이냐는 질문을 많이 받음.
+- 추정의 불확실성을 줄이는 2가지 방법을 이야기.
+
+#### Painting the Missile
+
+- 아래는 집 페인트 칠에 걸리는 시간.
+
+> “Well, if everything goes right, and this paint has the coverage they claim, it might be as few as 10 hours. But that's unlikely: I'd guess a more realistic figure is closer to 18 hours. And, of course, if the weather turns bad, that could push it out to 30 or more.”
+
+- 보통은 이런 식으로 여러 숫자를 시나리오에 따라 제시.
+- 미국 해군은 PERT(Program Evaluation Review Technique)를 사용.
+- 낙관적, 그리고 비관적 추정을 함께 가져가는 것.
+- 범위 값을 통해 추정이 갖는 불확실성을 드러낼 수 있음.
+
+#### Eating the Elephant
+
+- 첫 기능을 코딩하고 테스트 끝낸 뒤 이를 첫 번째 이터레이션으로 지정.
+- 이를 기반으로 각 이터레이션에 걸릴 시간을 측정하고, 이터레이션은 몇 개가 될지를 결정.
+- 매 이터레이션마다 지난 이터레이션의 결과를 반영해서 정확도를 꾸준히 조정.
+- 코끼리를 한 번에 한 입씩 먹으라는 오래된 농담에 비유.
+
+```
+Tip 24) Iterate the Schedule with the Code
+```
