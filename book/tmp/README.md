@@ -92,3 +92,9 @@
 - 강한 매니저, 친구 같은 매니저, 엔지니어로써 존경하는 매니저를 구분해야 함.
 
 # Chapter 3. Tech Lead
+
+## All Great Tech Leads Know This One Weird Trick
+
+별다른 내용은 없고 아래 한 줄이 요약. 종종 자신이 잘 할 줄 아는 것을 더 하려는 경향이 있는데, 그럼에도 불구하고 기술적 기여와 전체 팀을 위한 노력 사이의 균형이 중요하다는 이야기.
+
+> the willingness to step away from the code and figure out how to balance your technical commitments with the work the whole team needs.
