@@ -1160,3 +1160,7 @@ DBC를 코드적으로 지원하지 않는 언어라고 해도 괜찮음. 이는
 - 이런 경우 시멘틱 불변을 아래와 같이 선언.
 
 > Err in favor of the consumer
+
+### Dynamic Contracts and Agents
+
+딱히 기록할 내용 없음.
