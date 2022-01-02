@@ -1047,3 +1047,74 @@ Tip 36) You Can't Write Perfect Software
 - 여기에는 계약이 지켜지지 않았을 때에 대한 약속도 포함.
 - 인간의 상호작용을 돕는 기본적 도구 중 하나.
 - 이는 소프트웨어 모듈에도 적용될 수 있음.
+
+### DBC
+
+Eiffel 언어에서의 DBC 개념 이야기.
+
+- Bertrand Meyer가 개발.
+- 프로그램의 정확성을 보장하고자,
+- 소프트웨어 모듈의 권리와 책임을 명시하는 기법.
+- 그런데 무엇이 정확한 것인가?
+- 명시된 것보다 덜 하지도 더 하지도 않는 것.
+- 요구<sup>claim</sup>를 문서화하고 검증하는 것이 DBC의 핵심.
+
+모든 함수/메서드는 무언가를 하기에 앞서, 현재 세상의 상태에 대한 기대를 갖고 있음. Meyer는 이런 기대와 요구를 아래와 같이 설명.
+
+- Preconditions
+  - 루틴이 실행되기 전에 참이어야 하는 것.
+  - 이것이 거짓이면 루틴은 실행되지 않음.
+  - 좋은 데이터를 넘겨주는 것은 호출자의 책임.
+- Postconditions
+  - 루틴이 보장해야 하는 실행 결과.
+  - 루틴에 사후조건이 있다는 것은 무한 루프가 허용되지 않음을 의미.
+- Class invariants
+  - 클래스가 호출자의 관점에서 항상 참임을 보장해줘야 하는 것.
+  - 루틴의 내부 처리 동안은 불변이 유지되지 않을 수 있지만,
+  - 루틴이 종료되어 호출자에게 제어권이 넘어갈 때는 항상 참이어야 함.
+  - 어떤 객체의 잔고가 항상 0 이상인 상태를 유지하는 것이 한 예가 아닐까.
+
+아래와 같이 표현하기도.
+
+> 모든 루틴의 선행조건이 호출자에 의해 만족된다면, 루틴은 자신의 완료 시점에 모든 사후조건과 불변을 보장.
+
+아래는 Clojure 언어에서 specs라는 걸 이용해 선행/사후조건을 적용하는 예시.
+
+```clojure
+(defn accept-deposit [account-id amount]
+    { :pre  [ (> amount 0.00)
+              (account-open? account-id) ]
+      :post [ (contains? (account-transactions account-id) %) ] }
+    "Accept a deposit and return the new transaction id"
+    ;; Some other processing goes here...
+    ;; Return the newly created transaction:
+    (create-transaction account-id :deposit amount))
+```
+
+여기에 입력 갑으로 음수가 들어간다면 아래와 같은 런타임 예외 발생.
+
+```
+Exception in thread "main"...
+Caused by: java.lang.AssertionError:
+Assert failed: (> amount 0.0)
+```
+
+마지막으로 10번째 주제였던 직교성과 비교.
+
+- 직교성에서는 코드를 "부끄럽게<sup>shy</sup>" 작성하라고 했음.
+- 여기서는 코드를 "게으르게<sup>lazy</sup>" 작성하길 권장.
+- 시작하기에 앞서 받아들이는 것에 엄격해야 하고,
+- 반환 값으로는 가능한 적은 것을 약속.
+
+```
+Tip 37) Design with Contracts
+```
+
+#### Class Invariants and Functional Languages
+
+- 이는 네이밍에 관한 것.
+- Eiffel은 객체지향 언어라서 "클래스 불변"이라고 명명.
+- 하지만 실은 좀 더 넓은 범위의 개념이며, 상태<sup>state</sup>에 가까움.
+- 객체지향 언어에서 상태는 클래스의 인스턴스에 연관됨.
+- 함수형 언어에서는, 상태를 함수에 넘겨주고, 바뀐 상태를 반환.
+- 불변 개념은 이런 환경에서도 유용함.
