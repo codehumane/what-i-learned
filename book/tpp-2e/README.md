@@ -1170,3 +1170,40 @@ DBC를 코드적으로 지원하지 않는 언어라고 해도 괜찮음. 이는
 - 에러가 났음을 부정하거나 무시하는 경우가 있음.
 - 하지만 실용주의 프로그래머는 에러가 있을 수 있음을 받아들일 줄 앎.
 - 에러는 우리에게 정보를 가져다 줌.
+
+### Catch and Release Is for Fish
+
+예외를 잡고 메시지를 남긴 뒤 다시 예외를 던지는 경우가 있음.
+
+```rb
+try do
+    add_score_to_board(score);
+rescue InvalidScore
+    Logger.error("Can't add invalid score. Exiting");
+    raise
+rescue BoardServerDown
+    Logger.error("Can't add score: board is down. Exiting");
+    raise
+rescue StaleTransaction
+    Logger.error("Can't add score: stale transaction. Exiting");
+    raise
+end
+```
+
+하지만, 실용주의 프로그래머는 아래와 같이 함.
+
+```rb
+add_score_to_board(score);
+```
+
+이렇게 하는 이유는 2가지.
+
+1. 에러 핸들링으로 애플리케이션 코드를 흐리게 하지 않음.
+2. (더 중요) 코드가 덜 커플링 되어 있음.
+    - 첫 번째 예시에서는 메서드가 일으킬 수 있는 모든 예외가 나열됨. 
+    - 작성자가 예외를 추가한다면 같이 반영 못 할 수도.
+    - 두 번째 예시에서는 예외가 자동으로 전파됨.
+
+```
+Tip 38) Crash Early
+```
