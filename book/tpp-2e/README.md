@@ -1375,3 +1375,47 @@ Tip 41) Act Locally
 - 특정 리소스가 필요하면 관련 클래스의 객체를 생성하고,
 - 이 객체가 스코프를 벗어나면 GC에 의해 처리되며 객체 소멸자가 리소스를 해제.
 - 예외가 리소스 해제를 방해하는 언어에서 특히 유용하다고 함.
+
+### Balancing and Exceptions
+
+예외가 발생할 때의 리소스 해제는 보통 아래의 2가지 방법 중 하나.
+
+1. 변수 스코프 사용 (C++나 Rust에서의 스택 변수)
+2. `try...catch` 블럭에서 `finally` 절 사용
+
+그 중에서 아래는 Rust 예제.
+
+```rust
+{
+    let mut accounts = File::open("mydata.txt")?; // >--
+    // use 'accounts'                             //    |
+    ...                                           //    |
+}                                                 // <--
+// 'accounts' is now out of scope, and the file is
+// automatically closed
+```
+
+#### An Exception Antipattern
+
+```
+begin
+    thing = allocate_resource()
+    process(thing)
+finally
+    deallocate(thing)
+end
+```
+
+- 무엇이 잘못됐을까?
+- 만약 리소스 할당이 실패하고 예외가 발생한다면?
+- `finally` 절이 실행되고 할당도 되지 않은 리소스를 해제하려 함.
+- 아래와 같이 해야 함.
+
+```
+thing = allocate_resource()
+begin
+    process(thing)
+finally
+    deallocate(thing)
+end
+```
