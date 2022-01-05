@@ -1272,3 +1272,91 @@ while (iter.hasMoreElements()) {
 - 따라서 프로덕션에서도 단정문을 활용하여,
 - 예상치 못한 문제를 fail-fast 시키고,
 - 문제가 있을 때 좀 더 빠르게 문제를 찾아가길.
+
+## Topic 26. How to Balance Resources
+
+- 우리는 코드를 작성할 때면 언제나 리소스를 관리함.
+- 메모리, 트랜잭션, 스레드, 네트워크 연결, 파일, 타이머, ...
+- 이들은 모두 제한된 가용성을 가짐.
+- 대부분의 경우 아래의 사용성 패턴을 가짐.
+- 리소스를 할당하고, 사용하고, 할당을 다시 해제.
+
+```
+Tip 40) Finish What You Start
+```
+
+```rb
+def read_customer
+    @customer_file = File.open(@name + ".rec", "r+")
+    @balance       = BigDecimal(@customer_file.gets)
+end
+
+def write_customer
+    @customer_file.rewind
+    @customer_file.puts @balance.to_s
+    @customer_file.close
+end
+
+def update_customer(transaction_amount)
+    read_customer
+    @balance = @balance.add(transaction_amount,2)
+    write_customer
+end
+```
+
+- 위 코드에서 몇 가지 문제가 있음.
+- 일단, `read_customer`와 `write_customer`가 지나치게 커플링.
+- 이 둘은 `customer_file` 인스턴스 변수를 공유함.
+- 만약, 요구사항 변경으로 `update_customer`가 아래와 같이 바뀐다면?
+
+```rb
+def update_customer(transaction_amount)
+    read_customer
+    if (transaction_amount >= 0.00)
+        @balance = @balance.add(transaction_amount,2)
+        write_customer
+    end
+end
+```
+
+- 여기서도 `else` 문을 추가하여 직접 `close`를 호출해 줄 수도 있으나,
+- 한 번에 한 곳이 아니라 여러 곳을 함께 살피며 고쳐나가야 하는 근본적 문제는 여전함.
+- 그래서 아래와 같이 변경.
+
+```rb
+def read_customer(file)
+    @balance=BigDecimal(file.gets)
+end
+
+def write_customer(file)
+    file.rewind
+    file.puts @balance.to_s
+end
+
+def update_customer(transaction_amount)
+    file=File.open(@name + ".rec", "r+")          # >--
+    read_customer(file)                           #    |
+    @balance = @balance.add(transaction_amount,2) #    |
+    file.close                                    # <--
+end
+```
+
+- 여기서 좀 더 나아갈 수 있음.
+- 리소스의 생명주기 스코프를 블럭 단위로 제한하는 것.
+- 블럭이 끝나면서 `file` 변수는 끝나고,
+- 외부 파일은 닫힘(일일이 수동으로 닫는 게 아니라 자동으로 닫아줌).
+- 이런 식으로 범위를 제한해 주는 것은 언제나 도움이 됨.
+
+```rb
+def update_customer(transaction_amount)
+    File.open(@name + ".rec", "r+") do |file|         # >--
+        read_customer(file)                           #    |
+        @balance = @balance.add(transaction_amount,2) #    |
+        write_customer(file)                          #    |
+    end                                               # <--
+end
+```
+
+```
+Tip 41) Act Locally
+```
