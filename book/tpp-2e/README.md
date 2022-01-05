@@ -1419,3 +1419,8 @@ finally
     deallocate(thing)
 end
 ```
+
+### Checking the Balance
+
+- 리소스가 실제로 잘 해제 됐는지를 확인하는 것이 좋음.
+- 이를 위한 간단한 이야기 2가지를 함.
