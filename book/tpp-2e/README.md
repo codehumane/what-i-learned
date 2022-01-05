@@ -1258,3 +1258,17 @@ while (iter.hasMoreElements()) {
     // ...
 }
 ```
+
+### Leave Assertions Turned On
+
+- 위 내용들이 의미 있으려면, 이 얘기가 빠질 수 없음.
+- 일단, 아래 이야기는 단정문에 대한 흔한 오해라고 함.
+
+> Assertions add some overhead to code. Because they check for things that should never happen, they'll get triggered only by a bug in the code. Once the code has been tested and shipped, they are no longer needed, and should be turned off to make the code run faster. Assertions are a debugging facility.
+
+- 여기에는 2가지 잘못된 가정이 들어 있음.
+- 첫째로, 테스트가 모든 버그를 발견한다고 생각.
+- 둘째로, 실제 프로덕션 환경에서도 예상 가능한 일만 일어남.
+- 따라서 프로덕션에서도 단정문을 활용하여,
+- 예상치 못한 문제를 fail-fast 시키고,
+- 문제가 있을 때 좀 더 빠르게 문제를 찾아가길.
