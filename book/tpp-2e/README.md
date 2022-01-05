@@ -1245,3 +1245,16 @@ assert result != null && result.size() > 0 : "Empty result from XYZ";
 - 하지만 코드로 추가 되어 있으니, 읽거나 변경 시 항상 약간의 비용을 더해줄 것이고,
 - 이런 것들이 여러 개 쌓여 있을 때, 비용 대비 얼마나 이득인지 개인적으로 의문.
 
+### Assertions and Side Effects
+
+- [Heisenbug](https://en.wikipedia.org/wiki/Heisenbug) 이야기.
+- 단정문을 만들다가 오히려 단정문에 버그가 있을 수 있으니 조심하라는.
+- 예컨대 아래 코드.
+
+```java
+while (iter.hasMoreElements()) {
+    assert(iter.nextElement() != null);
+    var obj = iter.nextElement();
+    // ...
+}
+```
