@@ -1424,3 +1424,28 @@ end
 
 - 리소스가 실제로 잘 해제 됐는지를 확인하는 것이 좋음.
 - 이를 위한 간단한 이야기 2가지를 함.
+
+## Topic 27. Don't Outrun Your Headlights
+
+```
+Tip 42) Take Small Steps—Always
+```
+
+- 소프트웨어 개발에서 너무 먼 미래는 예측할 수 없음.
+- 항상 작고 신중한 스텝을 밟아야 함.
+- 피드백을 얻고 계속 조정하며 앞으로 전진.
+- 피드백은 단위 테스트나, 데모, 대화 등 다양.
+- "너무 큰" 작업이나 스텝은 X.
+- 여기서 "너무 큰"이라 함은 점치기<sup>fortune telling</sup>가 필요한 것.
+- 예를 들면 아래의 것들.
+    - 완료하는 데 몇 개월이 걸릴 것으로 추정.
+    - 미래의 유지보수나 확장성을 설계할 계획.
+    - 사용자의 미래 요구를 추측.
+    - 미래의 기술적 가용성을 추측.
+- 물론 이것들 중에서도 충분히 예상 가능한 미래라면 "너무 큰"이 아님.
+- 미래가 어떨 것이라고 더 많이 예측할수록, 더 많은 리스크를 감수.
+- 불활실한 미래를 설계하는 데 시간을 쏟지 말고,
+- 언제든 대체 가능한 코드를 작성하라.
+- 대체가능함을 위해선 물론 응집성, 결합도, DRY 등의 고민 필요.
+
+> Instead of wasting effort designing for an uncertain future, you can always fall back on designing your code to be replaceable.
