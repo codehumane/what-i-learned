@@ -1459,3 +1459,9 @@ Tip 42) Take Small Steps—Always
 ```
 Tip 43) Avoid Fortune-Telling
 ```
+
+# Chapter 5. Bend, or Break
+
+- 오늘날의 변화 속도를 따라가기 위해,
+- 코드는 가능한 느슨하게(유연하게) 작성해야 함.
+- 그렇지 않으면 코드는 금방 낡아 버리고 고치기 어려워짐.
