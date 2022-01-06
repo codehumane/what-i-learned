@@ -1449,3 +1449,13 @@ Tip 42) Take Small Steps—Always
 - 대체가능함을 위해선 물론 응집성, 결합도, DRY 등의 고민 필요.
 
 > Instead of wasting effort designing for an uncertain future, you can always fall back on designing your code to be replaceable.
+
+### Black Swans
+
+- 역사상 중요했던 사건들은 예측하기 힘들고 드물게 일어났지만,
+- 우리의 일상에 큰 영향을 미쳤다는 블랙 스완 이야기.
+- 소프트웨어에서도 마찬가지.
+
+```
+Tip 43) Avoid Fortune-Telling
+```
