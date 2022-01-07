@@ -1628,3 +1628,17 @@ Tip 47) Avoid Global Data
 ```
 Tip 48) If It's Important Enough to Be Global, Wrap It in an API
 ```
+
+### Inheritance Adds Coupling
+
+상속 역시 뒤에서 다루겠지만, 상속의 오용 역시 커플링으로 이어짐.
+
+### Again, It's All About Change
+
+- 커플링 된 코드는 변경하기 어려움.
+- 한 곳에서의 변경이 코드 어딘가에 영향을 줄 수 있음.
+- 그리고 이 영향을 찾기 어려움.
+- 한달 후 프로덕션에서 찾게 될 수도.
+- 코드를 부끄럽게 유지하라.
+- 직접적으로 아는 이들만 그것을 다루게 하라.
+- 이렇게 하면 커플링을 줄여줄 것이고, 변경하기 더 쉬움.
