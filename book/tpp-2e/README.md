@@ -1494,3 +1494,107 @@ Tip 44) Decoupled Code Is Easier to Change
 - 한 모듈의 "간단한" 변경이 관련 없는 모듈로 퍼져나가거나 어딘가를 깨뜨림
 - 어디에 영향을 줄지 몰라 변경을 꺼리는 개발자
 - 변경의 영향을 모르기에 회의에 모든 사람이 들어와야 함
+
+### Train Wreks
+
+```java
+public void applyDiscount(customer, order_id, discount) {
+    totals = customer
+            .orders
+            .find(order_id)
+            .getTotals();
+    totals.grandTotal = totals.grandTotal - discount;
+    totals.discount   = discount;
+}
+```
+
+- 너무 많은 세부사항이 노출되어 있음.
+- 만약, 어떤 주문도 40% 이상 할인하면 안 된다는 요구사항이 들어온다면?
+- 여기 외에도 `totals`의 모든 세터를 확인해야 함.
+
+```
+Tip 45) Tell, Don't Ask
+```
+
+- 합계를 다루는 책임은 `totals` 객체에 있어야 함.
+- 묻지 말고 말해야 함(TDA: Tell, Don't Ask).
+- 대상의 내부 상태에 기반해서 대상의 행위를 결정하지 말고,
+- 내부 상태와 행위 세부 내용 모두 대상 객체에게 맡기라는 것.
+- 이런 캡슐화를 통해 지식이 코드 전체에 산재하는 것을 막을 수 있음.
+- 코드를 바꾸면 아래와 같은 모습.
+
+```java
+public void applyDiscount(customer, order_id, discount) {
+    customer
+        .orders
+        .find(order_id)
+        .getTotals()
+        .applyDiscount(discount);
+}
+```
+
+- 같은 원리를 `customer` 객체에도 적용시킬 수 있음.
+- `order`에 대해서도 마찬가지.
+
+```java
+// customer TDA
+public void applyDiscount(customer, order_id, discount) {
+    customer
+        .findOrder(order_id)
+        .getTotals()
+        .applyDiscount(discount);
+}
+
+// order TDA
+public void applyDiscount(customer, order_id, discount) {
+    customer
+        .findOrder(order_id)
+        .applyDiscount(discount);
+}
+```
+
+- 여기서 잠깐.
+- `custoemr`에 `applyDiscountToOrder(order_id)`를 추가할 순 없을까?
+- 무조건 TDA 적용은 X.
+- 이런 근거로 저자는 지금 모습이 편안하고 실용적이라고 함.
+- 개인적으로는 편안함 때문이라면 그 기준이 개인 별로 천차만별이라 위험하고,
+- 실용적이라는 것은 결론을 근거로 들고 있는 모순.
+- 고객은 주문 없이도 살아갈 수 있음.
+- 한편, 고객이 주문을 알아야 한다면,
+- 고객이 의존하는 객체들은 어마어마하게 많을 것.
+- 주문이 바뀔 때마다, 또는 다른 의존 객체들이 바뀔 때마다, 고객이 영향 받음.
+- 그래서 아래와 같은 방식이 좀 더 변경을 국소화 해준다고 생각.
+
+```java
+public void applyDiscount(customer, order_id, discount) {
+    orderRepository
+        .find(customer.id, order_id)
+        .ifPresent(o -> o.applyDiscount(discount));
+}
+```
+
+#### The Law of Demeter
+
+```
+Tip 46) Don't Chain Method Calls
+```
+
+- 무언가에 접근할 때 1개 이상의 "."을 사용하지 않는 것을 권장.
+- 물론, 거의 바뀌지 않는 곳이라면 상관 없음.
+- 예컨대, 아래처럼 언어 차원에서 제공해 주는 것.
+- 1판을 작성한 후로 20년이 지났지만 아래 체이닝에 변경은 없었음.
+
+```rb
+people
+    .sort_by {|person| person.age }
+    .first(10)
+    .map {| person | person.name }
+```
+
+#### Chains and Pipeline
+
+- 함수를 파이프라인으로 조합하기도 함.
+- 이는 train wreck 아님.
+- 숨겨져야 하는 구현 세부사항에 의존하는 것이 아니기에.
+- 물론 파이프라인은 커플링을 가져옴.
+- 하지만 목적은 변경하기 쉬운 것.
