@@ -1598,3 +1598,33 @@ people
 - 숨겨져야 하는 구현 세부사항에 의존하는 것이 아니기에.
 - 물론 파이프라인은 커플링을 가져옴.
 - 하지만 목적은 변경하기 쉬운 것.
+
+### The Evils of Globalization
+
+- 전역적으로 접근 가능한 데이터는 애플리케이션 컴포넌트 간 커플링을 퍼뜨리는 원천.
+- 애플리케이션의 모든 메서드가 갑자기 추가적 파라미터를 같는 것과 같음.
+- 코드를 재사용 가능하게 만들면 도움이 됨.
+- 인터페이스가 명확해지고, 다른 코드 부분과 디커플링 됨.
+- 그런데 전역 데이터는 이런 구분을 어렵게 만듦.
+- 단위 테스트를 작성할 때 이 문제가 종종 드러나곤 함.
+- 겉으로 보기엔 드러나지 않는 환경을 미리 마련해야 함.
+
+```
+Tip 47) Avoid Global Data
+```
+
+#### Global Data Includes Singletons
+
+- 싱글톤 역시 전역 데이터. 단지 이름이 길 뿐.
+- 이런 경우 `Config.log_level` 보다는,
+- `Config.log_level()`이나 `Config.getLogLevel()`을 사용하는 것이 좀 더 나음.
+
+#### Global Data Includes External Resources
+
+- 변할 수 있는<sup>mutable</sup> 외부 리소스 역시 전역 데이터.
+- 데이터베이스, 데이터 저장소, 파일 시스템, 서비스 API 등이 이에 해당.
+- 이들을 다룰 때 역시 리소스를 감싸서 제어권을 제한해야 함.
+
+```
+Tip 48) If It's Important Enough to Be Global, Wrap It in an API
+```
