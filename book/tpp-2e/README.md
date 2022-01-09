@@ -1657,3 +1657,97 @@ Tip 48) If It's Important Enough to Be Global, Wrap It in an API
 - 사용자 입장에서는 더 상호작용적이고,
 - 애플리케이션은 리소스를 좀 더 효율적으로 사용.
 - 이를 위한 방법 4가지를 차례로 살펴볼 예정.
+
+### Finite State Machines
+
+- FSM(Finite State Machine)은 몇 줄만의 구현으로,
+- 잠재적 혼란을 피할 수 있게 도와줌.
+- FSM을 사용하는 것은 쉬운 일이지만,
+- 많은 개발자들의 오해로 멀리하는 듯 함.
+
+#### The Anatomy of a Pragmatic FSM
+
+- 상태 머신은 기본적으로 이벤트를 어떻게 다룰 것인지에 대한 명세.
+- 몇 개의 상태로 구성되며, 이 중 하나는 현재 상태를 가리킴.
+- 각 상태 별로 중요한 이벤트들을 명시하고,
+- 이벤트 마다 시스템의 새로운 상태를 정의.
+
+![FSM example](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9780135956977/files/images/events_simple_fsm.png)
+
+- FSM에 관해 한 가지 흥미로운 것은 FSM을 아래와 같이 표로 나타낼 수 있다는 것.
+
+|         | Header  | Data    | Trailer | Other |
+|---------|---------|---------|---------|-------|
+| Initial | Reading | Error   | Error   | Error |
+| Reading | Error   | Reading | Done    | Error |
+
+- 이를 코드로 나타내면 아래와 같음.
+
+```rb
+TRANSITION = {
+    initial: {header: :reading},
+    reading: {data: :reading, trailer: :done},
+}
+
+state = :initial
+
+while state != :done && state != :error
+    msg = get_next_message()
+    state = TRANSITIONS[state][msg.msg_type] || :error
+end
+```
+
+#### Adding Actions
+
+- 앞에서 살펴본 순수 FSM은 이벤트 스트림 파서임.
+- 유일한 출력값이 최종 상태.
+- 특정 전이<sup>transition</sup>마다 트리거 되는 행위를 추가할 수 있음.
+- 아래는 문자열을 읽어 들이는 상태 당이어그램과 코드.
+- 상태와 액션을 표로 나타낼 수 있는데, 이를 코드에도 그대로 드러냄에 주목.
+
+![](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9780135956977/files/images/event_string_fsm.png)
+
+```rb
+TRANSITIONS = {
+
+    #   current       new state         action to take
+    # ---------------------------------------------------------
+    
+    look_for_string: {
+        '"'      => [ :in_string,       :start_new_string ],
+        :default => [ :look_for_string, :ignore ],
+    },
+
+    in_string: {
+        '"'      => [ :look_for_string, :finish_current_string ],
+        '\\'     => [ :copy_next_char,  :add_current_to_string ],
+        :default => [ :in_string,       :add_current_to_string ],
+    },
+
+    copy_nex_char: {
+        :default => [ :in_string,       :add_current_to_string ],
+    },
+}
+
+state = :look_for_string
+result = []
+
+while ch = STDIN.getc
+    state, action = TRANSITIONS[state][ch] || TRANSITIONS[state][:default]
+    case action
+    when :ignore
+    when :start_new_string
+        result = []
+    when :add_current_to_string
+        result << ch
+    when :finish_current_string
+        puts result.join
+    end
+end
+```
+
+#### State Machines Are a Start
+
+- 상태 머신을 사용할 기회를 좀 더 적극적으로 찾아보길 권장.
+- 물론 이벤트와 관련된 모든 문제를 해결해 주지는 못함.
+- 이벤트를 다루는 또 다른 방법에 대해서도 이어서 다룸.
