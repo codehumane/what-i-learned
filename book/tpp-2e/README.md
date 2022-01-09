@@ -1466,7 +1466,7 @@ Tip 43) Avoid Fortune-Telling
 - 코드는 가능한 느슨하게(유연하게) 작성해야 함.
 - 그렇지 않으면 코드는 금방 낡아 버리고 고치기 어려워짐.
 
-## Topic 27. Decoupling
+## Topic 28. Decoupling
 
 커플링은 변경의 적.
 
