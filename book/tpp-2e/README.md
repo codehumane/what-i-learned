@@ -1751,3 +1751,46 @@ end
 - 상태 머신을 사용할 기회를 좀 더 적극적으로 찾아보길 권장.
 - 물론 이벤트와 관련된 모든 문제를 해결해 주지는 못함.
 - 이벤트를 다루는 또 다른 방법에 대해서도 이어서 다룸.
+
+### The Observer Pattern
+
+- 옵저버 패턴에서는 *observable*이라 불리는 이벤트 소스가 있음.
+- 그리고 이 이벤트들에 관심있는 클라이언트(*observer*라 불리는)들이 함께 존재.
+- 옵저버는 옵저버블에 자신의 관심사를 등록.
+- 함수의 참조를 넘기는 방식이 일반적.
+- 이벤트가 발생하면, 옵저버블은 옵저버 목록을 순회하며,
+- 등록 시점에 넘겨 받았던 함수를 호출함.
+- 이벤트는 이 호출의 파라미터로 사용됨.
+- 아래는 애플리케이션을 종료하는 데 쓰이는 `Terminator` 모듈 예제.
+
+```rb
+module Terminator
+    CALLBAKCS = []
+    
+    def self.register(callback)
+        CALLBAKCS << callback
+    end
+
+    def self.exit(exit_status)
+        CALLBACKS.each { |callback| 
+            callback.(exit_status)
+        }
+        exit!(exit_status)
+    end
+end
+
+Terminator.register(-> (status) {
+     puts "callback 1 see #{status}"
+})
+
+Terminator.register(-> (status) {
+    puts "callback 2 see #{status}"
+})
+
+Terminator.exit(99)
+```
+
+- 하지만, 옵저버 패턴은 한 가지 문제가 있음.
+- 옵저버들이 옵저버블에 등록되어야 하므로 커플링이 생김.
+- 또한, 일반적으로 콜백들은 동기적으로 다뤄지므로 성능 병목이 있을 수도.
+- 이런 문제는 Publish/Subscribe 전략으로 극복 가능.
