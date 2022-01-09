@@ -1642,3 +1642,8 @@ Tip 48) If It's Important Enough to Be Global, Wrap It in an API
 - 코드를 부끄럽게 유지하라.
 - 직접적으로 아는 이들만 그것을 다루게 하라.
 - 이렇게 하면 커플링을 줄여줄 것이고, 변경하기 더 쉬움.
+
+## Topic 29. Juggling the Real World
+
+- 끊임없이 뭔가 일어나고 움직이는 복잡한 세상에 잘 통합되고자,
+- 반응적 애플리케이션을 만드는 방법에 대한 이야기.
