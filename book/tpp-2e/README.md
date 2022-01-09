@@ -1829,3 +1829,39 @@ Terminator.exit(99)
 - 어떤 것은 명시적. 버튼 클릭, 타이머 만료, ...
 - 어떤 것은 덜 명시적. 누군가의 로그인, 패턴 매칭하는 파일 라인, ...
 - 원천이 무엇이든 선형적 코드보다 더 높은 반응성과 디커플링을 가져다 줌.
+
+## Topic 30. Transforming Programming
+
+변환은 매우 중요.
+
+- 모든 프로그램은 데이터를 변환함.
+- 입력을 출력으로 바꾸는 것.
+- 우리가 지금까지 걱정했던 많은 것들이 해결되기 때문.
+- 구조는 깔끔해지고, 에러 핸들링은 좀 더 일관적이게 되고, 커플링은 낮아짐.
+
+아래 터미널 명령어 역시 변환.
+
+```sh
+$ find . -type f | xargs wc -l | sort -n | tail -5
+```
+
+- `find . -type f`: 현재 디렉토리의 모든 파일 목록을 표준 포맷으로 작성
+- `xargs wc -l`: 표준 입력으로부터 라인을 읽어들이고, 이를 정리해서 `wc -l` 커맨드의 인자로 넘김. `wc -l`은 인자로 넘어온 파일들의 내용 길이를 계산.
+- `sort -n`: 각 라인은 숫자로 시작한다고 가정하고, 표준 입력을 정렬. 표준 출력에 결과를 작성.
+- `tail -5`: 표준 입력을 읽고 마지막 5개 라인을 표준 출력으로 작성.
+
+이 파이프라인을 그림으로 나타내면 아래와 같음.
+
+![linux find pipeline](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9780135956977/files/images/wc-pipeline.png)
+
+원래의 요구사항은 "라인이 가장 긴 파일 5개를 찾아라"이며, 5가지 일련의 변환으로 나누어짐.
+
+- list of files
+- list with line numbers
+- sorted list
+- highest five + total
+- highest five
+
+```
+Tip 49) Programming Is About Code, But Programs Are About Data
+```
