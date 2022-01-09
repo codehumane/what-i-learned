@@ -1484,7 +1484,7 @@ Tip 44) Decoupled Code Is Easier to Change
 
 코드 디커플링을 위해 필요한 것들.
 
-- Train wreks - 메서드 호출 체인
+- Train wrecks - 메서드 호출 체인
 - Globalization - 정적 자원들의 위험
 - Inheritance - 상속이 왜 위험한지
 
@@ -1495,7 +1495,7 @@ Tip 44) Decoupled Code Is Easier to Change
 - 어디에 영향을 줄지 몰라 변경을 꺼리는 개발자
 - 변경의 영향을 모르기에 회의에 모든 사람이 들어와야 함
 
-### Train Wreks
+### Train Wrecks
 
 ```java
 public void applyDiscount(customer, order_id, discount) {
