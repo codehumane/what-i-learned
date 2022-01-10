@@ -1970,3 +1970,30 @@ def anagrams_in(word) do
     |> group_by_length()
 end
 ```
+
+### Why Is This So Great?
+
+일단 메인 함수를 다시 살펴보자.
+
+```
+word
+  |> all_subsets_longer_than_three_characters()
+  |> as_unique_signatures()
+  |> find_in_dictionary()
+  |> group_by_length()
+```
+
+- 이전 변형의 출력을 다음 변형의 입력으로 전달. 이는 매우 자연스럽게 읽히는 코드.
+- 또 한 가지. OOP 방식으로 위를 구현하면, 여러 객체가 서로 통신하며, 서로의 상태를 계속 변경. 이는 꽤나 커플링.
+- OO 시스템이 변경하기 어려운 이유 중 하나.
+- 하지만 상태 없는 객체들도 매우 흔하게 다루기에 별로 와닿지 않음.
+
+```
+Tip 50) Don't Hoard State; Pass It Around
+```
+
+- 변형적<sup>transformational</sup> 모델에서는 데이터 풀이 아니라 데이터가 흘러다님.
+- 데이터는 함수의 동료.
+- 파이프라인은 code -> data -> code -> data ...의 연속.
+- 데이터가 더 이상 특정 함수 그룹에 묶이지 않음.
+- 이는 커플링의 감소.
