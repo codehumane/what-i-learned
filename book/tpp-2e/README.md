@@ -1865,3 +1865,108 @@ $ find . -type f | xargs wc -l | sort -n | tail -5
 ```
 Tip 49) Programming Is About Code, But Programs Are About Data
 ```
+
+### Finding Transformations
+
+- 변환을 찾는 가장 쉬운 방법은 요구사항부터 출발.
+- 일단 요구사항의 입력과 출력을 결정.
+- 이는 전체 프로그램을 나타내는 함수를 정의한 것.
+- 이제 이 입력을 출력으로 이끄는 여러 단계들을 찾기.
+- 주어진 문자들로 만들 수 있는 모든 단어를 나열하는 입출력 예시는 아래와 같음.
+
+```
+"lvyin" is transformed to ->    3 => ivy, lin, nil, yin
+                                4 => inly, liny, viny
+                                5 => vinyl
+```
+
+- 이 *anagram finder*는 다시 4개의 변환 과정으로 나뉨.
+
+Step    | Transformation | Sample data
+------- | -------------- | -----------
+Step 0: | Initial input  | "ylvin"
+Step 1: | All combinations of three or more letters | vin, viy, vil, vny, vnl, vyl, iny, inl, iyl, nyl, viny, vinl, viyl, vnyl, inyl, vinyl
+Step 2: | Signatures of the combinations | inv, ivy, ilv, nvy, lnv, lvy, iny, iln, ily, lny, invy, ilnv, ilvy, lnvy, ilny, ilnvy
+Step 3: | List of all dictionary words which match any of the signatures | ivy, yin, nil, lin, viny, liny, inly, vinyl
+Step 4: | Words grouped by length | 3 => ivy, lin, nil, yin <br/> 4 => inly, liny, viny <br/> 5 => vinyl
+
+#### Transformations All the Way Down
+
+이번에는 Step 1을 다시 한 번 쪼개고 있음.
+
+Step      | Transformation | Sample data
+--------- | -------------- | -----------
+Step 1.0: | Initial input | "vinyl"
+Step 1.1: | Convert to characters  | v, i, n, y, l
+Step 1.2: | Get all subsets  | [], [v], [i], … [v,i], [v,n], [v,y], … [v,i,n], [v,i,y], … [v,n,y,l], [i,n,y,l], [v,i,n,y,l]
+Step 1.3: | Only those longer than three characters  | [v,i,n], [v,i,y], … [i,n,y,l], [v,i,n,y,l]
+Step 1.4: | Convert back to strings  | [vin,viy, … inyl,vinyl]
+
+이제 코드를 작성할 수 있는 수준이 됨(아래 언어는 Elixir).
+
+```ex
+defp all_subsets_longer_than_three_characters(word) do
+    word
+    |> String.codepoints()
+    |> Comb.subsets()
+    |> Stream.filter(fn subset -> length(subset) >= 3 end)
+    |> Stream.map(&List.to_string(&1))
+end
+```
+
+#### What's with the |> Operator?
+
+- 많은 함수형 언어처럼 Elixir도 파이프라인 연산자가 있음.
+- 이는 종종 *forward pipe* 또는 그냥 *pipe*라고 불리기도 함.
+- 왼쪽의 값을 받아서 오른쪽에 있는 함수의 첫 번째 인자로 넘겨주는 것.
+- 아래 두 코드는 같은 일을 함.
+
+```ex
+"vinyl" |> String.codepoints |> Comb.subsets()
+Comb.subsets(String.codepoints("vinyl"))
+```
+
+- 파이프라인 연산자가 단지 문법적 설탕이 아니라,
+- 다르게 생각할 수 있는 혁신적 기회를 주는 거라고 함.
+- 개인적으론 문법 설탕. 하지만 편리해 보이는 건 확실.
+
+#### Keep on Transforming...
+
+이번엔 Step 2를 세분화.
+
+Step      | Transformation | Sample data
+--------- | -------------- | -----------
+Step 2.0: | Initial input  | vin, viy, … inyl, vinyl
+Step 2.1: | convert to signatures | inv, ivy … ilny, inlvy
+
+```ex
+defp as_unique_signatures(subsets) do
+    subsets
+    |> Stream.map(&Dictionary.signature_of/1)
+end
+
+defp find_in_dictionary(signatures) do
+    signatures
+    |> Stream.map(&Dictionary.lookup_by_signature/1)
+    |> Stream.reject(&is_nil/1)
+    |> Stream.concat(&(&1))
+end
+
+defp group_by_length(words) do
+    words
+    |> Enum.sort()
+    |> Enum.group_by(&String.legnth/1)
+end
+```
+
+#### Putting It All Together
+
+```ex
+def anagrams_in(word) do
+    word
+    |> all_subsets_longer_than_three_characters()
+    |> as_unique_signatures()
+    |> find_in_dictionay()
+    |> group_by_length()
+end
+```
