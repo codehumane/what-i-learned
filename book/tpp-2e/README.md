@@ -1997,3 +1997,88 @@ Tip 50) Don't Hoard State; Pass It Around
 - 파이프라인은 code -> data -> code -> data ...의 연속.
 - 데이터가 더 이상 특정 함수 그룹에 묶이지 않음.
 - 이는 커플링의 감소.
+
+### What About Error Handling?
+
+- 변형 모델에서 에러는 어떻게 다룰까?
+- 기본적으로 날것의 값 대신 이를 감싼 데이터 구조체를 주고 받음.
+- 이 구조체에는 또한 값이 유효한지 여부를 포함.
+- Haskell에서는 이 래퍼가 `Maybe`라고 불림.
+- Scala에서는 `Option`.
+
+#### First, Choose a Representation
+
+- Elixir에서는 함수가 튜플을 반환.
+- 이는 `{:ok,value}` 또는 `{:error,reason}`을 포함.
+
+```ex
+iex(1)> File.open("/etc/passwd")
+{:ok, #PID<0.109.0>}
+iex(2)> File.open("/etc/wombat")
+{:error, :enoent}
+```
+
+#### Then Handle It Inside Each Transformation
+
+코드 살펴보면 이해가 좀 더 쉬움.
+
+```ex
+def find_all(file_name, pattern) do
+    File.read(file_name)
+        |> find_matching_lines(pattern)
+        |> truncate_lines()
+    end
+end
+
+def find_matching_lines({:ok, content}, pattern) do
+    content
+        |> String.split(~r/\n/)
+        |> Enum.filter(&String.match?(&1, pattern))
+        |> ok_unless_empty()
+end
+
+def find_matching_lines(error, _), do: error
+
+# ------------
+
+def truncate_lines({:ok, lines}) do
+    lines
+        |> Enum.map(&String.slice(&1, 0, 20))
+        |> ok()
+end
+
+def truncate_lines(error, _), do: error
+
+# ------------
+
+defp ok_unless_empty([]), do: error("nothing found")
+defp ok_unless_empty(result), do: ok(result)
+
+defp ok(result),    do: {:ok,   result}
+defp error(reason), do: {:error, reason}
+```
+
+#### Or Handle It in the Pipeline
+
+- 위 예시에서 에러 핸들링의 부담이 변형들에게 옮겨감.
+- Elixir 같이 함수 호출에 패턴 매칭을 사용하는 언어에서는 그 부담이 줄긴 하겠지만 여전히 좋은 모습은 아님.
+- 우리는 에러가 생겼을 때 파이프라인의 나머지 코드가 실행되지 않기를 원함.
+- 이는 파이프라인의 이전 단계가 성공하기 전까지는 함수의 실행을 지연하고 싶은 것.
+- 이를 위해 아래와 같이 수정해 볼 수 있음.
+
+```ex
+def and_then({ :ok, value }, func), do: func.(value)
+def and_then(anything_else, _func), do: anything_else
+
+def find_all(file_name, pattern) do
+    File.read(file_name)
+    |> and_then(&find_matching_lines(&1, pattern))
+    |> and_then(&truncate_lines(&1))
+end
+
+# 나머지는 동일
+```
+
+- 위에서 `and_then` 함수는 바인드 함수의 예시.
+- 이는 무언가를 감싼 값을 받고, 그 값에 대해 함수를 실행하며, 새로운 감싼 값을 반환.
+- 이런 약간의 도우미를 통해 나머지 변형들의 단순화를 꾀함.
