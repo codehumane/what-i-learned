@@ -2089,3 +2089,37 @@ end
 - 상속을 사용하는가?
 - 멈춰라.
 
+### Some Background
+
+Simula의 상속 이야기.
+
+- 상속은 1969년에 Simula 67에서 처음 소개.
+- 이는 여러 타입의 이벤트를 같은 리스트에 큐잉하는 좋은 해결책이었음.
+- *prefix* 클래스들이라 불리는 것들을 사용.
+
+```
+link CLASS car;
+  ... implementation of car
+
+link CLASS bicycle;
+  ... implementation of bicycle
+```
+
+- 여기서 `link`가 *prefix* 클래스.
+- 이는 연결 리스트의 기능을 더해주는 역할.
+- 자동차와 자전거 모두 교통 신호를 기다리는 목록에 추가할 수 있음.
+- 현대 시대의 용어로 `link`는 부모 클래스.
+- 행위라기 보다, 서로 다른 타입을 엮는 것.
+- 이는 Java와 C++ 같은 언어에서 계승됨.
+
+Smalltalk의 상속 이야기.
+
+- Simula에 이어 Smalltalk도 나옴.
+- 스몰토크 창시자인 앨런 케이는, 2019 Quora에서, 스몰토크가 상속을 가지게 된 이유를 언급.
+- 여기서의 상속은 타입이 아니라, 순수하게 행위를 위한 것.
+- 행위의 동적 조직화.
+- Ruby와 JavaScript 같은 언어에서 볼 수 있는 특징.
+
+> So when I designed Smalltalk-72—and it was a lark for fun while thinking about Smalltalk-71—I thought it would be fun to use its Lisp-like dynamics to do experiments with "different programming" (meaning various was to accomplish "this is like that except").
+
+지금은 이 2가지 목적으로 상속을 사용. 하지만, 어느 쪽이든 문제가 있음.
