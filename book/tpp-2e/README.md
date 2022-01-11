@@ -2123,3 +2123,56 @@ Smalltalk의 상속 이야기.
 > So when I designed Smalltalk-72—and it was a lark for fun while thinking about Smalltalk-71—I thought it would be fun to use its Lisp-like dynamics to do experiments with "different programming" (meaning various was to accomplish "this is like that except").
 
 지금은 이 2가지 목적으로 상속을 사용. 하지만, 어느 쪽이든 문제가 있음.
+
+### Problems Using Inheritance to Share Code
+
+- 상속은 커플링.
+- 자식 클래스 의존은 부모, 부모의 부모 등 모든 조상에 대한 의존.
+
+```rb
+class Vehicle
+    def initialize
+        @speed = 0
+    end
+    def stop
+        @speed = 0
+    end
+    def move_at(speed)
+        @speed = speed
+    end
+end
+
+class Car < Vehicle
+    def info
+        "I'm car driving at #{@speed}"
+    end
+end
+
+# top-level code
+my_ride = Car.new
+my_ride.move_at(30)
+```
+
+- `my_car.move_at` 호출은 부모 클래스인 `Vehicle`에서 일어남.
+- 만약, 누군가 `Vehicle`의 `move_at`을 `set_velocity`로 리네임 하면서,
+- `@speed` 인스턴스 변수도 `@velocity`로 바꿔야 한다면,
+- `Vehicle`을 참조하는 곳만 깨질 것이라 예상.
+- 그러나 `Car`를 참조하는 곳도 함께 깨짐.
+- 그리고 인스턴스 변수의 변경은 내부 구현 세부사항이나,
+- 여기서는 `Car`에도 영향을 주게 됨.
+- so much coupling
+
+#### Problems Using Inheritance to Build Types
+
+- 종종 상속을 새로운 타입을 정의하는 도구로 사용.
+- 처음엔 단순할지 모르나, 매우 복잡한 계층이 만들어짐.
+- 이런 복잡성은 애플리케이션을 깨지기 쉽게 만듦.
+- 한 곳의 변경이 위 아래 계층에 영향을 주기 때문.
+- 한편 Car가 일종의 Vehicle이지만, 동시에 Asset이나 LoanCollateral일 수 있음.
+- 이는 다중 상속 문제로 이어짐.
+- C++에서는 다중상속을 명확성에 대한 의구심 때문에 안 좋은 이름으로 부름.
+- 결과적으로, 많은 최근의 OO 언어들은 다중상속을 제공 안 함.
+
+```
+Tip 51) Don't Pay Inheritance Tax
+```
