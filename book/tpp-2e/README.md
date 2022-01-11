@@ -2176,3 +2176,120 @@ my_ride.move_at(30)
 ```
 Tip 51) Don't Pay Inheritance Tax
 ```
+
+### The Alternatives Are Better
+
+상속을 필요 없게 만드는 3가지 기법을 소개.
+
+1. Interfaces and protocols
+2. Delegation
+3. Mixins and traits
+
+#### Interfaces and Protocols
+
+- OO 언어에서는 클래스가 행위 집합을 구현하도록 지정할 수 있음.
+- 예를 들어, `Car` 클래스에게 `Drivable`와 `Locatable` 행위를 구현하게 명시.
+
+```java
+public interface Drivable {
+    double getSpeed();
+    void stop();
+}
+
+public interface Locatable() {
+    Coordinate getLocation();
+    boolean locationIsValid();
+}
+
+public class Car implements Drivable, Locatable {
+    // Code for class Car. This code must include
+    // the functionality of both Drivable
+    // and Locatable
+}
+```
+
+- 자바에서는 `Drivable`와 `Locatable`를 가리켜 인터페이스라 부름.
+- 다른 언어에서는 protocol이나 trait라 부르기도.
+- 이렇게 하면 클래스들을 타입으로 사용할 수 있음.
+- 같은 인터페이스를 구현하기만 하면 같은 타입.
+- 아래와 같은 식으로.
+
+```java
+List<Locatable> items = Arrays.asList(
+    new Car(...),
+    new Phone(...),
+    new Car(...)
+);
+
+void printLocation(Locatable item) {
+    if (item.locationIsValid() {
+    print(item.getLocation().asString());
+}
+
+items.forEach(printLocation);
+```
+
+```
+Tip 52) Prefer Interfaces to Express Polymorphism
+```
+
+- 인터페이스와 프로토콜은 상속 없이도 다형성 제공.
+
+#### Delegation
+
+```rb
+# 상속
+class Account < PersistenceBaseClass
+end
+
+# 위임
+class Account
+    def initialize(...)
+        @repo = Persister.for(self)
+    end
+
+    def save
+        @repo.save()
+    end
+end
+```
+
+- 위 예시에서 상속 대신 위임을 사용하면,
+- 클라이언트 코드에 프레임워크 API를 노출하지 않으면서도,
+- 프레임워크의 기능을 사용할 수 있음.
+
+```
+Tip 53) Delegate to Services: Has-A Trumps Is-A
+```
+
+- 여기서 좀 더 나아갈 수도 있음.
+- 왜 `Account`가 영속에 대해서 알아야 하나?
+
+```rb
+class Account
+    # nothing but account stuf
+end
+
+class AccountRecord
+    # wraps an account with the ability
+    # to be fetched and stored
+end
+```
+
+- 좀 더 디커플링 됨.
+- 하지만 비용이 따름.
+- 보일러플레이트 코드를 좀 더 작성해야 함.
+- 다행히 mixin과 trait이 우리의 일을 대신해 줌.
+
+#### Mixins, Traits, Categories, Protocol Extensions, ...
+
+- 믹스인의 기본 개념은 간단.
+- 상속 없이 클래스나 객체가 새로운 기능을 갖도록 확장.
+- 여러 함수들의 집합을 만들고, 여기에 이름을 붙이고, 클래스나 객체에서 이를 확장.
+- 원래 클래스들이 할 수 있는 것과 믹스인의 것을 병합하는 것.
+- [Working with Mixins in Ruby](https://www.culttt.com/2015/07/08/working-with-mixins-in-ruby/)에서 'When would you use a Mixin over Inheritance?' 부분에 상속에 비해 믹스인이 가지는 이점이 잘 나와 있음.
+- 상속이 "type of something"이라면 믹스인은 "capable of something".
+
+```
+Tip 54) Use Mixins to Share Functionality
+```
