@@ -2402,3 +2402,12 @@ Tip 56) Analyze Workflow to Imporve Concurrency
 - 이런 액티비티 다이어그램을 통해 병렬로 실행될 수 있는 것들을 찾아 병렬성을 극대화할 수 있음.
 
 ![activity diagram of parallelism](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9780135956977/files/images/pina-colada.png)
+
+### Opportunities for Concurrency
+
+- 액티비티 다이어그램은 잠재적 동시성을 보여주는 것이지,
+- 그것이 꼭 그래야 한다고 말하는 것은 아님.
+- 예컨대, 위의 피나 콜라다 예제에서 바텐더가 모든 일을 동시에 하려면 손이 5개여야.
+- 하지만 그래서 설계가 필요.
+- 다이어그램을 보면 8번의 작업이 몇 분 정도 소요됨을 알 수 있음.
+- 이 시간을 기다리는 동안 바텐더는 10번이나 11번을 수행할 수도.
