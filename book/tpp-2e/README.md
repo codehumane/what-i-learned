@@ -2606,3 +2606,10 @@ end
 ```
 Tip 58) Random Failures Are Often Concurrency Issues
 ```
+
+### Other Kinds of Exclusive Access
+
+- 대부분의 언어는 공유 자원에 대한 배타적 접근을 지원하는 라이브러리들을 갖고 있음.
+- 뮤텍스<sup>mutexes</sup>(mutual exclusion), 모니터, 세마포어 등으로 불림.
+- 하지만 Rust처럼 언어 차원에서 지원하는 것도 있음. 데이터 소유권 개념인데, 오직 한 번에 1개의 변수나 파라미터만이 변경 가능한 데이터의 참조를 가질 수 있음.
+- 함수형 언어로 동시성을 쉽게 만들 수 있다고는 하지만 역시나 같은 문제들에 직면.
