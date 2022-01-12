@@ -2429,7 +2429,7 @@ Tip 56) Analyze Workflow to Imporve Concurrency
 - 이제 문제는 이를 어떻게 구현할 것인가에 대한 것.
 - 이는 뒤이은 챕터들에서 다루게 됨.
 
-## Topic 35. Shared State Is Incorrect State
+## Topic 34. Shared State Is Incorrect State
 
 - 식당에서 직원에게 애플 파이 1개를 부탁.
 - 직원은 뒤를 돌아 디스플레이에서 파이가 1개 남아 있음을 확인하고 알았다고 함.
