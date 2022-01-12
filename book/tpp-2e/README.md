@@ -2384,3 +2384,21 @@ Tip 55) Parameterize Your App Using External Configuration
 - 우리는 동시성을 허용해야 하고,
 - 시간 또는 순서 의존성을 디커플링 해야 함.
 - 이렇게 함으로써 유연하고 추론하기 쉬우며 좀 더 신뢰성 있고 빠른 반응성을 기대.
+
+### Looking for Concurrency
+
+- 애플리케이션 워크플로우를 설계 일부로 모델링하고 분석해야 함.
+- 무엇이 동시에 일어날 수 있고, 무엇이 엄격한 순서대로 일어나야 하는지 찾아야 함.
+- 액티비티 다이어그램 같은 도구를 이용해 순서도를 그려볼 수 있음.
+
+```
+Tip 56) Analyze Workflow to Imporve Concurrency
+```
+
+- 액티비티 다이어그램에서 액션은 모서리가 둥근 박스로 표현.
+- 액션을 떠나는 화살표는 다른 액션으로 이어짐.
+- 또는 동기화 막대<sup>synchronization bar</sup>라고 불리는 두꺼운 선으로 이어짐.
+- 이 두꺼운 선으로 향하는 모든 액션이 완료되어야, 이 선을 떠나는 화살들이 계속 진행될 수 있음.
+- 이런 액티비티 다이어그램을 통해 병렬로 실행될 수 있는 것들을 찾아 병렬성을 극대화할 수 있음.
+
+![activity diagram of parallelism](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9780135956977/files/images/pina-colada.png)
