@@ -2341,3 +2341,9 @@ Tip 55) Parameterize Your App Using External Configuration
 - 그리고 설정 변경을 전역적으로 반영할 수 있음.
 - 또한 설정을 특수화 된 UI를 통해 관리할 수 있음.
 - 더불어 설정이 동적이 됨.
+
+### Don't Write Dodo-Code
+
+- 설정 외부화 없이는 코드가 적응력이나 유연함을 갖기 어령무.
+- 적응하지 못하는 종은 사라지기 마련.
+- 도도 새가 적응하지 못하고 멸종 됐다는 얘기 곁들임.
