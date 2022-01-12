@@ -2442,3 +2442,108 @@ Tip 56) Analyze Workflow to Imporve Concurrency
 ```
 Tip 57) Shared State Is Incorrect State
 ```
+
+### Nonatomic Updates
+
+- 위 사례에서 두 직원이 동시에 한 일은 아래 코드와 같음.
+
+```rb
+if display_case.pie_count > 0
+    promise_pie_to_customer()
+    display_case.take_pie()
+    give_pie_to_customer()
+end
+```
+
+- 여기서 문제는 2개의 프로세서가 같은 메모리에 쓰기를 할 수 있다는 것이 아님.
+- 문제는 어떤 프로세스도 메모리의 읽기 일관성을 보장할 수 없다는 것.
+- 파이 갯수를 읽어들이고 업데이트 하는 것이 원자적 연산이 아님.
+- 값이 중간 상태일 수 있음.
+
+#### Semaphores and Other Forms of Mutual Exclusion
+
+- 세마포어란, 한 번에 한 사람만 소유할 수 있는 것을 가리킴.
+- 세마포어를 만들고 이를 이용해서 리소스에 대한 접근 제어.
+
+```rb
+case_semaphore.lock()
+
+if display_case.pie_count > 0
+    promise_pie_to_customer()
+    display_case.take_pie()
+    give_pie_to_customer()
+end
+
+case_semaphore.unlock()
+```
+
+- 이 방식에는 다소 문제가 있음.
+- 접근자들이 세마포어를 사용한다는 관례에 모두 동의를 했기에 가능한 것.
+- 만약 누군가 이를 깜빡한다면 다시 혼란에 빠지게 됨.
+
+#### Make the Resource Transactional
+
+- 위 방식은 접근을 보호하는 역할을 접근자에게 위임해 버림.
+- 이제 접근을 중앙화 해보자.
+
+```rb
+slice = display_case.get_pie_if_available()
+if slice
+    give_pie_to_customer()
+end
+
+def get_pie_if_available()
+    @case_semaphore.lock()
+
+    if @slices.size > 0
+        update_sales_data(:pie)
+        return @slices.shift
+    else
+        false
+    end
+
+    @case_semaphore.unlock()
+end
+```
+
+- 파이 조각 갯수를 확인하고 얻는 행위를 하나의 API로 변경하고,
+- 그 API 안에서 세마포어 구현을 함.
+- 하지만 이 방식도 문제가 있음.
+- 만약, `update_sale_data`에서 예외가 발생한다면?
+- 세마포어는 잠금을 해제하지 못한 상태를 영원히 유지하게 됨.
+- 뒤이은 `get_pie_if_available` 호출자들은 계속 대기.
+- 그래서 아래와 같이 해야 함.
+
+```rb
+def get_pie_if_available()
+    @case_semaphore.lock()
+
+    try {
+        if @slices.size > 0
+            update_sales_data(:pie)
+            return @slices.shift
+        else
+            false
+        end
+    }
+    ensure {
+        @case_semaphore.unlock()
+    }
+end
+```
+
+- 보통은 언어에서 이런 처리를 돕기에 아래와 같은 코드가 되곤 함.
+
+```rb
+def get_pie_if_available()
+    @case_semaphore.protect() {
+        if @slices.size > 0
+            update_sales_data(:pie)
+            return @slices.shift
+        else
+            false
+        end
+    }
+end
+```
+
