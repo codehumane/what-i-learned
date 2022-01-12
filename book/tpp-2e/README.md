@@ -2422,3 +2422,9 @@ Tip 56) Analyze Workflow to Imporve Concurrency
 - 한 가지 예시는 Elixir 언어의 컴파일러.
 - 이는 프로젝트를 여러 모듈로 나누고 각각을 병렬로 컴파일 함.
 - 때로는 모듈간 의존성이 있는데, 이 경우엔 의존 작업이 끝날 때까지 기다리게 됨.
+
+### Identifying Opportunities Is the Easy Part
+
+- 동시성과 병렬성으로 이점을 취할 수 있는 지점을 식별하는 것은 생각보다 간단.
+- 이제 문제는 이를 어떻게 구현할 것인가에 대한 것.
+- 이는 뒤이은 챕터들에서 다루게 됨.
