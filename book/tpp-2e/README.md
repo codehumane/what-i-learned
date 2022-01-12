@@ -2547,3 +2547,52 @@ def get_pie_if_available()
 end
 ```
 
+### Multiple Resource Transactions
+
+- 파이와 함께 아이스크림도 팔아야 한다고 해보자.
+- 위 코드를 아래와 같은 방식으로 고려해 볼 수 있음.
+
+```rb
+slice = display_case.get_pie_if_available()
+scoop = freezer.get_ice_cream_if_available()
+
+if slice && scoop
+    give_order_to_customer()
+end
+```
+
+- 하지만 이 코드는 동작하지 않음.
+- 파이는 얻었지만 아이스크림을 얻으려 하는 순간 그럴 수 없다는 걸 알게 되면?
+- 파이만 얻은 상태로 아무 것도 할 수 없게 됨.
+- 그래서 아래와 같이 바꿔볼 수 있음.
+
+```rb
+slice = display_case.get_pie_if_available()
+
+if slice
+    try {
+        scoop = freezer.get_ice_cream_if_available()
+        if scoop
+            try {
+                give_order_to_customer()
+            }
+            rescue {
+                freezer.give_back(scoop)
+            }
+            end
+    }
+    rescue {
+        display_case.give_back(slice)
+    }
+end
+```
+
+- 하지만 이 역시 이상적이진 않음.
+- 코드가 일단 정말 별로다.
+- 비즈니스 로직이 잡일에 묻혀버림.
+- 앞서 리소스 그 자체가 리소스를 핸들링 하도록 했었으나,
+- 지금은 리소스가 2개인 상황.
+- 1개의 리소스로 2개를 몰아 넣는 것은 별로.
+- 실용적 접근법은 아이스크림을 얻은 파이<sup>apple pie à la mode</sup>를 하나의 새로운 자원으로 보는 것.
+- 물론 현실 세계에서는 복합 메뉴가 많을 수 잇고,
+- 그 메뉴마다 새로운 모듈을 만들고 싶지는 않을 것.
