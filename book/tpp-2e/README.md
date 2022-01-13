@@ -2648,3 +2648,138 @@ Tip 58) Random Failures Are Often Concurrency Issues
 ```
 Tip 59) Use Actors For Concurrency Without Shared State
 ```
+
+### A Simple Actor
+
+- 액터를 이용해 앞서 소개했던 식당 케이스를 구현.
+- 액터는 3개(고객, 직원, 파이 케이스).
+- 구현은 자바스크립트와 Nact 라이브러리를 이용.
+- 일단 고객 먼저 구현.
+- 고객은 3가지 메시지를 받을 수 있음.
+- "배고프신가요"
+- "파이가 있습니다."
+- "죄송하지만, 파이가 없습니다."
+
+```js
+const customerActor = {
+    'hungry for pie': (msg, ctx, state) => {
+        return dispatch(state.waiter, {
+            type: "order,
+            customer: ctx.self,
+            wants: 'pie'
+        });
+    },
+
+    'put on table': (msg, ctx, state) =>
+        console.log(`${ctx.self.name} sees "${msg.food}"" appear on the table`),
+
+    'no pie left': (_msg, ctx, _state) =>
+        console.log(`${ctx.self.name} sulks...`)
+}
+```
+
+- 이제 직원 액터 구현.
+
+```js
+const waiterActor = {
+    "order": (msg, ctx, state) => {
+        if (msg.wants == "pie") {
+            dispatch(state.pieCase, {
+                type: "get slice",
+                customer: msg.customer,
+                waiter: ctx.self
+            })
+        } else {
+            console.dir(`Don't know how to order ${msg.wants}`);
+        }
+    },
+
+    "add to order": (msg, ctx) =>
+        console.log(`Waiter adds ${msg.food} to ${msg.customer.name}'s order`),
+
+    "error": (msg, ctx) => {
+        dispatch(msg.customer, {
+            type: 'no pie left',
+            msg: msg.msg
+        });
+        console.log(`\nThe waiter apologizes to ${msg.customer.name}: ${msg.msg}`);
+    }
+};
+```
+
+- 이제 파이 케이스 구현.
+- 파이 케이스는 상태를 가짐.
+- 가지고 있는 모든 조각에 대한 배열.
+
+```js
+const pieCaseActor = {
+    'get slice': (msg, context, state) => {
+        if (state.slices.length == 0) {
+            dispatch(msg.waiter, {
+                type: 'error',
+                msg: "no pie left",
+                customer: msg.customer
+            });
+            return state;
+        }
+        else {
+            var slice = state.slices.shift() + " pie slice";
+            dispatch(msg.customer, {
+                type: 'put on table',
+                food: slice
+            });
+            dispatch(msg.waiter, {
+                type: 'add to order',
+                food: slice,
+                customer: msg.customer
+            });
+            return state;
+        }
+    }
+}
+```
+
+- 보통 액터는 다른 액터에 의해 동적으로 시작되지만,
+- 지금 예제에서는 단순화를 위해 액터를 수동으로 시작시킬 것.
+- 그리고 이 시작에 몇 가지 초기 상태를 함께 넘김.
+
+```js
+const actorSystem = start();
+
+let pieCase = start_actor(
+    actorSystem,
+    'pie-case',
+    pieCaseActor,
+    { slices: ["apple", "peach", "cherry"] }
+);
+
+let waiter = start_actor(
+    actorSystem,
+    'waiter',
+    waiterActor,
+    { pieCase: pieCase }
+);
+
+let c1 = start_actor(
+    actorSystem,
+    'customer1',
+    customerActor,
+    { waiter: waiter }
+));
+
+let c2 = start_actor(
+    actorSystem,
+    'customer2',
+    customerActor,
+    { waiter: waiter }
+));
+
+dispatch(c1, { type: 'hungry for pie', waiter: waiter });
+dispatch(c2, { type: 'hungry for pie', waiter: waiter });
+dispatch(c1, { type: 'hungry for pie', waiter: waiter });
+dispatch(c2, { type: 'hungry for pie', waiter: waiter });
+dispatch(c1, { type: 'hungry for pie', waiter: waiter });
+sleep(500).then(() => {
+    stop(actorSystem);
+})
+```
