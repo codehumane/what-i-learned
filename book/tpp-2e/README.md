@@ -3113,3 +3113,42 @@ Tip 67) A Test Is the First User of Your Code
 - 통제된 환경에서 주어진 데이터로 실행.
 - 실질적인 통합 환경에서 테스트하기에 앞서,
 - 각 모듈이 먼저 계약에 잘 맞게 동작하는지 확인하는 것.
+
+### Testing Against Contract
+
+- 단위 테스트를 계약을 테스트하는 것으로 생각하길 선호.
+- 이는 코드가 계약을 잘 수행하는지,
+- 계약이 우리가 생각하는 것과 동일한지를 확인하는 것.
+- 예를 들어 아래와 같은 계약이 있다고 가정.
+
+```
+pre-conditions:
+    argument >= 0;
+
+post-conditions:
+    ((result * result) - argument).abs <= eplison*argument;
+```
+
+- 이를 통해 3가지를 알 수 있으며(기록은 생략),
+- 테스트를 작성해 보면 아래와 같음.
+
+```
+assertWithinEpsilon(my_sqrt(0), 0)
+assertWithinEpsilon(my_sqrt(2.0), 1.4142135624)
+assertWithinEpsilon(my_sqrt(64.0), 8.0)
+assertWithinEpsilon(my_sqrt(1.0e7), 3162.2776602)
+assertRaisesException fn => my_sqrt(-4.0) end
+```
+
+- 위 예제는 독립적인 루틴.
+- 서로 의존하는 것들은 어떻게 해야 할까?
+- 만약 `A`라는 모듈이 있고, 이것이 `DataFeed`와 `LinearRegression`에 의존.
+- 그럼 가장 먼저 `DataFeed`가 계약을 만족해야 하는지 검증하고,
+- `LinearRegression` 계약을 검사한 뒤,
+- 이 둘에 의존하는 `A`의 계약을 검증.
+- 만약 `A`만 실패한다면, `A` 자체에 문제가 있거나, `A`가 의존하는 것들을 사용하는 지점에 문제가 있는 것.
+- 이런 확인은 디버깅 비용을 줄여줌.
+
+```
+Tip 69) Design to Test
+```
