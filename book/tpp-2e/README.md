@@ -3152,3 +3152,10 @@ assertRaisesException fn => my_sqrt(-4.0) end
 ```
 Tip 69) Design to Test
 ```
+
+### Ad Hoc Testing
+
+- `console.log()` 같은 코드를 사용하거나,
+- 혹은 디버거로 확인하는 테스팅을 가리킴.
+- 디버깅이 완료되면 이 작업을 정식으로 만들 것.
+- 문제가 된 것은 반복 될 가능성이 있기 때문.
