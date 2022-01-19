@@ -3203,3 +3203,35 @@ Tip 70) Test Your Software, or Your Users Will
 - 그러나 저자는 이 방법을 좋아하지 않는다고 함.
 - Topic 41에서 다뤘던 것처럼, 테스트가 구현의 가이드가 되기 때문.
 - 그래서 컴퓨터가(우리의 선입견을 가지지 않은), 테스트를 대신해 주는 것을 권장.
+
+### Contracts, Invariants, and Properties
+
+- 코드가 계약<sup>contract</sup>과 불변성<sup>invariant</sup> 만족시킨다면,
+- 이를 이용해서 프로퍼티 기반 테스팅이라는 테스트 자동화를 수행해 볼 수 있음.
+
+```
+Tip 71) Use Property-Based Tests to Validate Your Assumptions
+```
+
+- 아래 코드는 2가지 속성(프로퍼티) 검증.
+- 하나는 정렬 전후의 리스트 크기는 변하지 않는다는 것.
+- 나머지 하나는 임의의 리스트 값이 뒤에 있는 값보다 클 수 없다는 것.
+- 이 검증을 프로퍼티 기반 테스팅으로 작성한 것이고,
+- 파이썬의 Hypothesis와 pytest라는 도구를 사용함.
+
+```py
+from hypothesis import given
+import hypothesis.strategies as some
+
+@given(some.lists(some.integers()))
+def test_list_size_is_invariant_across_sorting(a_list):
+    original_length = len(a_list)
+    a_list.sort()
+    assert len(a_list) == original_length
+
+@given(some.lists(some.text()))
+def test_sorted_result_is_ordered(a_list):
+    a_list.sort()
+    for i in range(len(a_list) - 1):
+        assert a_list[i] <= a_list[i + 1]
+```
