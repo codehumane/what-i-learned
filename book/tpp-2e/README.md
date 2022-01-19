@@ -3235,3 +3235,14 @@ def test_sorted_result_is_ordered(a_list):
     for i in range(len(a_list) - 1):
         assert a_list[i] <= a_list[i + 1]
 ```
+
+### Test Data Generation
+
+- Hypothesis의 경우 데이터를 생성하기 위한 도구들을 지원.
+- 아래와 같은 식.
+
+```py
+@given(some.integers())
+@given(some.integers(min_value=5, max_value=10).map(lambda x: x * 2))
+@given(some.lists(some.integers(min_value=1), max_size=100))
+```
