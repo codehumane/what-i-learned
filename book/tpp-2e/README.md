@@ -3445,3 +3445,11 @@ Tip 72) Keep It Simple and Minimize Attack Surfaces
 ```
 Tip 73) Apply security Patches Quickly
 ```
+
+### Common Sense vs Crypto
+
+- 암호학을 다룰 때는 상식이 맞지 않을 수 있음을 기억.
+- 가장 첫 번째 룰은 직접 하지 말라는 것.
+- 아무리 간단한 것이라 해도 직접 만들면 취약.
+- 대신 신뢰할 수 있는 것을 활용.
+- 이것이 실용적.
