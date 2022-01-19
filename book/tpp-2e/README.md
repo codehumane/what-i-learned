@@ -3246,3 +3246,105 @@ def test_sorted_result_is_ordered(a_list):
 @given(some.integers(min_value=5, max_value=10).map(lambda x: x * 2))
 @given(some.lists(some.integers(min_value=1), max_size=100))
 ```
+
+### Finding Bad Assumptions
+
+- 간단한 주문 처리와 제고 관리 시스템 예시 소개.
+- 재고는 `Warehouse`라는 객체로 모델링.
+
+```py
+class Warehouse:
+    def __init__(self, stock):
+        self.stock = stock
+
+    def in_stock(self, item_name):
+        return (item_name in self.stock) and (self.stock[item_name] > 0)
+    
+    def take_from_stock(self, item_name, quantity):
+        if quantity <= self.stock[item_name]:
+            self.stock[item_name] -= quantity
+        else:
+            raise Exception("Oversold {}".format(item_name))
+    
+    def stock_count(self, item_name):
+        return self.stock[item_name]
+
+def test_warehouse():
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    assert wh.in_stock("shoes")
+    assert wh.in_stock("hats")
+    assert not wh.in_stock("umbrellas)
+
+    wh.take_from_stock("shoes", 2)
+    assert wh.in_stock("shoes")
+
+    wh.take_from_stock("hats", 2)
+    assert not wh.in_stock("htats")
+```
+
+- 이제 주문 프로세스를 작성.
+
+```py
+def order(warehouse, item, quantity):
+    if warehouse.in_stock(item):
+        warehouse.take_from_stock(item, quantity)
+        return ("ok", item, quantity)
+    else:
+        return ("not available", item, quanitty)
+
+def test_order_in_stock():
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    status, item, quantity = order(wh, "hats", 1)
+    assert status == "ok"
+    assert item     == "hats"
+    assert quantity == 1
+    assert wh.stock_count("hats") == 1
+
+def test_order_not_in_stock():
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    status, item, quantity = order(wh, "umbrellas", 1)
+    assert status   == "not available"
+    assert item     == "umbrellas"
+    assert quantity == 1
+    assert wh.stock_count("umbrellas") == 0
+
+def test_order_unknown_item():
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    status, item, quantity = order(wh, "bagel", 1)
+    assert status   == "not available"
+    assert item     == "bagel"
+    assert quantity == 1
+```
+
+- 언뜻 보기엔 괜찮아 보임.
+- 하지만 프로퍼티 테스트를 조금 추가해보자.
+
+```py
+@given(
+    item = some.sampled_from(["shoes", "hats"]),
+    quantity = some.integers(min_value=1, max_value=4)
+)
+def test_stock_level_plus_quantity_equals_original_stock_level(item, quantity):
+    wh = Warehouse({"shoes": 10, "hats": 2, "umbrellas": 0})
+    initial_stock_level = wh.stock_count(item)
+    (status, item, quantity) = order(wh, item, quantity)
+    if status == "ok":
+        assert wh.stock_count(item) + quantity == initial_stock_level
+```
+
+- 모자를 3개 주문하게 되는 테스트 값이 주입되면 문제가 됨.
+- 프로퍼티 테스팅이 잘못된 가정을 발견한 것.
+- 바로, `in_stock` 함수가 재고 아이템으로 1개 이상만 있는지 검사한 것.
+- 그래서 `in_stock`과 `order`를 아래와 같이 바꿔야 함.
+
+```py
+def in_stock(self, item_name, quantity):
+    return (item_name in self.stock) and (self.stock[item_name] >= quantity)
+
+def order(wharehouse, item, quantity):
+    if warehouse.in_stock(item, quantity):
+        warehouse.take_from_stock(item, quantity)
+        return ("ok", item, quantity)
+    else:
+        return ("not available", item, quantity)
+```
