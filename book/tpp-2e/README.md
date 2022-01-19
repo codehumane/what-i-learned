@@ -3348,3 +3348,10 @@ def order(wharehouse, item, quantity):
     else:
         return ("not available", item, quantity)
 ```
+
+## Topic 43. Stay Safe Out There
+
+- 1판에서 편집증을 가질 필요는 없다고 했는데 이는 틀렸음.
+- 매일 매일 편집증적으로 대해야 함.
+- 보안에 대한 사건들이 끊임없이 보도됨.
+- 누구의 탓이 아니라 개발자들의 부주의 때문.
