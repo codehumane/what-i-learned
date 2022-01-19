@@ -3363,3 +3363,85 @@ def order(wharehouse, item, quantity):
 - 잘못된 파라미터 전달, 리소스 누수, 가용성 고갈 등을 고려해야 하는 것.
 - 여기서 더 나아가 외부에서 고의적으로 시스템 고장 내는 것에도 대응 필요.
 - 보안 이야기.
+
+### Security Basic Principles
+
+기억하면 좋을 보안 관련 원칙들.
+
+1. Minimize Attack Surface Area
+2. Principle of Least Privilege
+3. Secure Defaults
+4. Encrypt Sensitive Data
+5. Maintain Security Updates
+
+#### Minimize Attack Surface Area
+
+- 시스템 공격 면적 = 공격자가 데이터 입력/추출하거나, 서비스를 실행시킬 수 있는 모든 접근 지점.
+- 코드 복잡도는 공격 면적을 넓힘.
+- 코드가 적고 간단할 수록 더 적은 버그와 적은 보안 취약점을 가짐.
+- 다음으로, 외부 데이터를 믿지 말고, 데이터페이스나 렌더링 등의 처리 전에 정제할 것.
+
+```rb
+puts "Enter a file name to count: "
+name = gets
+system("wc -c ${name}")
+```
+
+- 위 코드는 아래와 같은 방식에 의해 손상될 수 있음.
+
+```
+Enter a file name to count: 
+tests.dat; rm -rf /
+```
+
+- 그래서 SAFE를 이용해서 아래와 같이 바꿔야 함.
+
+```
+$SAFE = 1
+
+puts "Enter a file name to count: "
+name = gets
+system("wc -c ${name}")
+```
+
+- 인증되지 않는 서비스 역시 위험.
+- 인증한다고 하더라도 권한을 가진 사용자를 최소화.
+- 사용되지 않는, 오래된, 낡은 사용자나 서비스는 제거.
+- "Password iss used by another user" 같은 메시지를 보여주는 것도 위험.
+- 너무 많은 정보 누출 X.
+- 풀 스택 트레이스 같이 디버깅에 용이한 정보를 노출하는 것도 위험.
+
+```
+Tip 72) Keep It Simple and Minimize Attack Surfaces
+```
+
+#### Principle of Least Privilege
+
+- 최소한의 권한을 짧은 시간만 허용.
+- 루트나 관리자 등의 권한 부여를 최소화하고,
+- 부여하더라도 짧은 시간 동안만.
+- OS뿐만아니라 애플리케이션에서도 마찬가지.
+
+#### Secure Defaults
+
+- 애플리케이션에서 기본 설정은 가장 안전한 값으로 해야 함.
+- 비밀번호 같은 것을 가리킴.
+
+#### Encrypt Sensitive Data
+
+- 민감 정보를 남기지 말 것.
+- VCS에 모든 것을 담는 게 좋긴 하나,
+- 비밀 정보나 API 키, SSH 키, 암호화된 비밀번호, 그 외 자격증명은 남기면 안 됨.
+- 이들은 설정 파일이나 환경 변수 등 독립적으로 관리해야 함.
+
+#### Maintain Security Updates
+
+- 업데이트는 큰 고통이 수반됨.
+- 보안 패치는 되지만, 애플리케이션 일부가 손상될 수도.
+- 업데이트를 좀 더 연기하는 것을 고려해 볼 수도 있겠으나,
+- 이는 최악의 아이디어.
+- 알려진 취약점으로 시스템이 깨지기 쉽기 때문.
+
+```
+Tip 73) Apply security Patches Quickly
+```
