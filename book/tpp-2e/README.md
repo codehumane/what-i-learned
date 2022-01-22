@@ -3544,3 +3544,12 @@ Fib.nth(20) # => 4181
 ```
 Tip 74) Name Well; Rename When Needed
 ```
+
+# Chapter 8. Before the Project
+
+프로젝트 시작 시 고민하면 좋을 이야기들.
+
+- 요구사항 수집.
+- 문제 해결법.
+- 함께 일하기.
+- 생각하기.
