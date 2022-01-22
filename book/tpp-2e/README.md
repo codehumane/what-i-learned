@@ -3696,3 +3696,24 @@ Tip 79) Policy Is Metadata
 
 > Good requirements are abstract.
 > Requirements are not architecture. Requirements are not design, nor are they the user interface. Requirements are need.
+
+## Just One More Wafer-Thin Mint...
+
+- 많은 프로젝트들의 실패가 늘어나는 범위에 기인함.
+- 이를 예방하는 방법은 피드백.
+- 고객과 꾸준한 피드백 주기를 가져간다면,
+- "딱 하나만 더요"의 파장을 좀 더 잘 이해할 수 있을 것.
+- 보드에 카드를 한 장 올리면 한 장을 뒤로 옮겨야 하는 고민이 필요.
+- 피드백은 양방향으로 작동함.
+
+### Maintain a Glossary
+
+- 요구사항에 대해 논의하다 보면,
+- 사용자와 도메인 전문가들은 특정 용어를 특정한 의미로 사용하게 됨을 발견.
+- 예컨대, "client"와 "customer"를 구분해서 사용.
+- 시스템에서 이런 구분을 무시하는 것은 적절치 못함.
+- 프로젝트 용어집을 만들고 관리하라.
+
+```
+Tip 80) Use a Project Glossary
+```
