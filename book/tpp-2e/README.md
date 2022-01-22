@@ -3682,3 +3682,17 @@ Tip 79) Policy Is Metadata
 - 요구사항이 너무 단순한 것 아니냐고 걱정할 수 있음.
 - 그러나 이는 개발자들이 질문을 통해 명확하게 알아가도록 권장.
 - 피드백 프로세스를 강화하는 것.
+
+## Overspecification
+
+- 너무 자세한 문서화는 위험.
+- 좋은 요구사항은 추상적(오호라).
+- 요구사항과 관련된, 비즈니스 요구를 정확하게 반영한, 가장 단순한 문장이 최고.
+- 하지만 모호하면 안 됨.
+- 근본적인 시멘틱 불변(Topic 23에서 다룬)을 요구사항으로 도출하고,
+- 현재의 작업 관례를 정책으로 문서화 해야 함.
+- 요구사항은 아키텍처도, 설계도, 사용자 인터페이스도 아님.
+- 요구사항은 필요<sup>need</sup>임.
+
+> Good requirements are abstract.
+> Requirements are not architecture. Requirements are not design, nor are they the user interface. Requirements are need.
