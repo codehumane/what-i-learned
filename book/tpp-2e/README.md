@@ -3565,3 +3565,16 @@ Tip 74) Name Well; Rename When Needed
 ```
 Tip 75) No One Knows Exactly What They Want
 ```
+
+### The Requirements Myth
+
+- 소프트웨어 산업 초기에는 컴퓨팅이 고비용.
+- 따라서 컴퓨팅을 수행하기에 앞서, 정확히 원하는 바를 확인하고 코드로 작성하는 데 많은 시간을 투자.
+- 하지만 세상은 복잡하고 알 수 없으며 모순적.
+- 이런 세상에서 정확한 명세는 매우 드문 일.
+- 개발자로써 사람들이 무엇을 원하는지 깨닫는 데 도움을 주어야.
+- 이는 아마도 가장 중요한 속성.
+
+```
+Tip 76) Programmers Help People Understand What They Want
+```
