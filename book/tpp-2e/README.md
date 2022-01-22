@@ -3644,3 +3644,12 @@ Tip 78) Work with ad User to Think Like a User
 ```
 Tip 79) Policy Is Metadata
 ```
+
+### Requirements vs. Reality
+
+- 궁극의 음악 믹싱 보드가 개발됐지만,
+- 이것이 원하는 모든 소리를 낼 수 있음에도 불구하고,
+- 이를 사용하는 사용자들은 드물었음.
+- 마우스나 키보드의 조합으로 소리를 만드는 것이 손에 맞지 않았기 때문.
+
+> yes, it does what I want, but not how I want.
