@@ -3617,3 +3617,13 @@ Tip 76) Programmers Help People Understand What They Want
 ```
 Tip 77) Requirements Are Learned in a Feedback Loop
 ```
+
+### Walk in Your Client's Shoes
+
+- 고객의 생각을 잘 이해하는 한 방법은 고객이 되어 보는 것.
+- 시스템을 사용하게 될 고객이 어떻게 일하는지 직접 지켜보기.
+- 창고에서 직접 일해보기.
+
+```
+Tip 78) Work with ad User to Think Like a User
+```
