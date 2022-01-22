@@ -3553,3 +3553,15 @@ Tip 74) Name Well; Rename When Needed
 - 문제 해결법.
 - 함께 일하기.
 - 생각하기.
+
+## Topic 45. The Requirements Pit
+
+- 요구사항에 관한 많은 글들에서 요구사항을 "수집<sup>gathering</sup>"한다고 많이 표현.
+- 수집이라는 단어가 마치 요구사항이 이미 어딘가에 있고,
+- 이를 즐겁게 찾아 바구니에 담으면 되는 것 같은 느낌을 줌.
+- 하지만 요구사항은 수면 위로 잘 드러나지 않을 때가 많음.
+- 심지어 존재하지 않을 때도.
+
+```
+Tip 75) No One Knows Exactly What They Want
+```
