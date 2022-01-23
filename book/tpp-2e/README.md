@@ -3752,3 +3752,15 @@ Tip 81) Don't Think Outside the Box—Find the Box
 - 일단 모든 가능한 방법들을 열거.
 - 바보 같아 보이거나 유용해 보이지 않더라도 괜찮음.
 - 그리고 하나씩 살펴보며 불가능한지 확인해보고 증명.
+
+### Get Out of Your Own Way!
+
+- 가끔 생각보다 문제가 어렵다고 느낄 때가 있음.
+- 아마도 일정이 얼마 안 남았거나, 난이도에 좌절한 상태일 수도.
+- 잠시 다른 일을 할 때임.
+- 산책을 하거나, 잠을 자거나, ...
+
+> To put it plainly—people who were distracted did better on a complex problem-solving task than people who put in conscious effort.
+
+- 혹시 문제를 놓치 못하겠다면,
+- 그럼 다른 이들에게 문제를 설명해 보길.
