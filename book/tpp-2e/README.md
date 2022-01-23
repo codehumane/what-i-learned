@@ -3809,3 +3809,9 @@ Tip 81) Don't Think Outside the Box—Find the Box
 ```
 Tip 82) Don't Go into the Code Alone
 ```
+
+# 끝
+
+- 평이한 내용이 계속 나오고 있어, 책 정리는 여기서 마무리!
+- 1판을 사회생활 초반에 읽었던지라 처음 생각이 많이 남.
+- 다시금 마음을 울린 내용이 있었다는 점에서 수확.
