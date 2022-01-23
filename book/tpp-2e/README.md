@@ -3717,3 +3717,12 @@ Tip 79) Policy Is Metadata
 ```
 Tip 80) Use a Project Glossary
 ```
+
+## Topic 46. Solving Impossible Puzzles
+
+- 퍼즐을 푸는 방법은,
+- 상상이 아닌 실제 제약을 식별해내고,
+- 그 곳에서 해결책을 찾는 것.
+- 어떤 제약은 절대적이고, 어떤 것은 선입견.
+- 한편, 명백해 보이는 제약도 실제로는 제약이 아닐 수도 있음.
+- 많은 소프트웨어의 문제들이 교활함<sup>sneaky</sup>.
