@@ -3764,3 +3764,13 @@ Tip 81) Don't Think Outside the Box—Find the Box
 
 - 혹시 문제를 놓치 못하겠다면,
 - 그럼 다른 이들에게 문제를 설명해 보길.
+
+### Fortune Favors the Prepared Mind
+
+> Dans les champs de l'observation le hasard ne favorise que les esprits préparés.<br/>
+> (When it comes to observation, fortune favors the prepared mind.)
+
+- 위 내용은 문제 해결에서도 적용.
+- 유레카 순간을 위해서는 뇌의 무의식에 어느 정도의 원재료가 필요.
+- 이를 위한 한 가지 방법은, 잘 된 것과 그렇지 않았던 것에 대해 피드백을 주는 것.
+- 무엇보다 DON'T PANIC.
