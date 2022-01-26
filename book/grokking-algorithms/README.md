@@ -108,3 +108,12 @@ quickSort(arr[], low, high)
 ```
 
 [코틀린으로 작성했었던 퀵정렬](https://github.com/codehumane/algorithm/blob/master/src/main/kotlin/basic/sort/quicksort.kt)도 참고.
+
+## Big O notation revisited
+
+- 퀵정렬는 피벗으로 무엇을 선택했느냐에 따라 성능이 달라짐.
+- 최악의 경우는 O(n^2).
+- 선택정렬과 같은 것.
+- 평균적으로는 O(n·logn) 소요.
+- 한편 병합정렬은 항상 O(n·logn).
+- 그렇다면 병합정렬을 써야 하는 건 아닌지 의아할 것.
