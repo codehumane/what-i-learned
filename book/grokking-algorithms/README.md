@@ -5,7 +5,7 @@
 - 알고리즘은 하나의 유형만을 해결.
 - 한편 D&C(Divide and Conquer)는 문제 해결의 생각 도구.
 - 어려운 문제를 만나면 "D&C를 쓸 수는 없을까?"를 떠올리기.
-- 퀵소트는 대표적인 D&C.
+- 퀵정렬는 대표적인 D&C.
 
 ## Divide & conquer
 
@@ -47,3 +47,64 @@ print sum([1, 2, 3, 4])
 2. Step 2: 문제를 기저 사례만큼 계속 나눠보기.
 
 ![재귀로 배열 합 구하기](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617292231/files/OEBPS/Images/058fig01_alt.jpg)
+
+## Quicksort
+
+일단 기저 사례는 2가지.
+
+- 빈 배열
+- 원소가 1개인 배열
+
+코드로 나타내면 아래와 같음.
+
+```py
+def quicksort(array):
+    if len(array) < 2:
+        return array
+```
+
+2개인 경우를 고민.
+
+- 만약 첫 번째 원소가,
+- 두 번째 원소보다 작다면 그대로 두고,
+- 크다면 서로 교체.
+
+3개면 어떻게 될까?
+
+- D&C를 사용하고 있으므로,
+- 기저 사례가 될 때까지 쪼개기.
+
+이제 퀵정렬를 소개.
+
+- 배열에서 한 원소를 고름.
+- 이를 피벗<sup>pivot</sup>이라 부름.
+- 이제 이 원소보다 작은 것은 왼쪽으로,
+- 큰 것은 오른쪽으로 보냄.
+- 이는 파티셔닝이라 불림.
+- `[33,15,10]`에서 `33`을 피벗으로 고르면,
+- `[15,10]`과 `[]`로 파티셔닝 됨.
+- 만약 파티셔닝 된 서브 배열들이 정렬되어 있다면,
+- 이 둘을 합치는 것으로 전체 정렬이 됨.
+- 원소가 2개인 `[15,10]` 배열과,
+- 빈 배열인 `[]`에 대해서는,
+- 위에서 얘기한 것처럼 정렬하면 됨.
+
+[GeeksforGeeks에 나온 수도코드](https://www.geeksforgeeks.org/quick-sort/).
+
+```
+/* low  --> Starting index,  high  --> Ending index */
+quickSort(arr[], low, high)
+{
+    if (low < high)
+    {
+        /* pi is partitioning index, arr[pi] is now
+           at right place */
+        pi = partition(arr, low, high);
+
+        quickSort(arr, low, pi - 1);  // Before pi
+        quickSort(arr, pi + 1, high); // After pi
+    }
+}
+```
+
+[코틀린으로 작성했었던 퀵정렬](https://github.com/codehumane/algorithm/blob/master/src/main/kotlin/basic/sort/quicksort.kt)도 참고.
