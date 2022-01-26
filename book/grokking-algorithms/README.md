@@ -131,3 +131,12 @@ quickSort(arr[], low, high)
 - 한편, 병합정렬이 큰 데이터 구조체에서는 더 낫다고 함. 
 - 게다가 퀵정렬은 최악의 케이스(n^2)보단 평균 케이스(n·logn)가 주로 일어남.
 - 병합정렬 코드는 [여기](https://github.com/codehumane/algorithm/blob/master/src/main/java/sort/MergeSort.java), 퀵정렬은 [여기](https://github.com/codehumane/algorithm/blob/master/src/main/kotlin/basic/sort/quicksort.kt) 참고.
+
+### Average case vs. worst case
+
+- 피벗으로 첫 번째 것을 고르면 느림.
+- 가운데 것을 고르면 빠름.
+- 이미 정렬된 `[1,2,3,4,5,6,7,8]` 배열이 있다고 가정.
+- 첫 번째를 피벗으로 고르면 8번의 콜 스택 발생.
+- 가운데 값을 피벗으로 고르면 4번의 콜 스택.
+- 그래서 O(n·logn).
