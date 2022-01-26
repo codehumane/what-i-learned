@@ -117,3 +117,17 @@ quickSort(arr[], low, high)
 - 평균적으로는 O(n·logn) 소요.
 - 한편 병합정렬은 항상 O(n·logn).
 - 그렇다면 병합정렬을 써야 하는 건 아닌지 의아할 것.
+
+### Merge sort vs. quicksort
+
+- O(n)의 실제 의미는 c x n.
+- 여기서 c는 some fixed amount of time.
+- 일반적으로는 c는 의미 없음.
+- 그러나 때로는 큰 차이를 만들기도 함.
+- 퀵정렬과 병합정렬에서도 이 차이가 의미 있는 수준.
+- 둘 다 O(n·logn)이지만 퀵정렬이 빠름.
+- 왜 그런지는 [여기](https://www.geeksforgeeks.org/quicksort-better-mergesort/)에 좀 더 설명 되어 있음.
+- 부가적 공간이 필요 없고, 최악 케이스는 발생 가능성 적고, 참조 국소성 때문.
+- 한편, 병합정렬이 큰 데이터 구조체에서는 더 낫다고 함. 
+- 게다가 퀵정렬은 최악의 케이스(n^2)보단 평균 케이스(n·logn)가 주로 일어남.
+- 병합정렬 코드는 [여기](https://github.com/codehumane/algorithm/blob/master/src/main/java/sort/MergeSort.java), 퀵정렬은 [여기](https://github.com/codehumane/algorithm/blob/master/src/main/kotlin/basic/sort/quicksort.kt) 참고.
