@@ -149,13 +149,13 @@ quickSort(arr[], low, high)
 - 가장 짧은 시간이 걸리는 경로를 찾을 수 있음.
 - 더 많은 선을 거치더라도 더 빠를 수 있음.
 - 가장 적은 선을 거치는 경로는 BFS로 찾을 수 있음.
-- 반면 가장 빠른 경로에는 Dikstra 알고리즘을 사용.
+- 반면 가장 빠른 경로에는 Dijkstra 알고리즘을 사용.
 
 ## Working with Dijkstra's algorithm
 
-![Dikstra graph](./7-1-dikstra-graph.jpeg)
+![Dijkstra graph](./7-1-Dijkstra-graph.jpeg)
 
-Dikstra 알고리즘은 4단계.
+Dijkstra 알고리즘은 4단계.
 
 1. 가장 저렴한 노드 찾기
 2. 이 노드 이웃들의 비용을 업데이트
@@ -211,7 +211,7 @@ Dikstra 알고리즘은 4단계.
 | B    | 2            |
 | F    | ∞ -> 7 -> 6  |
 
-- 이제 모든 노드에 대해 Dikstra 알고리즘을 수행한 것.
+- 이제 모든 노드에 대해 Dijkstra 알고리즘을 수행한 것.
 - F 노드에 대해서는 안 해도 됨.
 
 ### Step 4
