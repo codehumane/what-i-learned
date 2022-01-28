@@ -153,7 +153,7 @@ quickSort(arr[], low, high)
 
 ## Working with Dijkstra's algorithm
 
-![Dijkstra graph](./7-1-Dijkstra-graph.jpeg)
+![Dijkstra graph](7-1-Dijkstra-graph.jpeg)
 
 Dijkstra 알고리즘은 4단계.
 
@@ -198,8 +198,8 @@ Dijkstra 알고리즘은 4단계.
 ### Step 3
 
 - 일단 Step 1을 반복.
-- 이제 B에서 가장 시간이 적게 걸리는 이웃을 찾기.
-- F에 비해 A가 더 시간이 적게 걸림.
+- 이제 B 다음으로 가장 비용 적은 노드 찾기.
+- 그럼 A.
 - 이제 A의 이웃 노드들에 대한 비용 계산.
 - 갱신이 일어나야 하는 곳은 A에서 F로의 경로.
 - 표에서 F가 7이었는데 A를 거치면 6으로 충분.
