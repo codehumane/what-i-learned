@@ -153,7 +153,7 @@ quickSort(arr[], low, high)
 
 ## Working with Dijkstra's algorithm
 
-![Dijkstra graph](7-1-Dijkstra-graph.jpeg)
+![Dijkstra graph](./7-1-dijkstra-graph.jpeg)
 
 Dijkstra 알고리즘은 4단계.
 
@@ -234,7 +234,7 @@ Dijkstra 알고리즘은 4단계.
 
 결국 아래 그림에서 book을 piano로 바꾸는 데 들이는 적은 비용을 찾는 것.
 
-![dijkstra example 2](7-2-dijkstra-example2.jpeg)
+![dijkstra example 2](./7-2-dijkstra-example2.jpeg)
 
 일단 시작 점의 간선 비용들부터 측정. 더불어 이번엔 parent도 함께 관리.
 
