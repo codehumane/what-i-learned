@@ -361,3 +361,17 @@ def find_lowest_cost_node(costs):
 탐욕 알고리즘은 쉽다고 함. 각 단계에서 최적의 선택을 고르면 됨.
 
 > In technical terms: at each step you pick the locally optimal solution, and in the end you're left with the globally optimal solution.
+
+## The knapsack problem
+
+- 가능한 비싼 물건들을 가방에 넣어야 한다고 가정.
+- 35 파운드까지 넣을 수 있는데, 주위를 보니 물건은 총 3개.
+- 스테레오 = 3,000달러 30파운드
+- 랩탑 = 2,000달러 20파운드
+- 기타 = 1,500달러 15파운드
+- 앞서 배운 탐욕 알고리즘 대로,
+- 일단 가장 비싼 스테레오를 가방에 담음.
+- 가방엔 10파운드만 남기에 더 담을 수 없음.
+- 그러나 이는 랩탑과 기타를 담은 것 보다 덜 비싼 가격.
+- 때로는 완벽함이 적이 됨.
+- 괜찮은 정도로 문제를 해결하는 방법이 오히려 도움 될 때도.
