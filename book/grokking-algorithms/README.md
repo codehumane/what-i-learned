@@ -340,3 +340,24 @@ def find_lowest_cost_node(costs):
 ```
 
 # Chapter 8. Greedy algorithms
+
+## The classroom scheduling problem
+
+아래의 수업 목록이 있을 때 가장 많은 수업을 듣기 위한 방법은?
+
+| class | start | end   |
+| ----- | ----- | ----- |
+| art   | 9     | 10    |
+| eng   | 9:30  | 10:30 |
+| math  | 10    | 11    |
+| cs    | 10:30 | 11:30 |
+| music | 11    | 12    |
+
+방법은 간단.
+
+1. 가장 먼저 끝나는 수업을 선택
+2. 그 수업이 끝난 뒤 시작하는 것을 고르는데, 이 때도 마찬가지로 가장 먼저 끝나는 대상을 고르면 됨
+
+탐욕 알고리즘은 쉽다고 함. 각 단계에서 최적의 선택을 고르면 됨.
+
+> In technical terms: at each step you pick the locally optimal solution, and in the end you're left with the globally optimal solution.
