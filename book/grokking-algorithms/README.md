@@ -338,3 +338,5 @@ def find_lowest_cost_node(costs):
             lowest_cost_node = node
     return lowest_cost_node
 ```
+
+# Chapter 8. Greedy algorithms
