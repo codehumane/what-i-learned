@@ -467,3 +467,25 @@ for station, states_for_station in stations.items():
 
 - 셋은 리스트와 유사. 다만 중복 허용 X.
 - 셋에 대해 union, inntersection, difference 연산 가능.
+
+## Back to the code
+
+- 루프 전체 코드는 아래와 같음.
+
+```py
+while states_needed:
+    best_station = None
+    states_covered = set()
+
+    for station, states_for_station in stations.items():
+        
+        #set intersection
+        covered = states_needed & states_for_station
+
+        if len(covered) > len(states_covered):
+            best_station = station
+            states_covered = covered
+    
+    states_needed -= states_covered
+    final_stations.add(best_station)
+```
