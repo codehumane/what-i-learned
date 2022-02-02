@@ -65,6 +65,7 @@
 - [Netty in Action](https://github.com/codehumane/what-i-learned/blob/master/book/netty-in-action/README.md)
 - [The Pragmatic Programmer, 2Ed](book/tpp-2e/README.md)
 - [The Manager's Path](book/tmp/README.md)
+- [Grokking Algorithms](book/grokking-algorithms/README.md)
 
 # DOCUMENT
 
