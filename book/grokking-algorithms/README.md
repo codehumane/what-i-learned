@@ -462,3 +462,8 @@ for station, states_for_station in stations.items():
         best_station = station
         states_covered = covered
 ```
+
+## Sets
+
+- 셋은 리스트와 유사. 다만 중복 허용 X.
+- 셋에 대해 union, inntersection, difference 연산 가능.
