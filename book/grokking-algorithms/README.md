@@ -395,7 +395,7 @@ def find_lowest_cost_node(costs):
 - 하지만 이 방법은 모든 스테이션의 부분 집합을 구해야 하므로,
 - 오랜 시간이 걸린다는 단점이 있음.
 
-## Approximate algorithms
+### Approximate algorithms
 
 근사치 알고리즘.
 
@@ -419,7 +419,7 @@ def find_lowest_cost_node(costs):
 - 탐욕 알고리즘은 간단하므로 생각하기 쉽고,
 - 간단하다는 것은 일반적으로 빠르다는 것을 나타냄.
 
-## Code for setup
+#### Code for setup
 
 - 이 예제에서는 간단함을 위해, 주 부분 집합과 스테이션 부분 집합을 이용.
 - 먼저, 포함하고 싶은 주의 목록을 set으로 작성.
@@ -445,7 +445,7 @@ stations["kfive"] = set(["ca", "az"])
 final_stations = set()
 ```
 
-## Calculating the answer
+#### Calculating the answer
 
 - 정확한 해결책은 1개 이상.
 - 모든 스테이션을 돌며 아직 범위에 포함되지 않은 주를 가장 많이 다루는 것을 선택.
@@ -464,12 +464,12 @@ for station, states_for_station in stations.items():
         states_covered = covered
 ```
 
-## Sets
+#### Sets
 
 - 셋은 리스트와 유사. 다만 중복 허용 X.
 - 셋에 대해 union, inntersection, difference 연산 가능.
 
-## Back to the code
+#### Back to the code
 
 - 루프 전체 코드는 아래와 같음.
 
