@@ -432,11 +432,33 @@ states_needed = set(["mt", "wa", "or", "id", "nv", "ut", "ca", "az"])
 ```py
 stations = {}
 stations["kone"] = set(["id", "nv", "ut"])
-...
+stations["ktwo"] = set(["wa", "id", "mt"])
+stations["kthree"] = set(["or", "nv", "ca"])
+stations["kfour"] = set(["nv", "ut"])
+stations["kfive"] = set(["ca", "az"])
 ```
 
 - 그리고 최종 스테이션 집합을 담을 곳이 필요.
 
 ```py
 final_stations = set()
+```
+
+## Calculating the answer
+
+- 정확한 해결책은 1개 이상.
+- 모든 스테이션을 돌며 아직 범위에 포함되지 않은 주를 가장 많이 다루는 것을 선택.
+
+```py
+best_station = None
+states_covered = set()
+
+for station, states_for_station in stations.items():
+    
+    #set intersection
+    covered = states_needed & states_for_station
+
+    if len(covered) > len(states_covered):
+        best_station = station
+        states_covered = covered
 ```
