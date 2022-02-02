@@ -417,3 +417,26 @@ def find_lowest_cost_node(costs):
 - 여기서의 n은 라디오 스테이션을 가리킴.
 - 탐욕 알고리즘은 간단하므로 생각하기 쉽고,
 - 간단하다는 것은 일반적으로 빠르다는 것을 나타냄.
+
+## Code for setup
+
+- 이 예제에서는 간단함을 위해, 주 부분 집합과 스테이션 부분 집합을 이용.
+- 먼저, 포함하고 싶은 주의 목록을 set으로 작성.
+
+```py
+states_needed = set(["mt", "wa", "or", "id", "nv", "ut", "ca", "az"])
+```
+
+- 다음으로 해시를 이용해 주 별 스테이션 목록을 작성.
+
+```py
+stations = {}
+stations["kone"] = set(["id", "nv", "ut"])
+...
+```
+
+- 그리고 최종 스테이션 집합을 담을 곳이 필요.
+
+```py
+final_stations = set()
+```
