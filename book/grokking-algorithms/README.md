@@ -817,3 +817,9 @@ else:
 - 동적 프로그래밍의 모든 문제를 계산하는 단 1개의 공식 같은 것은 없음.
 
 # Chapter 10. K-nearest neighbors
+
+## Classifying oranges vs. grapefruit
+
+- KNN(k-nearest neighbors) 알고리즘을 이용해,
+- 주어진 과일이 오렌지인지 자몽인지를 간략하게 판별하는 이야기.
+- 이 때 이용한 것은 색상과 크기.
