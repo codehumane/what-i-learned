@@ -31,6 +31,7 @@
 
 # BOOK
 
+- [Building Microservices, 2nd Edition](book/building-microservices-2e/README.md)
 - [Effective Java, 3rd Edition](book/ej3/README.md)
 - [Growing Object-Oriented Software, Guided by Tests](book/goosgt/README.md)
 - [Designing Data-Intensive Application](book/ddia/README.md)
