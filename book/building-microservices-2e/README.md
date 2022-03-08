@@ -446,3 +446,41 @@ SOA와의 관계.
 - 서비스 간 주고받는 데이터가 복잡해질수록 문제가 됨.
 - 정보 은닉을 기억해야 함.
 - 꼭 필요한 것만을 공유하고, 필요한 만큼만 데이터를 보내라.
+
+### Pass-Through Coupling
+
+pass-through 결합도 설명과 이것의 문제점 이야기.
+
+- 한 MS가 다른 MS로 데이터를 전달하는데,
+- 중간에 또 다른 MS를 거쳐야 하는 것을 가리킴.
+- 문제적 결합도의 대표적 사례.
+- 만약, `Order Processor`가 주문 요청을 `Warehouse`에게 보내고,
+- `Warehouse`는 주문 요청에서 `Shipping Manifest`를 추출해서,
+- `Shipping` 서비스로 보내야 한다고 가정.
+- 만약, `Shipping Manfiest`의 변경이 필요하면,
+- `Warehouse`뿐만 아니라 `Order Processor`에까지 영향을 줌.
+
+이를 해결할 수 있는 첫 번째 방법.
+
+- 중간 단계를 없애는 방법을 생각해 볼 수 있음.
+- `Warehouse`에 주문 상품 목록만을 담아 요청하고 응답이 오면,
+- `Shipping Manifest`만을 `Shipping`에 전달하는 것.
+- 다만, 이것의 트레이드 오프로 `Order Processor`의 도메인 의존성과 로직의 복잡성이 높아짐.
+
+두 번째 대안 이야기.
+
+- `Order Processor`로부터 `Shipping Manifest`를 숨기는 것도 방법.
+- `Order Processor`는 추상화 된 주문 요청을 `Warehouse`에 보내고,
+- `Warehouse`가 이 요청으로부터 `Shipping Manifest`를 만들어 `Shipping`에 요청.
+- `Shipping` 서비스의 계약이 바뀌더라도 이 변경은 `Warehouse`로만 영향이 한정될 가능성 높음.
+- 물론 완전히 독립적이 되는 것은 아님.
+- 국제 배송이 될 경우 `Shipping`은 부가 정보를 필요로 할 수 있으며,
+- 이 정보를 마땅히 얻을 곳이 없다면,  `Order Processor`의 변경은 불가피.
+- 하지만 `Shipping Manifest`를 숨김으로써 단계적 배포 등을 통해 어느 정도 독립성을 챙길 수 있음.
+
+마지막 방법.
+
+- `Order Processor`가 여전히 `Shipping Manifest`를 포함해서 요청을 보내긴 하되,
+- `Warehouse`는 이것의 구조에는 관심을 두지 않고,
+- 단지 데이터 블럽으로 대우하며 그대로 `Shipping`에 전달.
+- `Shipping Manifest`의 변경은 이제 `Order Processor`와 `Shipping`으로 한정.
