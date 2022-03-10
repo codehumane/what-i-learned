@@ -525,3 +525,11 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 컨텐츠 결합에서는 이 책임이 덜 명확하며 따라서 개발자 입장에서 시스템을 변경하는 것이 더 어려움.
 - 로직이 중복될 뿐만 아니라 로직이 달라지기 시작하면 원인을 찾기 어려운 문제가 됨.
 - 위에서 `Order`를 만들었던 것처럼 서비스를 하나 만들고 요청을 위임하는 것이 좋음.
+
+## Just Enough Domain-Driven Design
+
+- 에릭 에반스의 DDD 책에 나온 3가지 주요 아이디어 짧게 소개.
+- Ubiquitous language
+- Aggregate
+- Bounded context
+
