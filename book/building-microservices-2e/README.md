@@ -687,3 +687,11 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 일반적으로는 MS의 소유권만 바뀜.
 
 # Chapter 3. Splitting the Monolith
+
+## Have a Goal
+
+- MSA 자체가 목적은 아님.
+- 그리고 목적지로 갈 수 있는 다른 쉬운 방법은 없는지 먼저 고민해야 함.
+- 목적이 명확치 않으면 어디서부터 시작해야 할지도 막막.
+
+> Microservices aren't easy. Try the simple stuff first.
