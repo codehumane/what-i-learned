@@ -695,3 +695,8 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 목적이 명확치 않으면 어디서부터 시작해야 할지도 막막.
 
 > Microservices aren't easy. Try the simple stuff first.
+
+## Incremental Migration
+
+- 모놀리틱을 나누기로 했다면 조금씩 떼어내길 강력히 권장.
+- 점진적 접근을 통해, 앞으로 나아가며 배울 수 있고, 잘못되는 것의 영향도 줄일 수 있음.
