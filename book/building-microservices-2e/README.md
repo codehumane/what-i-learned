@@ -899,3 +899,11 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - [Holding locks while in doubt](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#holding-locks-while-in-doubt)
 - [Recovering from coordinator failure](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#recovering-from-coordinator-failuer)
 - [Limitations of distributed transactions](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#limitations-of-distributed-transactions)
+
+## Distributed Transactions - Just Say No
+
+- 2PC 같은 분산 트랜잭션의 사용을 피할 것을 권장.
+- 그럼 어떻게 해야 할까?
+- 첫 번째 옵션은, 원자적으로 일관성 있게 다뤄야 하는 데이터가 있다면 함께 두기.
+- 그런데 데이터가 여러 MS에 분리 되어 있을 수 있고, 잠금은 여전히 피하고 싶을 수 있음.
+- 두 번째 옵션은, 바로 뒤에서 다룰 사가<sup>sagas</sup>.
