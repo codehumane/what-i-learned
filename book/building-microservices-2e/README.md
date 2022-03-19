@@ -895,3 +895,7 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 무엇을 해야 할까? 그리고 자동으로 처리가 어려운 경우도.
 - 참여자가 늘어날수록 지연도 커짐.
 - 이런 이유로 2PC는 매우 짧은 시간이 걸리는 연산에만 주로 사용.
+- DDIA에 정리했던 내용도 함께 참고.
+- [Holding locks while in doubt](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#holding-locks-while-in-doubt)
+- [Recovering from coordinator failure](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#recovering-from-coordinator-failuer)
+- [Limitations of distributed transactions](https://github.com/codehumane/what-i-learned/blob/0a3568f7a7e5ad3157bb4133309ce4db55e41d69/book/ddia/Distributed-Data.md#limitations-of-distributed-transactions)
