@@ -907,3 +907,26 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 첫 번째 옵션은, 원자적으로 일관성 있게 다뤄야 하는 데이터가 있다면 함께 두기.
 - 그런데 데이터가 여러 MS에 분리 되어 있을 수 있고, 잠금은 여전히 피하고 싶을 수 있음.
 - 두 번째 옵션은, 바로 뒤에서 다룰 사가<sup>sagas</sup>.
+
+## Sagas
+
+- 여러 상태를 조율하면서도 잠금은 사용하지 않는 설계.
+- 일단 LLT<sup>Long Lived Transaction</sup> 문제 이야기.
+- 트랜잭션이 길어지면 여러 로우나 테이블 자체가 잠길 수 있음.
+- 그래서 LLT를 몇 개의 트랜잭션으로 나누고 이를 독립적으로 처리하는 것을 제안.
+- 경합의 범위도 줄어들고 잠금의 기간도 줄어듦.
+- 사가가 원래는 단일 DB의 LLT를 돕는 메커니즘으로 만들어졌지만,
+- 여러 서비스 간 변경을 조율하는 데도 잘 동작함.
+- 주문서 작성 플로우를 예시로 소개.
+- 주문서 작성 프로세스를 몇 개의 단계로 나누고,
+- 서비스 별로 각 단계를 나눠서 담당함.
+- 각각의 변경 사항은 로컬 ACID 트랜잭션으로 처리.
+
+```
+# Order fulfillment
+1. Check item in stock and reserve for order (Warehouse MS)
+2. Take money from customer (Payment Gateway MS)
+3. Award points to customer (Loyalty MS)
+4. Package and send order (Warehouse MS)
+# Fulfillment completed
+```
