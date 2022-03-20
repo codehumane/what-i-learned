@@ -965,3 +965,24 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 대신, 고객에게 주문에 문제가 있어 취소됐다고 두 번재 메일을 보내야 함.
 - 그리고 롤백에 관련된 정보가 시스템에 영속되는 것이 좋음.
 - 주문이 취소됐다면 취소된 이유와 함께 주문 정보를 남겨야 함.
+
+#### Reordering workflow steps to reduce rollbacks
+
+- 프로세스 순서를 재조정하여 롤백 시나리오를 좀 더 단순하게 만들 수 있음.
+- 다시 주문 절차를 보자.
+
+```
+# Order fulfillment
+1. Check item in stock and reserve for order (Warehouse MS)
+2. Take money from customer (Payment Gateway MS)
+3. Award points to customer (Loyalty MS)
+4. Package and send order (Warehouse MS)
+# Fulfillment completed
+```
+
+- 여기서 3, 4를 서로 바꿀 수 있음.
+- 이렇게 하면 패키징과 주문 발송 시 문제가 일어났을 때,
+- 3번을 롤백하는 일을 줄일 수 있음.
+- 문제가 될 가능성이 높은 작업을 최대한 앞으로 당기면,
+- 보상 트랜잭션의 수를 줄일 수 있게 됨.
+- 보상 트랜잭션이 어려울 수록 더 유용.
