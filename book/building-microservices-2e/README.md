@@ -930,3 +930,17 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 4. Package and send order (Warehouse MS)
 # Fulfillment completed
 ```
+
+### Saga Failure Modes
+
+- 개별 트랜잭션으로 분리됐을 때, 실패 대응은 어떻게 이뤄지는지 이야기.
+- 특히, 실패했을 때 어떻게 복구할 것인가에 관함.
+- 사가 논문에서는 2가지 복구를 다룸.
+- backward recovery, forward recovery.
+- backward recovery는 리버트.
+- 이를 위해 보상(앞선 트랜잭션에서 커밋된 변경을 다시 돌리는) 행위를 정의.
+- forward recovery는 실패가 발생한 지점부터 처리를 다시 진행.
+- 이를 위해서는 재시도 트랜잭션이 가능해야 함.
+- 비즈니스 상황에 따라 둘 중 하나 또는 모두가 필요할 수 있음.
+- 여기서 이 복구라는 것이 비즈니스 실패에 대한 것이지, 기술적인 실패에 대한 것이 아님에 유의.
+- 사가는 시스템들이 신뢰성 있게 동작한다는 것을 전제로 하고 있음.
