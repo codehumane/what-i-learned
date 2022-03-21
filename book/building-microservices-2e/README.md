@@ -1004,3 +1004,16 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - orchestrated saga와 choreographed saga.
 - 전자는 원래의 해결책에 가까우며 중앙화 된 조율과 추적을 활용.
 - 후자는 추적이 좀 더 복잡하긴 하지만 이런 중앙화 된 조율을 피하고 결합도 낮은 방식을 추구.
+
+#### Orchestrated sagas
+
+- 중앙 코디네이터가 실행 순서를 정하고 필요한 보상 트랜잭션을 트리거.
+- 명령과 제어 접근법으로 생각하면 됨(언제 무엇이 일어나야 하는지 통제).
+- 이는 사가에 무슨 일이 일어나는지에 대한 상당한 가시성을 제공.
+- 주문 예시에서는 `Order Processor` 같은 코디네이터를 하나 두고,
+- 각 서비스들에게 차례로 요청을 보내고 응답을 보며 다음 단계 결정.
+- 이 때의 장점은 `Order Processor`만 보면 주문의 전체 절차를 알 수 있음.
+- 하지만 결합도가 높은 단점. `Order Processor`가 모든 필요한 서비스를 알아야 함.
+- 그리고 서비스들의 로직이 점점 오케스트레이터에 섞일 위험이 있음.
+
+> If logic has a place where it can be centralized, it will become centralized!
