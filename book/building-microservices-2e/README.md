@@ -1055,3 +1055,7 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 경험을 떠나서는, 한 팀이 전체 사가의 구현을 책임진다면 오케스트레이션 방식을 권장.
 - 팀 경계 내에서는 결합도를 다루기 더 쉽기 때문.
 - 여러 팀이 걸쳐 있다면 결합도 낮은 코레오그래프 사가를 권장.
+
+### Sagas Versus Distributed Transactions
+
+> In most distributed transaction system, the failure of a single node causes transaction commit to stall. This in turn causes the application to get wedged. In usch systems, the larger it gets, the more likely the system is going to be down. When flying an airplane that needs all of its engines to work, adding an engine reduces the availability of the airplane.
