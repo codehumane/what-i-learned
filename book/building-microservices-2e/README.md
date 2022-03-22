@@ -1131,3 +1131,18 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 시스템을 관측 가능하게 만들려고 한다면,
 - 실제로 필요로 하는 결과물들을 생각해야 하며,
 - 서로 다른 지표라고 하더라도 꼭 다른 도구일 필요는 없음.
+
+## Building Blocks for Observability
+
+- 소프트웨어 사용자들이 만족하는지 알아야 함.
+- 문제가 있다면 (이상적으로는 고객들이 알기 전에 미리) 알아내야 함.
+- 그리고 시스템을 정상화하기 위해 필요한 것이 무엇인지 파악하고 실행.
+- 해결이 됐다면 문제에 대한 충분한 정보를 얻고 재발 방지를 준비할 수 있어야 함.
+- 이제 시스템 관측성을 돕는 몇 가지 도구들을 살펴볼 예정.
+- Log agregation
+- Metrics aggregation
+- Distributed tracing
+- Are you doing OK? (고객 만족 여부를 알고자 에러 예산, SLA, SLO들을 살피는 것)
+- Alerting
+- Semantic monitoring
+- Testing in production
