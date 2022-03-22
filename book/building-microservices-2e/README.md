@@ -1059,3 +1059,11 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 ### Sagas Versus Distributed Transactions
 
 > In most distributed transaction system, the failure of a single node causes transaction commit to stall. This in turn causes the application to get wedged. In usch systems, the larger it gets, the more likely the system is going to be down. When flying an airplane that needs all of its engines to work, adding an engine reduces the availability of the airplane.
+
+# Chapter 10. From Monitoring to Observability
+
+- 모니터링과 관측성<sup>observability</sup>를 어떻게 다른 개념으로 쓰고 있을지 궁금.
+- MSA 환경에서 모니터링의 어려움을 소개하고,
+- 이를 돕는 도구들도 이야기 하겠지만,
+- 근본적으로 사고의 전환이 필요하다고 강조.
+- 더불어, 무엇이 잘못됐는지 알아내기 위해 시스템에 질문을 던지는 방법에 대해서도 이야기.
