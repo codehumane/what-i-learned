@@ -1185,3 +1185,10 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 15-02-2020 16:01:03 Email INFO [abc-123] Send streaming welcome ...
 15-02-2020 16:01:03 Payment ERROR [abc-123] ValidatePayment ...
 ```
+
+#### Timing
+
+- 로그가 작성되는 순서는 실제 일어난 일의 순서와 일치하지 않을 수 있음.
+- clock skew 문제나 요청/응답의 지연 등의 이유로.
+- 그래서 Leslie Lamport 같은 사람은 논리적 시계 시스템을 이야기.
+- 호출의 순서를 추적하기 위해 카운터를 이용하는 것.
