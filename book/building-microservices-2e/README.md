@@ -1192,3 +1192,10 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - clock skew 문제나 요청/응답의 지연 등의 이유로.
 - 그래서 Leslie Lamport 같은 사람은 논리적 시계 시스템을 이야기.
 - 호출의 순서를 추적하기 위해 카운터를 이용하는 것.
+
+#### Implementations
+
+- 여러가지 로그 집계를 위한 도구들 이야기.
+- 오픈소스와 상업용, 직접 호스팅과 매니지드형 등 다양.
+- Elasticsearch, Kibana, Spluk, Humio, ClowdWatch가 그 예.
+- 저자는 Humio의 빅팬.
