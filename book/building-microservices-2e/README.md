@@ -1146,3 +1146,8 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - Alerting
 - Semantic monitoring
 - Testing in production
+
+### Log Aggregation
+
+- 시스템이 많아지면 장비에 직접 접속하거나 SSH 멀티플렉싱으로 로그 보기가 어려움.
+- 전문화 된 도구를 사용해서 로그를 중앙 수집해야 함.
