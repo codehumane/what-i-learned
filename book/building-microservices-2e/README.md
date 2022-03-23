@@ -1267,3 +1267,8 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - SLA를 팀에 연결시키긴 어려움.
 - SLA는 너무 넓은 범위를 가지며 공통적 성향.
 - 따라서 SLO를 사용.
+
+### Service-level indicators
+
+- SLO를 정했다면 실제 데이터들을 수집.
+- SLI로 SLO를 만족하는지 판단.
