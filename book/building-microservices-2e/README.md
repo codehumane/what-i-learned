@@ -1170,3 +1170,18 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 이런 식으로 순서를 약속해서 진행할 수도 있음.
 - 그러나 이 로그 구조가 동적이면 파싱이 어려움.
 - 그래서 JSON 포맷을 이용하기도.
+
+#### Correlating log lines
+
+- MSA 환경에서는 여러 서비스들이 함께 협력하여 사용자의 요청을 처리.
+- 결국 correlation ID가 필요하다는 이야기.
+- 이런 ID는 게이트웨이에서 생성하고, 요청의 모든 다운스트림에 공유.
+- 아래 로그에서는 `abc-123`이 correlation ID를 가리킴.
+
+```
+15-02-2020 16:01:01 Gateway INFO [abc-123] Signup for streaming
+15-02-2020 16:01:02 Streaming INFO [abc-123] Cust 773 signs up ...
+15-02-2020 16:01:03 Customer INFO [abc-123] Streaming package added ...
+15-02-2020 16:01:03 Email INFO [abc-123] Send streaming welcome ...
+15-02-2020 16:01:03 Payment ERROR [abc-123] ValidatePayment ...
+```
