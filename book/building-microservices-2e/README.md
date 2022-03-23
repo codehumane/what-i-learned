@@ -1238,3 +1238,10 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 저자는 Graphite를 추천했었음.
 - 하지만 카디널리티가 문제.
 - 그래서 Honeycomb나 Lightstep을 추천.
+
+## Distributed Tracing
+
+- 분산 추적이 필요하다는 이야기.
+- 앞서 correlation ID와 로그 파일 얘기를 했는데,
+- 이보다 자세하게 시각화하고, 데이터를 쪼개서 분석하는 이야기들도 다룰 예정.
+- 'How it works', 'Implementing distributing tracing' 내용은 간단해서 기록은 생략.
