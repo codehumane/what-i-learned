@@ -1297,3 +1297,20 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 너무 많은 알림은 사람을 무디게 만들고,
 - 정작 중요한 알림이 왔을 때도 지나칠 수 있게 만듦.
 - 알림의 우선순위 같은 도구도 필요.
+
+#### Toward better alerting
+
+Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanisticsystems.com/2015/10/16/fit-for-purpose-questions-about-alarm-system-design-from-theory-and-practice/)"에 아래 내용이 나옴.
+
+> The purpose of [alerts] is to direct the user's attention towards significant aspects of the operation or equipment that require timely attention.
+
+좋은 알림을 만드는 몇 가지 가이드라인.
+
+- Relevant: 알림이 가치 있는지 확인.
+- Unique: 다른 것과 중복되지 않도록.
+- Timely: 충분히 빨라야 함.
+- Prioritzed: 알림들이 어떤 순서로 처리되어야 하는지 알 수 있어야 함.
+- Understandable: 이해하기 쉬워야.
+- Diagnostic: 무엇이 잘못됐는지 충분한 정보가 담겨야.
+- Advisory: 무슨 조치를 취해야 하는지 알 수 있어야.
+- Focusing: 가장 중요한 문제에 주의를 기울이게 해야.
