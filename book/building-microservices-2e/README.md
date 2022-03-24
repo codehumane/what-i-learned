@@ -1339,3 +1339,11 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 두 번째로, 이미 일어난 일들을 보여주는 것.
 - 사용자가 문제를 이미 인식하고 나서야 우리도 알게 됨.
 - 뒤에 나오는 Testing in Production은 이 2가지 한계를 극복.
+
+### Testing in Production
+
+> Not testing in prod is like not practicing with the full orchestra because your solo sounded fine at home.
+
+- 프로덕션 환경에서의 모든 테스팅은 일종의 모니터링 행위.
+- 시스템이 실제로 우리가 기대한 대로 동작하는지 확인하는 것.
+- 그리고 사용자가 인지하기 전에 문제를 효과적으로 파악할 수 있는 수단.
