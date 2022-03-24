@@ -1314,3 +1314,16 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - Diagnostic: 무엇이 잘못됐는지 충분한 정보가 담겨야.
 - Advisory: 무슨 조치를 취해야 하는지 알 수 있어야.
 - Focusing: 가장 중요한 문제에 주의를 기울이게 해야.
+
+### Semantic Monitoring
+
+- 시멘틱 모니터링에는 사고의 전환이 필요.
+- 단순히 에러가 있는지 없는지 보는 것이 아니라,
+- 시스템이 우리가 기대한 대로 동작하고 있는지를 질문하고 꾸준히 확인해야 함.
+- 그럼 기대 수준은 어떻게 정할까?
+- MusicCorp를 예시로 들면 아래의 것들.
+  - New customers can register to join.
+  - We are selling at least $20,000 worth of products per hour during our peak time.
+  - We are shipping orders out at a rate that is normal.
+- 모델 정의가 끝났다면 이 모델을 만족시키는지 알아봐야 함.
+- real user monitoring 그리고 syntehtic transaction을 통해 가능.
