@@ -1327,3 +1327,15 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
   - We are shipping orders out at a rate that is normal.
 - 모델 정의가 끝났다면 이 모델을 만족시키는지 알아봐야 함.
 - real user monitoring 그리고 syntehtic transaction을 통해 가능.
+
+#### Real user monitoring
+
+- 시간 당 20,000달러를 벌어들이는지를 모니터링하려면,
+- CPU 비율 같은 메트릭 외에,
+- 판매량이나 매출액 등의 비즈니스 수치도 함께 보고 모니터링 할 수 있어야 함.
+- 이 방식은 2가지 문제가 있음.
+- 일단, 정보에 소음이 많음.
+- 이 정보만을 가지고 문제가 있는지 파악하기 어려울 때가 많음.
+- 두 번째로, 이미 일어난 일들을 보여주는 것.
+- 사용자가 문제를 이미 인식하고 나서야 우리도 알게 됨.
+- 뒤에 나오는 Testing in Production은 이 2가지 한계를 극복.
