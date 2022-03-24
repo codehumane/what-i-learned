@@ -1208,7 +1208,7 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 그래서 서비스 형태의 도구를 사용하는 것을 권장.
 - 데이터가 노출될 경우 위험한 것들은 로깅에서 제외하는 노력도 필요.
 
-## Metric Aggregation
+### Metric Aggregation
 
 - 여러 호스트의 메트릭 역시 수집해야 함.
 - 그런데 이 메트릭으로 현재 상태가 괜찮은지 어떻게 판단할 수 있을까?
@@ -1222,7 +1222,7 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 메트릭은 여러 해상도로도 볼 수 있어야 함.
 - 어떤 때는 매 10초마다, 어떤 때는 시간 단위로.
 
-### Low versus high cardinality
+#### Low versus high cardinality
 
 - 최근 메트릭 수집 도구일수록 높은 카디널리티의 데이터를 저장하고 조회할 수 있음.
 - 여기서 카디널리티는 쿼리를 수행할 수 있는 대상 필드의 수라고 생각하면 됨.
@@ -1232,21 +1232,21 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 하지만 높은 카디널리티를 가져야 여러 질문을 던질 수 있고,
 - 높은 관측성으로 이어질 가능성도 커짐.
 
-### Implementations
+#### Implementations
 
 - 이 책의 1판 당시에는 Prometheus가 유명세였고,
 - 저자는 Graphite를 추천했었음.
 - 하지만 카디널리티가 문제.
 - 그래서 Honeycomb나 Lightstep을 추천.
 
-## Distributed Tracing
+### Distributed Tracing
 
 - 분산 추적이 필요하다는 이야기.
 - 앞서 correlation ID와 로그 파일 얘기를 했는데,
 - 이보다 자세하게 시각화하고, 데이터를 쪼개서 분석하는 이야기들도 다룰 예정.
 - 'How it works', 'Implementing distributing tracing' 내용은 간단해서 기록은 생략.
 
-## Are We Doing OK?
+### Are We Doing OK?
 
 - 모놀리틱에서 서비스가 up이냐 down이냐 따지던 것이 MSA에서는 의미가 약해지고 모호.
 - `Return` 서비스는 정상적으로 떠 있는데, 의존 서비스 중 하나인 `Inventory`가 장애 상황이라면?
@@ -1256,24 +1256,24 @@ pass-through 결합도 설명과 이것의 문제점 이야기.
 - 시스템이 정상 동작하는지를 이전보다 한 단계 멀리 떨어져서 여러 지표를 함께 보는 것.
 - 요컨대, 전체적인 관점에서 여러 지표를 종합적으로 봐야 함.
 
-### Service-level agreement
+#### Service-level agreement
 
 - SLA의 기본적인 설명 언급.
 - 이는 매우 "bare minimum"인 경향을 가짐.
 - 따라서 이를 달성하더라도 고객 만족은 떨어질 수도.
 
-### Service-level objectives
+#### Service-level objectives
 
 - SLA를 팀에 연결시키긴 어려움.
 - SLA는 너무 넓은 범위를 가지며 공통적 성향.
 - 따라서 SLO를 사용.
 
-### Service-level indicators
+#### Service-level indicators
 
 - SLO를 정했다면 실제 데이터들을 수집.
 - SLI로 SLO를 만족하는지 판단.
 
-### Error budgets
+#### Error budgets
 
 - 새로운 걸 시도할 때면 불안정성이 일시적으로 늘어나곤 함.
 - 그렇다고 시스템 안정성 유지를 위해 변화를 거부할 순 없음.
