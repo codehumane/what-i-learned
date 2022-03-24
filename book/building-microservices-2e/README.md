@@ -1362,3 +1362,13 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 물론 실수의 여지도 있음을 언급.
 - 저자 지인이 이커머스 서비스에 가짜 트랜잭션을 일으켰는데,
 - 엄청난 양의 세제가 회사 앞에 배달되어 있었다고.
+
+#### 그 외
+
+- 그 외 내용들은 제목만 기록.
+- A/B testing
+- Canary release
+- Parallel run
+- Somke tests
+- Synthetic transactions
+- Chaos engineering
