@@ -1377,3 +1377,31 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 
 - 원래는 정리 안 하려고 했으나,
 - 이럴 때라도 가볍게나마 보안 관련 내용 읽어두는 게 좋은 듯.
+
+## Core Principles
+
+### Principle of Least Privilege
+
+- 최소한의 대상에게,
+- 최소한의 기간으로,
+- 최소한의 권한만 부여.
+
+### Defense in Depth
+
+- 방어를 여러겹으로 하라는 이야기.
+- 여러 MS로 나누고 각각이 할 수 있는 일의 범위를 제한해 두는 것도 이에 해당.
+- 그리고 이들 MS를 서로 다른 네트워크 구간에서 실행.
+- 참고로, 보안 제어의 종류에 대한 이야기도 언급.
+  - Preventative: 공격 예방. 민감정보를 안전하게 보관하고, 암호화하고, 인증과 허가 메커니즘을 두는 등.
+  - Detective: 공격이 발생하면 이를 알리는 것.
+  - Responsive: 공격 중간이나 후에 대응을 돕는 것. 시스템의 자동화된 재구축, 데이터 복구를 위한 백업 등.
+
+### Automation
+
+- 자동화는 보안에서도 중요.
+- 보안 키를 폐기하고 순환시키는 것 등에 활용.
+
+### Build Security into the Delivery Process
+
+- 보안을 뒤늦게 챙기는 경향이 있고 이는 위험.
+- 개발 단계부터 챙겨야 하며, 이를 돕는 몇 가지 도구들 소개.
