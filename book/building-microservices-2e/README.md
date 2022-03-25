@@ -1372,3 +1372,8 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - Somke tests
 - Synthetic transactions
 - Chaos engineering
+
+# Chapter 11. Security
+
+- 원래는 정리 안 하려고 했으나,
+- 이럴 때라도 가볍게나마 보안 관련 내용 읽어두는 게 좋은 듯.
