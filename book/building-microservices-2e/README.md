@@ -1442,3 +1442,11 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 ### Recover
 
 - 문제가 된 시스템을 다시 복구하는 것을 가리킴.
+
+## Foundations of Application Security
+
+- 아래 4가지 이야기.
+- Credentials
+- Patching
+- Backups
+- Rebuild
