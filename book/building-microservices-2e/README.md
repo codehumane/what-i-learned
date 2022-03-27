@@ -1530,3 +1530,8 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 백업된 것과 함께 자동으로 연결될 수 있어야 함.
 - 매 배포마다 재구축하는 절차를 동일하게 밟는 것이 도움이 됨.
 - 요즘의 컨테이너 기반 배포 절차가 이러함.
+
+## Implicit Trust Versus Zero Trust
+
+- 사용자와 시스템, MS 간에는 어느 정도 수준의 신뢰가 바람직할까?
+- 암묵적 신뢰, 제로 신뢰 2가지 이야기.
