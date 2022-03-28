@@ -1703,3 +1703,9 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 이해하기 어렵거나 테스팅의 어려움으로 이어질 수도.
 - 두 번째로, 겹겹이 쌓는 보안과 반대로, 단일 실패 지점이며, 계란을 한 바구니에 담는 상황.
 - 마지막으로, 여러가지 역할이 점점 게이트웨이에 추가될 수 있음에도 유의해야 함.
+
+### Fine-Grained Authorization
+
+- 게이트웨이가 인증을 완료한 객체에게 허가를 위한 역할을 부여할 수도 있음.
+- 너무 잘게 나눈 역할은 유지보수가 어려울 수 있음에 유의.
+- 그래서 fine-grained 대신 coarse-grained 역할 분류를 선호.
