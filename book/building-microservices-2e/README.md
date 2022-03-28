@@ -1672,3 +1672,9 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 그리고 서버와 클라이언트의 양방향.
 - 따라서 service-to-service 인증.
 - 이 외에도 API 키를 이용한 방식도 있음.
+
+### Human Authentication
+
+- MFA 얘기도 함.
+- 생체 인증도.
+- 저자는 민감 정보를 다루는 곳에 MFA는 필수라고 이야기.
