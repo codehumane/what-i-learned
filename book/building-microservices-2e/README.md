@@ -1566,3 +1566,9 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 예컨대, public과 private을 모두 다룬다면 private으로 분류.
 - 각 그룹 내에서는 통신이 가능하고, 보안이 더 약한 그룹으로만 접근할 수 있음.
 - secret은 zero trust, public은 implicit trust로 보면 됨.
+
+## Securing Data
+
+- MSA 환경에서는 더 많은 장소를 데이터가 이동함.
+- 단지 네트워크를 통해 흐르는 것뿐만 아니라 디스크에도 존재.
+- 2가지 위치에서 데이터를 보호하는 방법에 대한 이야기.
