@@ -1572,3 +1572,45 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - MSA 환경에서는 더 많은 장소를 데이터가 이동함.
 - 단지 네트워크를 통해 흐르는 것뿐만 아니라 디스크에도 존재.
 - 2가지 위치에서 데이터를 보호하는 방법에 대한 이야기.
+
+### Data in Transit
+
+- 프로토콜에 따라 신경써야 하는 것이 다름.
+- HTTP의 경우는 TLS를 고려하는 한편,
+- 메시지 브로커를 사용한 통신의 경우 전송 중인 데이터를 보호하기 위해 특정 기술을 고려해야 할 수도.
+- 크게 4가지 영역을 고민해야 함.
+- Order Processor MS에서 Payment MS로 요청을 보내는 경우를 예로 설명하면 아래와 같음.
+- Client identity: 요청을 보낸 클라이언트가 정말 Order Processor가 맞는가?
+- Visibility of data: 요청을 누군가 볼 수 있는가?
+- Manipulation of data: 요청을 누군가 변조할 수 있는가?
+- Server identity: 서버가 정말로 Payment MS가 맞는가?
+
+#### Server identity
+
+- 대화 대상이 내가 기대한 서버가 맞는지 확인.
+- 공격자가 서버인 척 위장할 수 있기 때문.
+- HTTPS의 경우 인증서를 활용.
+- 이에 기반한 통신 프로토콜은 모두 HTTPS의 메커니즘 활용 가능.
+- SOAP, gRPC, ...
+
+#### Client identity
+
+- 여기서의 클라이언트는 요청을 보내는 MS를 가리킴.
+- 업스트림 MS의 신원을 확인하고 인증하는 것.
+- 이를 위한 여러가지 방법이 존재.
+- 한 가지는, 요청에 약속한 무언가를 담아서 보내는 것.
+- 공유된 시크릿이나 클라이언트 사이드의 인증서 등이 그 예.
+- 서버와 클라이언트 모두 식별이 필요하므로 이는 상호 인증<sup>mutual authentication</sup>.
+- 이를 위해 mutual TLS를 사용할 수 있음.
+- Vault 같은 도구 활용이 도움이 됨.
+
+#### Visibility of data
+
+- HTTPS나 mutual TLS 사용하면,
+- 중간에 데이터를 확인하기 어려움.
+
+#### Manipulation of data
+
+- 일반적으로 데이터를 볼 수 없게 보호했다면 조작도 어렵긴 함.
+- 그러나, 그런 경우가 아니거나, 그런 경우라고 하더라도 조작 안 됨을 보장하고 싶을 수도.
+- 한 가지 방법은 HMAC(hash-based message authenticatio ncode).
