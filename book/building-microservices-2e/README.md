@@ -1664,3 +1664,11 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 인가는 principal을 허용된 행위들로 매핑하는 것을 가리킴.
 - 이런 인허가를 사용자가 MS 별로 하게 할 순 없으므로,
 - MSA 환경에서의 SSO도 다룰 예정.
+
+### Service-to-Service Authentication
+
+- 앞서 mutual TLS 다룸.
+- 전송 데이터 보호뿐만 아니라 인증의 한 형태.
+- 그리고 서버와 클라이언트의 양방향.
+- 따라서 service-to-service 인증.
+- 이 외에도 API 키를 이용한 방식도 있음.
