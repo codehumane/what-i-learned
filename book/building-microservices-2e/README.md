@@ -1678,3 +1678,14 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - MFA 얘기도 함.
 - 생체 인증도.
 - 저자는 민감 정보를 다루는 곳에 MFA는 필수라고 이야기.
+
+### Common Single Sign-On Implementations
+
+- 일반적인 SSO 개념 설명.
+- 인증자가 리소스에 접근하려고 하면,
+- identity provider로 인증하기 위해 연결됨.
+- 이 공급자는 사용자에게 ID와 비밀번호 또는 MFA를 요청할 수도 있고,
+- 인증이 완료되면 service provider에게 정보를 제공해서 리소스에 접근할 수 있게 도와줌.
+- 이 identity provider는 외부 시스템일 수도 있고 내부 조직일 수도 있음.
+- 구글의 OpenID Connect, LDAP 같은 디렉토리 서비스 등이 이에 해당.
+- SAML은 복잡성 때문에 잘 쓰이지 않고, OpenID Connect가 주로 사용됨.
