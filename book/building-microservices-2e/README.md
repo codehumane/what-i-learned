@@ -1709,3 +1709,10 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 게이트웨이가 인증을 완료한 객체에게 허가를 위한 역할을 부여할 수도 있음.
 - 너무 잘게 나눈 역할은 유지보수가 어려울 수 있음에 유의.
 - 그래서 fine-grained 대신 coarse-grained 역할 분류를 선호.
+
+### The Confused Deputy Problem
+
+- 혼동된 대리자 문제.
+- 사용자 인증이 됐어도,
+- 서비스간 식별이 됐어도,
+- 사용자의 권한을 넘어서는 정보 접근을 막아야 함.
