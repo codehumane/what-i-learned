@@ -1716,3 +1716,13 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 - 사용자 인증이 됐어도,
 - 서비스간 식별이 됐어도,
 - 사용자의 권한을 넘어서는 정보 접근을 막아야 함.
+
+### Centralized, Upstream Authorization
+
+- 혼동된 대리자 문제를 해결하는 한 가지 방법은,
+- 시스템이 요청을 받으면 바로 권한 검사를 실행하는 것.
+- 책의 예시에서는 SSO 게이트웨이와 `Web Shop`가 권한 검사 주체가 됨.
+- `Shipping`과 `Order`는 implicit trust 전략을 가짐.
+- 하지만 이 방식에서는 업스트림이 다운스트림이 어떤 기능을 제공하는지,
+- 그리고 어떻게 기능에 대한 접근을 제한하는지 알아야 하는 문제가 있음.
+- 이는 자율적인 MS와는 거리가 있고 배포에도 서로 의존성을 가지게 됨.
