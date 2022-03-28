@@ -1656,3 +1656,11 @@ Steven Shorrock의 "[Alarm Design: From Nuclear Power to WebOps](https://humanis
 #### Encrypt backups
 
 - 백업 역시 민감 정보는 암호화.
+
+## Authentication and Authorization
+
+- 인증은 상대방이 누구인지 우리가 확인하는 과정.
+- 이 인증된 당사자를 가리켜 pincipal이라 부름.
+- 인가는 principal을 허용된 행위들로 매핑하는 것을 가리킴.
+- 이런 인허가를 사용자가 MS 별로 하게 할 순 없으므로,
+- MSA 환경에서의 SSO도 다룰 예정.
