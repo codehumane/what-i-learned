@@ -1800,3 +1800,11 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 
 - 점점 더 중요해지는 회복성 간단히 설명.
 - 회복성에 대한 개념부터 다시 살펴보는 것으로 내용 시작.
+
+## What Is Resiliency?
+
+- Dvaid D. Woods는 회복성을 4가지 관점으로 설명.
+- Robustness: 예상된 변화를 수용할 수 있는 능력.
+- Rebound: 충격 이후에 회복하는 능력.
+- Graceful extensibility: 예상치 못한 상황을 얼마나 잘 다루는가.
+- Sustained adaptability: 변화(환경, 이해관계자, 수요)에 지속적으로 적응하는 능력.
