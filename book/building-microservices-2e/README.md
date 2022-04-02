@@ -1988,3 +1988,8 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 
 - 구매 별로 한 번만 포인트 적립이 가능하다는 규칙이 있다면 멱등성이 가능.
 - 참고로 HTTP에서 GET, PUT이 멱등적이라고 정의되어 있음에 유의.
+
+## Spreading Your Risk
+
+- 계란을 한 바구니에 담지 말아라.
+- VM, SAN, 데이터 센터 랙, AWS 가용 리전, 멀티 클라우드 얘기들.
