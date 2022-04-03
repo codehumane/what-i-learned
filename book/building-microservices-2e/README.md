@@ -2027,3 +2027,8 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 그리고 잠금 관리는 단일 프로세스에서도 하기 어려움.
 - 만약 일관성이 꼭 필요하다고 하더라도 직접하지는 않을 것을 권장.
 - Consul 등의 데이터 스토어나 락 서비스를 이용.
+
+### Sacrificing Partition Tolerance?
+
+- AC.
+- 분산 시스템에서는 불가능.
