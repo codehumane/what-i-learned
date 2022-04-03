@@ -1968,8 +1968,8 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 
 ```json
 {
-  'amount': 100,
-  'forAccount': 1234
+  "amount": 100,
+  "forAccount": 1234
 }
 ```
 
@@ -1978,10 +1978,10 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 
 ```json
 {
-  'amount': 100,
-  'forAccount': 1234,
-  'reason': {
-    'forPurchase': 4567
+  "amount": 100,
+  "forAccount": 1234,
+  "reason": {
+    "forPurchase": 4567
   }
 }
 ```
@@ -1997,9 +1997,9 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 ## CAP Theorem
 
 - 분산 시스템에서의 일관성<sup>consistency</sup>, 가용성<sup>availability</aup>, 파티션 내성<sup>partition tolerance</sup> 간 트레이드 오프.
-  - 일관성: 여러 노드에 대해서 같은 대답을 얻음.
-  - 가용성: 모든 요청이 응답을 받음.
-  - 파티션 내성: 노드 간 커뮤니케이션이 불가능한 경우에 대응할 수 있음.
+- 일관성: 여러 노드에 대해서 같은 대답을 얻음.
+- 가용성: 모든 요청이 응답을 받음.
+- 파티션 내성: 노드 간 커뮤니케이션이 불가능한 경우에 대응할 수 있음.
 - 책에서는 `Inventory` MS를 예시로 들며 설명.
 - 이 MS는 2개의 인스턴스를 가지며 인스턴스 별로 로컬 DB를 가짐.
 - 그리고 이 2개의 세트는 서로 다른 데이터 센터에 배포되어 있음.
