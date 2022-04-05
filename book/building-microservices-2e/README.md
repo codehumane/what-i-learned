@@ -2083,3 +2083,10 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - Horizontal duplication: 같은 일을 하는 대상을 여러 개 갖기.
 - Data partitioning: 데이터 속성에 따라 나누기.
 - Functional decomposition: 종류에 따라 나누기.
+
+### Vertical Scaling
+
+- 수직 스케일링이 도움될 때가 있고,
+- 클라우드의 도움으로 이 비용이 적어져서,
+- (쉽고 빠르게 가능하고, 다시 돌아오기도 쉬움)
+- 생각해 볼 만한 선택지.
