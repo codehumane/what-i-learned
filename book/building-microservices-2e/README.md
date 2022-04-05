@@ -2075,3 +2075,11 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 우리는 보통 2가지 이유로 시스템을 스케일링.
 - 하나는 성능, 다른 하나는 안정성.
 - 이 장에서는 여러 종류의 스케일링을 알아봄.
+
+## The Four Axes of Scaling
+
+- <The Art of Scalability>에 나오는 3가지 스케일링 분류에 저자가 1가지를 더함.
+- Vertical scaling: 더 큰 머신 갖기.
+- Horizontal duplication: 같은 일을 하는 대상을 여러 개 갖기.
+- Data partitioning: 데이터 속성에 따라 나누기.
+- Functional decomposition: 종류에 따라 나누기.
