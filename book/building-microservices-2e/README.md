@@ -2295,3 +2295,8 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 성능과 안정성, 비일관성과 복잡성 사이의 트레이드 오프 고려해야.
 - 이상적인 캐시의 수는 0.
 - 최적화를 피할 수 없는 곳에서만 사용.
+
+# Chapter 15. Organizational Structures
+
+- MSA와 조직 구조의 좀 더 자세한 이야기.
+- 조직의 변화가 필요할 수도.
