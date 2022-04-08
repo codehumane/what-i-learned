@@ -2313,3 +2313,9 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
   - 통합 테스트 환경 없이도 필요할 때마다 테스트 가능해야 함.
   - 업무 시간에도 배포 가능해야 함.
 - 이를 위해 권한과 책임이 분산되어 있어야 한다고(꼭 그래야 하는지는 다소 의문. 의도는 알겠음).
+
+## Conway's Law
+
+> Any organization that designs a system (defined more broadly here than just information systems) will inevitably produce a design whose structure is a copy of the organization's communication structure.
+
+> If you have four groups working on a compiler, you'll get a 4-pass compiler.
