@@ -2319,3 +2319,9 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 > Any organization that designs a system (defined more broadly here than just information systems) will inevitably produce a design whose structure is a copy of the organization's communication structure.
 
 > If you have four groups working on a compiler, you'll get a 4-pass compiler.
+
+## Team Size
+
+- 일반적으로 적을 수록 좋고,
+- 정확한 숫자를 묻는다면 대게 5-10이라는 답변을 얻음.
+- 무조건 사람이 많다고 좋은 것은 X.
