@@ -2333,3 +2333,12 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 다음으로, 엔지니어링 조직과 생산성을 급진적으로 올릴 수 있음.
 - 중앙 집중화 되어 있던 의사결정을 세분화해서 분산시키고,
 - 책임감 있고 자율적인 팀을 만들어야 가능.
+
+## Small Teams, Large Organization
+
+- 사람을 늘린다고 소프트웨어 개발이 빨라지는 것은 아님.
+- 각자가 병렬로 일할 수 있어야 하며, 커뮤니케이션 등의 의존성이 없어야 함.
+- 팀도 무작정 나눈다고 좋아지는 것이 아니라 각 팀에 자율성이 있어야 함.
+- 아래는 아마존 팀에 관한 이야기.
+
+> The Two-Pizza Team is autonomous. Interaction with other teams is limited, and when it does occur, it is well documented, and interfaces are clearly defined. It owns and is responsible for every aspect of its systems. One of the primary goals is to slower the communications overhead in organizations, including the number of meetings, coordination points, planning, testing, or releases. Teams that are more independent move faster.
