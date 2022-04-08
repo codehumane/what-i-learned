@@ -2342,3 +2342,9 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 아래는 아마존 팀에 관한 이야기.
 
 > The Two-Pizza Team is autonomous. Interaction with other teams is limited, and when it does occur, it is well documented, and interfaces are clearly defined. It owns and is responsible for every aspect of its systems. One of the primary goals is to slower the communications overhead in organizations, including the number of meetings, coordination points, planning, testing, or releases. Teams that are more independent move faster.
+
+## On Autonomy
+
+- 반복되는 이야기.
+- 팀이 작다고 무조건 좋은 게 아니라,
+- 그 팀에 자율성이 있어야 함.
