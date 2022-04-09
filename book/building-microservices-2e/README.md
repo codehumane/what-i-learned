@@ -2387,6 +2387,7 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 
 ## Enabling Teams
 
+- 최근 회사에서 이런 역할의 중요성을 뼈저리게 느낌.
 - 도메인 단위로 stream-alinged 팀이 있고,
 - 기술 계층 단위로 enabling 팀이라는 용어를 사용하는 것.
 - 이들은 stream-aligned 팀을 지원하는 역할.
@@ -2395,3 +2396,9 @@ Z9HMH0DGs60I0P5bVVSFixeDxJjGovQEtlNUi__iE_0 3
 - 더 이상 중앙에서 통제하고 감시하는 것이 아니라,
 - 사람들을 연결하고 전체적인 모습을 확인하고 다른 팀들이 일을 잘 수행하도록 도움.
 - 팀 경계 바깥에서 해결하는 것이 더 나은 문제들도 찾아내고 해결하는 역할도 enabling 팀의 역할.
+
+### Communities of Practice
+
+- CoP(community of practice) 역시 횡단 그룹.
+- 이들은 동료들끼리 배우고 공유하는 일을 장려함.
+- enabling 팀과 다소 역할이 겹치긴 하나 서로 초점과 역할이 다름.
