@@ -289,3 +289,40 @@ email.setSubject("whoops");
 - 구조적 측정은 코드 복잡도(순환 복잡도) 등 코드 품질 측정.
 - 프로세스 측정은 시험성과 배포성 측정.
 - 얼마나 테스트가 잘 되고 있는지, 배포 성공/롤백률이나 배포 시 발생한 이슈 버그 등의 통계 등을 측정하는 것.
+
+## 거버넌스와 피트니스 함수
+
+### 아키텍처 특성 관리
+
+- 거버넌스<sup>governance</sup>는 kubernan(이끌다)이라는 그리스어에서 유래.
+- 아키텍트 거버넌스는 소프트웨어의 모든 개발 프로세스를 포괄.
+- 조직 내부의 소프트웨어 품질 보장 업무는 아키텍처 범주에 포함되므로 아키텍처 거버넌스 항목.
+- 이런 거버넌스 활동의 자동화를 위해 피트니스 함수 기법이 있음.
+
+### 피트니스 함수
+
+- 아키텍처 피트니스 함수: 어떤 아키텍처 특성의 객관적인 무결성을 평가하는 모든 메커니즘.
+- 순환 의존성: 아래 예시와 같이 피트니스 함수로 순환 참조 여부 확인.
+
+```java
+var jdepend = new JDepend();
+jdepend.addDirectory("/path");
+jdepend.analyze();
+assertFalse(jdepend.containsCycles());
+```
+
+- 메인 시퀀스로부터의 거리 피트니스 함수
+
+```java
+var ideal = 0.0;
+var tolerance = 0.5;
+var packages = jdepend.analyze();
+var iter = packages.iterator();
+while (iter.hasNext()) {
+  p = (JavaPackage) iter.next();
+  assertEquals(ideal, p.distance(), tolerance);
+}
+```
+
+- 아크 유닛 얘기도 언급.
+- 그 외 카오스 몽키, 시미안 아미 등도 피트니스 함수 응용 사례.
