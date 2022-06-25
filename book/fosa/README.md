@@ -524,3 +524,27 @@ sed ${1}q
 - 모놀리식이므로 단순하고, 알기 쉬우며, 구축과 유지보수가 쉬움.
 - 필터 별로 관심사 분리되어 있으므로 모듈성 확보.
 - 특성 별 별점 작성한 표가 있는데, 레이어드 아키텍처와 동일한 점수들.
+
+# CH12. 마이크로커널 아키텍처 스타일
+
+- 보통 제품 기반 애플리케이션에 적합.
+- 제품 기반 = 단일 모놀리식 배포 단위로 다운로드와 설치가 가능하고, 고객 사이트에 서드파티 제품으로 설치되곤 함.
+- 이클립스 IDE, PMD, 지라, 젠킨스 등이 이 아키텍처를 사용.
+- 토폴로지는 코어 시스템과 플로그인 컴포넌트 요소로 구성.
+- 코어 시스템은 어떤 플러그인을 어떻게 사용할 수 있는지를 레지스트리를 통해 확인.
+- 플러그인과 코어 간의 계약은 도메인 단위로 표준화 되어 있고 입출력은 계약에 명시됨.
+
+```java
+public interface AssessmentPlugin {
+       public AssessmentOutput access();
+       public String register();
+       public String deregister();
+}
+
+public class AssessmentOutput {
+       public String assessmentReport;
+       public Boolean resell;
+       public Double value;
+       public Double resellPrice;
+}
+```
