@@ -787,3 +787,17 @@ public class AssessmentOutput {
 - 하지만 데이터량(캐시 크기)이 매우 많거나 너무 빈번하게 캐시 업데이트가 일어난다면 분산 캐시 고려.
 - 분산 캐시는 데이터가 한 곳에 있어 복제할 필요가 없고 따라서 높은 수준의 데이터 일관성 보장.
 - 하지만 캐시 데이터를 원격에서 가져와야 함로 성능이 낮고 시스템 전체적으로 지연이 높아짐.
+
+## 니어 캐시
+
+- 분산 캐시와 인메모리 데이터 그리드의 하이브리드 형식.
+- 이 구성에서 분산 캐시는 full backing cache,
+- 인메모리 데이터 그리드는 front cache라 부름.
+- front cache는 full backing cache에 비해 항상 적은 서브 세트를 담음.
+- 그리고 eviction policy로 옛 항목을 삭제 후 최근 항목 추가.
+- MRU나 MFU 캐시로 사용하는 것(혹은 RR<sup>Random Replacement</sup>).
+- front cache는 full backing cache와 동기화 되지만,
+- 각 처리 장치에 포함된 front cache 끼리는 동기화 안 됨.
+- 이로 인해 처리 장치마다 서로 다른 데이터를 갖게 되고,
+- 처리 장치 간 성능과 응답성이 비일관적이 되므로,
+- 이 모델을 권장하지는 않는다고 함.
