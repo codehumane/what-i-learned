@@ -81,6 +81,7 @@
 - [Reactive Programming with Reactor 3](document/reactive-programming-with-reactor-3.md)
 - [Spring Metrics, Prometheus](document/spring-metrics-prometheus.md)
 - [java.util.Deque w/ ArrayDeque](document/java-util-deque.md)
+- [java.util.LinkedHashMap](document/java-linkedhashmap.md)
 - ["How-to" Guides - Batch Applications](document/spring-boot-reference-batch-applications.md)
 - [AMQP 0-9-1 Model Explained](document/amqp-conecpts.md)
 - [Spring AMQP > Receiving Messages](document/spring-amqp-receiving-messages.md)
