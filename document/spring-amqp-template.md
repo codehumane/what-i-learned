@@ -56,3 +56,43 @@ retryTemplate.execute(
     }
 )
 ```
+
+## Publishing is Asynchronous - How to Detect Successes and Failures
+
+- 메시지 퍼블리싱은 비동기 메커니즘.
+- 기본적으로 라우팅되지 못한 메시지는 RabbitMQ에 의해 drop 됨.
+- 성공적인 퍼블리싱을 위해 비동기 confirm을 받을 수 있음.
+- 아래의 2가지 실패 시나리오를 생각해보자.
+
+```
+1. 익스체인지로 퍼블리싱 했는데 매칭되는 목적지 큐가 하나도 없음.
+2. 존재하지 않는 익스체인지로 퍼블리싱.
+```
+
+- 첫 번째 케이스는 퍼블리셔의 반환으로 대응이 가능(뒤에서 자세히 다룸).
+- 두 번째 케이스는 메시지가 drop되고 아무런 반환도 되지 않음.
+- 관련된 채널은 예외와 함께 닫힘.
+- 기본적으로 이 예외는 로그에 남지만,
+- `ChannelListener`를 `CachingConnectionFactory`에 등록해서 이 이벤트를 통지 받을 수 있음.
+
+```
+this.connectionFactory.addConnectionListener(new ConnectionListener() {
+
+    @Override
+    public void onCreate(Connection connection) {
+    }
+
+    @Override
+    public void onShutDown(ShutdownSignalException signal) {
+        ...
+    }
+
+})
+```
+
+- signal의 `reason` 프로퍼티에서 문제를 좀 더 확인할 수 있음.
+- 보내는 측 스레드에서 이 예외를 감지하고 싶다면,
+- `RabbitTemplate`에 `setChannelTransacted(true)`를 하고,
+- `txCommit()`에서 예외를 받음.
+- 하지만 트랜잭션은 성능을 크게 저하시킴.
+- 따라서 트랜잭션 활성화는 신중히 고려할 것.
