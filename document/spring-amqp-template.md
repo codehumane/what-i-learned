@@ -211,3 +211,127 @@ public <T> T invoke(
     ConfirmCallback nacks
 );
 ```
+
+## Strict Message Ordering in a Multi-Threaded Environment
+
+- Scoped Operations에서 다룬 내용은 연산들이 모두 같은 스레드에서 수행될 때에만 적용됨.
+- 하지만 아래의 경우를 생각해보자.
+
+```
+1. thread-1이 큐에 메시지를 보내고, thread-2에게 작업을 위임.
+2. thread-2가 동일한 큐로 메시지를 보냄.
+```
+
+- RabbitMQ의 비동기 특성 때문에, 그리고 캐시된 채널의 사용 때문에,
+- 동일한 채널이 사용되고 따라서 큐에 메시지가 의도한 순서대로 도착했음을 보장할 수 없음.
+- 이를 해결하는 한 가지 방법은 채널 캐시 크기를 1로 가져가는 것(`channelCheckoutTimeout`과 함께).
+
+```java
+@SpringBootApplication
+public class Application {
+    
+    private static final Logger log = LoggerFactory.getLogger(Applicatino.class);
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    TaskExecutor exec() {
+        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
+        exec.setCorePoolSize(10);
+        return exec;
+    }
+
+    @Bean
+    CachingConnectionFactory ccf() {
+        CachingConnectionFactory ccf = new CachingConnectionFactory("localhost");
+        CachingConnectionFactory publisherCF = (CachingConnectionFactory) ccf.getPublisherConnectionFactory();
+        publisherCF.setChannelCacheSize(1);
+        publisherCF.setChannelCheckoutTimeout(1000L);
+        return ccf;
+    }
+
+    @RabbitListener(queues = "queue")
+    void listen(String in) {
+        log.info(in);
+    }
+
+    @Bean
+    Queue queue() {
+        return new Queue("queue");
+    }
+
+    @Bean
+    public ApplicationRunner runner(Service service, TaskExecutor exec) {
+        return args -> {
+            exec.execute(() -> service.mainService("test"));
+        }
+    }
+}
+
+@Component
+class Service {
+    private static final Logger LOG = LoggerFactory.getLogger(Service.class);
+    private final RabbitTemplate template;
+    private final TaskExecutor exec;
+
+    Service(RabbitTemplate template, TaskExecutor exec) {
+        template.setUsePublisherConnection(true);
+        this.template = template;
+        this.exec = exec;
+    }
+
+    void mainService(String toSend) {
+        LOG.info("Publishing from main service");
+        this.template.convertAndSend("queue", toSend);
+        this.exec.execute(() -> secondaryService(toSend.toUpperCase()));
+    }
+
+    void secopndaryService(String toSend) {
+        LOG.info("Publishing from secondary service");
+        this.template.convertAndSend("queue", toSend);
+    }
+}
+```
+
+- 위에서 퍼블리싱이 2개의 서로 다른 스레드에서 이뤄지긴 하지만,
+- 채널이 1개로 설정되어 있으므로 2개는 같은 채널을 사용하게 됨.
+- 2.3.7 이후 버전에서는 `ThreadChannelConnectionFactory`가 제공되며,
+- `prepareContextSwitch`와 `switchContext`를 이용해서 순서를 보장하는 처리가 가능.
+
+```java
+@SpringBootApplication
+public class Application {
+    
+    // ... 위 코드와 동일
+
+    @Bean
+    ThreadChannelConnectionFactory tccf() {
+        ConnectionFactory rabbitConnectionFactory = new ConnectionFactory();
+        rabbitConnectionFactory.setHost("localhost");
+        return new ThreadChannelConnectionFactory(rabbitConnectionFactory);
+    }
+
+    // ... 위 코드와 동일
+
+@Component
+class Service {
+    
+    // ... 위 코드와 동일
+
+    void mainService(String toSend) {
+        LOG.info("Publishing from main service");
+        this.template.convertAndSend("queue", toSend);
+        Object context = this.connFactory.prepareSwitchContext();
+        this.exec.execute(() -> secondaryService(toSend.toUpperCase(), context));
+    }
+
+    void secondaryService(String toSend, Object threadContext) {
+        LOG.info("Publishing from secondary service");
+        this.connFactory.switchContext(threadContext);
+        this.template.convertAndSend("queue", toSend);
+        this.connFactory.closeThreadChannel();
+    }
+}
+```
