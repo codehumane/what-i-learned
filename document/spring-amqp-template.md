@@ -158,3 +158,56 @@ assertTrue(cd1.getFuture().get(10, TimeUnit.SECONDS).isAck());
 - 예컨대, 아직 처리 중인 `ack`에 대해 커넥션이 닫힌 경우.
 
 한편, 확인과 반환 모두 활성화되어 있다면, `CorrelationData`는 반환 메시지와 함께 만들어짐. 단, `CorrelationData`가 고유한 `id`를 가지는 경우에 한함.
+
+## Scoped Operations
+
+- 일반적으로, 템플릿을 쓸 때,
+- `Channel`을 캐시에서 체크아웃 (또는 생성) 하고,
+- 연산을 위해 사용되고 재사용을 위해 캐시에 반환됨.
+- 멀티 스레드 환경에서, 다음 연산에 같은 채널이 사용된다는 보장은 불가.
+- 하지만, 몇 개의 연산이 모두 같은 채널에서 수행되는 것이 필요할 때가 있음.
+- (어떤 상황인지 추정은 안 됨)
+- 2.0부터는 `invoke` 메서드가 제공되고, 여기에 `OperationsCallback`을 쓸 수 있음.
+- 인자로 주어진 `RabbitOperations`을 사용한 콜백 내의 모든 연산들은 동일한 전용 `Channel` 사용하게 됨.
+- 사용이 끝나면 캐시로 반환되지 않고 닫힘.
+- 만약 채널이 `PublisherCallbackChannel`이라면, 모든 확인이 수신된 이후에 다시 캐시로 반환.
+
+```java
+@FunctionalInterface
+public interface OperationsCallback<T> {
+    T doInRabbit(RabbitOperations operations);
+}
+```
+
+- (다행이 어떤 상황에 필요한지 설명 이어짐)
+- 이것이 필요한 한 가지 예는, `Channel`의 `waitForConfirms()` 메서드를 쓰길 원할 때.
+- 이 메서드는 예전에는 Spring API로 노출되지 않았음. 채널이 일반적으로 캐시되고 공유되기 때문.
+- 이제 `RabbitTemplate`은 `waitForConfirms(long timeout)`와 `waitForConfirmsOrDie(long timeout`을 제공함.
+- 이는 `OperationsCallback` 범위 내에서 사용되는 채널로 위임.
+- 범위 바깥에서는 이 메서드 사용 불가.
+
+```java
+Collection<?> messages = getMessagesToSend()
+Boolean result = this.template.invoke(t -> {
+    // convertAndSend는 메시지 단위
+    messages.forEach(m -> t.convertAndSend(ROUTE, m));
+    // wait은 전용 channel 단위
+    t.waitForConfirmsOrDie(10_000);
+    return true;
+});
+```
+
+- confirm을 이런 식으로 사용한다면, 그리고 returns도 비활성화 되어 있다면,
+- correlating confirm를 위한 많은 인프라 설정이 필요 없어짐.
+- 2.2 버전부터는 커넥션 팩토리가 `publisherConfirmType`을 지원하며,
+- 이를 `ConfirmType.SIMPLE`로 설정한다면 인프라를 피하고 confirm 절차는 좀 더 효율적.
+- 그리고 `RabbitTemplate`은 전송할 메시지의 `MessageProperties`에 `publisherSequenceNumber` 설정 가능.
+- confirm을 확인하고 싶다면, 아래와 같이 오버로딩 된 `invoke` 메서드를 이용하면 됨.
+
+```java
+public <T> T invoke(
+    OperationsCallback<T> action,
+    ConfirmCallback acks,
+    ConfirmCallback nacks
+);
+```
