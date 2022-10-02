@@ -81,3 +81,10 @@ at least once, at most once.
 - AMQP 0-9-1은 [heartbeat feature](https://www.rabbitmq.com/heartbeats.html)를 제공.
 - 이를 통해 애플리케이션 레이어가 고장난 연결을 즉각 찾아낼 수 있도록 함.
 - 유휴 TCP 연결을 종료시키는 네트워크 장비에 대한 대응이 될 수 있음.
+
+## Data Safety on the RabbitMQ Side
+
+- RabbitMQ 측의 메시지 손실을 피하기 위해서는,
+- 큐와 메시지가 RabbitMQ 노드 재시작이나 노드와 하드웨어 고장을 다룰 수 있어야 함.
+- 이를 위해 [durability of queues and messages](https://www.rabbitmq.com/queues.html#durability),
+- [published as persistent by publishers](https://www.rabbitmq.com/publishers.html#message-properties)를 활용.
