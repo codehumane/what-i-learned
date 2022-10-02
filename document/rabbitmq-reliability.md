@@ -73,3 +73,11 @@ at least once, at most once.
 - acknowledgements의 사용은 at least once 전달을 보장.
 - 이것이 없으면 퍼블리시와 컨슘 사이에 메시지 유실 가능하고,
 - 따라서 at most once 정도만을 보장.
+
+## Detecting Dead TCP Connections with Heartbeats
+
+- 고장난 TCP 연결은 OS가 감지하는 데 오래 걸릴 수 있음.
+- 이는 패킷 손실로 이어지기도 함.
+- AMQP 0-9-1은 [heartbeat feature](https://www.rabbitmq.com/heartbeats.html)를 제공.
+- 이를 통해 애플리케이션 레이어가 고장난 연결을 즉각 찾아낼 수 있도록 함.
+- 유휴 TCP 연결을 종료시키는 네트워크 장비에 대한 대응이 될 수 있음.
