@@ -36,3 +36,40 @@
 - 일반적으로 커넥션이 실패하면, 커넥션이 예외를 일으켜서 클라이언트에 통지.
 - 대부분의 클라이언트 라이브러리들은 커넥션 실패 시 자동 복구하는 기능들을 제공.
 - 이것이 적절치 않은 경우라면, 연결 실패 이벤트 핸들러 정의를 통해 자체적 복구 메커니즘 마련.
+
+## Acknowledgements and Confirms
+
+acknowledgements 필요성 이야기.
+
+- 연결이 실패하면, 메시지는 클라이언트와 서버 사이에 전송 중일 수 있음.
+- 클라이언트나 서버에서 디코드나 인코딩 중일 수도 있고,
+- TCP 스택 버퍼에 머물거나, 와이어를 통해 전송 중일 수도.
+- 이런 메시지는 전달되지 않을 가능성이 큼.
+- 재전송을 고려해야 함.
+- [acknowledgements](https://www.rabbitmq.com/confirms.html)이 도움이 됨.
+
+acknowledgements 방향과 각각의 용어.
+
+- acknowledgements는 양쪽에서 사용될 수 있음.
+- 컨슈머가 메시지를 받았고 처리했음을 서버에게 알려줄 수 있고(consumer acknowledgements),
+- 서버가 퍼블리서에게 알려줄 수도 있음(publisher confirms).
+
+TCP 전달 보장과의 차이점.
+
+- TCP는 패킷이 연결 상대에게 전달됨을 보장.
+- 그리고 이것이 될 때까지 재전송.
+- 하지만, 이는 네트워크 레이어의 실패만을 다룬 뿐임.
+- acknowledgements와 confirms는 메시지를 받았고,
+- 상대 어플리케이션이 이에 대해 처리를 마쳤다는 것까지 알려줌.
+
+acknowledgements의 시멘틱.
+
+- 컨슈머 애플리케이션은 전달 받은 메시지에 대해,
+- 필요한 작업을 다 끝내기 전까지 acknowledge를 하면 안 됨.
+- 비슷하게, 브로커는 메시지에 대한 책임을 다 수행하면 메시지를 confirm.
+
+at least once, at most once.
+
+- acknowledgements의 사용은 at least once 전달을 보장.
+- 이것이 없으면 퍼블리시와 컨슘 사이에 메시지 유실 가능하고,
+- 따라서 at most once 정도만을 보장.
