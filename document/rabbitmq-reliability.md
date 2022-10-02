@@ -113,3 +113,15 @@ at least once, at most once.
 - 브로커는 confirmation을 보냈는데 프로듀서에게 전달되지 않았기 때문.
 - 따라서 컨슈머 애플리케이션은 중복 제거를 하거나,
 - 들어온 메시지를 멱등성 있게 처리해야 함.
+
+## Ensuring that Messages are Routed
+
+- 메시지가 큐로 라우팅 됐는지를 보장받는 게, 프로듀서 입장에서 중요할 때가 있음.
+- 이미 알고 있는 단일 큐로 라우팅하려면, 프로듀서는 단지 목적지 큐를 선언하고 곧장 발행하면 됨.
+- 만약 좀 더 복잡한 상황에서 적어도 1개 이상의 큐로 메시지가 도달했는지 알고 싶으면,
+- `basic.publish`에 `mandatory` 플래그를 설정해서,
+- 만약 적절한 큐로 바운딩 되지 못했다면 `basic.return`가 클라이언트에 돌아오게 하면 됨.
+- 자세한 내용은 [Publishers guide](https://www.rabbitmq.com/publishers.html) 참고.
+- 클러스터링 된 노드로 메시지 발행 시에는 미러링 때문에,
+- 노드 간 네트워크 장애 시 지연이 발생할 수 있음.
+- 자세한 내용은 [inter-node heartbeat guide](https://www.rabbitmq.com/nettick.html) 참고.
