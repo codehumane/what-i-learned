@@ -88,3 +88,18 @@ at least once, at most once.
 - 큐와 메시지가 RabbitMQ 노드 재시작이나 노드와 하드웨어 고장을 다룰 수 있어야 함.
 - 이를 위해 [durability of queues and messages](https://www.rabbitmq.com/queues.html#durability),
 - [published as persistent by publishers](https://www.rabbitmq.com/publishers.html#message-properties)를 활용.
+
+## Clustering and Queue Content Replication
+
+- [clusters of nodes](https://www.rabbitmq.com/clustering.html)는 redundancy를 제공하며 단일 노드 장애에 내성을 가짐.
+- RabbitMQ 클러스터에서는 모든 요소(익스체인지, 바인딩, 사용자 등)가 전체 클러스터에 복제.
+- [quorum queues](https://www.rabbitmq.com/quorum-queues.html)와 [streams](https://www.rabbitmq.com/streams.html)도 여러 클러스터 노드에 복제.
+- 한 노드가 리더, 나머지 노드들이 팔로워.
+- 리더가 장애이면 팔로워 중 하나가 새로운 리더로 선출.
+- 과거에는 [classic queue mirroring](https://www.rabbitmq.com/ha.html)이 큐 리플리케이션의 유일 선택지.
+- 하지만 이제는 deprecated 되고 [quorum queues](https://www.rabbitmq.com/ha.html#interstitial)와 [streams](https://www.rabbitmq.com/streams.html) 사용이 권장됨.
+- [exclusive queues](https://www.rabbitmq.com/queues.html#exclusive-queues)는 커넥션의 생애주기에 묶이므로,
+- 리플리케이션 되지 않으며 노드 재시작에도 살아 남지 못함.
+- 연결된 노드의 고장에 대해서는 컨슈머가 평소처럼 복구 절차 밟아야 함.
+- 새로운 리더 선출 시, 다른 노드에 연결되어 있던 컨슈머는, RabbitMQ에 의해 자동으로 재등록 됨.
+- 이 경우엔 컨슈머들이 재연결이나 재구독 등의 복구를 수행할 필요 없음.
