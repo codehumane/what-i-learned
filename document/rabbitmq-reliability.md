@@ -74,6 +74,13 @@ at least once, at most once.
 - 이것이 없으면 퍼블리시와 컨슘 사이에 메시지 유실 가능하고,
 - 따라서 at most once 정도만을 보장.
 
+publisher duplication.
+
+- 참고로 이건 consumer 입장이며,
+- 뒤에서 다루는 data safety on the publisher side에 따르면,
+- publisher confirm 사용할 경우,
+- 메시지 중복이 발생할 수 있음을 설명.
+
 ## Detecting Dead TCP Connections with Heartbeats
 
 - 고장난 TCP 연결은 OS가 감지하는 데 오래 걸릴 수 있음.
