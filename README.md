@@ -86,6 +86,7 @@
 - ["How-to" Guides - Batch Applications](document/spring-boot-reference-batch-applications.md)
 - [RabbitMQ > AMQP 0-9-1 Model Explained](document/amqp-conecpts.md)
 - [RabbitMQ > Reliability Guide](document/rabbitmq-reliability.md)
+- [RabbitMQ > Consumer Acknowledgements and Publisher Confirms](document/rabbitmq-confirms.md)
 - [Spring AMQP > Receiving Messages](document/spring-amqp-receiving-messages.md)
 - [Spring AMQP > Resilience](document/spring-amqp-resilience.md)
 - [Spring AMQP > Connection and Resource Management](document/spring-connection-and-resource-management.md)
