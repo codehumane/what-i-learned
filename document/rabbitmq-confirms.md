@@ -42,3 +42,46 @@
 - 따라서 delivery tag는 채널 별로 scoped.
 - delivery tag는 단순<sup>monotonically</sup> 증가하는 양수이며 클라이언트 라이브러리에 의해 제시됨.
 - 메시지 전달을 acknowledge하는 클라이언트 라이브러리 메서드는 delivery tag를 인자로 받음.
+
+## Consumer Acknowledgement Modes and Data Safety Considerations
+
+컨슈머 acknowledgement 소개.
+
+- 노드가 컨슈머에게 메시지를 전달할 때,
+- 메시지가 다뤄졌는지 혹은 적어도 전달은 된 건지 판단해야 함.
+- 실패는 곳곳에서 일어나므로, 이 결정은 데이터 안정성 관심사임.
+- 메시징 프로토콜은 보통 confirmation 메커니즘을 제공함.
+- 이는 컨슈머에 대한 접수 통지.
+- 이 메커니즘을 사용할지 여부는 컨슈머 구독 시점에 결정됨.
+
+컨슈머 acknowledgements 종류.
+
+- acknowledgements를 사용하기로 했다면,
+- 메시지가 보내지자 마자 성공이라고 간주될 수도 있고(TCP 소켓에 쓰여지면),
+- 클라이언트가 명시적으로("manual") acknowledgements를 보낼 수도 있음.
+- 수동 acknowledgement는 아래 프로토콜 메서드를 사용해서 positive 또는 negative로 설정.
+  - `basic.ack`: positive acknowledgement.
+  - `basic.nack`: negative acknowledgement.
+  - `basic.reject`: negative acknowledgement인데, `basic.nack`에 비해 한 가지 제약을 가짐.
+- positive acknowledgements는 단순히 RabbitMQ에게 메시지가 전달됐으며 버려도 된다고 기록하는 것.
+- `basic.reject`와 함께 사용하는 negative acknowledgements는 같은 효과를 가짐.
+- 버려도 되는 것은 같지만, 성공해서 버리냐, 실패해서 버리냐의 시멘틱 차이일 뿐.
+
+자동 acknowledgement의 안정성 주의점.
+
+- 자동 acknowledgement 모드에서는, 메시지가 보내지고 난 직후에 전달이 성공했다고 여겨짐.
+- 이는 높은 성능을 가져오지만, 전달과 컨슈머 프로세싱의 안정성이 줄어드는 트레이드 오프.
+- 이 모드는 종종 "fire-and-forget"이라고 불림.
+- 수동 모드와 다르게, 성공적으로 전달되기 전 컨슈머 TCP 커넥션이나 채널이 닫히면,
+- 서버가 보낸 메시지는 유실될 수 있음.
+- 안정성 측면에서 유의해야 함.
+
+자동 acknowledgement의 부하 주의점.
+
+- 또 한 가지 주의해야 할 것은, 자동 acknowledgement 모드가 컨슈머에게 부하가 될 수 있다는 것.
+- 수동 acknowledgement 모드는 전형적으로 제한된 채널 prefetch와 함께 사용됨.
+- 이는 채널의 처리되지 않은<sup>outstanding</sup> 메시지의 갯수를 제한하는 것.
+- 하지만 자동 모드에서는 이런 제약이 없음.
+- 컨슈머는 전달 속도에 의해 부하가 걸릴 수 있고,
+- 메모리에 백로그를 계속 쌓아가서 힙을 고갈시키며 OS에 의해 프로세스가 중단 될 수도.
+- 일부 클라이언트 라이브러리는 TCP 백 프레셔를 적용.
