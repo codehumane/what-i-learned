@@ -31,3 +31,14 @@
 - AMQP 0-9-1에서는 `basic.consume` 메서드를 이용해서 컨슈머가 등록되거나,
 - `basic.get` 메서드와 함께 메시지가 온 디멘드로 페치 될 때라고 함.
 - (컨슈머 등록이 왜 delivery acknowledgements인지는 이해 못 하는 중)
+
+## Delivery Identifiers: Delivery Tags
+
+- 다른 주제를 다루기에 앞서, 어떻게 전달이 식별되는지 설명하는 것이 중요.
+- 그리고 acknowledgements가 개별 전달을 어떻게 지칭하는지도.
+- 컨슈머(구독)가 등록되면, RabbitMQ는 `basic.deliver` 메서드를 이용해서 메시지를 전달(푸시)함.
+- 이 메서드는 delivery tag를 함께 전달.
+- 이 태그가 채널 내의 전달을 고유하게 식별.
+- 따라서 delivery tag는 채널 별로 scoped.
+- delivery tag는 단순<sup>monotonically</sup> 증가하는 양수이며 클라이언트 라이브러리에 의해 제시됨.
+- 메시지 전달을 acknowledge하는 클라이언트 라이브러리 메서드는 delivery tag를 인자로 받음.
