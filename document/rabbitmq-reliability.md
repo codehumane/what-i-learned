@@ -151,3 +151,10 @@ publisher duplication.
 - 만약 컨슈머가 메시지를 처리할 수 없다면,
 - `basic.reject`나 `basic.nack`를 이용해서 거절할 수 있음.
 - 이를 받은 서버는 메시지를 재적재 하거나, DLQ로 보내는 등의 처리.
+
+## Consumer Cancel Notification
+
+- 컨슈머가 연결된 큐가 삭제되면,
+- RabbitMQ는 [컨슈머에게 이를 통지함](https://www.rabbitmq.com/consumer-cancel.html).
+- 이를 받은 컨슈머난 복구 작업을 수행해야 함.
+- (이것이 안전하고 적절하다면) 다른 큐를 찾던지, 원래의 큐를 다시 선언하던지.
