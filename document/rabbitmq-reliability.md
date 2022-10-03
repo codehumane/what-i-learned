@@ -158,3 +158,13 @@ publisher duplication.
 - RabbitMQ는 [컨슈머에게 이를 통지함](https://www.rabbitmq.com/consumer-cancel.html).
 - 이를 받은 컨슈머난 복구 작업을 수행해야 함.
 - (이것이 안전하고 적절하다면) 다른 큐를 찾던지, 원래의 큐를 다시 선언하던지.
+
+## Monitoring and Health Checks
+
+- 어떤 장애들은 모호하고 감지가 어려움.
+- 예를 들어, [커넥션 누수](https://www.rabbitmq.com/connections.html)는 천천히 일어나며, 만성 질환 같고, 오랜 시간 감지가 어려움.
+- [Monitoring and metrics](https://www.rabbitmq.com/monitoring.html)가 이런 장애를 감지하는 한 가지 방법.
+- Prometheus를 통해 긴 시간 메트릭을 수집하면 비정기적 문제 패턴도 감지 가능.
+- 모니터링에 더해, [health checks](https://www.rabbitmq.com/monitoring.html#health-checks)는 특정 시점<sup>point-in-time</sup>의 문제를 발견해 내는 또 다른 도구.
+- 광범위한 헬스 체크는 거짓 양성을 일으킬 수 있음.
+- 더 많은 체크가 반드시 좋은 것은 아님.
