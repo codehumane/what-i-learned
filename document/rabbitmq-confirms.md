@@ -65,7 +65,7 @@
   - `basic.reject`: negative acknowledgement인데, `basic.nack`에 비해 한 가지 제약을 가짐.
 - positive acknowledgements는 단순히 RabbitMQ에게 메시지가 전달됐으며 버려도 된다고 기록하는 것.
 - `basic.reject`와 함께 사용하는 negative acknowledgements는 같은 효과를 가짐.
-- 버려도 되는 것은 같지만, 성공해서 버리냐, 실패해서 버리냐의 시멘틱 차이일 뿐.
+- 버려도 되는 것은 같지만, 성공해서 버리냐(ack), 실패해서 버리냐(nack)의 시멘틱 차이일 뿐.
 
 자동 acknowledgement의 안정성 주의점.
 
@@ -85,3 +85,29 @@
 - 컨슈머는 전달 속도에 의해 부하가 걸릴 수 있고,
 - 메모리에 백로그를 계속 쌓아가서 힙을 고갈시키며 OS에 의해 프로세스가 중단 될 수도.
 - 일부 클라이언트 라이브러리는 TCP 백 프레셔를 적용.
+
+## Positively Acknowledging Deliveries
+
+- delivery acknowledgement를 위한 API들은 보통 클라이언트 라이브러리의 채널 연산자로써 제공됨.
+- Java 클라이언트들은 `Channel#basicAck`와 `Channel#basicNack`를 이용해 `basic.ack`와 `basic.nack`를 각각 수행.
+
+```java
+boolean autoAck = false;
+channel.basicConsume(
+  queueName,
+  autoAck,
+  "a-consumer-tag",
+  new DefaultConsumer(channel) {
+    @Override
+    public void handleDelivery(String consumerTag,
+                               Envelope envelope,
+                               AMQP.BasicProperties properties,
+                               byte[] body) throws IOEXception {
+      long deliveryTag = envelope.getDeliveryTag();
+      // positively acknowledge a single delivery,
+      // the message will be discarded
+      channel.basicAck(deliveryTag, false);
+    }
+  }
+);
+```
