@@ -111,3 +111,20 @@ channel.basicConsume(
   }
 );
 ```
+
+## Acknowledging Multiple Deliveries at Once
+
+- 수동 acknowledgements는 네트워크 트래픽 절감을 위해 일괄 처리할 있음.
+- acknowledgement 메서드의 `multiple` 필드를 `true`로 설정하면 됨.
+- 참고로, `basic.reject`는 역사적으로 필드를 갖지 못했음.
+- 그래서 RabbitMQ가 프로토콜 확장으로 `basic.nack`를 도입.
+- `multiple` 필드가 `true`로 설정되면,
+- 명시된 것과 더불어 모든 처리 중인 delivery tag들을 acknowledgement.
+- 다른 모든 acknowledgement와 마찬가지로 이 역시 채널 스코프.
+- 바로 위에서 작성한 코드와 `basicAck` 메서드 호출부만 다름.
+
+```java
+// positivley acknowledge all deliveries
+// up to this devliery tag
+channel.basicAck(deliveryTag, true);
+```
