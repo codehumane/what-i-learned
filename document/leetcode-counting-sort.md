@@ -105,3 +105,13 @@ private int[] sort(int[] list, int[] counts) {
 - 0과 15로 치환해서 counting sort를 하고,
 - 다시 이를 -5와 10으로 치환하면 됨.
 - map and remap.
+
+## 장단점
+
+- 첫 번째 장점으로, stable sort (동률이면 순서 유지되는)
+- 그리고, 크기가 큰 컬렉션이 상대적으로 적은 범위의 값을 가진다면,
+- comparison based sort에 비해 매우 빠를 수 있음.
+- 반면, 추가적인 메모리를 필요로 함.
+- 많은 comparison based sort들은 추가적 메모리 X.
+- 만약 N에 비해 K가 많이 크다면 O(N·logN)보다 느릴 수도.
+- 실제 원소에 비해 과도한 K 만큼의 메모리와 연산이 필요하기 때문.
