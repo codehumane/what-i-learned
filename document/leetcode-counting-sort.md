@@ -92,3 +92,9 @@ private int[] sort(int[] list, int[] counts) {
     return sorted;
 }
 ```
+
+## 복잡도
+
+- O(N + K)
+- N은 입력 배열 크기, K는 배열 원소의 최대값.
+- 공간복잡도 역시 O(N + K)
