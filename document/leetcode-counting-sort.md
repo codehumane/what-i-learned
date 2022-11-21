@@ -45,3 +45,50 @@
 - `counts` 배열에서 왼쪽부터 값을 축적해 나가면 됨(인덱스 i는 앞선 인덱스들의 총합).
 - `startingIndices = [0,0,2,2,3,4,7]`
 - 결국, 원래 입력 원소들의 위치를 나타내는 배열을 만든 것.
+
+## 구현
+
+전체 구현은 [여기에 작성함](https://github.com/codehumane/algorithm/commit/bbb16db13f1f254b115ccd4c9c4caf7c77bd5512).
+
+```java
+public void sort(int[] list) {
+    if (list.length == 0) return;
+
+    var counts = counts(list);
+    accumulate(counts);
+    var sorted = sort(list, counts);
+    log.debug("before: {}, after: {}", list, sorted);
+    System.arraycopy(sorted, 0, list, 0, list.length);
+}
+
+private int[] counts(int[] list) {
+    var max = Arrays.stream(list).max().orElseThrow();
+    var counts = new int[max + 1];
+
+    for (int num : list) {
+        counts[num]++;
+    }
+
+    return counts;
+}
+
+private void accumulate(int[] counts) {
+    var startIdx = 0;
+
+    for (int i = 0; i < counts.length; i++) {
+        var count = counts[i];
+        counts[i] = startIdx;
+        startIdx += count;
+    }
+}
+
+private int[] sort(int[] list, int[] counts) {
+    var sorted = new int[list.length];
+
+    for (int num : list) {
+        sorted[counts[num]++] = num;
+    }
+
+    return sorted;
+}
+```
