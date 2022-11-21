@@ -98,3 +98,10 @@ private int[] sort(int[] list, int[] counts) {
 - O(N + K)
 - N은 입력 배열 크기, K는 배열 원소의 최대값.
 - 공간복잡도 역시 O(N + K)
+
+## 최소값이 음수인 경우
+
+- 만약, 배열 값이 -5에서 10 사이라면,
+- 0과 15로 치환해서 counting sort를 하고,
+- 다시 이를 -5와 10으로 치환하면 됨.
+- map and remap.
