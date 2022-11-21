@@ -2,3 +2,22 @@
 
 - [LeetCode Counting Sort](https://leetcode.com/explore/learn/card/sorting/695/non-comparison-based-sorts/4437/) 정리.
 - non-comparison based sort에서 가장 간단한 빌딩 블럭 중 하나.
+
+## 간단 버전
+
+- `A = [1,5,0,3,6,4,2]`라는 배열이 있다고 해보자.
+- 이 배열의 특수한 속성은, 최대값이 6이고, 최소값이 0이며, 각 값은 배열에서 정확히 한 번만 존재한다는 것.
+- 따라서, 아주 간단한 알고리즘으로 한 번의 순회로 정렬할 수 있음.
+- O(N) 시간과 O(N)의 추가 공간만 필요.
+
+```
+1. Initialize an array output of size 7
+2. For every element A[i]
+    - output[A[i]] = A[i]
+```
+
+- 이 알고리즘 동작을 보장하는 속성은 다음의 3가지.
+- 먼저, 배열의 각 원소가 0과 N-1 사이(0 <= A[i] <= N-1).
+- 다음으로, 어떤 원소도 중복되지 않음.
+- 마지막으로, 배열 크기는 N(모든 원소가 정확히 1번씩 나타나는 것).
+- 이 알고리즘이 counting sort의 가장 단순화된 버전임.
