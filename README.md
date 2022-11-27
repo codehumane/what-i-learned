@@ -70,6 +70,7 @@
 - [Grokking Algorithms](book/grokking-algorithms/README.md)
 - [TCP/IP 쉽게, 더 쉽게](book/sura-tcpip/README.md)
 - [Fundamentals of Software Architecture](book/fosa/README.md)
+- [Software Architecture: The Hard Parts](book/sathp/README.md)
 
 # DOCUMENT
 
