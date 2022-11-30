@@ -117,3 +117,7 @@
 - 구심<sup>afferent</sup>/원심<sup>efferent</sup> 커플링
 - 추상도와<sup>abstractness</sup> 불안정도<sup>instability</sup>
 - 메인 시퀀스로부터의 거리<sup>distance from the main sequence</sup>
+
+### 4.2 컴포넌트 기반 분해
+
+뒤이은 챕터들에서 자세히 다루므로 간단한 소개는 기록 생략.
