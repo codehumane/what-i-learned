@@ -109,3 +109,11 @@
       ↓
    전술적 분기
 ```
+
+### 4.1 분해 가능한 코드베이스인가?
+
+분해 가능한지 판단을 위한 몇 가지 메트릭 소개. [Fundamentals of Software Architecture](../fosa/README.md)에서 다룬 내용이라 나열만 하고 넘어감.
+
+- 구심<sup>afferent</sup>/원심<sup>efferent</sup> 커플링
+- 추상도와<sup>abstractness</sup> 불안정도<sup>instability</sup>
+- 메인 시퀀스로부터의 거리<sup>distance from the main sequence</sup>
