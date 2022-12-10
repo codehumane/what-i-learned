@@ -71,6 +71,7 @@
 - [TCP/IP 쉽게, 더 쉽게](book/sura-tcpip/README.md)
 - [Fundamentals of Software Architecture](book/fosa/README.md)
 - [Software Architecture: The Hard Parts](book/sathp/README.md)
+- [도메인 주도 설계 첫걸음](book/lddd/README.md)
 
 # DOCUMENT
 
