@@ -281,3 +281,34 @@ public class Ticket
 
 - 애그리게이트 역시 UL 사용해야 함.
 - 다른 개발자 및 도메인 전문가와 소통해야 하는 주요 대상.
+
+#### 6.2.4 도메인 서비스
+
+- 애그리게이트나 밸류 오브젝트에도 속하지 않거나,
+- 복수의 애그리게이트에 관련된 비즈니스 로직을 다뤄야 할 수도.
+- 이 경우 도메인 서비스를 활용.
+- 이는 상태가 없는 객체.
+- 보통 계산이나 분석을 수행하고자, 다양한 시스템 구성 요소를 호출하며 조율.
+
+```C#
+public class ResponseTimeFrameCalculationService
+{
+    ...
+    public ResponseTimeframe CalculateAgentResponseDeadline(UserId agentId,
+        Priority priority, bool escalated, DateTime startTime)
+    {
+        var policy = _departmentRepository.GetDepartmentPolicy(agentId);
+        var maxProcTime = policy.GetMaxResponseTimeFor(priority);
+
+        if (escalated) {
+            maxProcTime = maxProcTime * policy.EscalationFactor;
+        }
+
+        var shifts = _departmentRepository.GetUpcomingShifts(agentId,
+            startTime, startTime.Add(policy.MaxAgentResponseTime));
+
+        return CalculateTargetTime(maxProcTime, shifts);
+    }
+    ...
+}
+```
