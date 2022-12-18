@@ -400,3 +400,19 @@ BC.
 
 - MSA와 DDD의 관계 탐구.
 - 더불어, MSA에 DDD를 어떻게 활용하는지 소개.
+
+### 서비스란 무엇인가?
+
+- OASIS에 따르면, "미리 정의된 인터페이스를 사용해 하나 이상의 역량에 접근하기 위한 메커니즘".
+- 여기서 인터페이스란, 서비스 데이터의 모든 입출력 메커니즘.
+- 요청/응답의 동기식과 이벤트 발행의 비동기식 모두 포함.
+- 이 퍼블릭 인터페이스는 서비스가 하는 일을 잘 설명함.
+
+```
+Campaign publishing service
+- Publish(CampaignId): PublishingResult
+- Pause(CampaignId): Confirmation
+- Reschedule(CampaignId, Schedule): Confirmation
+- GetStatistic(CampaignId): PublishingStatistics
+- Deactivate(CampaignId, Reason): PublishingStatus
+```
