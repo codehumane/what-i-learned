@@ -45,6 +45,7 @@
 - [Domain-Driven Design Distilled](book/dddd/README-en.md)
 - [도메인 주도 설계 핵심](book/dddd/README.md)
 - [도메인 주도 설계 구현](book/iddd/README.md)
+- [도메인 주도 설계 첫걸음](book/lddd/README.md)
 - [Get Your Hands Dirty on Clean Architecture](book/gyhdca/README.md)
 - [신은 주사위 놀이를 하지 않는다](book/the-improbability-principle/README.md)
 - [새빨간 거짓말, 통계](book/how-to-lie-with-statistics/README.md)
@@ -71,7 +72,6 @@
 - [TCP/IP 쉽게, 더 쉽게](book/sura-tcpip/README.md)
 - [Fundamentals of Software Architecture](book/fosa/README.md)
 - [Software Architecture: The Hard Parts](book/sathp/README.md)
-- [도메인 주도 설계 첫걸음](book/lddd/README.md)
 
 # DOCUMENT
 
