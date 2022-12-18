@@ -416,3 +416,30 @@ Campaign publishing service
 - GetStatistic(CampaignId): PublishingStatistics
 - Deactivate(CampaignId, Reason): PublishingStatus
 ```
+
+### 마이크로서비스란 무엇인가?
+
+- 서비스는 자신의 퍼블릭 인터페이스에 의해 정의.
+- 그러니, 마이크로서비스는 자신의 마이크로 퍼블릭 인터페이스, 즉 micro-front door에 의해 정의되는 서비스.
+- micro를 통해 변경의 이유를 줄이고 개발/관리/확장의 자율성 높일 수 있음.
+- 퍼블릭 인터페이스만 외부에 제공하므로 DB도 노출 X.
+- 하지만 단순히 작게 만들기만 한다면?
+- 서비스 간 연동과 데이터 흐름이 복잡.
+- 이는 결국 진흙 덩어리의 분산 버전.
+- 각 MS의 복잡성은 로컬 복잡성, 전체 시스템의 복잡성을 글로벌 복잡성.
+- 이 둘 간의 균형을 잘 잡아야 함.
+
+![로컬과 글로벌 복잡성의 균형](https://www.doit.com/wp-content/uploads/2020/04/1_zcygywao9vmjw3cxkygs5q.png)
+
+- 이를 돕는 도구로, 깊은 서비스로서의 마이크로서비스, 깊은 모듈로서의 마이크로서비스 소개.
+- 먼저, 깊은 서비스로서의 MS.
+- <The Philosophy of Software Design> 책에 나온 깊이 휴리스틱을 MS에 적용하는 것.
+- 아래 그림을 보면, 사각형 깊이가 복잡성이고, 넓이가 기능의 양임.
+- 효과적인 모듈은 깊이가 깊다고 함.
+
+![깊은 모듈과 얇은 모듈](https://miro.medium.com/max/720/1*lCGfGhyIOUg12Bhis-iLQA.webp)
+
+- 다음으로, 깊은 모듈로서의 MS.
+- 깊은 서비스로서의 MS와 같은 이야기.
+- 다만 MS는 물리적 경계, 모듈은 논리적 경계와 물리적 경계 모두를 가리킴.
+- 어쨌든 개별 서비스에 집중하느라 아키텍처의 가장 중요한 관점인 '시스템'을 고려하지 못하는 것은 위험.
