@@ -755,3 +755,22 @@
 - Audit 테이블은 공동 오너십 적용해, 감사 서비스를 만들고 다른 서비스들은 감사 서비스에 비동기로 큐 요청.
 - Product 테이블은 카탈로그 서비스를 대리자로 삼고, 재고 서비스가 카탈로그에 쓰기 요청을 보내는 것으로.
 - 이렇게 오너십을 정했다면, 이제는 비즈니스 워크플로우와 트랜잭션 요건을 따져봐야 함.
+
+### 9.7 분산 트랜잭션
+
+- ACID 이해 없이는 분산 트랜잭션 언제 사용할지 트레이드 오프는 어떨지 판단 어렵.
+- 그래서 ACID 기본 설명 소개.
+- 하지만 분산 트랜잭션은 ACID 지원 X.
+- 개별 서비스가 각자 커밋하므로 원자성 없음.
+- 일관성 역시 지키기 어려움.
+- 격리 역시 마찬가지.
+- 내구성은 각 서비스 단위로만 지켜짐. 사용자의 요청 단위가 아님.
+- 대신 BASE를 지원.
+- 먼저 BA는 Basic Availability.
+- 시스템이 CAP에서 말하는 가용성을 보장하는 것.
+- 데이터를 여러 시스템에 나누어 복제해서 저장하는 식으로 이를 달성.
+- S는 Soft state.
+- ACID에서의 일관성을 포기하는 것.
+- 비즈니스 요청은 아직 처리 중이고, 일부만 반영된 상태를 가리킴.
+- 마지막으로 E는 Eventual consistency.
+- 책 내용이 별로라 [Abandoning ACID in Favor of BASE in Database Engineering](https://www.lifewire.com/abandoning-acid-in-favor-of-base-1019674#:~:text=In%20BASE%2C%20basic%20availability%20may,for%20part%20of%20your%20effort.)을 참고함.
