@@ -774,3 +774,17 @@
 - 비즈니스 요청은 아직 처리 중이고, 일부만 반영된 상태를 가리킴.
 - 마지막으로 E는 Eventual consistency.
 - 책 내용이 별로라 [Abandoning ACID in Favor of BASE in Database Engineering](https://www.lifewire.com/abandoning-acid-in-favor-of-base-1019674#:~:text=In%20BASE%2C%20basic%20availability%20may,for%20part%20of%20your%20effort.)을 참고함.
+
+### 9.8 최종 일관성 패턴
+
+- 최종 일관성을 위한 3가지 패턴 소개.
+- 이를 위해 일단 아래와 같이 서비스와 테이블이 있다고 가정.
+- 그리고 사용자가 서비스 가입 해지를 요청해 와서,
+- 고객 프로필 데이터를 삭제하고 이후로 비용은 더 이상 과금되지 않을 거라고 응답.
+- 그럼 이제 Contract, Billing에도 해지를 반영해야 하는 상황.
+
+| 서비스 | 소유 테이블 |
+| ----- | -------- |
+| 고객 프로필 | Profile |
+| 지원 계약 | Contract |
+| 과금 결제 | Billing |
