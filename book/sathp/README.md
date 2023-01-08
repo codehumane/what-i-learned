@@ -1085,3 +1085,55 @@
 | ACCEPTED | COMPLETED | 기사가 수리 완료 |
 | COMPLETED | NO_SURVEY | 설문 전송 실패 |
 | COMPLETED | CLOSED | 설문 전송 성공 |
+
+### 12.3 사가 관리 기법
+
+- 프레임웍이나 제품이 있는 게 아니라,
+- 직접 설계하고 만들고 꾸준히 관리해야 함.
+- 관리 기법 중 하나로 애너테이션 같은 언어에서 기본으로 제공하는 아티팩트 활용.
+- 단순히 시스템에 있는 트랜잭셔널 사가를 포착하고 문서화 시키기 위한 용도.
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Saga {
+  public Transaction[] value();
+
+  public enum Transaction {
+    NEW_TICKET,
+    CANCEL_TICKET,
+    NEW_CUSTOMER,
+    UNSUBSCRIBE,
+    NEW_SUPPORT_CONTRACT
+  }
+}
+
+@ServiceEntrypoint
+@Saga(Transaction.NEW_TICKET)
+public class SurveyServiceAPI {
+  ...
+}
+
+@ServiceEntrypoint
+@Saga({
+  Transaction.NEW_TICKET,
+  Transaction.CANCEL_TICKET
+})
+public class TicketServiceAPI {
+  ...
+}
+```
+
+- 이를 기반으로 CLI 도구를 만들어,
+- 사가 정보를 추출해 중앙화하거나 실시간 검색을 할 수도.
+
+```shell
+$ ./sagatool.sh NEW_TICKET -services
+
+-> Ticket Service
+-> Assignment Service
+-> Routing Service
+-> Survey Service
+
+$
+```
