@@ -227,3 +227,8 @@
 - 이유는 마이크의 이해를 도울 뿐, 결국은 사실에 대한 결정.
 - 그리고 이해는 하지만 사실에 대해서는 거절할 수도.
 - 너무 상세한 설명은 마이크로 매니징으로의 초대.
+
+High Stakes
+Being a “Team Player”
+The Cost of Saying Yes
+Code Impossible
