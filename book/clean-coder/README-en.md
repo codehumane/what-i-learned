@@ -762,7 +762,7 @@
 - 마지막으로 창의력 발산을 위해서는 그만큼 입력해 둔 것도 있어야 한다고 함.
 - 저자는 과학 소설을 많이 읽음.
 
-## Time Boxking and Tomatoes
+## Time Boxing and Tomatoes
 
 - 뽀모도로 도구 이야기.
 - 기록 생략.
