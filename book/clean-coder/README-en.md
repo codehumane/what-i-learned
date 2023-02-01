@@ -832,3 +832,21 @@
 - 확실하긴 하나 희생이 필요한 일이라면 그건 당신의 선택.
 
 > Commitment is about certainty.
+
+### An Estimate
+
+- An estimate is a guess.
+- commitment가 내재되지 않음.
+- promise도 담겨 있지 않음.
+- 추정을 지키지 못한다고 불명예도 아님.
+- 우리가 추정을 하는 이유는,
+- 그것이 얼마나 걸리는지 모르기 때문임.
+- 불행히도 대부분의 개발자들이 추정에 약함.
+- 이유는 추정의 본질을 이해하지 못했기 때문.
+- 추정은 숫자가 아님. 분포임.
+
+> An estimate is not a number. An estimate is a distribution.
+
+- 보통 아래와 같은 상황이면 3일이라고 대답하기 쉽상.
+
+![probability distribution](https://ramonmorcillo.com/static/9a2fd3590182fc8eed02757175aaf01e/5f4af/probability_distribution.png)
