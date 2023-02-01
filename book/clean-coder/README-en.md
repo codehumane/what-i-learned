@@ -850,3 +850,14 @@
 - 보통 아래와 같은 상황이면 3일이라고 대답하기 쉽상.
 
 ![probability distribution](https://ramonmorcillo.com/static/9a2fd3590182fc8eed02757175aaf01e/5f4af/probability_distribution.png)
+
+### Implied Commitments
+
+- 상대가 일정을 물어왔을 때,
+- 3-4일 걸릴 가능성이 크다고 대답.
+- 그러자 상대가 그럼 4일이라고 봐도 될까요를 질문.
+- 아니오 5~6일 걸릴 수도 있어요라고 명확하게 답변.
+- 만약 이 상황에서 상대가 6일 이상은 안 걸릴 수 있게 시도(try)해 볼 수 있냐고 질문한다면,
+- 시도(try)가 뭔지 정확히 정의해야 함.
+- 앞장들에서 얘기한 바와 같이 이는 지켜야 하는 약속.
+- 야근을 해서라도 주말을 반납해서라도 try한다는 의미.
