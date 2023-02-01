@@ -804,3 +804,13 @@
 - 그러나 그것의 비용은 커 보이고,
 - 그 상태로 가다 보면 코드는 절대 탈출할 수 없는 늪으로.
 - 이 늪에서 계속 가는 건 priority inversion.
+
+# CH10. Estimation
+
+- 중요한 변경을 하는데 얼마나 걸리냐고 상사가 물었고,
+- 1개월이 걸린다고 말했는데 3개월이 걸림.
+- 어느날 술자리에서 상사에게 자신에게 화났냐고,
+- 너무 오래 걸리는 것 같지 않냐고 물어봤다고 함.
+- 상사는 아래와 같이 답변.
+
+> Yes, I think it’s taken you a long time, but I can see that you are working hard on it, and making good progress. It’s something we really need. So, no, I’m not mad.
