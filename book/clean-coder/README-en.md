@@ -814,3 +814,10 @@
 - 상사는 아래와 같이 답변.
 
 > Yes, I think it’s taken you a long time, but I can see that you are working hard on it, and making good progress. It’s something we really need. So, no, I’m not mad.
+
+## What Is an Estimate?
+
+- 문제는 추정(estimate)에 대해 서로 다른 뷰.
+- 비즈니스측은 추정을 약속(commitment)으로 봄.
+- 개발자는 추정을 추측(guess)으로 봄.
+- 이 차이는 큼.
