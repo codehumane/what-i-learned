@@ -941,7 +941,7 @@
 ### Planning Poker
 
 - 일반적인 플래닝 포커 이야기.
-- [planningpocker.com](https://planningpoker.com/)도 소개.
+- [planningpoker.com](https://planningpoker.com/)도 소개.
 
 ### Affinity Estimation
 
