@@ -990,3 +990,10 @@
 - 비현실에 대한 수락은 목표를 망가뜨리고 결국 개발과 비즈니스 모두에 피해.
 
 > The difference is important. Professionals will always help the business find a way to achieve its goals. But professionals do not necessarily accept commitments made for them by the business. In the end, if we can find no way to meet the promises made by the business, then the people who made the promises must accept the responsibility.
+
+### Staying Clean
+
+- "quick and dirty"는 모순.
+- Dirty always means slow!
+- 시스템, 코드, 설계를 가능한 깨끗하게 유지.
+- 이렇게 해야 빨리 갈 수 있음.
