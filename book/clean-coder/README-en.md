@@ -976,3 +976,17 @@
 - 그 회사는 그만 두고, 컨설턴트가 되었으며, 다시는 누구를 보스라고 부르는 일은 없었다고.
 
 > Everything changed that day. I stopped the crazy hours. I stopped the high-stress lifestyle. I stopped throwing pens and writing 3,000-line C functions. I determined that I was going to enjoy my career by doing it well, not by doing it stupidly.
+
+## Avoiding Pressure
+
+- 가장 좋은 건 압박을 만드는 상황 자체를 피하는 것.
+- 완전히 압박을 제거할 순 없을지 몰라도, 크기를 줄이고 기간을 최소화하는 것도 고려.
+
+### Commitments
+
+- 10장에서 얘기한 것처럼, 지킬 수 있을지를 알 수 없는 것에 대해서는, commitment를 안 하는 것이 중요.
+- 비즈니스는 언제나 리스크를 줄이고 싶어해서 이런 commitment를 끊임 없이 요구.
+- 우리는 위험을 수치화하고 관리쪽에 이를 제시해서 적절히 다룰 수 있게 해야 함.
+- 비현실에 대한 수락은 목표를 망가뜨리고 결국 개발과 비즈니스 모두에 피해.
+
+> The difference is important. Professionals will always help the business find a way to achieve its goals. But professionals do not necessarily accept commitments made for them by the business. In the end, if we can find no way to meet the promises made by the business, then the people who made the promises must accept the responsibility.
