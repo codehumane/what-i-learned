@@ -962,3 +962,17 @@
 - 이 작은 단위에 대해 각각을 추정 후 합계.
 - 작은 단위로 쪼개면서 미처 보지 못한 것들이 보이기도 하고,
 - 작은 단위들의 오류는 통합되면서 서로 상쇄되기도 .
+
+# CH11. Pressure
+
+- 의사가 내 몸을 수술한다고 해보자.
+- 그리고 나는 잠시 유체이탈해서 이 광경을 지켜보는 상황.
+- 말 그대로 데드라인이 얼마 안 남았음.
+- 의사가 손을 벌벌 떨고 땀을 흘리고 칼질을 실수하고 상황 판단에 미숙하다면?
+- 전문가는 압박 상황에서도 침착하고 결단력 있음.
+- 압박이 커질수록 자신의 평소의 학습과 훈련에 바탕.
+- 그것이 압박 속에서도 데드라인과 약속(commitment)를 지키는 최선의 방법임을 앎.
+- 그리고 저자의 사례를 얘기하는데, 미친듯한 압박과 업무량의 스타트업에서, 화와 비난이 가득한 바보 같은 일하기를 반성하는 듯함.
+- 그 회사는 그만 두고, 컨설턴트가 되었으며, 다시는 누구를 보스라고 부르는 일은 없었다고.
+
+> Everything changed that day. I stopped the crazy hours. I stopped the high-stress lifestyle. I stopped throwing pens and writing 3,000-line C functions. I determined that I was going to enjoy my career by doing it well, not by doing it stupidly.
