@@ -647,18 +647,35 @@ executor.execute(writer);
 ## 4.3 Included transports
 
 - 기본으로 제공되는 전송들로 NIO, Epoll, OIO, Local, Embedded가 있음.
-- 다른 것은 관심 없고 Epoll만 정리.
+- 다른 것은 관심 없고 NIO와 Epoll만 정리.
+
+### 4.3.1 NIO - non-blokcing I/O
+
+- NIO는 모든 I/O 연산에 대해 완전한 비동기 구현체를 제공.
+- 셀렉터-기반 API를 이용.
+- 셀렉터의 기본 개념은, 레지스트리처럼 동작하는 것.
+- 채널의 상태가 변경되면 통지 받겠다고 이 레지스트리에 요청.
+- 변경의 종류로는 아래와 같은 것들이 있음.
+  - OP_ACCEPT: 새로운 채널이 수락됐고 준비 됨.
+  - OP_CONNECT: 채널 연결이 완료됨.
+  - OP_READ: 채널에 읽을 데이터가 준비됨.
+  - OP_WRITE: 채널에 데이터를 쓸 수 있음.
+- 애플리케이션이 이 상태 변화에 반응하면,
+- 셀렉터는 리셋되고 다시 처리를 반복.
+- 한 스레드에서 계속 변경을 체크하고 적절히 대응함.
+
+![Selecting and processing state changes](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/04fig02_alt.jpg)
 
 ### 4.3.2 Epoll - native non-blocking transport for Linux
 
+- 자바의 NIO는 플랫폼 독립성을 이뤘으나,
+- 이는 그 자체로 한계이기도 함(모든 시스템에서 동일한 기능을 제공해야 하다 보니 타협을).
 - 고성능 네트워킹 플랫폼으로써의 리눅스 중요성이 커짐에 따라,
 - 확장성 높은 I/O 이벤트-통지를 지원하는 epoll 등이 개발됨.
 - 이 API는 2002년부터 사용 가능했고,
 - 기존의 POSIX select와 poll 시스템 호출보다 더 나은 성능을 보임.
 - 지금은 리눅스에서 논블럭킹 네트워킹의 표준으로 자리 잡음.
-- 아래 그림은 NIO의 셀렉트와 상태 변경 처리 과정인데, Epoll에서도 개념적으로 동일.
-
-![Selecting and processing state changes](https://learning.oreilly.com/api/v2/epubs/urn:orm:book:9781617291470/files/04fig02_alt.jpg)
+- 개념적 동작 방식은 NIO 그림과 마찬가지임.
 
 # Chapter 5. ByteBuf
 
