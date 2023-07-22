@@ -41,3 +41,11 @@
 - 예외적인 보이는 경우도 있으나 실체를 알려주고 있음.
 - 유지보수성을 위해 꾸준히 작은 사전 설계를 하라는 얘기도 함께 함.
 - 큰 사전 설계(BDUF<sup>big design up front</sup>)가 아니라.
+
+## Maintainability generates developer joy
+
+- 유지보수성이 개발자를 행복하게 만드는 이점도 있다는 이야기.
+- 저자는 여기서 이를 developer joy라 부르는데,
+- developer experience 또는 developer enablement라고도 알려져 있다고 함.
+- 이는 생산성에 직결되며, 생산성과 만족감은 서로에게 영향.
+- 회사에 오래 다니게 만드는 동인이기도.
