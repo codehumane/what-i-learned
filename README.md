@@ -49,6 +49,7 @@
 - [도메인 주도 설계 구현](book/iddd/README.md)
 - [도메인 주도 설계 첫걸음](book/lddd/README.md)
 - [Get Your Hands Dirty on Clean Architecture](book/gyhdca/README.md)
+- [Get Your Hands Dirty on Clean Architecture 2E](book/gyhdca-2e/README.md)
 - [신은 주사위 놀이를 하지 않는다](book/the-improbability-principle/README.md)
 - [새빨간 거짓말, 통계](book/how-to-lie-with-statistics/README.md)
 - [생각한다면 과학자처럼](book/sientific-habits-of-mind/README.md)
