@@ -182,3 +182,9 @@
 - 2. 컴포넌트는 전용 API와 내부를 가짐.
 - 3. 컴포넌트의 API는 바깥에서 호출될 수 있으나 내부는 그렇지 않음.
 - 4. 컴포넌트는 내부 요소로 서브 컴포넌트들을 가질 수 있음.
+
+## Case study - building a "Check Engine" component
+
+- 이런 저런 설명인데 그냥 앞선 개념의 구체화.
+- [저자의 컴포넌트 예시](https://github.com/thombergs/components-example)도 함께 제공.
+- 실제 소프트웨어 프로젝트에서 사용하던 컴포넌트 일부만 가져온 것이라 함.
