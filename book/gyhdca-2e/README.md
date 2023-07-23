@@ -188,3 +188,9 @@
 - 이런 저런 설명인데 그냥 앞선 개념의 구체화.
 - [저자의 컴포넌트 예시](https://github.com/thombergs/components-example)도 함께 제공.
 - 실제 소프트웨어 프로젝트에서 사용하던 컴포넌트 일부만 가져온 것이라 함.
+
+## Enforcing component boundaries
+
+- 컨벤션만으로는 어려움.
+- 그래서 ArchUnit 등의 피트니스 함수를 소개.
+- 딱히 특별한 내용 없음.
