@@ -84,3 +84,58 @@ infix fun String.and(s: String) = this + s
 - 마지막 인자가 람다인 컨벤션이 여기에 적용된 건 복잡성 증대.
 - and 네이밍이 내부 동작과 다름.
 - 문자열 결합은 이미 내장된 기능이며, 굳이 새로 만들 필요 없음.
+
+## 아이템 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라
+
+- 연산자 오버로딩은 강력하고 매력적.
+- 다만, 연산자의 의미에 맞는 오버로딩 해야함.
+
+```kt
+print(10 * !6) // 의미 x
+
+operator fun Int.not() = factorial()
+fun Int.factorial(): Int = (1..this).product()
+fun Iterable<Int>.product(): Int = fold(1) { acc, i -> acc * i }
+```
+
+- 오버로딩한 함수 이름은 not.
+- 팩토리얼에 사용하면 혼란과 오해 여지 있음.
+- 코틀린의 모든 연산자는, 구체적 이름을 가진 함수에 대한 별칭일 뿐임.
+
+### 분명하지 않은 경우
+
+- 연산자 오버로딩 시, 의미가 명확치 않다면, infix 확장 함수 활용.
+- 아래는 함수에 대한 * 연산자 오버로딩 예시.
+
+```kt
+// 함수를 세 번 반복하는 새로운 함수가 만들어진다고 생각
+operator fun Int.times(operation: () -> Unit): ()->Unit = { repeat(this) { operation() } }
+val tripleHello = 3 * { print("Hello") }
+tripleHello()
+
+// 함수가 세 번 호출된다고 생각
+operator fun Int.times(operation: () -> Unit) = { repeat(this) { operation() } }
+3 * { print("Hello") }
+
+// 확장 함수로 의미 드러내기
+infix fun Int.timesRepeated(operation: ()->Unit) = { repeat(this) { operation() } }
+val tripleHello = 3 timesRepeated { print("Hello") }
+tripleHello()
+
+// 이미 stdlib에서 구현된 top-level function 활용
+repeat(3) { print("Hello") }
+```
+
+### 규칙을 무시해도 되는 경우
+
+- DSL에서는 연산자 오버로딩 규칙 무시해도 괜찮음.
+- HTML DSL에서의 String.unaryPlus가 그 예.
+- [kotlinx.html](https://kotlinlang.org/docs/typesafe-html-dsl.html)인가 봄.
+
+```kt
+body {
+    div {
+        +"Some text"
+    }
+}
+```
