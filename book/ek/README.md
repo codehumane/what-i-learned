@@ -412,3 +412,33 @@ observable
         }
     )
 ```
+
+## 아이템 18. 코딩 컨벤션을 지켜라
+
+아래 이유로 컨벤션 지키기를 권장.
+
+- 어떤 프로젝트를 접해도 쉽게 이해.
+- 다른 외부 개발자도 코드 이해 쉬움.
+- 다른 개발자도 코드 작동 방식 쉽게 추측.
+- 코드 병합이나, 다른 프로젝트로 코드 이동이 쉬움.
+
+이를 돕는 2가지 도구 소개.
+
+- IntelliJ 포매터 (공식)
+- ktlink: 린터
+
+자주 위반되는 규칙 하나는 클래스와 함수의 형식.
+
+```kt
+// do
+class Person(
+    val id: Int = 0,
+    val name: String = "",
+    val surname: String = ""
+) : Human(id, name)
+
+// don't (이름 변경 시 변경량 많음)
+class Pserson(val id: Int = 0,
+              val name: String = "",
+              val surname: String = "") : Human(id, name)
+```
