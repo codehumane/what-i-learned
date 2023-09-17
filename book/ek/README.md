@@ -318,3 +318,97 @@ fun Tree<Int>.sum(): Int = when (this) {
 
 반대로, 상태 추출/설정 시엔 함수 대신 프로퍼티 사용.
 
+## 아이템 17. 이름 있는 아규먼트를 사용하라
+
+- 이름 있는 아규먼트를 사용하면,
+- 값이 무엇을 나타내는지 알 수 있으며,
+- 파라미터 입력 순서에 독립적이라 더 안전.
+
+```kt
+val text = (1..10).joinToString("|")
+
+// 의도가 드러남
+var separator = "|"
+val text = (1..10).joinToString(separator)
+
+// 의도도 드러나고, 파라미터 순서 문제로부터 안전
+val text = (1..10).joinToString(separator = "|")
+```
+
+### 이름 있는 아규먼트는 언제 사용해야 할까?
+
+```kt
+sleep(100) // 100s인가?
+sleep(timeMillis = 100) // 이름 있는 아규먼트를 통한 명시
+sleep(Millis(100)) // 이런 선택지도 있음 참고
+sleep(100.ms) // 확장 프로퍼티로도 가능
+```
+
+- 다음 3가지 경우에 사용 권장
+- 디폴트 아규먼트의 경우
+- 같은 타입의 파라미터가 많은 경우
+- 함수 타입 파라미터
+
+### 디폴트 아규먼트의 경우
+
+- 함수 이름은 일반적으로 필수 파라미터들과 연관.
+- 이로 인해, 디폴트 값을 갖는 optional parameter들의 설명은 명확치 않을 때가 있음.
+- 그래서 이름 붙여서 사용하길 권장.
+
+### 같은 타입의 파라미터가 많은 경우
+
+- 파라미터 타입이 같으면, 잘못된 위치 입력 시 찾아내기 힘듦.
+- 이 때 이름 있는 인자 사용이 도움이 됨.
+
+```kt
+sendEmail(
+    to = "contact@kt.academy",
+    message = "Hello, ..."
+)
+```
+
+### 함수 타입 파라미터
+
+- 함수 이름이 파라미터를 잘 설명해 주지 못하는 경우라면(repeat, thread, ...),
+- 함수 타입 아규먼트로 이름 있는 아규먼트 사용을 권장.
+
+```kt
+val view = linearLayout {
+    text("Click below")
+    button({ /* 1 */ }, { /* 2 */ })
+}
+
+val view = linearLayout {
+    text("Click below")
+    button(onClick = { /* 1 */ }, {
+        /* 2 */
+    })
+}
+```
+```kt
+// java
+observable
+    .getUsers()
+    .subscribe((List<User> users) -> {
+        // ...
+    }, (Throwable throwable) -> {
+        // ...
+    }, () -> {
+        // ...
+    });
+
+// kotlin
+observable
+    .getUsers()
+    .subscribeBy(
+        onNext = { users: List<User> -> 
+            // ...
+        },
+        onError = { throwable: Throwable ->
+            // ...
+        },
+        onCompleted = {
+            // ...
+        }
+    )
+```
