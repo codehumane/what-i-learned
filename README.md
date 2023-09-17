@@ -78,6 +78,7 @@
 - [Fundamentals of Software Architecture](book/fosa/README.md)
 - [Software Architecture: The Hard Parts](book/sathp/README.md)
 - [개발자 원칙](book/%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9B%90%EC%B9%99/README.md)
+- [Effective Kotlin](book/ek/README.md)
 
 # DOCUMENT
 
