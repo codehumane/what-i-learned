@@ -168,3 +168,22 @@ if (person != null && person.isAdult) {
 
 - 책에는 없지만 Unit, Void, void, Nothing, null 구분 유의.
 - primitive와 everything is object 비교도 생각해 볼 거리(generic, nullable, member function, ...).
+
+## 아이템 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라
+
+- 타입 추론 이야기 반복.
+- 개발 시간 줄여주고, 가독성을 높일 수 있음.
+- 그러나 유형 명확치 않은 경우 남용 자제.
+
+```kt
+val num = 10
+val name = "March"
+val ids = listOf(12, 112, 554, 997)
+val data = getSomeData()
+val data: UserData = getSomeData()
+```
+
+- 함수 정의를 보며 타임 확인을 한다면 가독성 떨어진다는 신호.
+- IntelliJ 아닌 GitHub 환경도 고려해보면 좋음.
+- 아이템 3(최대한 플랫폼 타임을 사용하지 말라)과,
+- 아이템 4(inferred 타입으로 리턴하지 말라)도 함께 생각해 보기.
