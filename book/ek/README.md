@@ -139,3 +139,32 @@ body {
     }
 }
 ```
+
+## 아이템 13. Unit?을 리턴하지 말라
+
+```kt
+fun keyIsCorrect(key: String): Boolean = //...
+fun verifyKey(key: String): Unit? = //...
+
+if (!keyIsCorrect(key)) return
+verifyKey(key) ?: return
+```
+
+- Unit?을 Boolean 대신 써볼 수 있겠으나,
+- 이는 읽을 때는 그리 멋져 보이지 않음.
+- 오해의 소지가 있고, 예측 어려운 오류를 만들 수도.
+
+```kt
+// 혼란 야기 + showData, showError 모두 호출 될 수도
+getData()?.let{ view.showData(it) } ?: view.showError()
+
+// vs
+if (person != null && person.isAdult) {
+    view.showPerson(person)
+} else {
+    view.showError()
+}
+```
+
+- 책에는 없지만 Unit, Void, void, Nothing, null 구분 유의.
+- primitive와 everything is object 비교도 생각해 볼 거리(generic, nullable, member function, ...).
