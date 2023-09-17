@@ -236,3 +236,85 @@ class Node(val name: String) {
             print("Created ${this?.name} in ${this@Node.name}")
         }
 ```
+
+## 아이템 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다
+
+일단, 프로퍼티의 개념 설명부터.
+
+- 코틀린의 프로퍼티는 자바의 필드와 완전히 다른 개념.
+- 둘 다 데이터를 저장한다는 점에서는 같음.
+- 그러나 프로퍼티는 필드가 필요 없음.
+- 오히려 개념적으로 접근자(함수)를 나타냄.
+    - val일 땐 getter.
+    - var일 땐 getter/setter.
+    - 그래서 인터페이스에도 프로퍼티 정의 가능.
+    - 함수이므로 확장 프로퍼티도 만들 수 있음.
+    - 프로퍼티 위임도 가능.
+
+```kt
+// 자바의 필드
+String name = null;
+
+// 언뜻 비슷해 보일 수 있는 코틀린의 프로퍼티
+var name: String? = null
+
+// 자바 필드와는 다른 점을 드러내는 코틀린의 프로퍼티
+var name: String? = null
+    // backing field가 코틀린에서 필드가 쓰이는 유일한 곳 (val에서는 안 만들어짐)
+    get() = field?.toUpperCase()
+    set(value) {
+        if (!value.isNullOrBlank()) {
+            field = value
+        }
+    }
+
+// 인터페이스에 프로퍼티 선언 가능
+interface Person {
+    val name: String
+}
+
+// 게터를 가진다는 프로퍼티이므로 오버라이드 가능
+open class Supercomputer {
+    open val theAnswer: Long = 42
+}
+class AppleComputer : Supercomputer() {
+    override val theAnswer: Long = 1_800_275_2273
+}
+
+// 프로퍼티 위임도 가능
+val db: Database by lazy { connectToDb() }
+
+// 확장 프로퍼티
+val Context.preferences: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(this)
+```
+
+참고로, derived property에 대해 번역 이상한 것이 있어 원문 기록.
+
+> For a read-write var property, we can make a property by defining a getter and a setter. Such properties are known as derived properties, and they are not uncommon. They are the main reason why all properties in Kotlin are encapsulated by default.
+
+이러한 프로퍼티 특성이 있다고, 함수를 완전히 대체하듯 사용하면 위험.
+
+- 원칙적으로, 프로퍼티는 상태를 나타내거나 설정하기 위한 목적으로 사용.
+- 프로퍼티를 함수로 정의한다 했을 때 접두사로 get/set을 고려한다면 괜찮음.
+- 연산 비용 크거나 복잡도가 O(1)보다 크다면 함수로.
+- 비즈니스 로직 포함한다면 함수.
+- 비결정적 특성(같은 동작 연속으로 했을 때 다른 값이 나올 수 있음)이면 함수.
+- 변환이 일어난다면 함수.
+- getter에서 상태 변경 일어난다면 함수.
+
+```kt
+val Tree<Int>.sum: Int
+    get() = when (this) {
+        is Leaf -> value
+        is Node -> left.sum + right.sum
+    }
+
+fun Tree<Int>.sum(): Int = when (this) {
+    is Leaf -> value
+    is Node -> left.sum + right.sum
+}
+```
+
+반대로, 상태 추출/설정 시엔 함수 대신 프로퍼티 사용.
+
