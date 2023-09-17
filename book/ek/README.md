@@ -187,3 +187,52 @@ val data: UserData = getSomeData()
 - IntelliJ 아닌 GitHub 환경도 고려해보면 좋음.
 - 아이템 3(최대한 플랫폼 타임을 사용하지 말라)과,
 - 아이템 4(inferred 타입으로 리턴하지 말라)도 함께 생각해 보기.
+
+## 아이템 15. 리시버를 명시적으로 참조하라
+
+- sender, receiver.
+- this는 receiver를 가리키는 도구 중 하나.
+
+### 여러 개의 리시버
+
+스코프 내에 2개 이상의 리시버가 있으면 혼란.
+
+```kt
+class Node(val name: String) {
+    
+    fun makeChild(childName: String) =
+        create("$name.$childName").apply {
+            print("Created ${name}")
+        }
+    
+    fun create(name: String): Node? = Node(name)
+
+}
+
+val node = Node("parent")
+node.makeChild("child") // "Created parent" 출력
+```
+
+그래서 명시적으로 리시버 가리키기.
+
+```kt
+class Node(val name: String) {
+    
+    fun makeChild(childName: String) =
+        create("$name.$childName").apply {
+            print("Created ${this?.name}")
+        }
+    
+    fun create(name: String): Node? = Node(name)
+```
+
+아래는 둘 이상의 리시버를 가리키는 예시.
+
+```kt
+class Node(val name: String) {
+    
+    fun makeChild(childName: String) =
+        create("$name.$childName").apply {
+            print("Created ${this?.name} in ${this@Node.name}")
+        }
+```
