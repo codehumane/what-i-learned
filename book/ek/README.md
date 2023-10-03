@@ -442,3 +442,132 @@ class Pserson(val id: Int = 0,
               val name: String = "",
               val surname: String = "") : Human(id, name)
 ```
+
+# 3장 객체 생성
+
+## 아이템 33. 생성자 대신 팩토리 함수를 사용하라
+
+가장 일반적인 인스턴스 생성 방법은 기본 생성자.
+
+```kt
+class MyLinkedList<T>(
+    val head: T,
+    val tail: MyLinkedList<T>?
+)
+
+val list = MyLinkedList(1, MyLinkedList(2, null))
+```
+
+아래와 같이 탑레벨 함수를 이용할 수도 있으며, 이를 카리켜 팩토리 함수라 부름.
+
+```kt
+fun <T> myLinkedListOf(
+    vararg elements: T
+): MyLinkedList<T>? {
+    if (elements.isEmpty()) return null
+    val head = elements.first()
+    val elementsTail = elements.copyOfRange(1, elements.size)
+    val tail = myLinkedListOf(*elementsTail)
+    return MyLinkedList(head, tail)
+}
+
+val list = myLinkedListOf(1, 2)
+```
+
+팩토리 함수는 몇 가지 장점이 있음.
+
+1. 함수에 이름 부여 가능.
+2. 원하는 형태 타입 리턴 가능. 예를 들어, listOf는 플랫폼에 따라 다른 객체 리턴.
+3. 싱글턴 객체 사용도 가능.
+4. 프록시나 빌드 후 만들어지는 객체 등, 아직 존재하지 않는 객체 리턴 가능.
+5. 클래스와 다른 가시성 선택 가능.
+6. [inline](https://kotlinlang.org/docs/inline-functions.html), [refied](https://kotlinlang.org/docs/inline-functions.html#reified-type-parameters) 사용 가능.
+7. 생성자로 만들기 복잡한 객체도 만들 수 있음.
+8. 생성자 호출을 좀 더 지연시킬 수 있음.
+
+물론, 팩토리 함수는 기본<sup>primary</sup> 생성자가 아니라, 추가적<sup>secondary</sup> 생성자에 대안. 참고로, 코틀린에서는 추가적 생성자보다는 팩토리 함수가 더 많이 사용된다고. 팩토리 함수에는 아래의 것들이 있음.
+
+1. companion 객체 팩토리 함수
+2. 확장 팩토리 함수
+3. 탑레벨 팩토리 함수
+4. 가짜 생성자
+5. 팩토리 클래스의 메서드
+
+### Companion 객체 팩토리 함수
+
+```kt
+// 인터페이스에도 선언 가능
+interface MyList<T> {
+    companion object {
+        fun <T> of(vararg elements: T): MyList<T>? {
+            // ...
+        }
+    }
+}
+
+// 인터페이스 구현이나 클래스 상속과 함께 쓰일 수도
+class MainActivity : AppCompatActivity() {
+    // ...
+
+    companion object: ActivityFactory() {
+        override fun getIntent(context: Context): Intent = 
+            Intent(context, MainActivity::class.java)
+    }
+}
+```
+
+### 확장 팩토리 함수
+
+companion 객체가 이미 있고, 이를 변경할 수 없는 경우라면, 확장 함수를 고려해 볼 수 있음(이미 정의된 companion이 있어야 함에 유의).
+
+```kt
+fun Tool.Companion.createBigTool( /*...*/ ) : BigTool {
+    // ...
+}
+```
+
+### 탑레벨 팩토리 함수
+
+- 앞에서 다뤘던 내용.
+- listOf, setOf, mapOf, ...
+- 다만, 탑레벨은 IDE 팁을 복잡하게 만들 수 있으므로,
+- 이름을 신중하게 정해야 함.
+
+### 가짜 생성자
+
+- 실제로는 탑레벨 함수.
+- 그런데, 이름이 대문자로 시작.
+- 그래서, 기본 생성자처럼 보이고, 가짜 생성자라고 부름.
+- List, MutableList는 인터페이스인데 가짜 생성자(List(), MutableList())를 만든 것.
+- 탑레벨 팩토리 함수의 장점을 그대로 가짐.
+- 혼란을 줄 수 있는 건 단점.
+- 생성자처럼 보여 생성자의 제약을 가질 것으로 기대했는데 이것이 깨지는 경우가 그 혼란의 예.
+
+```kt
+public inline fun <T> List(
+    size: Int,
+    init: (index: Int) -> T
+): List<T> = MutableList(size, init)
+
+public inline fun <T> mutableList(
+    size: Int,
+    init: (index: Int) -> T
+): MutableList<T> {
+    val list = ArrayList<T>(size)
+    repeat(size) { index -> list.add(init(index)) }
+    return list
+}
+```
+
+### 팩토리 클래스의 메서드
+
+- 팩토리 클래스는 클래스의 상태를 가질 수 있음.
+- 따라서, 팩토리 함수보다 다양한 기능을 가짐.
+
+```kt
+class StudentsFactory {
+    var nextId = 0
+    fun next(name: String, surname: String) =
+        Student(nextId++, name, surname)
+}
+```
