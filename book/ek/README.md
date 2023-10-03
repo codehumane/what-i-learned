@@ -641,3 +641,23 @@ val villagePizza = Pizza.Builder("L)
 4. 동시성 문제 없음(스레드 세이프).
 
 물론, 기본 생성자 사용할 때 보다 빌더가 더 단순한 코드를 만들 때도 있음. 이럴 때 유용. 빌더를 사용하는 경우는 DSL 빌더도 고려해 볼 만 한데, 이는 일반적인 내용은 아니라서 기록은 생략.
+
+# 6장 클래스 설계
+
+## 아이템 39. 태그 클래스보다는 클래스 계층을 사용하라
+
+- 이펙티브 자바에 나왔던 tagged class 다시 소개.
+- 이는 장황할 수 있고, 복잡성도 가지며, 응집력 약해질 가능성도 있고, switch 문 등이 변경에 약함.
+- 이펙티브 자바에서 나아가 코틀린에서는 [sealed](https://kotlinlang.org/docs/sealed-classes.html) 한정자 이용할 수 있음.
+- 코틀린 문서에서는 sealed의 장점으로 아래를 꼽음.
+
+> The key benefit of using sealed classes comes into play when you use them in a when expression. If it's possible to verify that the statement covers all cases, you don't need to add an else clause to the statement:
+
+```kt
+fun log(e: Error) = when(e) {
+    is FileReadError -> { println("Error while reading file ${e.file}") }
+    is DatabaseError -> { println("Error while reading from database ${e.source}") }
+    is RuntimeError ->  { println("Runtime error") }
+    // the `else` clause is not required because all the cases are covered
+}
+```
