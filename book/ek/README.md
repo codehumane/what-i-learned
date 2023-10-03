@@ -571,3 +571,73 @@ class StudentsFactory {
         Student(nextId++, name, surname)
 }
 ```
+
+## 아이템 34. 기본 생성자에 이름 있는 옵션 아규먼트를 사용하라
+
+- 코틀린 기본 생성자는 디폴트 인자 사용 가능.
+- 이는 자바에서의 telescoping constructor pattern 보다 이점이 많음.
+- 우선, 파라미터들의 값을 원하는 대로 지정할 수 있고,
+- 인자를 원하는 순서로 지정할 수 있으며,
+- 이름을 붙이므로 의미가 보다 명시적임.
+
+```kt
+val villagePizza = Pizza("L", 1, 2, 3)
+val villagePizza = Pizza(
+    size = "L",
+    cheese = 1,
+    olives = 2,
+    bacon = 3
+)
+```
+
+### 빌더 패턴
+
+빌더 패턴은 아래 장점을 가짐.
+
+- 파라미터에 이름 부여.
+- 파라미터 순서 지정 가능.
+- 디폴트 값 지정 가능.
+
+```kt
+class Pizza private constructor(
+    val size: String,
+    val cheese: Int,
+    val olives: Int,
+    val bacon: Int
+) {
+    class Builder(private val size: String) {
+        private var cheese: Int = 0
+        private var olives: Int = 0
+        private var bacon: Int = 0
+
+        fun setCheese(value: Int): Builder = apply {
+            cheese = value
+        }
+
+        fun setOlives(value: Int): Builder = apply {
+            olives = value
+        }
+
+        fun setBacon(value: Int): Builder = apply {
+            bacon = value
+        }
+
+        fun build() = Pizza(size, cheese, olives, bacon)
+    }
+}
+
+val villagePizza = Pizza.Builder("L)
+    .setCheese(1)
+    .setOlives(2)
+    .setBacon(3)
+    .build()
+```
+
+하지만 디폴트 아규먼트와 이름 있는 파라미터의 기본 생성자도, 빌더의 3가지 장점 중 2가지를 가지며, 아래와 같이 빌더 보다 더 우선되어야 하는 이유를 가짐.
+
+1. 더 짧음(빌더는 일단 코드가 더 많음).
+2. 더 명확함(기본 생성자는 생성자 코드만 보면 된다는 점에서).
+3. 더 사용하기 쉬움(기본 개념이므로).
+4. 동시성 문제 없음(스레드 세이프).
+
+물론, 기본 생성자 사용할 때 보다 빌더가 더 단순한 코드를 만들 때도 있음. 이럴 때 유용. 빌더를 사용하는 경우는 DSL 빌더도 고려해 볼 만 한데, 이는 일반적인 내용은 아니라서 기록은 생략.
