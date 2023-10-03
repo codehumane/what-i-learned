@@ -443,7 +443,7 @@ class Pserson(val id: Int = 0,
               val surname: String = "") : Human(id, name)
 ```
 
-# 3장 객체 생성
+# 5장 객체 생성
 
 ## 아이템 33. 생성자 대신 팩토리 함수를 사용하라
 
