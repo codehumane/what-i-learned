@@ -27,3 +27,7 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 - 민첩한 개발이 필요한 개발은 퍼블릭 클라우드에서 진행.
 - 이것이 하이브리드 IT의 탄생.
 - 그러나 책에서 우리는 하이브리드 IT와 멀티 클라우드를 구분할 것.
+
+## Introducing the main players in the field
+
+생략
