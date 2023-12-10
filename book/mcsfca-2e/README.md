@@ -31,3 +31,39 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 ## Introducing the main players in the field
 
 생략
+
+## Evaluating cloud service models
+
+클라우드가 제공하는 다양한 서비스 모델들 이야기.
+
+### IaaS
+
+- 기업들은 클라우드 프로바이더로 마이그레이션 시 IaaS부터 시작.
+- 인프라를 가리킴: 네트워크, 스토리지, compute, 가상화 레이어.
+
+### PaaS
+
+- 리소스에서 나아가 OS와 미들웨어까지 포함.
+- 한 예로 MySQL이나 PostgreSQL 등의 데이터베이스 플랫폼.
+
+### SaaS
+
+- 일반적으로 미래 모델로 받아들여지는 서비스.
+- 소프트웨어 스택의 모든 것을 클라우드 제공자가 관리.
+- 애플리케이션과 데이터까지.
+
+### FaaS
+
+- 서버리스 컴퓨팅 애플리케이션을 만들고 관리할 수 있게 하는 클라우드 서비스.
+- 정확히 필요한 만큼의 CPU나 메모리 등의 자원을 사용.
+
+### CaaS
+
+- Container as a Service.
+- 컨테이너 클러스터를 쉽게 설정할 수 있게 도와줌.
+
+### XaaX
+
+- Anything as a Service.
+- 모든 것을 서비스로 제공할 수 있다는 아이디어를 표현한 것.
+- Hardware as as Service, Desktop as a Service, Database as a service, ...
