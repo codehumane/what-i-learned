@@ -67,3 +67,17 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 - Anything as a Service.
 - 모든 것을 서비스로 제공할 수 있다는 아이디어를 표현한 것.
 - Hardware as as Service, Desktop as a Service, Database as a service, ...
+
+## Setting out a real strategy for multi-cloud
+
+- 클라우드 전략은 비즈니스 목표로부터 나옴.
+- 예컨대, 브랜드 인지도 높이기, 시장 출시 속도 높이기, 순이익 늘리기.
+- 수익을 창출하고 올리는 게 궁극적 목표.
+- 이 목표가 책을 계속 읽게 하는 가장 큰 동인. 궁금.
+- 하지만 아쉽게도 구체적인 내용이 이 절엔 없음.
+- 90년대 이후로 IT가 회사에 있어 핵심 활동 중 하나가 됐고,
+- 이런 상황에서 멀티 클라우드는 조직에 유연성과 선택의 자유를 늘려줌.
+- 다만, 이는 리스크도 가져옴. 집중력이 분산되고 관리의 복잡성을 늘림.
+- 그래서 전략이 필요하다는 이야기.
+- "cloud-first"가 아닌 "cloud-fit" 전략.
+- 적합한 것을 골라야.
