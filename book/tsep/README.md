@@ -404,3 +404,43 @@
 ## 7.3 Be Responsible
 
 > You are the "someone" in "someone should do something".
+
+### 7.3.1 Take Ownership
+
+- 시니어는 전체 프로젝트를 책임.
+- 그저 계획대로 진행되는 부분이 아님.
+- 허락보단 용서가 쉽다는 X.
+- 대신, "[의도를 발산](https://medium.com/@ElizAyer/dont-ask-forgiveness-radiate-intent-d36fd22393a3)<sup>radiating intent</sup>"하라고 함.
+
+#### Make decisions
+
+- 승인의 의미.
+
+> 그렇게 함으로써, 그들은 문서가 구조적으로 안전하다는 것을 증명하고 그들이 저지를 실수에 대해 법적 책임을 지는 것에 동의한다. 그들은 개인적으로 그 결정에 대한 책임을 전가받는 것이다.
+
+- 의사결정이 필요하면 망설이지 말고 결정.
+- 여러 선택지를 따지고, 최선의 결정을 내린 뒤, 여러분의 추론을 설명.
+- 이 결정에는 당신이 틀릴 수도 있다는 점을 받아들였다는 것까지 포함.
+
+#### Ask "obvious" questions
+
+- 암시적인 것들을 명시적으로 만들 책임이 있음.
+- 명백하고 당연한 것이더라도 다시 한 번 질문해라.
+- 동료들은 명백한 답변도 문서에 작성해야 함을 깨달을 수도.
+- 아래는 질문들.
+- "두 명의 엔지니어만 있는 팀에서 아주 중요한 MS 운영 계획을 세움. 이 MS는 어떻게 당직 업무를 처리할 수 있는가?"
+- "오래된 시스템을 유지하는 데 노력을 쏟는 대신, 벗어나는데 필요한 점이 무엇인지 평가했는가?"
+- "이 불가능한 제안을 보안팀과 검토했는가?"
+
+#### Don't delegate through neglect
+
+- "[glue work](https://noidea.dog/glue)"
+- 경력에는 큰 도움 되지 않지만, 팀을 성공으로 이끄는 데 필요한 리더십과 행정 업무들.
+- unblocking, onboarding, reminders, mentoring, scheduling.
+- 이런 일을 방치하면, 주인의식 강한 후배에게 떠넘겨지기 마련.
+- 너무 많으면 이들은 기술적 업무를 충분히 수행하지 못함.
+- 리더가 이런 일들을 더 많이 맡고,
+- 후배들에겐 그들의 경력을 발전시킬 업무를 위임하자.
+- 다시 한 번 되새겨 보고자 책 내용 다시 한 번 옮겨 적음.
+
+> So take ownership and do a lot of the work that's not anybody's job but that furthers your goals. Redirect your junior colleagues toward tasks that will develop their careers instead.
