@@ -400,3 +400,7 @@
 - 중단 되어야 하는 일에도 책임감을 갖고 받아들이기.
 
 > 필자가 종종 쓰는 가장 큰 칭찬 방식 중 하나는 "알렉스가 그 미팅에 참석할 것이므로 저는 갈 필요가 없습니다."라고 말하는 것이다.
+
+## 7.3 Be Responsible
+
+> You are the "someone" in "someone should do something".
