@@ -287,7 +287,7 @@
 - 즉, 엔지니어이자 사람으로써 어떻게 행동해야 하는가에 대한 이야기.
 - 참고로 뒷 장은 어떻게 능동적이고 의도적으로 조직과 동료에 좋은 영향을 줄 수 있는 지에 대한 이야기.
 
-## What Does It Mean to Do a Good Job?
+## 7.1 What Does It Mean to Do a Good Job?
 
 - 좋은 엔지니어가 무엇인지를 회사가 문서로 정의했을 수도 있으나,
 - 회사가 그래서 누구를 직책에 앉혔는지가,
@@ -299,7 +299,7 @@
 - 결국 좋은 동료가 되는 것도 좋은 엔지니어의 한 덕목.
 - 성숙하고, 건설적이고, 책임감 있어야 함.
 
-### But I Don't Want to Be a Role Model!
+### 7.1.2 But I Don't Want to Be a Role Model!
 
 - 시니어가 될수록 조직에 점점 더 큰 영향.
 - 좋든 싫든 당신이 엔지니어링 문화를 만들어 감.
@@ -307,7 +307,7 @@
 - 많은 리더들은 조용하고 사려 깊으며, 좋은 의사결정과 효과적인 협력을 통해 영향을 줌.
 - 최고의 엔지니어가 되고, 최고의 동료가 되어라. 일을 잘 해내고 그것을 보게 하라. 그게 롤 모델이 할 일.
 
-### What Does It Mean to Do a Good Job as a Senior Engineer?
+### 7.1.3 What Does It Mean to Do a Good Job as a Senior Engineer?
 
 - 남은 장에서 설명할 내용의 요약부.
 - 훌륭한 시니어가 갖춰야 할 네 가지 역량을 소개할 것.
