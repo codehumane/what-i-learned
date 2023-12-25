@@ -572,3 +572,12 @@
 
 - 이직을 하는 게 대부분이며, 우리는 히스토리를 잃게 됨.
 - 의사결정 기록, 시스템 다이어그램, 코드 코멘트 등을 남기기.
+
+### 7.5.2 Expect Failure
+
+- 필자의 최애 장애 회고는, [Spooky action at a distance, how an AWS outage ate our load balancer](https://www.hostedgraphite.com/blog/spooky-action-at-a-distance-how-an-aws-outage-ate-our-load-balancer).
+- 위 회사는 AWS를 사용하지 않았음에도 AWS의 장애 여파를 맞았다고 함. 그래서 필자가 좋아하는 것이라고.
+- 모든 것을 예측할 순 없으나, 예측할 수 있는 것도 있음.
+- 예측할 수 있는 것들에 대비하기.
+- 비상 상황에 대한 컨벤션을 만들기.
+- 사전 계획을 수립하고 카오스 엔지니어링 등으로 시뮬레이션.
