@@ -120,3 +120,12 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 
 1. Service Designs For Multi-Cloud
 2. Designing Applications For Multi-Cloud
+
+# CH4. Service Designs for Multi-Cloud
+
+## Introducing the scaffold for multi-cloud environments
+
+- 아무런 계획도 없이 시작하는 것은 위험.
+- 비용, 보안, 제어, ... 등을 신경써야 함.
+- 클라우드 제공 업체들은 이를 돕는 프레임워크들을 제공.
+- MS의 Azure는 이를 scaffold라 부름.
