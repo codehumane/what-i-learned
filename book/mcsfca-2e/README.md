@@ -81,3 +81,11 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 - 그래서 전략이 필요하다는 이야기.
 - "cloud-first"가 아닌 "cloud-fit" 전략.
 - 적합한 것을 골라야.
+
+## Gathering requirements for multi-cloud
+
+- 클라우드 환경을 설계하고 구축하기에 앞서 요구사항 수집해야 함.
+- "클라우드 기술을 사용하면 비즈니스에 어떤 가치를 더 일으킬 수 있지?"
+- 민첩성, 속도, 유연성, 재정적 측면 등을 고려.
+- 능력이 있어서 클라우드로 가는 게 아님.
+- 분명한 이점을 가져다 주기에 움직이는 것.
