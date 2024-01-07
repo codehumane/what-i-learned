@@ -129,3 +129,7 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 - 비용, 보안, 제어, ... 등을 신경써야 함.
 - 클라우드 제공 업체들은 이를 돕는 프레임워크들을 제공.
 - MS의 Azure는 이를 scaffold라 부름.
+
+## Working with Well-Architected Frameworks
+
+으악 4장 6장도 내용 쭉 훑어 보니 별 내용이 없음. 기록은 이걸로 끝!
