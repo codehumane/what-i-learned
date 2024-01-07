@@ -89,3 +89,34 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
 - 민첩성, 속도, 유연성, 재정적 측면 등을 고려.
 - 능력이 있어서 클라우드로 가는 게 아님.
 - 분명한 이점을 가져다 주기에 움직이는 것.
+- 기술은 마지막.
+
+### Using TOGAF for requirements management
+
+- TOGAF는 요구사항 수집에 도움.
+- 보통 아래의 활동들을 함.
+  - 요구사항 식별.
+  - 요구사항들의 기준선 생성.
+  - 기준선을 기반으로 요구사항 변경점들 식별.
+  - 변경점들의 영향도 평가.
+  - 요구사항 리포지토리 만들고 관리.
+  - 요구사항 구현.
+  - 제품 명세와 요구사항 사이의 차이점 분석 수행.
+- 클라우드를 위한 비즈니스 요구사항들은 아래 유형들로 분류 가능.
+  - interoperability
+  - configurability
+  - performance
+  - discoverability
+  - robustness
+  - portability
+  - usability
+- 보안의 중요성도 강조.
+- 클라우드를 이용해 비즈니스가 얻고자 하는 것들은 주로 3가지.
+  - scalability
+  - reliability
+  - ease of use
+
+기대했던 내용들이 아니고, 대략적인 내용들도 어느 정도 파악됨. 중간은 생략하고, 아래 2개 정도만 추가로 보기.
+
+1. Service Designs For Multi-Cloud
+2. Designing Applications For Multi-Cloud
