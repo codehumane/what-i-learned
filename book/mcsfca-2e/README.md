@@ -116,7 +116,7 @@ https://www.techopedia.com/definition/33511/multi-cloud-strategy
   - reliability
   - ease of use
 
-기대했던 내용들이 아니고, 대략적인 내용들도 어느 정도 파악됨. 중간은 생략하고, 아래 2개 정도만 추가로 보기.
+기대했던 내용들이 아니고, 대략적인 내용들도 어느 정도 파악됨. 나머지는 생략하고, 아래 2개 정도만 추가로 보며 기록.
 
 1. Service Designs For Multi-Cloud
 2. Designing Applications For Multi-Cloud
