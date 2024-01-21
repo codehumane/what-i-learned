@@ -83,3 +83,35 @@ suspend fun main(): Unit = coroutineScope {
 }
 // Finished
 ```
+
+## 중단될 수 없는 걸 중단하기
+
+- 중단점이 없어서 취소가 불가한 경우의 대응을 이야기.
+- 아래 코드는 `delay`` 대신 `Thread.sleep`을 사용해서 중단점이 없음.
+
+```kt
+supend fun main(): Unit = coroutineScope {
+    val job = Job()
+    lanch(job) {
+        repeat(1_000) { i ->
+            Thread.sleep(200) // 이 대신 파일 읽기나 무거운 연산이 있어도 마찬가지
+            println("Prnting $i")
+        }
+    }
+    delay(1000)
+    job.cancelAndJoin()
+    println("Cancelled successfully")
+    delay(1000)
+}
+// 중단점이 없기에,
+// Printing이 1초까지만 찍히지 않고,
+// 3분 넘게 계속 일어남.
+```
+
+- 이런 상황에 대한 대처법 중 하나로, 주기적인 `yield()` 호출이 있음.
+- 중단점을 강제로 중간 중간 넣어주는 것.
+- 다른 방법은, 잡의 상태를 추적하는 것.
+- `CoroutineScope#isActive`를 이용.
+- 마지막 방법은, 잡이 액티브 상태가 아닐 경우 `CancellationException`을 던지는 `ensureActive()` 함수를 사용하는 것.
+- `yield`에 비해서는 `ensureActive()`의 역할이 더 경량이므로 좀 더 선호됨.
+- `yield`는 스코프가 필요치 않고, 중단하고 재개하는 일을 하므로, 스레드 풀을 가진 디스패처 사용 시 스레드가 바뀔 수 있는 문제 있음.
