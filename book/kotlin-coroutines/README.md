@@ -131,3 +131,9 @@ suspend fun someTask() = suspendCancellableCoroutine { cont ->
     // 나머지 구현
 }
 ```
+
+# 10장. 예외 처리
+
+- 코루틴은 예외가 발생하면 자기 자신을 취소하고 부모로 전파(launch).
+- 부모는 자기 자신과 자식들을 모두 취소 후 부모에게 예외 전파(runBlocking).
+- runBlocking은 부모가 없기에 프로그램을 종료시킴. 그리고 예외를 바깥으로 다시 던짐.
