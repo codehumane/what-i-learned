@@ -29,3 +29,37 @@
 - 잡이 취소되면 'Cancelling' 상태로 바뀌고,
 - 상태 바뀐 뒤의 첫 번째 중단점에서 `CancellationException` 예외를 던짐.
 - `finally` 블럭에서 이 예외를 잡아 자원을 정리하는 것이 좋음.
+
+## 취소 중 코루틴을 한 번 더 호출하기
+
+- 코루틴 취소 후처리 과정에 제한이 있을까?
+- 자원을 정리해야 한다면 계속해서 실행될 수 있음.
+- 그러나 정리 과정 중 중단을 허용치는 않음.
+- 'Cancelling' 상태에서 중단이나 다른 코루틴 시작 불가.
+- 시작하려고 하면 무시됨.
+- 그런데 만약 DB 롤백 등 중단 함수를 호출해야 한다면?
+- 이 때는 `withContext(Noncancellable)`로 포장.
+
+```kt
+suspend fun main(): Unit = coroutineScope {
+    val job = Job()
+    lanch(job) {
+        try {
+            delay(200)
+            println("Coroutine finished")
+        } finally {
+            println("Finally")
+            withContext(NonCancellable) {
+                delay(1000L)
+                println("Cleanup done")
+            }
+        }
+    }
+    delay(100)
+    job.cancelAndJoin()
+    println("Done")
+}
+// Finally
+// Cleanup done
+// Done
+```
