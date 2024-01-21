@@ -137,3 +137,126 @@ suspend fun someTask() = suspendCancellableCoroutine { cont ->
 - 코루틴은 예외가 발생하면 자기 자신을 취소하고 부모로 전파(launch).
 - 부모는 자기 자신과 자식들을 모두 취소 후 부모에게 예외 전파(runBlocking).
 - runBlocking은 부모가 없기에 프로그램을 종료시킴. 그리고 예외를 바깥으로 다시 던짐.
+
+## 코루틴 종료 멈추기
+
+- 예외로 인해 코틀린이 종료될 수 있는데, 이 종료를 멈추는 방법에 대한 이야기.
+- 당연한 얘기지만, 코루틴 빌더를 try-catch로 래핑하는 건 도움 안 됨.
+
+```kt
+fun main(): Unit = runBlocking {
+    try {
+        launch {
+            delay(1000)
+            throw Error("Error")
+        }
+    } catch (e: Throwable) {
+        println("이건 출력 안 됨")
+    }
+
+    launch {
+        delay(2000)
+        println("이것도 출력 안 됨")
+    }
+}
+```
+
+### SupervisorJob
+
+- 코루틴 종료를 멈추는 방법으로 SupervisorJob을 권장.
+- 이를 이용하면 자식에서 발생한 모든 예외를 무시할 수 있음.
+- 위험해 보이기도 함. 언제 써야 할지, 언제 쓰지 말아야 할지, 고민해야 함.
+
+```kt
+fun main(): Unit = runBlocking {
+    val scope = CoroutineScope(SupervisorJob())
+
+    scope.launch {
+        delay(1000)
+        throw Error("Some error")
+    }
+
+    scope.launch {
+        delay(2000)
+        println("Will be printed")
+    }
+
+    delay(3000)
+}
+// Exception...
+// Will be printed
+```
+
+- 혹은 아래와 같이 할 수도.
+
+```kt
+fun main(): Unit = runBlocking {
+    val job = SupervisorJob()
+
+    launch(job) {
+        delay(1000)
+        throw Error("Some error")
+    }
+
+    launch(job) {
+        delay(2000)
+        println("출력 됨")
+    }
+
+    job.join()
+}
+```
+
+- 아래는 안 됨.
+- SupervisorJob은 단 하나의 자식만 가짐.
+
+```kt
+fun main(): Unit = runBlocking {
+    launch(SupervisorJob()) {
+        launch {
+            delay(1000)
+            throw Error("Some error")
+        }
+
+        launch {
+            delay(2000)
+            println("출력 안 됨")
+        }
+    }
+
+    delay(3000)    
+}
+// Exception
+```
+
+### SupervisorScope
+
+- 또 다른 방법으로 코루틴 빌더를 SupervisorScope로 래핑하는 것이 있음.
+- 부모와의 연결은 유지하면서 다른 코루틴에서 발생한 예외는 무시할 수 있어 편리.
+
+```kt
+fun main(): Unit = runBlocking {
+    supervisorScope {
+        launch {
+            delay(1000)
+            throw Error("에러")
+        }
+
+        launch {
+            delay(2000)
+            println("출력 됨")
+        }
+    }
+
+    delay(3000)
+    println("완료")
+}
+// Exception...
+// 출력 됨
+// 1초 후
+// 완료
+```
+
+- `withContext(SupervisorJob())`이 supervisorScope을 대체할 수 없음을 표현하는 그림이 재밌음.
+
+![](./withContext-SupervisoJob-incorrect.png)
