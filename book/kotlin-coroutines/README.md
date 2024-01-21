@@ -260,3 +260,36 @@ fun main(): Unit = runBlocking {
 - `withContext(SupervisorJob())`이 supervisorScope을 대체할 수 없음을 표현하는 그림이 재밌음.
 
 ![](./withContext-SupervisoJob-incorrect.png)
+
+## await
+
+- 특별한 건 없음.
+- 단지 await를 함께 사용했을 때의 모습을 보여줌.
+- 아래 코드에서 await가 `MyException`을 던지지만,
+- supervisorScope이 사용되어 다른 async는 중단되지 않고 끝까지 실행됨.
+
+```kt
+class MyException : Throwable()
+
+suspend fun main() = supervisorScope {
+    val str1 = async<String> {
+        delay(1000)
+        throw MyException()
+    }
+
+    val str2 = async {
+        delay(2000)
+        "Text2"
+    }
+
+    try {
+        println(str1.await())
+    } catch (e: MyException) {
+        println(e)
+    }
+
+    println(str2.await())
+}
+// MyException
+// Text2
+```
