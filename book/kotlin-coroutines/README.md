@@ -299,3 +299,24 @@ suspend fun main() = supervisorScope {
 - 이런 메카니즘도 역시 있구나.
 - `CancellationException`의 서브 클래스는 부모로 전파되지 않음.
 - 현재 코루틴을 취소시킬 뿐임.
+
+## 코루틴 예외 핸들러
+
+- `CoroutineExceptionHandler`도 있음.
+- 예외 전파를 중단시키지는 않음.
+- 다만, 예외 발생 시 해야 할 것들을 정의하는데 사용.
+- 예컨대, 예외 스택 트레이스.
+- 안드로이드에서는 사용자에게 대화창이나 에러 메시지를 보여줄 때 사용한다고 함.
+
+```kt
+val handler = CoroutineExceptionHandler { ctx, exception ->
+    println("Caught $exception")
+}
+
+val scope = CoroutineScope(SupervisorJob() + handlers)
+scope.launch {
+    ...
+}
+
+// ...
+```
