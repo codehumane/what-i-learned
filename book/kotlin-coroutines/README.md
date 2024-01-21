@@ -115,3 +115,19 @@ supend fun main(): Unit = coroutineScope {
 - 마지막 방법은, 잡이 액티브 상태가 아닐 경우 `CancellationException`을 던지는 `ensureActive()` 함수를 사용하는 것.
 - `yield`에 비해서는 `ensureActive()`의 역할이 더 경량이므로 좀 더 선호됨.
 - `yield`는 스코프가 필요치 않고, 중단하고 재개하는 일을 하므로, 스레드 풀을 가진 디스패처 사용 시 스레드가 바뀔 수 있는 문제 있음.
+
+## suspendCancellableCoroutine
+
+- `suspendCoroutine`과 비슷하지만,
+- 컨티뉴에이션 객체를 `CancellableContinuation<T>`로 래핑함.
+- 몇 가지 메서드가 추가된 래핑이며 `invokeOnCancellation` 메서드가 가장 중요.
+- 라이브러리의 실행을 취소하거나 자원 해제 시 사용함.
+
+```kt
+suspend fun someTask() = suspendCancellableCoroutine { cont ->
+    cont.invokeOnCancellation {
+        // 정리 작업 수행
+    }
+    // 나머지 구현
+}
+```
