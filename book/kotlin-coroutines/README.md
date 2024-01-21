@@ -63,3 +63,23 @@ suspend fun main(): Unit = coroutineScope {
 // Cleanup done
 // Done
 ```
+
+## invokeOnCompletion
+
+- 자원 해제의 또 하나의 방법.
+- `Job#invokeOnCompletion` 호출하기.
+- Completed나 Cancelled 같은 마지막 상태 도달 시 호출될 핸들러를 지정하는 것.
+
+```kt
+suspend fun main(): Unit = coroutineScope {
+    val job = lanch {
+        delay(1000)
+    }
+    job.invokeOnCompletion { exception: Throwable? ->
+        println("Finished")
+    }
+    delay(400)
+    job.cancelAndJoin()
+}
+// Finished
+```
