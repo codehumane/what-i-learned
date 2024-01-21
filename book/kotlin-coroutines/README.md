@@ -293,3 +293,9 @@ suspend fun main() = supervisorScope {
 // MyException
 // Text2
 ```
+
+## CancellationException은 부모까지 전파되지 않는다
+
+- 이런 메카니즘도 역시 있구나.
+- `CancellationException`의 서브 클래스는 부모로 전파되지 않음.
+- 현재 코루틴을 취소시킬 뿐임.
