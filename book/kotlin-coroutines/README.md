@@ -146,6 +146,30 @@ fun main() = runBlocking {
 - 참고로, runBlocking은 CoroutineScope의 확장 함수가 아님.
 - runBlocking은 자식이 될 수 없고 루트로만 사용됨.
 
+## 현업에서의 코루틴 사용
+
+- 스코프를 직접 만들거나,
+- 프레임워크에서 제공하는 스코프를 사용함.
+
+## coroutineScope 사용하기
+
+```kt
+suspend fun getArticlesForUser(
+    userToken: String?,
+): List<ArticleJson> = coroutineScope {
+    val articles = async { articleRepository.getArticles() }
+    val user = userService.getUser(userToken)
+    
+    articles
+        .await()
+        .filter { canSeeOnList(user, it) }
+        .map { toArticleJson(it) }
+}
+```
+
+- coroutineScope는 람다 표현식이 필요로 하는 스코프를 만들어 주는 중단 함수.
+- 일반적으로 중단 함수 내에서 스코프가 필요할 때 사용.
+
 # 9장. 취소
 
 - 단순히 스레드를 죽이면 연결을 닫고 자원을 해제할 수 없음.
