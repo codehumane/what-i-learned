@@ -514,3 +514,53 @@ suspend fun getUserProfile(): UserProfileData = coroutineScope {
 - runBlocking은 코루틴 빌더보다 코루틴 스코프  함수와 더 비슷.
 - runBlocking 또한 함수 본체를 곧바로 호출하고 그 결과를 반환.
 - 하지만 runBlocking은 블록킹 함수고, 코루틴 스코프는 중단 함수.
+
+## 추가적인 연산
+
+- 일단 안 좋은 방식.
+
+```kt
+class ShowUserDataUseCase(
+    private val repo: UserDataRepository,
+    private val view: UserDataView,
+) {
+    suspend fun showUserData() = coroutineScope {
+        val name = async { repo.getName() }
+        val friends = async { repo.getFriends() }
+        val profile = async { repo.getProfile() }
+        val user = User(
+            name = name.await(),
+            friends = friends.await(),
+            profile = profile.await()
+        )
+        view.show(user)
+        launch { repo.notifyProfileShown() }
+    }
+}
+```
+
+- 2가지 문제가 있음.
+- 일단, showUserData가 launch까지 기다려야 함. 부가적 일을 기다리는 게 의미 없음.
+- 다음으로, launch 내의 실패가 전체 실패로 이어짐. 부가적 일 때문에 전체가 실패하는 건 문제.
+- 그래서 아래와 같이 할 것을 권장.
+
+```kt
+class ShowUserDataUseCase(
+    private val repo: UserDataRepository,
+    private val view: UserDataView,
+    private val analyticsScope: CoroutineScope,
+) {
+    suspend fun showUserData() = coroutineScope {
+        val name = async { repo.getName() }
+        val friends = async { repo.getFriends() }
+        val profile = async { repo.getProfile() }
+        val user = User(
+            name = name.await(),
+            friends = friends.await(),
+            profile = profile.await()
+        )
+        view.show(user)
+        analyticsScope.launch { repo.notifyProfileShown() }
+    }
+}
+```
