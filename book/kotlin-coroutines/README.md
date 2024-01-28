@@ -49,6 +49,38 @@ fun main() {
 - 단위 테스트에서도 runTest가 주로 사용됨.
 - 메인 함수는 runBlocking 대신 suspend를 붙여 중단 함수로 만드는 것이 일반적.
 
+## async 빌더
+
+- launch와 비슷한데 값을 생성하도록 설계.
+- Deferred<T>를 반환함.
+- Deferred는 await를 가짐.
+- 아래 출력 시간 주의.
+
+```kt
+fun main() = runBlocking {
+    val res1 = GlobalScope.async {
+        delay(1000L)
+        "Text 1"
+    }
+    val res2 = GlobalScope.async {
+        delay(3000L)
+        "Text 2"
+    }
+    val res1 = GlobalScope.async {
+        delay(2000L)
+        "Text 3"
+    }
+    println(res1.await())
+    println(res2.await())
+    println(res3.await())
+}
+// 1초 후
+// Text 1
+// 2초 후
+// Text 2
+// Text 3
+```
+
 # 9장. 취소
 
 - 단순히 스레드를 죽이면 연결을 닫고 자원을 해제할 수 없음.
