@@ -492,3 +492,25 @@ suspend fun getUserProfile(): UserProfileData = coroutineScope {
     )
 }
 ```
+
+## 코루틴 스코프 함수
+
+- 스코프 만드는 다양한 함수 존재.
+- coroutineScope와 비슷하게 동작.
+- supervisorScope은 Job 대신 SupervisorJob을 사용.
+- withContext는 코루틴 컨텍스트를 바꿀 수 있는 coroutineScope.
+- withTimeout은 타임아웃이 있는 coroutineScope.
+- 이들을 모두 코루틴 스코프 함수라 부름.
+- 코루틴 스코프 함수와 코루틴 빌더가 혼동될 수 있어서 표로 정리.
+
+| 코루틴 빌더 | 코루틴 스코프 함수 |
+| -- | -- |
+| launch, async, produce | coroutineScope, supervisorScope, withContext, withTimeout |
+| CoroutineScope의 확장 함수 | 중단 함수 |
+| CoroutineScope 리시버의 코루틴 컨텍스트 사용 | 중단 함수의 컨티뉴에이션 객체가 가진 코루틴 컨텍스트를 사용 |
+| 예외는 Job을 통해 부모로 전파됨 | 일반 함수와 같은 방식으로 예외를 던짐 |
+| 비동기인 코루틴을 시작함 | 코루틴 빌더가 호출된 곳에서 코루틴을 시작함 |
+
+- runBlocking은 코루틴 빌더보다 코루틴 스코프  함수와 더 비슷.
+- runBlocking 또한 함수 본체를 곧바로 호출하고 그 결과를 반환.
+- 하지만 runBlocking은 블록킹 함수고, 코루틴 스코프는 중단 함수.
