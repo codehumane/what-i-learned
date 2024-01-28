@@ -81,6 +81,71 @@ fun main() = runBlocking {
 // Text 3
 ```
 
+## 구조화된 동시성
+
+- 코루틴이 GlobalScope에서 시작됐다면 프로그램은 이를 기다리지 않음.
+- 코루틴은 스레드를 블록하지 않음.
+- 아래는 delay가 부가적으로 필요함.
+
+```kt
+fun main() = runBlocking {
+    GlobalScope.launch {
+        delay(1000L)
+        println("World!")
+    }
+    GlobalScope.launch {
+        delay(2000L)
+        println("World!")
+    }
+    println("Hello,")
+    // delay(3000L)
+}
+// Hello,
+// 끝나 버림
+```
+
+- 하지만 위에서 GlobalScope 사용 없이,
+- runBlocking의 리시버를 이용하면,
+- 위 코드에서 delay 없이도,
+- 구조화된 동시성 관계로,
+- launch가 모두 수행되는 것을 부모가 기다림.
+
+```kt
+fun <T> runBlocking(
+    context: CoroutineContext = EmptyCoroutineContext,
+    block: suspend CoroutineScope.() -> T
+)
+```
+
+- 이제 구조화된 동시성을 이용한 코드는 다음과 같음.
+
+```kt
+fun main() = runBlocking {
+    this.launch { // 그냥 launch 호출하고 동일
+        delay(1000L)
+        println("World!")
+    }
+    launch {
+        delay(2000L)
+        println("World!")
+    }
+    println("Hello,")
+}
+// Hello,
+// 1초 후
+// World!
+// 1초 후
+// World!
+```
+
+- 부모-자식의 관계에서 중요한 4가지는 아래와 같음.
+- 먼저, 자식은 부모로부터 컨텍스트를 상속받음.
+- 다음으로, 부모는 모든 자식이 작업을 마칠 때까지 기다림.
+- 그리고, 부모 코루틴이 취소되면 자식도 모두 취소됨.
+- 마지막으로, 자식 코루틴에서 에러 발생하면, 부모 코루틴 또한 에러로 소멸함.
+- 참고로, runBlocking은 CoroutineScope의 확장 함수가 아님.
+- runBlocking은 자식이 될 수 없고 루트로만 사용됨.
+
 # 9장. 취소
 
 - 단순히 스레드를 죽이면 연결을 닫고 자원을 해제할 수 없음.
