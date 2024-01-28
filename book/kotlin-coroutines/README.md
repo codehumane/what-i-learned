@@ -576,3 +576,9 @@ class ShowUserDataUseCase(
 - 기본 디스패처는 Dispatchers.Default.
 - CPU 개수와 동일한 수의 스레드 풀을 가짐.
 - 스레드를 효율적으로 사용한다면 이론적으로는 최적의 스레드 수.
+
+## 기본 디스패처를 제한하기
+
+- [limitedParallelism](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-dispatcher/limited-parallelism.html).
+- 디스패처가 같은 스레드 풀을 사용하지만,
+- 같은 시간에 특정 수 이상의 스레드를 사용하지 못하도록 제한.
