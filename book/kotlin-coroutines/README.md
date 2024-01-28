@@ -393,3 +393,102 @@ fun main() = runBlocking {
 - getFollowersNumber에서 발생한 예외가 async를 종료시키고,
 - 전체 스포크가 종료되는 걸로 이어져 프로그램이 끝남.
 - 예외가 발생하면 종료보다는 예외를 그대로 던지는 함수가 더 나음.
+
+## coroutineScope
+
+```kt
+suspend fun <R> coroutineScope(
+    block: suspend CoroutineScope.() -> R
+): R
+```
+
+- coroutineScope는 스코프를 시작하는 중단 함수.
+- 인자로 들어온 함수가 생성한 값을 반환.
+- async, launch와 달리 리시버 없는 Supplier.
+- coroutineScope는 새로운 코루틴을 생성하지만,
+- 새로운 코루틴의 종료를 호출자가 기다리게 함.
+
+```kt
+fun main() = runBlocking {
+    val a = coroutineScope {
+        delay(1000)
+        10
+    }
+    println("a is calculated")
+    val b = coroutineScope {
+        delay(1000)
+        20
+    }
+    println(a) // 10
+    println(b) // 20
+}
+
+// 1초 후
+// a is calculated
+// 1초 후
+// 10
+// 20
+```
+
+- coroutineScope는 부모로부터 컨텍스트를 상속 받음.
+- coroutineScope는 자신의 작업을 끝내기 전까지 모든 자식을 기다림.
+- coroutineScope는 부모가 취소되면 자식들 모두를 취소함.
+- 기존의 중단 컨텍스트에서 벗어난 새로운 스코프를 만들고,
+- 부모로부터 스코프를 상속 받아 구조화된 동시성을 지원하는 것.
+
+```kt
+data class Details(val name: String, val followers: Int)
+data class Tweet(val text: String)
+
+class ApiException(
+    val code: Int,
+    message: String
+) : Throwable(message)
+
+fun getFollowersNumber(): Int =
+    throw ApiException(500, "Service unavailable")
+
+suspend fun getUserName(): String {
+    delay(500)
+    return "mmm"
+}
+
+suspend fun getTweets(): List<Tweet> {
+    return listOf(Tweet("Hello, world"))
+}
+
+suspend fun getUserDetails(): Details = coroutineScope {
+    val userName = async { getUserName() }
+    val followersNumber = async { getFollowersNumber() }
+    return Details(userName.await(), followersNumber.await())
+}
+
+fun main() = runBlocking {
+    val details = try {
+        getUserDetails()
+    } catch (e: Error) {
+        null
+    }
+
+    val tweets = async { getTweets() }
+    println("User: $details")
+    println("Tweets: ${tweets.await()}")
+}
+
+// User: null
+// Tweets: [Tweet(text=hello, world)]
+```
+
+- 11장 맨 처음 봤던 예제는 아래와 같이 바꿀 수 있음.
+
+```kt
+suspend fun getUserProfile(): UserProfileData = coroutineScope {
+    val user = getUserData()
+    val notifications = getNotifications()
+
+    return UserProfileData(
+        user = user,
+        notifications = notifications,
+    )
+}
+```
