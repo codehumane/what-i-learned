@@ -325,3 +325,71 @@ scope.launch {
 
 - 여러 엔드포인트에서 데이터를 동시에 얻어야 하는 중단 함수 생각해 보기.
 - 일단 차선책부터 이야기.
+
+## 코루틴 스코프 함수가 소개되기 전에 사용한 방법들
+
+- 중단 함수에서 중단 함수 호출하는 것이 첫 번째 방법.
+- 하지만 작업이 동시에 진행되지 않음.
+
+```kt
+suspend fun getUserProfile(): UserProfileData {
+    val user = getUserData() // 1초 걸리고
+    val notifications = getNotifications() // 앞선 작업 기다린 뒤 또 1초를 기다림
+
+    return UserProfileData(
+        user = user,
+        notifications = notifications,
+    )
+}
+```
+
+- 두 개의 중단 함수를 async로 래핑하는 것을 고려해 볼 수 있으나 이는 위험.
+- async는 스코프를 필요로 하며, GlobalScope 사용은 좋지 않음.
+- GlobalScope는 단지 EmptyCoroutineContext를 가진 스코프.
+- 부모 코루틴과 아무 관계 없고, 부모의 취소에도 실행 중인 async로 취소될 수 없으며 작업 끝날 때까지 낭비되며, 부모 컨텍스트 무시됨.
+- 이는 메모리 누수와 CPU 낭비, 단위 테스트 어려움으로 이어짐.
+- 그래서 스코프를 인자로 넘기는 방법도 있음.
+- 위 단점은 사라지지만, 스코프가 함수로 전달되며 예상치 못한 부작용 발생 가능.
+- 예컨대, async에서 예외 발생하면 모든 스코프가 닫히게 됨(SupervisorJob이 아닌 Job 사용한다고 가정).
+
+```kt
+data class Details(val name: String, val followers: Int)
+data class Tweet(val text: String)
+
+fun getFollowersNumber(): Int =
+    throw Error("Service exception")
+
+suspend fun getUserName(): String {
+    delay(500)
+    return "mmm"
+}
+
+suspend fun getTweets(): List<Tweet> {
+    return listOf(Tweet("Hello, world"))
+}
+
+suspend fun CoroutineScope.getUserDetails(): Details {
+    val userName = async { getUserName() }
+    val followersNumber = async { getFollowersNumber() }
+    return Details(userName.await(), followersNumber.await())
+}
+
+fun main() = runBlocking {
+    val details = try {
+        getUserDetails()
+    } catch (e: Error) {
+        null
+    }
+
+    val tweets = async { getTweets() }
+    println("User: $details")
+    println("Tweets: ${tweets.await()}")
+}
+
+// 예외만 발생
+```
+
+- 사용자 세부사항을 가져오는 데 문제가 있더라도 트윗은 볼 수 있을 것 같지만,
+- getFollowersNumber에서 발생한 예외가 async를 종료시키고,
+- 전체 스포크가 종료되는 걸로 이어져 프로그램이 끝남.
+- 예외가 발생하면 종료보다는 예외를 그대로 던지는 함수가 더 나음.
