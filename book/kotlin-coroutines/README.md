@@ -564,3 +564,9 @@ class ShowUserDataUseCase(
     }
 }
 ```
+
+# 12장. 디스패처
+
+- RxJava의 스케쥴러와 비슷한 개념.
+- 코루틴이 실행되어야 할 스레드(또는 스레드 풀)을 결정.
+- CoroutineContext가 이를 결정함.
