@@ -582,3 +582,11 @@ class ShowUserDataUseCase(
 - [limitedParallelism](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-dispatcher/limited-parallelism.html).
 - 디스패처가 같은 스레드 풀을 사용하지만,
 - 같은 시간에 특정 수 이상의 스레드를 사용하지 못하도록 제한.
+
+## 메인 디스패처
+
+- 안드로이드 등의 프레임워크는 메인과 UI 스레드 개념을 가짐.
+- 메인 스레드는 UI와 상호작용하는 데 사용하는 유일한 스레드.
+- 당연히, 메인 스레드가 블럭킹 되면 안 됨.
+- Dispatchers.Main과 Dispatchers.Default는 서로 다름.
+- CPU 집약적인 작업 수행 시 활용.
