@@ -616,3 +616,10 @@ suspend fun main() = coroutineScope {
 - Dispatchers.Default와 Dispatchers.IO는 같은 스레드 풀을 공유.
 - 하지만 한도가 서로 독립적이므로, 서로 다른 디스패처에 의한 스레드 고갈은 없음.
 - Dispatchers.IO에서 64개 스레드를 모두 사용중이고, Dispatchers.Default도 주어진 8개를 모두 사용중이라면, 활성화된 스레드 개수는 72개.
+
+## 커스텀 스레드 풀을 사용하는 IO 디스패처
+
+- Dispatchers.IO의 limitedParallelism과 Dispatchers.Default의 그것은 동작이 다름.
+- 아래 그림 참고.
+
+![](https://pbs.twimg.com/media/FVW8RD8WIAYZ3VV?format=jpg&name=large)
