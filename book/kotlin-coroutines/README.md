@@ -590,3 +590,29 @@ class ShowUserDataUseCase(
 - 당연히, 메인 스레드가 블럭킹 되면 안 됨.
 - Dispatchers.Main과 Dispatchers.Default는 서로 다름.
 - CPU 집약적인 작업 수행 시 활용.
+
+## IO 디스패처
+
+- I/O 연산으로 스레드 블록킹 시 사용하기 위한 용도.
+- 같은 시간에 64개 (또는 더 많은 코어가 있다면 그 코어 수)의 스레드를 사용 가능.
+
+```kt
+suspend fun main() = coroutineScope {
+    repeat(1000) {
+        launch(Dispatchers.IO) {
+            Thread.sleep(200)
+
+            val threadName = Thread.currentThread().name
+            println("Running on thread: $threadName)
+        }
+    }
+}
+// Running on thread: DefaultDispatcher-worker-1
+// ...
+// Running on thread: DefaultDispatcher-worker-53
+// Running on thread: DefaultDispatcher-worker-14
+```
+
+- Dispatchers.Default와 Dispatchers.IO는 같은 스레드 풀을 공유.
+- 하지만 한도가 서로 독립적이므로, 서로 다른 디스패처에 의한 스레드 고갈은 없음.
+- Dispatchers.IO에서 64개 스레드를 모두 사용중이고, Dispatchers.Default도 주어진 8개를 모두 사용중이라면, 활성화된 스레드 개수는 72개.
