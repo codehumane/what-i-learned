@@ -10,6 +10,36 @@
 - 중단 함수를 시작하는 지점이 바로 코루틴 빌더.
 - launch, runBlocking, async
 
+## launch 빌더
+
+```kt
+fun main() {
+    GlobalScope.launch {
+        delay(1000L)
+        println("World!")
+    }
+    GlobalScope.launch {
+        delay(1000L)
+        println("World!")
+    }
+    GlobalScope.launch {
+        delay(1000L)
+        println("World!")
+    }
+    println("Hello,")
+    Thread.sleep(2000L)
+}
+// Hello,
+// 1초 경과
+// World!
+// World!
+// World!
+```
+
+- launch 함수는 CoroutineScope 인터페이스의 확장 함수.
+- CoroutineScope 인터페이스는 구조화된 동시성의 핵심.
+- 다만, 현업에서는 GlobalScope 사용을 지양해야 함.
+
 # 9장. 취소
 
 - 단순히 스레드를 죽이면 연결을 닫고 자원을 해제할 수 없음.
