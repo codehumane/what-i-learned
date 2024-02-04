@@ -9,6 +9,113 @@
 - 기존 코드 구조를 광범위하게 뜯어고칠 필요 없음.
 - 코틀린 사용하는 플랫폼에서 모두 사용 가능.
 
+## 안드로이드(그리고 다른 프론트엔드 플랫폼)에서의 코루틴 사용
+
+```kt
+fun onCreate() {
+    val news = getNewsFromApi()
+    val sortedNews = news
+        .sortedByDescending { it.publishedAt }
+    view.showNews(showNews)
+}
+```
+
+- 위와 같은 기능을 구현한다고 해보자.
+- 위 코드는 간단하긴 하나, 앱에서는 뷰를 다루는 스레드가 하나뿐이라, onCreate가 메인 함수에서 실행된다면 블로킹이 일어나고 앱 크래시 발생 가능.
+
+### 스레드 전환
+
+- 아래와 같이, 블로킹 가능한 스레드를 먼저 사용 후, 메인 스레드로 전환해 볼 수 있음.
+
+```kt
+fun onCreate() {
+
+    thread {
+        val news = getNewsFromApi()
+        val sortedNews = news
+            .sortedByDescending { it.publishedAt }
+
+        runOnUiThread {
+            view.showNews(showNews)
+        }
+    }
+}
+```
+
+- 하지만, 몇 가지 문제가 있음.
+- 스레드가 실행됐을 때 멈출 수 있는 방법이 없어, 메모리 누수로 이어질 수 있음.
+- 스레드 생성이 많아지면 그만큼 비용.
+- 스레드 자주 전환하면 복잡도가 늘어나고 관리하기 어려움.
+- 코드도 길어지고 이해하기 어려운 문제도 있음.
+- 위 예제에서는, 만약 데이터를 가져오는 중에 뷰를 닫으면, 별도 스레드는 데이터 가져오기 완료 후 존재하지 않는 뷰를 수정하려 하기에, 백그라운드 예외나 알 수 없는 결과를 일으킬 수 있음.
+
+### 콜백
+
+```kt
+fun onCreate() {
+    startedCallbacks += getNewsFromApi() { news ->
+        val sortedNews = news
+            .sortedByDescending { it.publishedAt }
+        view.showNews(showNews)
+    }
+}
+```
+
+- 위 코드는 콜백을 이용한 방식.
+- 취소를 위해 콜백들을 따로 관리하고 있음.
+- 또한 함수가 각각 취소가 가능한 방식으로 구현되어야 함.
+- 데이터를 여러 곳에서 가져와야 하면, callback 계층이 깊어지는 문제도 있음.
+- 병렬 처리도 안 됨.
+
+### RxJava와 리액티브 스트림
+
+```kt
+fun onCreate() {
+    disposables += getNewsFromApi()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .map { news -> news.sortedByDescending { it.publishedAt }}
+        .subscribe { sortedNews -> view.showNews(sortedNews) }
+}
+```
+
+- 콜백보다 더 나음.
+- 메모리 누수 없고, 취소 가능하며, 스레드 적절히 사용.
+- 하지만 바뀌는 코드가 많음.
+
+### 코틀린 코루틴의 사용
+
+- 코루틴 핵심 기능은 코루틴을 특정 지점에서 멈추고 이후에 재개할 수 있다는 것.
+- 예컨대, API로 데이터를 얻어올 때 잠깐 중단 가능.
+- 코루틴 중단이 스레드 블로킹을 일으키는 것은 아님.
+- 중단 동안 다른 코루틴 처리할 게 있다면 진행하면 됨.
+- 그리고 데이터가 준비 되면 다시 코루틴을 재개.
+- 코드는 아래와 같이 됨.
+
+```kt
+fun onCreate() {
+    viewModelScope.launch {
+        val news = getNewsFromApi()
+        val sortedNews = news
+            .sortedByDescending { it.publishedAt }
+        view.showNews(showNews)
+    }
+}
+```
+
+- 여러 데이터를 가져오는 것도 병렬 처리 가능.
+
+```kt
+fun ShowNews() {
+    viewModelScope.launch {
+        val config = async { getConfigFromApi() }
+        val news = async { getNewsFromApi(config.await()) }
+        val user = async { getUserFromApi() }
+        view.showNews(user.await(), news.await())
+    }
+}
+```
+
 # 6장. 코루틴 빌더
 
 - 중단 함수는 컨티뉴에이션 객채를 다른 중단 함수로 전달해야 함.
