@@ -51,3 +51,7 @@
 - Part 2: Before You Measure
 - Part 3: Measurement Methods
 - Part 4: Beyond the basics
+
+# CH2. An Intuitive Measurement Habit: Eratosthenes, Enrico, and Emily
+
+- 정량적 측정을 직관적으로 찾아내는 3개의 사례 소개.
