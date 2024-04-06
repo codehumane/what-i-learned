@@ -55,3 +55,11 @@
 # CH2. An Intuitive Measurement Habit: Eratosthenes, Enrico, and Emily
 
 - 정량적 측정을 직관적으로 찾아내는 3개의 사례 소개.
+
+## How an Ancient Greek Measured the Size of Earth
+
+- 에라토스테네스의 지구 길이 측정 얘기.
+- https://www.youtube.com/watch?v=fz60nt-oU0I 영상 참고.
+- 키워드만 기록하면, 시에네의 우물, 알렉산드리아의 막대 그림자, 엇각, 태양빛은 평행하다 가정, 7.2도.
+- 간단한 관측과 영리한 계산으로 위대한 측정.
+- 어려운 방법 대신, 관찰 가능한 몇 가지로, 많은 정보를 도출.
