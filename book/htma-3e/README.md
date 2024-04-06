@@ -43,3 +43,11 @@
 - 온도나 질량 등 명확하고 직접적인 측정에만 적용할 수 있다는 생각은 오해.
 - 그리고 스프레드시트, 테이블, 차트만 있으면 유용한 통계 도구를 활용할 수 있음.
 - 이해할 수만 있으면 됨. 일일이 기억할 필요는 없음.
+
+### A Guide to the Rest of the Book
+
+- 책은 크게 4부분이고, 순서대로 읽어야 전체 프로세스 이해하기 좋음.
+- Part 1: The Measurement Solution Exists
+- Part 2: Before You Measure
+- Part 3: Measurement Methods
+- Part 4: Beyond the basics
