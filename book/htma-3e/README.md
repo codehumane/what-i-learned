@@ -135,3 +135,18 @@
 - 측정이 이런 것이라면, 물리학에서도 측정할 수 있는 건 매우 드묾.
 - 과학자, 계리사, 통계학자가 측정을 할 때는 다른 정의를 사용.
 - 그리고 측정을 이해하려면 측정 너머에 있는 이론적 프레임워크를 함께 알아야 함.
+
+### A Definition of Measuarement: An "Information Theory" Version Definition of Measurement
+
+> Measurement: A quantitatively expressed reduction of uncertainty based on one or more observations.
+
+- 불확실성을 정량적으로 줄여주는 관찰을 측정이라고 봐야 함.
+- 꼭 제거가 아니더라도 줄여주는 것만으로도 의미가 있음.
+- 현실 세계에서의 양에 관한 확신은 불가.
+- 에러는 피할 수 없음.
+- 더 나은 지식을 가져다주는지가 중요.
+- 측정 결과가 공유될 땐 보통 오류 정도가 포함됨.
+- 예컨대, 95%의 신뢰율 구간 같은 정보.
+- 이런 게 없다면 측정을 의심해 볼 만함.
+- 클로드 새넌의 정보 이론 얘기도 나옴.
+- 이 역시 "불확실성의 감소"가 중요함을 얘기하는 것.
