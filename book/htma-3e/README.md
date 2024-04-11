@@ -136,7 +136,7 @@
 - 과학자, 계리사, 통계학자가 측정을 할 때는 다른 정의를 사용.
 - 그리고 측정을 이해하려면 측정 너머에 있는 이론적 프레임워크를 함께 알아야 함.
 
-### A Definition of Measuarement: An "Information Theory" Version Definition of Measurement
+### A Definition of Measurement: An "Information Theory" Version Definition of Measurement
 
 > Measurement: A quantitatively expressed reduction of uncertainty based on one or more observations.
 
