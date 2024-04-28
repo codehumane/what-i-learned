@@ -1,6 +1,8 @@
 
 # How to Measure Anything: Finding the Value of Intangibles in Business, 3rd Edition
 
+# PART I: The Measurement Solution Exists
+
 # CH1. The Challenge of Intangibles
 
 - "Anything can be measured."
@@ -433,3 +435,5 @@ clarification chain 순서.
 - 불확실성 줄이기 위해 비실용적이고 섬세한 방법을 택해야 한다 생각지 말자.
 - 이미 정교한 결과를 알고 있는 게 아니라면 이런 저런 시도를 하자.
 - 측정을 시작하고, 반복적으로 개선하고, 초기 발견을 기반으로 계속 조정해 가기.
+
+# PART II: Before You Measure
