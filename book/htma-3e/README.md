@@ -531,7 +531,7 @@ clarification chain 순서.
 - 추정과 계산은 의사 결정 모델을 구축하고,
 - 모델의 결과는 어떤 행동을 취해야 할지를 가리킴.
 
-### A Ridiculously Simple (But Compeltely Legitimate) Decision Model
+### A Ridiculously Simple (But Completely Legitimate) Decision Model
 
 ```
 - Estimated Costs of Action X.
