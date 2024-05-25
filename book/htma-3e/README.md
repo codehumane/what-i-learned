@@ -886,3 +886,22 @@ clarification chain 순서.
 - 셋째, 정보는 그 자체로 시장 가치를 지님.
 - 여기서 가장 중요한 것 첫 번째.
 - 이번 장은 이 첫 번째에 대한 이야기.
+
+## The Chance of Being Wrong and the Cost of Being Wrong: Expected Opportunity Loss
+
+- 정보의 가치를 계산하는 방법 이야기.
+- 결론은 아래와 같음.
+
+```
+EVI(Expected Value of Information)
+= 정보를 얻기 전의 EOL - 정보를 얻은 후의 EOL
+= EOL이 얼마나 감소하느냐
+
+EOL = chance of being wrong x cost of being wrong
+
+EVPI(Expected Value of Perfect Information)
+= 정보를 얻기 전의 EOL
+```
+
+- 개인적으로는 EVI는 물론 EVPI도 설득력 있었음.
+- 처음엔 EVPI로 접근해도 될 듯.
