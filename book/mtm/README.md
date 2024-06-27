@@ -502,6 +502,7 @@
 - 하지만 아래 같은 경우는 어떨까.
 
 | ID | Name | Status |
+| -- | -- | -- |
 | 1 | Alice | VERIFIED |
 | 2 | Bob | SUSPENDED |
 
