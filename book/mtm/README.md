@@ -800,3 +800,8 @@
 - 코레오그래피는 이벤트 기반 협력이라는 점에서 허들이 됨.
 - 하지만, 저자 경험상, 상태 추적의 어려움이 낮은 결합도라는 장점보다 더 컸음.
 - 경험에서 좀 떨어져서 일반적인 조언을 한다면, 여러 팀이 걸친 경우는 코레오그래피, 그렇지 않다면 오케스트레이션 권장.
+
+# CH5. Growing Pains
+
+- MSA 가면서 마주할 문제들 소개.
+- 이전에 [Building Microservices 2판 정리](https://github.com/codehumane/what-i-learned/blob/master/book/building-microservices-2e/README.md)했었는데 여기 좀 더 자세한 내용 있으니 함께 참고하라고.
