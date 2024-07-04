@@ -805,3 +805,15 @@
 
 - MSA 가면서 마주할 문제들 소개.
 - 이전에 [Building Microservices 2판 정리](https://github.com/codehumane/what-i-learned/blob/master/book/building-microservices-2e/README.md)했었는데 여기 좀 더 자세한 내용 있으니 함께 참고하라고.
+
+## More Services, More Pain
+
+- 서비스 수에 따라 문제 종류가 달라지는 경향이 있음.
+- 그리고 결합도가 높을 때 특히 문제가 빨리 찾아옴.
+- 이들을 감지할 피드백 메커니즘을 구축해야 함.
+
+| 서비스 수 | 문제 |
+| -- | -- |
+| 2-10개 | Breaking changes, reporting |
+| 10-50개 | Ownership at scale, Developer experience, Running too many things |
+| 50개 이상 | Global vs local optimisation, Orphaned services |
