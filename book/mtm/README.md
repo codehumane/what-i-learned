@@ -817,3 +817,31 @@
 | 2-10개 | Breaking changes, reporting |
 | 10-50개 | Ownership at scale, Developer experience, Running too many things |
 | 50개 이상 | Global vs local optimisation, Orphaned services |
+
+## Ownership at Scale
+
+- 마틴 파울러가 [소유권 유형](https://martinfowler.com/bliki/CodeOwnership.html)에 대해 얘기한 적 있음.
+- 이는 MSA에서도 적용 가능.
+- 여기서의 소유권은 코드 변경을 누가 하느냐의 관점.
+- 강한 코드 소유권: 모든 서비스는 소유자가 있음. 소유 그룹 바깥에서 변경을 원하면 소유자에게 변경을 요창.
+- 약한 코드 소유권: 모든 서비스가 소유자가 있으나, 누구나 직접 변경을 할 수 있음. 다만, 변경을 소유자에게 알려야 하고, 소유자는 변경을 계속 추적.
+- 집단 코드 소유권: 소유자가 없음. 누구나 원하는 대로 변경.
+
+### How Can This Problem Show Itself?
+
+- 서비스와 개발자가 많아질수록 점점 집단 소유권에 관련한 문제를 경험.
+- 집단 소유권이 잘 동작하려면, 어떤 변경의 방향과 모습에 대한 공유된 이해를 갖고 서로 잘 연결되어 있어야 함.
+- "분산된 모놀리스"라고 칭하고 있음.
+- 너무나 공감되는 이야기.
+
+### When Might This Problem Occur?
+
+- 작게 시작할 때는 집단 코드 소유권이 잘 동작.
+- 하지만 사람이 많아질수록 어떻게 바꾸고 어떻게 진화해야 하는지 공감대를 맞추기 어려움.
+- 이 때의 문제는, 합의하는 데 시간과 공간이 필요하고, 새로운 것들을 계속 따라가야 함.
+
+### Potential Solutions
+
+- 100명이 넘어가고 여러 팀으로 대규모 MSA를 위해선 강한 코드 소유권이 좋음.
+- 각자 변경의 방향과 모습에 대해 국소적으로 합의하면 됨.
+- 제품 중심의 팀 구조일 경우 각 도메인에 집중하기에도 좋음.
