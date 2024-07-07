@@ -971,3 +971,8 @@
 #### Toward observability
 
 - 특별한 얘기 없음.
+
+## Local Developer Experience
+
+- 모든 시스템을 로컬에 실행할 수 없음.
+- 이 상황에서 어떻게 해야할지 논의 필요.
