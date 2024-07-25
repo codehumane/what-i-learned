@@ -1246,3 +1246,18 @@ Four Useful Measurement Assumptions 다시 언급.
 - 여러 접근법 고려.
 - 불필요한 측정을 없애는 간단한 질문들 찾기. 에밀리는 테라피 터치의 수준이 아니라 작동 여부만 측정.
 - 해보기.
+
+# CH9. Sampling Reality: How Observing Some Things Tells Us about All Things
+
+> It is the mark of an educated mind to rest satisfied with the degree of precision which the nature of the admits and not to seek exactness where only an approximation is possible.
+
+- 벽돌의 결함에 대해 100% 확신하려면 모든 벽돌을 테스트해야 함.
+- 그러나 모든 벽돌에 압력을 가해 테스트하면, 판매할 수 있는 건 남아 있지 않을 수도.
+- 책에서는 벽돌 얘기를 했지만, 자동차의 충돌 안전 검사 생각해 보면 됨.
+- 한편, 전수 조사가 도움이 되는 경우도 있음.
+- 월별 재고 조사나, 대차대조표.
+- 하지만 모든 걸 확인하는 것은 많은 이유로 비실용적.
+- 과학계도 샘플링.
+- 우리가 경험에서 얻는 모든 건 샘플.
+- 일부를 경험하고 거기서 추론을 함.
+- 이번 장은 작은 샘플로부터 어떻게 많은 정보를 그려나갈 수 있는지를 다룸.
