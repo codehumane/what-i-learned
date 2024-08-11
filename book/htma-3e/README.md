@@ -1652,3 +1652,44 @@ Four Useful Measurement Assumptions 다시 언급.
 - 다만, 상관관계는 그 자체로 정확하진 않음.
 - 예를 들어, 프로젝트 매니저의 예측이 실제 비용에 비해 계속 1/2 정도라도 상관관계는 높음.
 - 과거 데이터로 회귀 모델링(regression modeling)을 사용하면, 통제된 실험이 필요 없을 수도.
+
+### A Regression Example: TV Ratings
+
+- 케이블 TV 네트워크 회사에서, 새로운 TV쇼 생산을 위한 몇 가지 사무 업무를 자동화하려 함.
+- 업무 단축으로 새로운 쇼 홍보를 더 일찍 시작할 수 있고, 이는 시청률 상승으로 이어진다는 게 기반 주장.
+- 시청률 상승은 매출 상승으로 이어짐.
+- 하지만 시청률 프로젝트의 효과를 어떻게 예측할 수 있을까?
+- 시청률엔 여러 요소가 영향을 줄텐데?
+- 과거 자료들 기반으로 일단 각 쇼의 방영 전 얼마나 많은 기간 동안 홍보를 했는지 알 수 있었음.
+
+![그림 9-13. 홍보 기간과 시청률](./그림%209-13.%20홍보%20기간과%20시청률.png)
+
+- 데이터에 대한 추가 분석에 앞서, 상관관계가 보이는가?
+- 이건 그냥 눈으로만 봐도 됨. 상관관계 있음.
+- 그럼, 얼마나 상관관계가 있는가?
+- 한 가지 방법은 엑셀에서 `=correl()` 함수를 사용하는 것.
+- 또 다른 방법은 Data Analysis Toolpak에 있는 회귀 도구를 이용하는 것.
+- 이 분석을 통해 Multiple R, R square, Intercept, X variable 1(coefficient), P-Value를 얻음.
+- 이걸 바탕으로 두 변수의 관계를 나타내는 공식을 만들 수 있음.
+- 계산된 값은 보통 "종속 변수(dependent variable)"라 불림.
+- 그리고 계산에 사용된 값은 "독립 변수(independent variable)"라 불림.
+
+```
+Estimated Ratings = Coefficient * Promotion Weeks + Intercept
+```
+
+지금 사례의 값을 대입하면 아래와 같음.
+
+```
+Estimated Ratings = 0.0215 * Promotion Weeks + 0.877
+```
+
+- 물론, 엑셀의 `=slope()`로 상관계수(coeeficient)를, `=intercept()`로 intercept를 구할 수 있음.
+- 지금까지의 작업은 시스템을 바꾸면 평점이 얼마나 개선될지에 대한 우리의 불확실성 줄이기.
+- 90% CI 계산 얘기도 있음. 쉬운 방법은 `=STEYX()` 함수로 X에 대한 Y의 오류 표준 편차 구하기.
+- 여기서는 0.543이며, 1.645*0.543을 결과에 더하고 빼면 됨.
+
+```
+Slope(i.e., coefficient) x change in weeks = 0.215 x 5 = 1.077
+90% CI = estimate +/- error = 1.077 +/- 1.645 x 0.543 = 0.18 to 1.97
+```
