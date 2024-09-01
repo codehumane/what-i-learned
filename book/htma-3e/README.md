@@ -1720,3 +1720,33 @@ Slope(i.e., coefficient) x change in weeks = 0.215 x 5 = 1.077
 - 그리고 이 사전 지식을 반영해야 함.
 - 이러한 사전 지식 다루기는 "베이지안 통계"라 불림.
 - 베이지안 분석으로, 지금 우리가 얼마 알고 있는지, 새로운 정보를 이 지식에 어떻게 반영해야 하는지 알 수 있음.
+
+## The Basics and Bayes
+
+- 베이즈 이론은 간단하게는 확률과 "조건부" 확률의 관계.
+- 조건부 확률이란, 특정한 상황이 주어졌을 때의 뭔가의 확률을 가리킴.
+- 아래는 앞으로의 내용을 이해하기 위해 필요한 통계에서의 기본 개념들.
+
+```
+Rule 1. How to write "Probability"
+  P(A) = Probability of A (0에서 1 사이의 값을 가짐. inclusive)
+  P(~A) = the probability of not A (~ 기호를 "no", "not", "isn't", "won't"라고 읽음)
+
+Rule 2. How to write "Sometimes it dependes": Conditional Probability.
+  P(A|B) = Conditional probability of A given B
+  P(Accident|Rain)은 비가 내릴 때 자동차 사고가 일어날 확률
+
+Rule 3. The "Something has to be true but contradictory things can't be true" rule
+  P(A) + P(~A) = 1
+  mutually exclusive 그리고 collectively exhaustive 한 확률의 사건이나 상태의 합은 1
+
+Rule 4. The probability of something is the weighted sum of its conditional probabilities
+  P(A) = P(A|B)P(B) + P(A|~B)P(~B)
+
+Rule 5. Bayes' Theorem: How to flip a conditional probability
+  P(A|B) = P(A)P(B|A) / P(B)
+  P(A|B) = P(A)P(B|A) / [P(B|A)P(A) + P(B|~A)P(~A)]
+```
+
+- 간단한 "베이지안 inversion 계산기" 사용법 설명은 생략.
+- 이런 대수적 조작을 "베이지안 역전<sup>inversion</sup>"이라 부름.
