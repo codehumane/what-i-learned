@@ -2069,3 +2069,60 @@ P(Prop = X|Hits = 14 of 20)
 - 이런 특성은 측정 회의론자의 걱정과 오해를 해소.
 - 구체적으로 알아보기 전에 4가지 흔한 오해를 알아봄.
 - 이들은 결국 하나로 이어짐.
+
+### Myth 1: Absence of Evidence
+
+- "Absence of evidence is not evidence of absence"
+- "증거의 부재는 부재의 증거가 아니다"
+- 이 말 자체는 사실.
+- 하지만 우리가 중요히 여기는 건 불확실성의 감소.
+- 불확실성을 줄여준다면 증거로 충분.
+- 이라크의 대량 살상 무기 보유 여부 판단 사례를 들고 있음.
+- 일단 여기서는 무기의 발견 여부를 유일하고 명확한 증거로 고려.
+- 무기를 발견했다면 이라크가 무기를 보여했다는 명확한 증거.
+- 또한, 무기가 없다면 무기를 발견할 수 없음.
+- 이를 확률로 표현하면 아래와 같음.
+
+```
+P(Find|Absent) = 0 그리고 P(Absent|Find) = 0
+비슷하게, P(~Find|Absent) = 1 그리고 P(~Absent|Find) = 1
+```
+
+- 우리가 알고 싶은 건 다음 2개의 차이.
+  - 조사를 수행한 뒤 무기를 발견하지 못했을 때 무기가 없을 가능성.
+  - 조사를 수행하지 않았을 때의 무기가 없을 가능성.
+- 무기를 발견하지 못했을 때 무기의 부재 가능성은 아래와 같이 씀.
+
+```
+P(Absent|Find) = P(Absent)P(~Find|Absent)/P(~Find)
+```
+
+- P(~Find|Absent) = 1이므로 아래가 성립.
+
+```
+P(Absent|~Find) = P(Absent)/P(~Find)
+```
+
+- 만약 조사 후에도 무기를 발견하지 못할 확률이 1인 경우엔 P(~Find)를 1로 대입하고,
+- 만약 P(~Find)가 1 미만이라면 P(~Find) < 1을 대입해 아래 식을 구할 수 있음.
+
+```
+P(Absent|~Find) = P(Absent)
+P(Absent|~Find) > P(Absent)
+```
+
+- 혹은 Rule 4를 이용해 같은 결론에 이르는 여정을 시작할 수도.
+
+```
+P(Absent) = P(Absent|Find)·P(Find) + P(Absent|~Find)·P(~Find)
+```
+
+- 만약 무기의 발견이 부재 가능성을 0으로 만드는 거라면,
+- P(Absent|Find) = 0이고 식은 아래와 같이 됨.
+
+```
+P(Absent) = P(Absent|~Find)P(~Find)
+```
+
+- 무기를 찾지 못할 확률이 0~1 사이이므로,
+- 결국 P(Absent) < P(Absent|~Find)가 됨.
