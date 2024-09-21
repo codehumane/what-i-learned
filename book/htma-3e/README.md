@@ -2170,3 +2170,9 @@ P(X) = P(X|Conclusive)P(Conclusive) + P(X|Inconclusive)P(Inconclusive)
 - 따라서 이번에도 P(X|Inconclusive)P(Inconclusive) 부분만 남고
 - P(X) > P(X|Inconclusive)가 됨.
 - 관측에 따라 P(X)의 값은 변화.
+
+### Myth 4: "This Alone Tells Me Nothing"
+
+- "이것만으로는 판단하기 어려워요. 더 많은 정보가 있어야 결정할 수 있어요."
+- 하지만, 상품 라인업의 5가지 제품 중 1개라는 것만 알아도 상품이 첫 해애 얼마나 벌지 판단에 도움이 됨.
+- 내가 담배를 피는지 안 피는지 만으로도 수명이 어떻게 달라질지 생각해 보는 것과 유사.
