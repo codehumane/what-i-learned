@@ -2126,3 +2126,47 @@ P(Absent) = P(Absent|~Find)P(~Find)
 
 - 무기를 찾지 못할 확률이 0~1 사이이므로,
 - 결국 P(Absent) < P(Absent|~Find)가 됨.
+
+### Myth 2: Correlation Is Not Evidence of Causation
+
+- 또 다른 오해는 "상관관계가 인과관계의 증거는 아니다"는 것.
+- 상관관계가 인과관계는 아님. 그러나 9장에서 다뤘듯 단서는 될 수 있음.
+- 일단, 상관관계만으로 인과관계를 증명할 수 없음은 명백.
+- 그리고, 상관관계가 없다면 인관관계도 될 수 없음.
+- 또한, 인과관계가 있다면 이는 상관관계도 됨.
+
+```
+P(Cause|~Corr) = 0
+P(Corr|Cause) = 1
+```
+
+- 위 식과 Rule 3과 베이즈 규칙을 이용해 아래와 같이 표현.
+
+```
+P(~Corr|Cause) = 1 - P(Corr|Cause)
+P(Cause|Corr) = P(Cause) · P(Corr|Cause) / P(Corr)
+P(Cause|Corr) = P(Cause) / P(Corr)
+```
+
+- 증거의 부재에서와 같이 P(Corr)가 1이 아니라면 식은 아래와 같음.
+
+```
+P(Cause|Corr) > P(Cause)
+```
+
+- 따라서 상관관계는 적어도 인과관계의 확률을 높여줌.
+
+### Myth 3: Ambiguous Results Tell Us Nothing
+
+- 관찰이 모호하거나 불완전해 보여도 정보가 될 수 있음.
+- X라는 주장에 대해, 결정적 관측은 X를 참으로 만듦.
+- P(X|Conclusive) = 1인 것.
+- Rule 4에 의해 아래와 같이 표현.
+
+```
+P(X) = P(X|Conclusive)P(Conclusive) + P(X|Inconclusive)P(Inconclusive)
+```
+
+- 따라서 이번에도 P(X|Inconclusive)P(Inconclusive) 부분만 남고
+- P(X) > P(X|Inconclusive)가 됨.
+- 관측에 따라 P(X)의 값은 변화.
