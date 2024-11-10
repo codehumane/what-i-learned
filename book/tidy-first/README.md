@@ -62,3 +62,19 @@ function foo_body(a,b)
 - 아래 문장도 번역이 이상.
 - Another case for explicit parameters is when you find the use of environment variables deep in the bowels of the code.
 - 명시적 파라미터가 필요한 또 하나의 경우는, 코드의 깊숙한 곳에서 환경 변수를 사용하는 것.
+
+## 12. Extract Helper
+
+- 추출 조건 중 형식지가 아니었던 부분이 나와 기록.
+- 목적이 분명하고, **나머지 코드와는 상호작용이 적은** 코드.
+- 도우미 추출의 또 하나의 특수 사례는 시간적 결합을 표현하는 경우.
+
+```
+// 만약 시간적 결합이 있다면
+foo.a()
+foo.b()
+// 아래와 같이 바꾸기
+ab()
+    a()
+    b()
+```
