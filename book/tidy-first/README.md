@@ -30,3 +30,35 @@
 - 번역이 또 이상.
 - 독자가 읽기 원하는 순서로 코드를 재배치하라.
 - Reorder the code in the file in the order in which a reader would prefer to encounter it.
+
+## 10. Explicit Parameters
+
+- 명시적이지 않은 파라미터를 넘기면 문제라고 하는데,
+- 정확히 어떤 것을 명시적이지 않다고 하는지가 명시적이지 않음.
+- 한 사례로 파라미터로 맵을 넘기는 걸 언급.
+- 맵을 넘기는 건 분명 위험.
+- 이렇게 런타임에서야 위험이 드러나는 파라미터를 명시적이지 않다고 하는 걸까?
+- 일단은, 아래와 같은 코드는, 어떤 데이터가 필수 값인지 이해하기 어렵게 만들고, 파라미터 값을 몰래 수정할 수도 있는 문제가 있음.
+
+```
+params = { a: 1, b: 2 }
+foo(params)
+
+function foo(params)
+    ...params.a... ...params.b...
+```
+
+- 그리고 2개의 루틴으로 나누라고 함.
+- 하나는 파라미터를 모으고, 하나는 명시적으로 파라미터를 전달하는 부분.
+
+```
+function foo(params)
+    foo_body(params.a, params.b)
+
+function foo_body(a,b)
+    ...a... ...b...
+```
+
+- 아래 문장도 번역이 이상.
+- Another case for explicit parameters is when you find the use of environment variables deep in the bowels of the code.
+- 명시적 파라미터가 필요한 또 하나의 경우는, 코드의 깊숙한 곳에서 환경 변수를 사용하는 것.
