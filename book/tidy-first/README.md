@@ -24,3 +24,9 @@
 - 거꾸로 코딩하기 - 루틴의 마지막 줄부터 시작하고, 필요한 중간 결과들이 마치 모두 있는 것 처럼 작성.
 - 테스트 먼저 작성 - 통과해야 할 테스트를 먼저 작성.
 - 헬퍼 설계 - 뭔가를 해주는 무언가가 있다면, 나머지는 쉬움.
+
+## 5. Reading Order
+
+- 번역이 또 이상.
+- 독자가 읽기 원하는 순서로 코드를 재배치하라.
+- Reorder the code in the file in the order in which a reader would prefer to encounter it.
