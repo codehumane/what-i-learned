@@ -447,3 +447,20 @@ Box>>area()
 > 오늘의 설계는, 내일의 기능 변경 "구매 옵션"에 대해 지불한 프리미엄.
 
 - 이제 옵션을 만드는 것과 기능을 변경하는 것 사이의 균형에 대해 얘기할 차례.
+
+## 27. Options Versus Cash Flows
+
+- 현금 흐름 할인, 그리고 옵션에 대해 이야기 했음.
+- 이제 줄다리기 할 차례.
+- 코드 정리를 먼저 해야 할까요?
+
+> cost(tidying) + cost(behavior change after tidying) < cost(behavior change without tidying)
+
+- 위 경우라면 당연히 코드 정리 먼저.
+- 문제는 반대의 경우.
+
+> cost(tidying) + cost(behavior change after tidying) > cost(behavior change without tidying)
+
+- 그러나 단기적으로는 비경제적일지라도, 앞으로 일어날 여러 변경들을 생각하면 비용은 분산되어, 코드 정리가 합리적일 수도.
+- 또한, 창출되는 옵션의 가치가 돈을 빨리 사용함으로써 잃는 확실한 비용보다 크다면, 코드 정리 먼저 할 수도.
+- 그리고, 소프트웨어 설계는 인간 관계(나 자신과의 관계 포함)
