@@ -105,3 +105,65 @@ consumer.subscribe(Arrays.asList("accountTopic"));
 - 다만, 토픽 필터링은 클라이언트 작업임을 유의해야 함.
 - 정규식 지정 시 컨슈머는 전체 토픽과 파티션 정보를 브로커에 일정 간격으로 요청.
 - 이 때, 토픽이나 파티션이나 컨슈머가 많으면, 브로커와 클라이언트 그리고 네트워크 전체에 상당한 오버헤드.
+
+## 4.4 폴링 루프
+
+- 컨슈머 API 핵심은 서버에 축 데이터가 들어왔는지 폴링하는 단순한 루프.
+- spring-kafka의 [KafkaMessageListenerContainer](https://github.com/spring-projects/spring-kafka/blob/main/spring-kafka/src/main/java/org/springframework/kafka/listener/KafkaMessageListenerContainer.java#L1311)를 봐도 뼈대는 동일.
+- [1684L](https://github.com/spring-projects/spring-kafka/blob/main/spring-kafka/src/main/java/org/springframework/kafka/listener/KafkaMessageListenerContainer.java#L1684)도 함께 보면 됨.
+
+```kt
+while (true) {
+    val timeout = Duration.ofMillis(100)
+    val records: ConsumerRecords<String, String> = consumer.poll(timeout)
+
+    records.forEach {
+
+        println(
+            """
+                topic = ${it.topic()}
+                partition = ${it.partition()}
+                offset = ${it.offset()}
+                key = ${it.key()}
+                value = ${it.value()}
+            """
+        )
+
+    }
+}
+```
+
+- 정해진 시간 내에 반복적으로 `poll`을 호출해야 살아 있는 컨슈머로 간주되고 그렇지 않으면 리밸런싱.
+- `poll`에 넘겨진 매개변수는, 컨슈머 버퍼에 데이터가 없을 때 얼마나 블럭될 것인가를 결정.
+- `poll`은 레코드들이 저장된 목록을 반환.
+- 책에서는 List라고 되어 있으나 [코드](https://github.com/a0x8o/kafka/blob/master/clients/src/main/java/org/apache/kafka/clients/consumer/ConsumerRecords.java) 보면 아래와 같이 Iterable.
+
+```java
+public class ConsumerRecords<K, V> implements Iterable<ConsumerRecord<K, V>> {
+    public static final ConsumerRecords<Object, Object> EMPTY = new ConsumerRecords<>(Collections.emptyMap());
+
+    private final Map<TopicPartition, List<ConsumerRecord<K, V>>> records;
+
+    ... 중략
+
+    @Override
+    public Iterator<ConsumerRecord<K, V>> iterator() {
+        return new ConcatenatedIterable<>(records.values()).iterator();
+    }
+```
+
+- `poll`은 데이터를 가져오는 것 외에도 여러가지 일을 함.
+- 컨슈머가 GroupCoordinator를 찾아 컨슈머 그룹에 참가하고 파티션 할당 받음.
+- 리밸런스 역시 관련 콜백들과 함께 여기서 처리됨.
+- 따라서, 컨슈머나 콜백에서 뭔가 잘못된 것들은 전부 `poll`에서 예외로 던져짐.
+- `max.poll.interval.ms`에 지정된 시간보다 오랫동안 `poll`이 호출해야 살아 있다고 간주됨.
+- 그래서 폴링 루프 안에서 예측 불가능한 시간 동안 블럭되는 작업을 수행하는 건 위험.
+- `KafkaConsumer#poll` 주석을 보면 [아래 설명들](https://github.com/a0x8o/kafka/blob/master/clients/src/main/java/org/apache/kafka/clients/consumer/KafkaConsumer.java#L1168) 적혀 있음.
+  - 두 번째 문단 마지막에 마침표 누락 @_@
+  - 컨르톨 레코드가 뭔가 하니, 트랜잭션을 사용할 때 begin/end/abort 등의 메시지라고 함.
+
+> Fetch data for the topics or partitions specified using one of the subscribe/ assign APIs. It is an error to not have subscribed to any topics or partitions before polling for data.
+> 
+> On each poll, consumer will try to use the last consumed offset as the starting offset and fetch sequentially. The last consumed offset can be manually set through seek(TopicPartition, long) or automatically set as the last committed offset for the subscribed list of partitions
+> 
+> This method returns immediately if there are records available or if the position advances past control records or aborted transactions when isolation. level=read_committed. Otherwise, it will await the passed timeout. If the timeout expires, an empty record set will be returned. Note that this method may block beyond the timeout in order to execute custom ConsumerRebalanceListener callbacks.
