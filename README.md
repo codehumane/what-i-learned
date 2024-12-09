@@ -90,6 +90,7 @@
 - [How to Measure Anything, 3rd Edition](book/htma-3e/README.md)
 - [Monolith to Microservices](book/mtm/README.md)
 - [Tidy First?](./book/tidy-first/README.md)
+- [카프카 핵심가이드 2판](./book/ktdg-2e/README.md)
 
 # DOCUMENT
 
