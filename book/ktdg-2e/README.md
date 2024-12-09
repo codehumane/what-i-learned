@@ -77,3 +77,18 @@ incremental rebalance라고도 부름. 조급한 리밸런스에서의 1~6 단�
 - 책에서는, 파티션 데이터로 로컬 상태나 캐시를 구축해야 하고, 컨슈머 재시작으로 이 작업을 반복하고 싶지 않을 때 유용하다고 함.
 - [Dynamic vs. Static Consumer Membership in Apache Kafka](https://www.confluent.io/blog/dynamic-vs-static-kafka-consumer-rebalancing/)에서는 롤링 업그레이드 환경을 위한 것이라고 함.
 - 리밸런싱이 컨슈머 수의 2배 만큼 발생하므로, 롤링 업그레이드 시간이 오래 걸림.
+
+## 4.2 카프카 컨슈머 생성하기
+
+```java
+// create consumer configs
+final Properties properties = new Properties();
+properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "broker1:9092,broker2:9092");
+properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "groupId");
+properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+final Consumer<String, String> consumer =
+    new KafkaConsumer<>(properties);
+```
