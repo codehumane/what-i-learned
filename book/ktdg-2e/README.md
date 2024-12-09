@@ -68,3 +68,12 @@ incremental rebalance라고도 부름. 조급한 리밸런스에서의 1~6 단�
 7. 이후의 과정 설명은 생략 된 것 같고, 위 이미지를 참고해서 해석함.
 
 그룹에 속한 컨슈머가 많을 경우 리밸런싱이 오랜 시간 소요될 수 있음. 이 때 점진적 협력적 리밸런싱으로 전체 중단을 막을 수 있음.
+
+### 4.1.3 정적 그룹 멤버십
+
+- 컨슈머가 그룹을 떠나면, 혹은 다시 참여하면 리밸런싱이 기본.
+- 그러나 컨슈머에 `group.instance.id`를 할당하면 정적 멤버가 됨.
+- 떠났다가 다시 돌아오더라도, `session.timeout.ms` 시간을 넘지 않았다면, 이전 파티션 할당.
+- 책에서는, 파티션 데이터로 로컬 상태나 캐시를 구축해야 하고, 컨슈머 재시작으로 이 작업을 반복하고 싶지 않을 때 유용하다고 함.
+- [Dynamic vs. Static Consumer Membership in Apache Kafka](https://www.confluent.io/blog/dynamic-vs-static-kafka-consumer-rebalancing/)에서는 롤링 업그레이드 환경을 위한 것이라고 함.
+- 리밸런싱이 컨슈머 수의 2배 만큼 발생하므로, 롤링 업그레이드 시간이 오래 걸림.
