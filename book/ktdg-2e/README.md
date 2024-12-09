@@ -87,8 +87,21 @@ properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "broker1:9092,br
 properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "groupId");
-properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
 final Consumer<String, String> consumer =
     new KafkaConsumer<>(properties);
 ```
+
+- 위 4가지 프로퍼티는 필수.
+
+## 4.3 토픽 구독하기
+
+```
+consumer.subscribe(Arrays.asList("accountTopic"));
+```
+
+- 여기서 토픽을 정규식으로 지정할 수도 있음.
+- 정규식과 매칭되는 새로운 토픽이 생성되면 거의 즉시 리밸런싱.
+- 다만, 토픽 필터링은 클라이언트 작업임을 유의해야 함.
+- 정규식 지정 시 컨슈머는 전체 토픽과 파티션 정보를 브로커에 일정 간격으로 요청.
+- 이 때, 토픽이나 파티션이나 컨슈머가 많으면, 브로커와 클라이언트 그리고 네트워크 전체에 상당한 오버헤드.
