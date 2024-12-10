@@ -319,3 +319,15 @@ try {
 - 오프셋 변경은 아래 같은 경우에 활용 고려.
 - 애플리케이션에 문제가 있어 시간에 민감한 데이터 처리가 늦어져서 건너뛰어야 할 때.
 - 컨슈머 측 데이터 유실로 전체 복구를 해야 할 때.
+
+## 4.9 폴링 루프를 벗어나는 방법
+
+- 컨슈머는 무한 루프(스프링 KafkaMessageListenerContainer에서는 isRunning을 따지긴 함).
+- 만약 컨슈머를 종료하고자 한다면, 다른 스레드에서 `consumer.wakeup()`을 호출하면 됨.
+- 이 때 컨슈머가 `poll()`에서 블럭킹 되어 있다면 `WakeupException`을 발생시키며 즉각 탈출.
+- 혹은 메시지를 처리 중이라면 다음 `poll()`에서 예외 발생.
+- 이 예외를 받고 스레드를 종료하기 전 `consumer.close()` 호출해야 함.
+- 그러면, 코디네이터에게 그룹을 떠난다는 메시지를 전송하고 필요 시 오프셋 커밋.
+- `KafkaConsumer#close(Duration timeout)`를 보면 아래와 같이 설명.
+
+> Tries to close the consumer cleanly within the specified timeout. This method waits up to timeout for the consumer to complete pending commits and leave the group. If auto-commit is enabled, this will commit the current offsets if possible within the timeout. If the consumer is unable to complete offset commits and gracefully leave the group before the timeout expires, the consumer is force closed. Note that wakeup() cannot be used to interrupt close.
