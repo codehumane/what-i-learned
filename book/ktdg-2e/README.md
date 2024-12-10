@@ -295,3 +295,12 @@ try {
     consumer.close()
 }
 ```
+
+## 4.7 리밸런스 리스너
+
+- 컨슈머 종료나 리밸런싱 전에 정리 작업 필요할 수도.
+- 이를 위해 컨슈머 `subscribe()`에 `ConsumerRebalanceListener`를 전달.
+  - `onPartitionsAssigned`
+  - `onPartitionsRevoked`
+  - `onPartitionsLost` (협력적 리밸런싱에서 예외적 상황에만 호출, 일반적으로는 revoked 호출)
+- 책에서는 `onPartitionsRevoked`에서 파티션 해제 전 마지막 오프셋 커밋하는 예제 소개함.
