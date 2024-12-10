@@ -206,3 +206,36 @@ public class ConsumerRecords<K, V> implements Iterable<ConsumerRecord<K, V>> {
 - 주기를 아무리 줄여도 중복을 완전히 제거할 순 없음.
 - 또한, 다음 `poll`에서 커밋이 일어날 수 있으니, 이전에 받은 메시지 처리를 그 전에 끝내야 함.
 - 자동 커밋은 편리하지만 중복 트레이드오프.
+
+### 4.6.2 현재 오프셋 커밋하기
+
+- 대부분의 개발자들은 오프셋 커밋을 직접 제어하려 한다고 함.
+- 유실과 중복 가능성을 제거하기 위해.
+- 이를 위해 우선 `enable.auto.commit=false` 설정.
+- 그리고 `commitSync()` API 활용.
+- 여기서는 어떤 오프셋을 커밋할지 명시하지 않고 있으며,
+- poll에서 리턴된 마지막 메시지를 커밋함에 유의.
+- 뒤에서 파라미터 지정하는 이야기도 다룸.
+- [KafkaConsumer](https://github.com/apache/kafka/blob/trunk/clients/src/main/java/org/apache/kafka/clients/consumer/KafkaConsumer.java) 코드에 나온 예시는 아래와 같음(코틀린 버전으로 바꿈).
+
+```kt
+val props = Properties().apply {
+    setProperty("bootstrap. servers", "localhost:9092")
+    setProperty("group. id", "test")
+    setProperty("enable. auto. commit", "true")
+    setProperty("auto. commit. interval. ms", "1000")
+    setProperty("key. deserializer", "org. apache. kafka. common. serialization. StringDeserializer")
+    setProperty("value. deserializer", "org. apache. kafka. common. serialization. StringDeserializer")
+}
+
+val consumer = KafkaConsumer<String, String>(props)
+consumer.subscribe(mutableListOf("foo", "bar"))
+
+while (true) {
+    val records = consumer.poll(Duration.ofMillis(100))
+
+    for (record in records) {
+        println("offset = ${record.offset()}, key = ${record.key()}, value = ${record.value()}")
+    }
+}
+```
