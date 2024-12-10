@@ -239,3 +239,27 @@ while (true) {
     }
 }
 ```
+
+- `commitSync`에 오프셋을 넘기는 예제도 있음.
+
+```kt
+try {
+    while (isRunning) {
+        val records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE))
+
+        for (partition in records.partitions()) {
+            val records = records.records(partition)
+
+            for (record in records) {
+                println(record.offset().toString() + ": " + record.value())
+            }
+
+            val lastOffset = records[records.size - 1].offset()
+            val commitOffset = OffsetAndMetadata(lastOffset + 1)
+            consumer.commitSync(Collections.singletonMap(partition, commitOffset))
+        }
+    }
+} finally {
+    consumer.close()
+}
+```
