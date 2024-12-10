@@ -195,3 +195,14 @@ public class ConsumerRecords<K, V> implements Iterable<ConsumerRecord<K, V>> {
 
 - 참고로, `poll`에서 받은 마지막 메시지의 오프셋이 아니라, 실제로는 그 다음 오프셋을 커밋한다고 함.
 - 그래서 수동 오프셋 커밋 등에 유의해야 함.
+
+### 4.6.1 자동 커밋
+
+- `enable.auto.commit`을 설정하면, poll을 통해 받은 마지막 메시지의 오프셋을 주기적으로 자동 커밋.
+- `auto.commit.interval.ms`를 함께 설정해서, 오토 커밋을 얼마나 자주 일으킬지 결정(기본 5s).
+- 참고로, [CONFLUENT 문서](https://docs.confluent.io/platform/current/installation/configuration/consumer-configs.html?utm_medium=sem&utm_source=google&utm_campaign=ch.sem_br.nonbrand_tp.prs_tgt.dsa_mt.dsa_rgn.apac_lng.eng_dv.all_con.docs&utm_term=&creative=&device=c&placement=&gad_source=1&gclid=Cj0KCQiAx9q6BhCDARIsACwUxu46n05vuk2S2xtJdZ2tf0TgZpzs2zRmTYldmZ0ej1GSfwALOjt0VBIaAsmIEALw_wcB#enable-auto-commit)에서는 백그라운드에서 주기적 커밋이라고 되어 있음.
+- 그리고 책에서는 매 `poll` 마다 필요 여부 판단 후 오프셋 커밋한다고 함.
+- 자동 커밋 사용 시, 주기적으로 커밋되므로, 리밸런싱이 일어난 뒤 메시지 중복 발생 가능.
+- 주기를 아무리 줄여도 중복을 완전히 제거할 순 없음.
+- 또한, 다음 `poll`에서 커밋이 일어날 수 있으니, 이전에 받은 메시지 처리를 그 전에 끝내야 함.
+- 자동 커밋은 편리하지만 중복 트레이드오프.
