@@ -167,3 +167,31 @@ public class ConsumerRecords<K, V> implements Iterable<ConsumerRecord<K, V>> {
 > On each poll, consumer will try to use the last consumed offset as the starting offset and fetch sequentially. The last consumed offset can be manually set through seek(TopicPartition, long) or automatically set as the last committed offset for the subscribed list of partitions
 > 
 > This method returns immediately if there are records available or if the position advances past control records or aborted transactions when isolation. level=read_committed. Otherwise, it will await the passed timeout. If the timeout expires, an empty record set will be returned. Note that this method may block beyond the timeout in order to execute custom ConsumerRebalanceListener callbacks.
+
+## 4.6 오프셋과 커밋
+
+- 앞서 봤듯 `poll()`은 아직 읽지 않은 레코드를 반환.
+- 컨슈머가 아직 읽지 않은 메시지인지 판단할 때 오프셋을 활용.
+- 각 파티션 메시지를 고유하게 식별하는 증분 ID가 오프셋.
+- [Kafka Offset Explained](https://kontext.tech/diagram/1159/kafka-offset-explained)에 나온 그림과 같이 컨슈머와 프로듀서 모두 파티션 별 오프셋이 있음.
+
+![](https://kontext.tech/api/flex/diagram/diagram-1159)
+
+- 다른 JMS 큐들과 달리 카프카는 컨슈머가 데이터를 읽어 들임.
+- 컨슈머가 파티션의 메시지를 어디까지 읽어 들였는지 기록하는 게 오프셋 커밋.
+- 컨슈머가 파티션에 할당 받으면 마지막으로 커밋된 오프셋으로부터 데이터 읽어 들임.
+- 만약, 파티션을 컨슈머 그룹이 처음 읽는 거라면 `auto.offset.reset` 설정에 따라 행동.
+- [Kafka Documentation의 auto.offset.reset](https://kafka.apache.org/documentation/#consumerconfigs_auto.offset.reset) 함께 참고.
+- 오프셋 커밋은 전통적 메시지 큐와 달리 개별 레코드 커밋이 아니라 처리한 메시지의 마지막 위치를 커밋.
+- 그 앞의 메시지들은 모두 성공적으로 처리한 것으로 간주.
+- 오프셋 커밋은 카프카의 특수 토픽인 `__consumer_offsets`에 기록.
+- 만약 리밸런싱이 일어나 파티션에 다른 컨슈머가 할당되면 여기서 오프셋을 읽고 처리 재개.
+- `실제 처리한 메시지 오프셋 > 커밋된 메시지 오프셋`이면 이 사이의 메시지들은 중복 처리.
+- `실제 처리한 메시지 오프셋 < 커밋된 메시지 오프셋`이면 이 사이의 메시지들은 처리 누락.
+
+![](https://newrelic.com/sites/default/files/wp_blog_inline_files/events_lost2-1024x547.jpg)
+
+![](https://newrelic.com/sites/default/files/wp_blog_inline_files/events_duplicated2.jpg)
+
+- 참고로, `poll`에서 받은 마지막 메시지의 오프셋이 아니라, 실제로는 그 다음 오프셋을 커밋한다고 함.
+- 그래서 수동 오프셋 커밋 등에 유의해야 함.
