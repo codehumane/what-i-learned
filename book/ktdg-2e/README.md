@@ -304,3 +304,18 @@ try {
   - `onPartitionsRevoked`
   - `onPartitionsLost` (협력적 리밸런싱에서 예외적 상황에만 호출, 일반적으로는 revoked 호출)
 - 책에서는 `onPartitionsRevoked`에서 파티션 해제 전 마지막 오프셋 커밋하는 예제 소개함.
+
+## 4.8 특정 오프셋의 레코드 읽어오기
+
+- 파티션의 원하는 오프셋부터 데이터 읽어들이기도 가능.
+- `seekToBeginning(Collection<TopicPartition> partitions)`: 파티션 처음부터 전부 읽기
+- `seekToEnd(Collection<TopicPartition> partitions)`: 파티션 마지막부터 새로 읽기
+- `seek`로 특정 오프셋을 지정할 수도 있음.
+- API 문서 설명은 아래와 같음.
+- 다음 `poll` 동작 시 오프셋이 반영되는 것.
+
+> Overrides the fetch offsets that the consumer will use on the next poll(timeout). If this API is invoked for the same partition more than once, the latest offset will be used on the next poll(). Note that you may lose data if this API is arbitrarily used in the middle of consumption, to reset the fetch offsets
+
+- 오프셋 변경은 아래 같은 경우에 활용 고려.
+- 애플리케이션에 문제가 있어 시간에 민감한 데이터 처리가 늦어져서 건너뛰어야 할 때.
+- 컨슈머 측 데이터 유실로 전체 복구를 해야 할 때.
