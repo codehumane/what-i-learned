@@ -124,6 +124,52 @@ producer.send(record, new DemoProducerCallback());
 | [max.request.size](https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html?utm_medium=sem&utm_source=google&utm_campaign=ch.sem_br.nonbrand_tp.prs_tgt.dsa_mt.dsa_rgn.apac_lng.eng_dv.all_con.docs&utm_term=&creative=&device=c&placement=&gad_source=1&gclid=Cj0KCQiA0--6BhCBARIsADYqyL8N6Ei3xbpzKhkIEqjfIy6Pwy0w2PJAQvjmpRogc0s27Vz44N88oncaAiIZEALw_wcB#max-request-size) | 한 번에 보낼 수 있는 메시지의 최대 개수. 하나의 요청이 너무 큰 것을 방지. 브로커의 `message.max.bytes` 설정과 동일하게 맞추는 것이 좋음. |
 | [enable.idempotence](https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html?utm_medium=sem&utm_source=google&utm_campaign=ch.sem_br.nonbrand_tp.prs_tgt.dsa_mt.dsa_rgn.apac_lng.eng_dv.all_con.docs&utm_term=&creative=&device=c&placement=&gad_source=1&gclid=Cj0KCQiA0--6BhCBARIsADYqyL8N6Ei3xbpzKhkIEqjfIy6Pwy0w2PJAQvjmpRogc0s27Vz44N88oncaAiIZEALw_wcB#enable-idempotence) | 스트림에 각 메시지가 정확히 한 번 쓰이는 것을 보장. 이 값이 제대로 동작하려면, `max.in.flight.requests.per.connection` 값은 5 이하여야 하고, `retries`는 0보다 커야 하며, `acks`는 `all`이어야 함. `acks=all`이고 `delivery.timeout.ms`가 꽤 큰 값일 때는 정확히 한 번이 아니라 최소 한 번 쓰여짐. 예를 들어, 전송 요청을 리더 브로커가 받아 레플리카 복제는 성공했는데, 프로듀서에게 응답을 보내기 전 크래시가 났다면, 프로듀서는 재시도를 하게 되고 이는 새로 선출된 리더에게 전달 되어 메시지가 중복 저장 됨. 멱등성 설정은 이를 막아줌. 내부적으로는 프로듀서가 레코드를 보낼 때 순차적 번호를 붙여서 보내고, 브로커는 값 중복 시 하나만 저장하며, 프로듀서는 DuplicateSequenceException 받아 이를 인지. |
 
+## 3.6 파티션
+
+- `ProduceRecord`에서 파티션과 값만 필수.
+- 키는 선택적. 하지만 추가 정보를 나타내며, 파티션을 결정하는 기준점 역할도 함.
+- 키가 없으면 파티션을 랜덤으로 지정. 이 때는 라운드 로빈 사용.
+- sticky 처리 얘기도 나오는데 재밌음. 결국 효율을 위한 것.
+- 키 값이 있고 기본 파티셔너를 사용한다면, 키를 해시한 결과로 파티션 지정.
+- 만약 특정 파티션에 장애가 있다면 (드문 경우지만) 해당 파티션에 데이터 쓰기 시 에러 발생.
+- 파티셔너는 파티션 상태를 고려하지 않음을 이야기하는 것. 언제나 모든 파티션을 대상으로 분배 알고리즘을 태움.
+- 기본 파티셔너 외에 RoundRobinPartitioner, UniformStickyPartitioner가 있음.
+- 키 분포가 불균형하다면 부하가 한쪽으로 몰릴 수 있는데 이 때 UniformStickyPartitioner를 사용하면 균등 분포를 위한 파티션 할당이 이뤄짐.
+- 키와 파티션 대응은 파티션 수가 변하지 않는 한 변하지 않음.
+
+### 3.6.1 커스텀 파티셔너 구현하기
+
+```kt
+class BananaPartitioner : Partitioner {
+
+    override fun configure(configs: MutableMap<String, *>?) = Unit
+
+    override fun close() = Unit
+
+    override fun partition(
+        topic: String,
+        key: Any?,
+        keyBytes: ByteArray?,
+        value: Any?,
+        valueBytes: ByteArray?,
+        cluster: Cluster
+    ): Int {
+
+        val partitions = cluster.partitionsForTopic(topic)
+        if ((keyBytes == null) || (key == null) || (key !is String)) {
+            throw InvalidRecordException("Customer name is required as message key")
+        }
+
+        return if (key == "Banana") {
+            partitions.size - 1;
+        } else {
+            abs(Utils.murmur2(keyBytes) % partitions.size - 1)
+        }
+    }
+
+}
+```
+
 # 4장. 카프카 컨슈머: 카프카에서 데이터 읽기
 
 ## 4.1 카프카 컨슈머: 개념
