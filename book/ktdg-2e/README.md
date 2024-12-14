@@ -57,6 +57,57 @@ Producer<String, String> producer = new KafkaProducer<>(
 2. synchronous send: 기술적으로는 전부 비동기. 여기서는 Future 객체를 반환함을 가리킴.
 3. asynchronous send: send에 콜백 함수 담아서 비동기 호출.
 
+## 3.3 카프카로 메시지 전달하기
+
+```java
+ProducerRecord<String, String> record = 
+    new ProductRecord<>(
+        "CustomerCountry",
+        "Precision Products",
+        "France"
+    );
+
+try {
+    producer.send(record);
+} catch (Exception e) {
+    e.printStackTrace();
+}
+```
+
+1. 우선 레코드가 필요. `ProducerRecord` 생성자는 여러 개인데 이 중 하나 사용. 여기서는 토픽 이름, 키, 밸류를 지정.
+2. 다음으로, `send` 메서드 호출. 이 메시지는 버퍼에 저장되었다가 별도 스레드가 브로커로 전달. 반환 값으로는 `RecordMetadata`가 담긴 `Future`인데 여기서는 무시.
+3. 메시지 전송 결과를 무시하더라도, 메시지 직렬화 실패로 `SerializationException`이 발생할 수도 있고, 버퍼가 가득 차서 `TimeoutException`이 발생하거나, 전송 작업 수행하는 스레드에 인터럽트가 걸린 경우 `InterruptException`이 발생할 수도 있음에 유의.
+
+### 3.3.1 동기적으로 메시지 전송하기
+
+- 동기적 코드는 성능 저하가 커서, 예제 코드만 많을 뿐, 실전에서는 사용 잘 안 함.
+- 방법은 간단. 반환 받은 `Future`의 `get()`을 호출해 결과를 기다리면 됨.
+
+### 3.3.2 비동기적으로 메시지 전송하기
+
+- 엄청난 성능 이점으로 대부분 비동기로 메시지 전송.
+- 이 때, 전송 성공한 경우는 보통 관심이 없으나, 실패에 대한 사후 처리는 중요.
+
+```java
+private class DemoProducerCallback implements Callback {
+    @Override
+    public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+        if (e != null) {
+            e.printStackTrace();
+        }
+    }
+}
+
+ProducerRecord<String, String> record =
+    new ProducerRecord<>(
+        "CustomerCountry",
+        "Biomedical Materials",
+        "USA"
+    );
+
+producer.send(record, new DemoProducerCallback());
+```
+
 # 4장. 카프카 컨슈머: 카프카에서 데이터 읽기
 
 ## 4.1 카프카 컨슈머: 개념
