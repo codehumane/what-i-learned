@@ -31,6 +31,32 @@
 - 저장 실패 시에는 에러 반환.
 - 프로듀서는 에러를 받았을 때 재시도를 할 수도 있음.
 
+## 3.2 카프카 프로듀서 생성하기
+
+프로듀서 생성에는 3가지 필수 속성 필요.
+
+- `bootstrap.servers`: 브로커의 연결 정보인데, 모든 브로커를 포함할 필요는 없음. 첫 연결을 시도한 뒤, 추가 정보를 받아 오기 때문. 1개가 문제 있을 수 있으니 최소 2개 이상 지정 권장.
+- 그 외에 `key.serializer`, `value.serializer` 필요.
+
+[`KafkaProducer`](https://github.com/a0x8o/kafka/blob/master/clients/src/main/java/org/apache/kafka/clients/producer/KafkaProducer.java) javadoc에 예제 잘 나와 있음.
+
+```java
+Properties props = new Properties();
+props. put("bootstrap. servers", "localhost:9092");
+
+Producer<String, String> producer = new KafkaProducer<>(
+    props,
+    new StringSerializer(),
+    new StringSerializer()
+);
+```
+
+메시지 전송 방법도 설명함. 3가지 있음.
+
+1. fire and forget: 전송만 하고 성공이나 실패 결과는 신경 쓰지 않음. 보통은 가용성이 높고 재시도가 일어나기에 유실은 잘 없음. 알 수 없는 에러 또는 타임아웃 시 유실 가능.
+2. synchronous send: 기술적으로는 전부 비동기. 여기서는 Future 객체를 반환함을 가리킴.
+3. asynchronous send: send에 콜백 함수 담아서 비동기 호출.
+
 # 4장. 카프카 컨슈머: 카프카에서 데이터 읽기
 
 ## 4.1 카프카 컨슈머: 개념
