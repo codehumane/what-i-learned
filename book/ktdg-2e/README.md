@@ -176,6 +176,55 @@ class BananaPartitioner : Partitioner {
 - 헤더가 있으면 메시지 파싱 필요 없이 헤더로 메시지 라우팅이나 출처 추적이 가능.
 - 키는 무조건 String 타입이어야 하고, 값은 직렬화 된 객체도 상관 없음.
 
+### 3.8 인터셉터
+
+- 주로 모니터링, 정보 추적, 표준 헤더 삽입 등에 인터셉터가 활용.
+- 특히 메시지가 생성된 위치에 대한 정보를 심어 메시지 전달 경로를 추적하거나 민감 정보 삭제 처리 등에 사용.
+- `ProducerInterceptor`는 2개의 메서드를 가짐.
+- `ProducerRecord<K, V> onSend(ProducerRecord<K, V> record)`: 브로커로 레코드 보내기 전, 직렬화 직전에 호출. 레코드 정보를 보기도 하고 수정도 가능.
+- `void onAcknowledgement(RecordMetadata metadata, Exception exception)`: 브로커가 보낸 응답을 클라이언트가 받았을 때 호출. 데이터를 변경할 수는 없고 읽을 수만 있음.
+- 아래와 같은 인터셉터를 만들고 의존성으로 추가하고 설정 파일을 애플리케이션 실행 시 명시해주면 됨.
+
+```kt
+class CountingProducerInterceptor<K, V> : ProducerInterceptor<K, V> {
+
+    private val sentCount = AtomicInteger(0)
+    private val ackedCount = AtomicInteger(0)
+    private val executorService = Executors.newSingleThreadScheduledExecutor()
+
+    override fun configure(configs: MutableMap<String, *>) {
+        val windowSize = (configs["counting.interceptor.window.size.ms"] as String).toLong()
+
+        executorService.scheduleAtFixedRate(
+            { printStatistics() },
+            windowSize,
+            windowSize,
+            TimeUnit.MILLISECONDS
+        )
+    }
+
+    private fun printStatistics() {
+        val sent = sentCount.getAndSet(0)
+        val acked = ackedCount.getAndSet(0)
+        println("sent: $sent, acked: $acked")
+    }
+
+    override fun close() {
+        executorService.shutdownNow()
+    }
+
+    override fun onAcknowledgement(metadata: RecordMetadata?, exception: Exception?) {
+        ackedCount.incrementAndGet()
+    }
+
+    override fun onSend(record: ProducerRecord<K, V>): ProducerRecord<K, V> {
+        sentCount.incrementAndGet()
+        return record
+    }
+
+}
+```
+
 # 4장. 카프카 컨슈머: 카프카에서 데이터 읽기
 
 ## 4.1 카프카 컨슈머: 개념
