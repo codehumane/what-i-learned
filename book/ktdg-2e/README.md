@@ -656,3 +656,12 @@ try {
 - `KafkaConsumer#close(Duration timeout)`를 보면 아래와 같이 설명.
 
 > Tries to close the consumer cleanly within the specified timeout. This method waits up to timeout for the consumer to complete pending commits and leave the group. If auto-commit is enabled, this will commit the current offsets if possible within the timeout. If the consumer is unable to complete offset commits and gracefully leave the group before the timeout expires, the consumer is force closed. Note that wakeup() cannot be used to interrupt close.
+
+# 6장. 카프카 내부 메커니즘
+
+사용자 입장에서 알아두면 좋을 카프카 내부 작동 방식 이야기.
+
+- 카프카 컨트롤러
+- 복제 작동 방식
+- 프로듀서와 컨슈머가 요청을 처리하는 방식
+- 파일 형식이나 인덱스 등 카프카가 저장을 처리하는 방식
