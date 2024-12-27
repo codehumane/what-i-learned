@@ -1269,3 +1269,33 @@ rack 고려시에는 조금 다름.
 - 열려 있는 트랜잭션의 시작점은 LSO<sup>Last Stable Offset</sup>이라 불림.
 - 트랜잭션이 커밋되거나 중단되거나 `transaction.timeout.ms`(기본 15분)이 지날 때까지 대기하게 됨.
 - 트랜잭션이 길어지면 지연으로 이어질 수 있음에 유의.
+
+### 8.2.4 What Problems Aren't Solved by Transactions?
+
+- 앞서 설명했듯, 트랜잭션은 스트림 처리 애플리케이션에서 원자적 멀티파티션 쓰기와 프로듀서의 좀비 펜싱 제공.
+- 이로써 컨슘-프로세스-프로듀스 스트림 처리 작업에서의 정확히-한번 보장을 함.
+- 다른 맥락에서는 트랜잭션이 동작하지 않거나 더 많은 처리가 필요.
+- 트랜잭션을 잘못 적용하는 사례들을 살펴볼 것.
+
+#### Side effects while stream processing
+
+- 레코드 처리 단계로 사용자에게 이메일 전송을 포함한다고 해보자.
+- 정확히-한번 시맨틱에서는 이메일이 한 번만 발송하는 걸 보장하지 않음.
+- 카프카로 레코드를 쓸 때 보장이 되는 것.
+- 시퀀스 번호를 이용해 중복을 탐지하거나, 마커를 이용해 트랜잭션을 중단할 수 있어야 함.
+- 하지만 이메일은 보낸 걸 취소할 수 없음.
+- 파일에 쓰기, REST API 호출 등 외부에 대한 행위 모두 마찬가지.
+
+#### Reading from a Kafka topic and writing to a database
+
+- 데이터베이스에 대한 쓰기도 지원 안 됨.
+- 필요하다면, 카프카 오프셋 커밋 대신, 오프셋을 데이터베이스에서 관리할 수도 있음.
+- 데이터와 오프셋을 모두 데이터페이스에 단일 트랜잭션으로 쓰는 것.
+- 이는 카프카라기 보다는 데이터페이스의 트랜잭션 보장을 이용하는 것.
+- 참고로, [아웃박스 패턴](https://developer.confluent.io/courses/microservices/the-transactional-outbox-pattern/) 얘기도 하고 있음.
+
+아래 3가지 케이스는 기록 생략.
+
+1. Reading data from a database, writing to Kafka, and from there writing to another database
+2. Copying data from one Kafka cluster to another
+3. Publish/subscribe pattern
