@@ -443,6 +443,84 @@ class Pserson(val id: Int = 0,
               val surname: String = "") : Human(id, name)
 ```
 
+# 3장 재사용성
+
+## 아이템 24. 제너릭 타입과 variance 한정자를 활용하라
+
+- 공변: A가 B의 서브 타입일 때, Cup<A>가 Cup<B>의 서브 타입이라는 의미.
+- 반변: A가 B의 서브 타입일 때, Cup<A>가 Cup<B>의 슈퍼 타입이라는 의미.
+- 아래는 invariant(불공변성), covariant(공변성), contravariant(반변성)의 예.
+
+```kt
+// 불공변
+class Cup<T>
+
+fun main() {
+    val any: Cup<Any> = Cup<Int>() // 오류
+    val nothing: Cup<Nothing> = Cup<Int>() // 오류
+}
+
+// 공변
+class Cup<out T>
+
+open class Parent
+class Father : Parent()
+
+fun main() {
+    val a: Cup<Parent> = Cup<Father>()
+    val b: Cup<Father> = Cup<Parent>() // 오류
+}
+
+// 반변
+class Cup<in T>
+
+open class Parent
+class Father : Parent()
+
+fun main() {
+    val a: Cup<Parent> = Cup<Father>() // 오류
+    val b: Cup<Father> = Cup<Parent>()
+}
+```
+
+- 코틀린 List는 공변, MutableList는 불공변.
+- 하지만 개인적으로 List, MutableList의 차이는 in, out의 차이라고 느껴짐.
+- 그리고 Comparable이 반변.
+
+```kt
+public interface List<out E> : Collection<E> { ...
+public interface MutableList<E> : List<E>, MutableCollection<E> { ...
+public interface Comparable<in T> { ...
+```
+
+- [여기 글](https://kt.academy/article/ak-variance)에서 아래와 유사한 예제로 contravaiant 설명하는 것 함께 참고.
+
+```kt
+interface Message
+
+data class AddOrder(val orderId: String) : Message
+data class CancelOrder(val orderId: String) : Message
+data class MakeInvoice(val orderId: String) : Message
+
+interface Sender<in T : Message> {
+    fun send(message: T)
+}
+
+class GeneralSender(val serviceUrl: String) : Sender<Message> {
+    override fun send(message: Message) = println("$serviceUrl - $message")
+}
+
+fun main() {
+    val addSender: Sender<AddOrder> = GeneralSender("ORDER_MANAGER_URL")
+    val cancelSender: Sender<CancelOrder> = GeneralSender("CANCEL_MANAGER_URL")
+    val invoiceSender: Sender<MakeInvoice> = GeneralSender("INVOICE_MANAGER_URL")
+
+    addSender.send(AddOrder("1"))
+    cancelSender.send(CancelOrder("1"))
+    invoiceSender.send(MakeInvoice("1"))
+}
+```
+
 # 5장 객체 생성
 
 ## 아이템 33. 생성자 대신 팩토리 함수를 사용하라
