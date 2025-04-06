@@ -115,3 +115,4 @@
 - [Spring AMQP > AmqpTemplate](document/spring-amqp-template.md)
 - [LeetCode > Radix Sort](document/leetcode-radix-sort.md)
 - [Kafka Consumer](document/kafka-consumer.md)
+- [CircuitBreaker](./document/resilience4j-circuitbreaker.md)
