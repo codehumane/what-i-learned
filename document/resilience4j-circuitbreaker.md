@@ -124,3 +124,23 @@ public class SlidingTimeWindowMetrics implements Metrics {
 3개 스레드가 동시에 함수 실행을 할 때 일어나는 예시 그림을 제공하고 있음.
 
 ![](https://files.readme.io/8d10418-Multiplethreads.PNG)
+
+## Create and configure a CircuitBreaker
+
+- `ConcurrentHashMap`에 기반한 인메모리 `CircuitBreakerRegistry`를 사용해서 `CircuitBreaker` 인스턴스를 생성하고 조회.
+- 모든 `CircuitBreaker` 인스턴스에 대해 전역 디폴트 `CircuitBreakerConfig`를 가진 `CircuitBreakerRegistry`를 생성하려면 아래와 같이 하면 됨. 
+
+```java
+CircuitBreakerRegistry circuitBreakerRegistry = 
+  CircuitBreakerRegistry.ofDefaults();
+```
+
+- 그리고 CHM을 어디에 어떻게 쓰는가 했더니, 설정값들을 CHM으로 관리하고 있음.
+
+```java
+public class AbstractRegistry<E, C> implements Registry<E, C> {
+
+    // 중략
+    protected final ConcurrentMap<String, C> configurations;
+
+```
