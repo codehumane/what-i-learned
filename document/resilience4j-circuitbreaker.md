@@ -20,7 +20,7 @@
 
 - N개의 측정값으로 구성된 원형 배열을 가짐.
 - 윈도우 사이즈가 만약 10이라면, 원형 배열은 항상 10개의 측정값을 가짐.
-- 새로운 호출 결과가 집계될 때 점진적으로 총집계가 업데이트 됨. 
+- 새로운 호출 결과가 집계될 때 점진적으로 총집계가 업데이트 됨.
 - 가장 오래된 측정값이 evict 될 때, 총집계에서 제외되고, 버킷은 초기화(Subtract-on-Evict).
 - 스냅샷은 윈도우 사이즈와 독립적이고 미리 집계되므로, 조회에 걸리는 시간은 상수 O(1).
 - 저장 공간은 당연히 O(N)이 될 것.
@@ -42,7 +42,9 @@
 - 부분 집계는 실패 호출 개수를 집계하기 위해 3개의 integer를 가짐.
     - 실패 호출 횟수, 느린 호출 횟수, 전체 호출 횟수
 - 그리고 호출 기간을 저장하기 위한 1개의 long을 가짐.
-- 말이 좀 어려울 수 있는데, [SlidingTimeWindowMetrics](https://github.com/resilience4j/resilience4j/blob/master/resilience4j-core/src/main/java/io/github/resilience4j/core/metrics/SlidingTimeWindowMetrics.java) 코드 함께 보면 쉬움.
+- 말이 좀 어려울 수
+  있는데, [SlidingTimeWindowMetrics](https://github.com/resilience4j/resilience4j/blob/master/resilience4j-core/src/main/java/io/github/resilience4j/core/metrics/SlidingTimeWindowMetrics.java)
+  코드 함께 보면 쉬움.
 
 ## Failure rate and slow call rate thresholds
 
@@ -85,28 +87,28 @@
 
 ```java
 private class ClosedState implements CircuitBreakerState {
-  // ... 중략
-  private void checkIfThresholdsExceeded(Result result) {
-    if (Result.hasExceededThresholds(result) && isClosed.compareAndSet(true, false)) {
-      publishCircuitThresholdsExceededEvent(result, circuitBreakerMetrics);
-      transitionToOpenState();
+    // ... 중략
+    private void checkIfThresholdsExceeded(Result result) {
+        if (Result.hasExceededThresholds(result) && isClosed.compareAndSet(true, false)) {
+            publishCircuitThresholdsExceededEvent(result, circuitBreakerMetrics);
+            transitionToOpenState();
+        }
     }
-  }
 }
 
 public class SlidingTimeWindowMetrics implements Metrics {
-  // ... 중략
-  public synchronized Snapshot record(long duration, TimeUnit durationUnit, Outcome outcome) {
-    totalAggregation.record(duration, durationUnit, outcome);
-    moveWindowToCurrentEpochSecond(getLatestPartialAggregation())
-            .record(duration, durationUnit, outcome);
-    return new SnapshotImpl(totalAggregation);
-  }
+    // ... 중략
+    public synchronized Snapshot record(long duration, TimeUnit durationUnit, Outcome outcome) {
+        totalAggregation.record(duration, durationUnit, outcome);
+        moveWindowToCurrentEpochSecond(getLatestPartialAggregation())
+                .record(duration, durationUnit, outcome);
+        return new SnapshotImpl(totalAggregation);
+    }
 
-  public synchronized Snapshot getSnapshot() {
-    moveWindowToCurrentEpochSecond(getLatestPartialAggregation());
-    return new SnapshotImpl(totalAggregation);
-  }
+    public synchronized Snapshot getSnapshot() {
+        moveWindowToCurrentEpochSecond(getLatestPartialAggregation());
+        return new SnapshotImpl(totalAggregation);
+    }
 }
 ```
 
@@ -128,11 +130,11 @@ public class SlidingTimeWindowMetrics implements Metrics {
 ## Create and configure a CircuitBreaker
 
 - `ConcurrentHashMap`에 기반한 인메모리 `CircuitBreakerRegistry`를 사용해서 `CircuitBreaker` 인스턴스를 생성하고 조회.
-- 모든 `CircuitBreaker` 인스턴스에 대해 전역 디폴트 `CircuitBreakerConfig`를 가진 `CircuitBreakerRegistry`를 생성하려면 아래와 같이 하면 됨. 
+- 모든 `CircuitBreaker` 인스턴스에 대해 전역 디폴트 `CircuitBreakerConfig`를 가진 `CircuitBreakerRegistry`를 생성하려면 아래와 같이 하면 됨.
 
 ```java
-CircuitBreakerRegistry circuitBreakerRegistry = 
-  CircuitBreakerRegistry.ofDefaults();
+CircuitBreakerRegistry circuitBreakerRegistry =
+        CircuitBreakerRegistry.ofDefaults();
 ```
 
 - 그리고 CHM을 어디에 어떻게 쓰는가 했더니, 설정값들을 CHM으로 관리하고 있음.
@@ -142,5 +144,46 @@ public class AbstractRegistry<E, C> implements Registry<E, C> {
 
     // 중략
     protected final ConcurrentMap<String, C> configurations;
-
 ```
+
+- 다음은 설정 설명들.
+
+| config proeprty                              | default value      | description                                                                                                         |
+|----------------------------------------------|--------------------|---------------------------------------------------------------------------------------------------------------------|
+| failureRateThreshold                         | 50                 | 실패 비율이 임계치보다 같거나 크면 써킷브레이커는 오픈 상태로 전이하고 short-circuiting calls를 시작                                                  |
+| slowCallRateThreshold                        | 100                | 위 설정과 같은데 실패 대신 느린 요청으로 판단                                                                                          |
+| slowCallDurationThreshold                    | 60,000 ms          | 어떤 호출이 느리다를 판단하는 기간 임계치                                                                                             |
+| permittedNumberOfCallsInHalfOpenState        | 10                 | 하프 오픈 상태일 때 허용할 호출 수                                                                                                |
+| maxWaitDurationInHalfOpenState               | 0 ms               | 하프 오픈 상태에서 오픈 상태로 전이하기까지 얼마나 기다릴지의 시간이고 기본값인 0은 무한 대기를 가리킴                                                          |
+| slidingWindowType                            | COUNT_BASED        | 클로즈 상태일 때의 슬라이딩 윈도우 타입 지정                                                                                           |
+| slidingWindowSize                            | 100                | 클로즈 상태일 때 호출 결과를 기록할 슬라이딩 윈도우 사이즈 지정 (갯수 또는 시간)                                                                     |
+| minimumNumberOfCalls                         | 100                | 느리거나 실패하는 요청을 계산할 때 필요로하는 최소한의 호출 수                                                                                 |
+| waitDurationInOpenState                      | 60,000 ms          | 오픈 상태에서 하프 오픈 상태로 넘어가기 전까지 얼마나 대기할지의 시간                                                                             |
+| automaticTransitionFromOpenToHalfOpenEnabled | false              | true로 설정하면, 별도의 요청 없이도, 자동으로 오픈 상태에서 하프 오픈 상태로 전이 (원래는 waitDurationInOpenState 시간이 지나도 후속 요청이 들어오지 않으면 상태가 전이되지 않음) |
+| recordExceptions                             | empty              | 실패로 간주할 예외 목록. 여기에 없는 예외는, ignoreException에 있는지 보고 무시하거나, 전부 성공으로 간주                                                |
+| ignoreExceptions                             | empty              | 위에서 함께 설명함                                                                                                          |
+| recordFailurePredicate                       | throwable -> true  | recordExceptions와 함께 고려                                                                                             |
+| ignoreExceptionPredicate                     | throwable -> false | 함께 알아두기                                                                                                             |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
