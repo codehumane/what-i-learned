@@ -96,6 +96,7 @@
 
 # DOCUMENT
 
+- [Burn Rate Alert](./document/burn-rate.md)
 - [Package java.util.stream Description](document/java-util-stream.md)
 - [Redis Cluster Tutorial](document/redis-cluster-tutorial.md)
 - [Redis Cluster Specification](document/redis-cluster-specification.md)
