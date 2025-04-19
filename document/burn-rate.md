@@ -17,7 +17,7 @@ https://docs.datadoghq.com/service_management/service_level_objectives/burn_rate
 - 소진율 2는 15일 만에 다 쓴다는 것이고 3은 10일에 다 끝난다는 것.
 - 공식으로 나타내면 아래와 같음.
 
-```math
+```
 length of SLO target (7, 30 or 90 days) / burn rate = time until error budget is fully consumed
 ```
 
@@ -79,3 +79,41 @@ error rate / (1 − SLO target)
 
 - SLO 목표가 낮을수록, 최대 소진율도 낮아짐.
 - 따라서, 이보다 높은 소진율 임계치를 설정하면 알림이 절대 발생하지 않음.
+
+## Picking burn rate values
+
+- 소진율 값을 고르는 건, SLO의 목표와 시간 윈도우에 따라 다름.
+- 소진율 알림을 설정할 때 소진율 임계치와 긴 시간 윈도우 설정에 집중해야 함.
+- 짧은 시간 윈도우는 보통 긴 시간 윈도우의 1/12로 시작.
+- 위에서 언급한 최대치를 넘지 않는 것도 중요.
+
+### Approach #1: Time to error budget depletion
+
+```
+length of SLO target (7, 30 or 90 days) / burn rate = time until error budget is fully consumed
+```
+
+- 소진율을 계산한 뒤, 에러 예산이 전부 소진되면 심각한 이슈가 될 만한 기간을 고르기.
+- 예를 들어, 3일 만에 소진이 다 되면 이건 진짜 심각해라고 한다면 소진율은 `30일 / 3일 = 10`으로 잡으면 됨.
+- 긴 알림 윈도우는, 사소한 일시적 문제가 아니라, 정말로 이슈라고 여겨질 정도로 소진율이 지속되는 기간을 잡기.
+- 소진율 값이 높을수록 긴 윈도우는 짧게 잡는 게 좋음(심각한 이슈를 빠르게 발견할 수 있게).
+
+### Approach #2: Theoretical error budget consumption
+
+- 한편, 다른 접근법도 있음.
+- 소진율과 긴 윈도우의 조합을 이론적 에러 예산 소비로 보는 것.
+
+```
+burn rate = length of SLO target (in hours)  *  percentage of error budget consumed / long window (in hours)  * 100 %
+burn rate = (SLO 목표 기간(시간) × 소비된 에러 버짓 비율) / 긴 윈도우(시간) × 100%
+```
+
+- 예를 들어, 7일 기간의 SLO에 대해, 1시간 동안 에러 예산을 10% 이상 소비했을 때 알림을 받겠다면, 소진율은 아래와 같이 계산.
+- 그러니까, "에러 버짓을 얼마나 빠르게 쓰고 있는가?"를 정량적으로 계산할 수 있는 방법.
+- 특정 시간 안에 몇 퍼센트를 소모하면 심각하다고 볼 것인지를 기준으로, 소진율을 역산해서 결정할 수 있음.
+
+```
+burn rate = (7 days * 24 hours * 10 % error budget consumed) / 1 hour * 100 % = 16.8
+burn rate = (7일 × 24시간 × 10%) / 1시간 × 100% = 16.8
+```
+
