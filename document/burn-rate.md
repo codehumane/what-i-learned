@@ -117,3 +117,30 @@ burn rate = (7 days * 24 hours * 10 % error budget consumed) / 1 hour * 100 % = 
 burn rate = (7일 × 24시간 × 10%) / 1시간 × 100% = 16.8
 ```
 
+## Examples
+
+- DataDog에서 7, 30, 90일 SLO에 대한 추천 값을 표로 제공.
+- 이 예시들은 99.9%를 목표로 한다고 가정한 것.
+- 먼저 7일.
+
+| Burn Rate | Long Window | Short Window | Theoretical Error Budget Consumed |
+|-----------|-------------|---------------|-----------------------------------|
+| 16.8      | 1 hour      | 5 minutes     | 10%                               |
+| 5.6       | 6 hours     | 30 minutes    | 20%                               |
+| 2.8       | 24 hours    | 120 minutes   | 40%                               |
+
+- 다음은 30일.
+
+| Burn Rate | Long Window | Short Window | Theoretical Error Budget Consumed |
+|-----------|-------------|---------------|-----------------------------------|
+| 14.4      | 1 hour      | 5 minutes     | 2%                                |
+| 6         | 6 hours     | 30 minutes    | 5%                                |
+| 3         | 24 hours    | 120 minutes   | 10%                               |
+
+- 마지막으로 90일.
+
+| Burn Rate | Long Window | Short Window | Theoretical Error Budget Consumed |
+|-----------|-------------|---------------|-----------------------------------|
+| 21.6      | 1 hour      | 5 minutes     | 1%                                |
+| 10.8      | 6 hours     | 30 minutes    | 3%                                |
+| 4.5       | 24 hours    | 120 minutes   | 5%                                |
