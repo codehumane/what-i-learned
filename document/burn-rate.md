@@ -24,7 +24,7 @@ length of SLO target (7, 30 or 90 days) / burn rate = time until error budget is
 - 소진율 경고는 최근 "에러 비율"을 사용함.
 - 여기서의 에러 비율은 주어진 기간 동안 전체 동작에 대해 잘못된 동작의 비율을 의미.
 
-```math
+```
 error rate = (1 − good behavior during time period) / total behavior during time period
 ```
 
