@@ -7,6 +7,7 @@
 
 # TIL
 
+- [2025-3Q](til/2025/2025-3Q.md)
 - [2025-2Q](til/2025/2025-2Q.md)
 - [2025-1Q](til/2025/2025-1Q.md)
 - [2024-4Q](til/2024/2024-4Q.md)
@@ -118,3 +119,4 @@
 - [LeetCode > Radix Sort](document/leetcode-radix-sort.md)
 - [Kafka Consumer](document/kafka-consumer.md)
 - [CircuitBreaker](./document/resilience4j-circuitbreaker.md)
+- [MySQL > 13.3.2 The CHAR and VARCHAR Types](./document/mysql-char-and-varchar.md)
