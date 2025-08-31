@@ -67,3 +67,25 @@ ch.close();
 - 수명이 긴 채널을 사용하고, 소비자들이 재전달에도 대응할 수 있게 설계하면, 위의 현상을 줄일 수 있음.
 - 긴 수명의 채널은 더 나은 성능에도 영향.
 - 재전달된 메시지는 [명시적으로 표시](https://www.rabbitmq.com/docs/consumers#message-properties) 된다는 점 참고.
+
+### Channels and Error Handling
+
+- 애플리케이션에 의한 채널 닫힘 외에, 프로토컬 에외의 의한 닫힘도 있음.
+- 몇 가지 시나리오는 회복 가능한("soft") 에러로 간주.
+- 채널은 닫혔지만 애플리케이션은 다른 것을 열고 복구나 재시도를 할 수 있음.
+
+```
+Redeclaring an existing queue or exchange with non-matching properties will fail with a 406 PRECONDITION_FAILED error
+Accessing a resource the user is not allowed to access will fail with a 403 ACCESS_REFUSED error
+Binding a non-existing queue or a non-existing exchange will fail with a 404 NOT_FOUND error
+Consuming from a queue that does not exist will fail with a 404 NOT_FOUND error
+Publishing to an exchange that does not exist will fail with a 404 NOT_FOUND error
+Accessing an exclusive queue from a connection other than its declaring one will fail with a 405 RESOURCE_LOCKED
+```
+
+- 클라이언트 라이브러리는 [예외 핸들러 등록](https://www.rabbitmq.com/client-libraries/java-api-guide#shutdown)을 통해 채널 예외를 관찰하고 반응할 수 있게 도와줌.
+- 닫힌 채널에 대한 연산 시도는 예외를 맞음.
+- RabbitMQ는 채널을 닫을 때, 클라이언트에게 비동기 프로토콜 메서드로 통지.
+- 따라서, 연산에 대한 닫힘 예외를 즉시 만나지 않고, 조금 뒤에 닫힘 이벤트 핸들러에서 일어날 수 있음.
+- 어떤 라이브러리들은 연산 응답을 동기적으로 기다림.
+- 이 경우에는 채널 예외를 조금 다르게 처리해야 할 수도.
