@@ -43,3 +43,27 @@ Channel ch = conn.createChannel();
 - 채널도 커넥션과 마찬가지로 오래 유지되기를 기대.
 - 즉, 매 작업마다 채널을 여는 건 비효율.
 - 채널을 여는 작업은 네트워크 왕복이 발생하기 때문.
+
+### Closing Channels
+
+- 채널이 필요하지 않으면 닫아야 함.
+- 채널을 닫으면 사용할 수 없게 되고 채널 리소스 반환이 예약됨.
+
+```java
+Channel ch = conn.createChannel();
+// do some work
+
+// close the channel when it is no longer needed
+ch.close();
+```
+
+- 채널의 커넥션이 닫혀도 채널은 닫힘.
+- 닫힌 채널에 대한 연산 시도는 예외를 맞게 됨.
+- 컨슈머가 [ack](https://www.rabbitmq.com/docs/confirms)를 응답하고 채널을 즉시 닫으면,
+- ack가 큐에 전달되지 않을 수도 있음.
+- (아마도 ack 전달이 비동기라서 그럴 것으로 추정)
+- pending ack는 큐에 자동으로 재적재 될 수 있음.
+- 이 현상은 수명이 짧은 채널에서 주로 발생.
+- 수명이 긴 채널을 사용하고, 소비자들이 재전달에도 대응할 수 있게 설계하면, 위의 현상을 줄일 수 있음.
+- 긴 수명의 채널은 더 나은 성능에도 영향.
+- 재전달된 메시지는 [명시적으로 표시](https://www.rabbitmq.com/docs/consumers#message-properties) 된다는 점 참고.
