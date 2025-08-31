@@ -97,7 +97,7 @@
 
 # DOCUMENT
 
-- [Burn Rate Alert](./document/burn-rate.md)
+- [Burn Rate Alert](document/burn-rate.md)
 - [Package java.util.stream Description](document/java-util-stream.md)
 - [Redis Cluster Tutorial](document/redis-cluster-tutorial.md)
 - [Redis Cluster Specification](document/redis-cluster-specification.md)
@@ -118,5 +118,6 @@
 - [Spring AMQP > AmqpTemplate](document/spring-amqp-template.md)
 - [LeetCode > Radix Sort](document/leetcode-radix-sort.md)
 - [Kafka Consumer](document/kafka-consumer.md)
-- [CircuitBreaker](./document/resilience4j-circuitbreaker.md)
-- [MySQL > 13.3.2 The CHAR and VARCHAR Types](./document/mysql-char-and-varchar.md)
+- [CircuitBreaker](document/resilience4j-circuitbreaker.md)
+- [MySQL > 13.3.2 The CHAR and VARCHAR Types](document/mysql-char-and-varchar.md)
+- [RabbitMQ Channels](document/rabbitmq-channels.md)
