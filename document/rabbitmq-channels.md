@@ -98,3 +98,25 @@ Accessing an exclusive queue from a connection other than its declaring one will
 - 노드가 여러 채널 커넥션을 지원하므로, 과도한 채널 사용이나 채널 누수의 영향은 주로 클라이언트가 아니라 RabbitMQ 노드 메트릭에 나타남.
 - 이들 요소를 고려할 때 커넥션 당 채널 수의 제한은 매우 권장됨.
 - 대부분의 애플리케이션들은 커넥션 당 한 자리 수의 채널을 유지하길 가이드.
+
+### Maximum Number of Channels per Connection
+
+- 커넥션 당 동시에 열릴 수 있는 채널 수는 서버와 클라이언트의 연결 시점에 협의됨.
+- RabbitMQ와 클라이언트 모두에 설정 가능.
+- 서버 사이드에서는 `channel_max`로 제한.
+
+```
+# no more 100 channels can be opened on a connection at the same time
+channel_max = 100
+```
+
+- 이 수치를 넘으면 커넥션은 에러와 함께 닫힘.
+- 클라이언트는 연결 당 더 적은 수로 설정.
+- 이 수치를 넘으면 오류를 만나게 됨.
+
+```java
+ConnectionFactory cf = new ConnectionFactory();
+// Ask for up to 32 channels per connection. Will have an effect as long as the server is configured
+// to use a higher limit, otherwise the server's limit will be used.
+cf.setRequestedChannelMax(32);
+```
