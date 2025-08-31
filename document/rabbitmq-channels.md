@@ -129,3 +129,30 @@ cf.setRequestedChannelMax(32);
 # no more than 500 channels can be opened on each node at the same time
 channel_max_per_node = 500
 ```
+
+## Monitoring, Metrics and Diagnostics
+
+- 현재 열려 있는 채널의 수, 열림/닫힘 비율은 매우 중요한 메트릭.
+- 이들의 모니터링은 채널 누수와 잦은 채널 chrun을 알 수 있음.
+- 이 2가지 문제는 노드의 리소스의 고갈로 이어질 수 있음.
+- [unacknowledged 메세지](https://www.rabbitmq.com/docs/confirms#acknowledgement-modes)의 수, `basic.get` 연산 비율은 비정상과 비효율 탐지에 도움.
+
+### Memory Use
+
+- 별 내용 없음.
+
+### Channel Leaks
+
+- 채널 누수는 애플리케이션이 채널을 닫지는 않고 (혹은 일부만 닫고) 계속 열기만 하는 상황을 가리킴.
+- 누수는 결국 RAM과 CPU 자원의 고갈로 이어짐.
+- 간단한 그림과 함께 설명중.
+- 기록할 만한 건 없음.
+
+### High Channel Chrun
+
+- 새로 열리는 채널 수도 지속적으로 많고, 새로 닫히는 채널 수도 지속적으로 많은 경우.
+- 보통 이런 경우는 수명이 짧은 채널을 사용하거나, 채널 수준의 예외 발생으로 채널이 자주 닫혀서 그럴 수 있음.
+
+### Inspecting Channels and Their State
+
+- CLI와 관리 UI를 통해 채널의 수와 상태를 볼 수 있음을 알려주고 있음.
