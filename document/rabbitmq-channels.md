@@ -120,3 +120,12 @@ ConnectionFactory cf = new ConnectionFactory();
 // to use a higher limit, otherwise the server's limit will be used.
 cf.setRequestedChannelMax(32);
 ```
+
+### Maximum number of Channels per Node
+
+- 노드 당 최대 채널 수 설정도 가능.
+
+```
+# no more than 500 channels can be opened on each node at the same time
+channel_max_per_node = 500
+```
