@@ -156,3 +156,11 @@ channel_max_per_node = 500
 ### Inspecting Channels and Their State
 
 - CLI와 관리 UI를 통해 채널의 수와 상태를 볼 수 있음을 알려주고 있음.
+
+## Publisher Flow Control
+
+- 채널에 대한 메시지 발행이 시스템의 나머지 처리 속도를 압도할 수 있음.
+- 이 경우 [플로우 컨트롤](https://www.rabbitmq.com/docs/flow-control)이 채널에 적용될 수 있음.
+- 이 때는 메시지 소비만 하는 곳은 영향 안 받음.
+- 느린 소비자가 [자동 ack 모드](https://www.rabbitmq.com/docs/confirms#acknowledgement-modes)를 사용한다면, 플로우 컨트롤 경험할 가능성 높음.
+- 플로우 컨트롤이자주 발생한다면, 발행과 소비의 연결을 분리해서, 발행이 아닌 연산들을 보호할 수도 있음.
