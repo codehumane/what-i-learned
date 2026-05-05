@@ -267,3 +267,36 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 - 사용자는 적고 예산은 너무 없어서, 사용자에게 진정 중요한 기능을 우선순위에 둠
 - 또한 사용자 피드백 통해 사진이 있는 게스트 프로필, 목록, 예약 시스템에 집중
 - 고급 검색 필터와 맞춤형 추천은 매력적 기능이었지만 당시 에어비엔비에겐 사치스러웠고 개발을 미룸
+
+#### 2.3.3 팀 생산성을 보는 다른 시각
+
+- 전통적인 생산성 지표는 반복 작업의 결과물을 측정
+- 데이터 담당자가 입력한 기록물의 숫자나, 콜 센터 직원이 응답한 전화 통화 수 등
+- 손쉽게 정량화할 수 있지만 업무의 복잡성은 고려하지 못함
+- 생산성은 효율성의 일부이며, 다음의 고려가 필요
+- 소프트웨어 엔지니어링 결과물의 실제 가치 측정 지표 - 기능성, 신뢰성, 유지보수성, 확장성, 사용성 등
+- 엔지니어의 업무 활동 지표 - 회의 참석, 동료와의 토론, 새로운 기술이나 도구 학습 등
+- [깃헙의 생산성과 협업 지표](https://thenewstack.io/github-developer-productivity-at-30-billion-messages-per-day/#:~:text=At%20GitHub%2C%20these%20productivity%20metrics%20include%3A)도 소개
+- 지표 설정을 위한 도구인 SMART, GQM, ORK도 소개
+
+```
+# GQM
+
+## 목표(G)
+- 검색 엔진에서 웹사이트의 순위 올리기
+
+## 질문(Q)
+- 웹사이트의 현재 순위는 어떤가요?
+- 어떻게 순위를 높일 수 있을까요?
+
+## 지표(M)
+- 모바일 환경에서 페이지 로딩 속도
+- 사용자 경험 지표
+```
+
+- 개인적으로는 [American Psychologist에 게시된 연구](https://www.researchgate.net/publication/11152729_Building_a_practically_useful_theory_of_goal_setting_and_task_motivation_-_A_35-year_odyssey) 얘기가 와 닿음
+- 별 내용 아니지만 다시금 새겨 놓고 갈 이야기
+- 구체적이고 어려운 목표 설정 > 최선을 다하라고 독려
+- '최선을 다하자'는 개인적이며 특이한 형태로 정의되기 쉽상
+- 어디까지 성과로 수용할 수 있는가에 대한 해석의 폭을 엄청나게 넓혀버림
+- 반면, 목표의 명확성은 달성해야 할 목표가 무엇인지에 대한 모호함을 줄여 성과에 대한 다양한 해석의 폭을 줄임
