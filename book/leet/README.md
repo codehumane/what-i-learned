@@ -460,11 +460,11 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 
 ② focus on what i can **contribute**
 
-- 엔지니어이자 리더로서 자신만의 유일무이한 기술, 전문 분야, 지식을 파악해야 함
-- 헌신이 가장 큰 가치를 발휘할 분야를 선정
-- 강점을 적극적으로 활용하고, 전문 분야에 바탕을 둔 유용한 통찰력을 제공해 영향력 극대화
-- 자기 자신이 되기, 다른 사람 되지 말기
-- '다른 사람들은 어렵게 처리하는 일인데 나에게는 비교적 쉬운 일이 무엇인가요?'
+- 이건 책 내용이 다소 이상함
+- 여기서 말하는 contribution은 결과에 관한 것
+- **efforts to results > just busyness**
+- 그냥 일하는 게 아니고 “나에게 어떤 성과가 기대되는가?”를 자문
+- “내가 속한 조직의 성과와 결과에 중대한 영향을 미칠 수 있는 기여는 무엇인가?”
 - output X outcome O
 
 ③ build on **strength**
