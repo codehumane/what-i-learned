@@ -519,4 +519,8 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 - 기본적인 도구를 재발명 < 핵심 비즈니스 가치에 집중
 - 자신의 진로와 우선순위에 대해 주의 깊게 고려
 
+#### 3.2.5 레버리지가 높은 활동 파악하기
 
+- 적은 노력, 시간, 돈으로 더 많은 성과 달성
+- 개인적 레버리지: 도구, 기술, 지식
+- 조직적 레버리지: 팀과 조직 구조
