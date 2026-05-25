@@ -600,3 +600,8 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 
 - 옥시젠 프로젝트 소개와 적용 이야기
 - 그 다음은 아리스토텔레스 프로젝트
+
+### 4.1 옥시젠 프로젝트
+
+- 훌륭한 매니저 자질 파악 목적
+- 2008년 구글에서 수행
