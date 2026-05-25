@@ -595,3 +595,8 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
   - 상위 20%에 집중해야 함
   - 일부는 놓아주어야 함
 - ③ **에너지 관리하기**: 하루쯤 쉬어라
+
+## CH 04. 효과적인 관리 행동: 구글의 연구
+
+- 옥시젠 프로젝트 소개와 적용 이야기
+- 그 다음은 아리스토텔레스 프로젝트
