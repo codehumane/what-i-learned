@@ -641,7 +641,7 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 - 팀에 전파하고 싶은 특성과 행동을 몸소 보여주고 모범 보이기
 - 진실성, 회복탄력성, 헌신, 성장 지향적 사고방식을 행동으로 보여주기
 
-#### 과도하게 세세한 관리 대신 팀에 권한 부여하기
+##### 과도하게 세세한 관리 대신 팀에 권한 부여하기
 
 - 도전적인 과제로 업무 영역 넓히기
 - 신중하고 사려 깊게 개입하기
@@ -662,7 +662,7 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
   - 성과에 대한 논의
   - 그리고 개선의 여지 있는 부분도 지원
 
-#### 포용적인 팀 환경을 조성하고 성공과 웰빙에 대한 관심 표현하기
+##### 포용적인 팀 환경을 조성하고 성공과 웰빙에 대한 관심 표현하기
 
 - 새 팀원이 환영 받는다는 느낌 갖게 만들기
   - 짝이나 멘토를 배정하고
@@ -692,3 +692,4 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
   - 웰빙과 일과 생활의 균형 개선하는 간단한 1가지 정하기
   - 일주일에 세 번은 한 시간씩 운동하기 위해 휴식하기 등
   - 일주일 동안 모든 연락 끊고 휴가 다녀오기
+
