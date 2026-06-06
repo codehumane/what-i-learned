@@ -100,6 +100,8 @@
 
 # DOCUMENT
 
+- [Shopify, We replaced Redis with MySQL for inventory reservations—and it scaled](https://github.com/codehumane/what-i-learned/blob/master/document/redis-to-mysql-for-inventory-reservations.md)
+- [MySQL Lock](https://github.com/codehumane/what-i-learned/blob/master/document/mysql-lock.md)
 - [Burn Rate Alert](document/burn-rate.md)
 - [Package java.util.stream Description](document/java-util-stream.md)
 - [Redis Cluster Tutorial](document/redis-cluster-tutorial.md)
