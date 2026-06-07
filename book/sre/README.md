@@ -287,7 +287,6 @@ https://landing.google.com/sre/book/chapters/service-level-objectives.html
   - DB 자체가 문제인지 아니면 DB와 웹 서버 사이의 네트워크 문제인지를 인지할 수 있음.
 - black-box를 통한 알림은 문제가 이미 발생한 경우 효과적이지만, 곧 발생할 것 같은 문제에는 무의미.
 
-
 ## The Four Golden Signals
 
 단 4가지만 측정할 수 있다면 latency, traffic, errors, saturation을 측정하라.
