@@ -26,7 +26,7 @@ https://redis.io/topics/cluster-tutorial 내용 읽고 간단 정리. 자세한 
 3. `crc16(key) % 16384`
 4. 그리고 모든 노드는 이런 해시 슬롯들의 부분 집합.
 5. 새로운 노드가 추가되면, 각 노드에서 일부 해시 슬롯들을 새로운 노드로 이동시킴.
-6. [Fixed Number of Partitions](https://github.com/codehumane/what-i-learned/blob/master/book/ddia/Distributed-Data.md#fixed-number-of-partitions)와 동일.
+6. [Fixed Number of Partitions](/book/ddia/Distributed-Data.md#fixed-number-of-partitions)와 동일.
 7. 참고로, 해시 슬롯을 옮기는 것은 다운타임 없이 운영 중에 가능.
 8. RC는 multiple key operation들을 지원.
 9. 단, 키로 찾으려는 값들이 같은 해시 슬롯에 속해 있어야 함.

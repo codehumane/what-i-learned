@@ -6,7 +6,7 @@
 
 1. 높은 성능과 선형적 확장성(1000 노드까지) 제공.
 2. 프록시 없고, 비동기 레플리케이션 사용되며, 값에 대한 병합 연산 없음.
-3. 수용 가능한 수준의 쓰기 안전성 (이 문서에 나온 설명보다는 [여기](https://github.com/codehumane/what-i-learned/blob/master/document/redis-cluster-tutorial.md#redis-cluster-consistency-guarantees) 내용이 더 설명적.
+3. 수용 가능한 수준의 쓰기 안전성 (이 문서에 나온 설명보다는 [여기](/document/redis-cluster-tutorial.md#redis-cluster-consistency-guarantees) 내용이 더 설명적.
 4. 가용성
    - 파티션이 발생하더라도, 대다수의 마스터 노드들이 모두 도달 가능하고,
    - 나머지 마스터는 도달 불가하지만 적어도 1개 이상의 도달 가능한 슬레이브가 있으면, RC는 계속 살아 있음.
