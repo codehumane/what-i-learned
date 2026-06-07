@@ -224,7 +224,7 @@ CREATE TABLE `tbl_user` (
 - 도메인 전문가로부터 "**…하면 저에게 알려주세요.**" 혹은 "**그런 일이 일어나면…**"와 같은 말이 언급된다면, 이벤트를 모델링 해야 할 여지가 큼.
 - 도메인 이벤트는 결합 분리를 가져옴. 글로벌 트랜잭션 대신, 결과적 일관성. 그리고 높은 확장성과 성능. 하지만 지연 시간을 감안.
 - 시스템 배치는 트랜잭션이 커서 주로 사용량이 적은 시간대에 수행됨. 도메인 이벤트를 활용하면 이로부터 해방.
-- 하지만 모든 상황에 가능한 것은 아님. [여기](https://github.com/codehumane/what-i-learned/blob/master/spring-ms/README.md#analyze-dependencies)의 "Events as opposed to query" 내용 참고.
+- 하지만 모든 상황에 가능한 것은 아님. [여기](/book/spring-ms/README.md#analyze-dependencies)의 "Events as opposed to query" 내용 참고.
 
 ## 이벤트 모델링
 
@@ -342,7 +342,7 @@ public class DomainEventPublisher {
 2. XA 트랜잭션 하에 제어됨. 공간적 제약 없지만, 글로벌 트랜잭션을 위한 특별한 지원이 필요. 고비용이고 성능이 나쁨. 호환성 문제.
 3. 같은 저장소를 **이벤트 저장소**로 활용한다는 점에서 1번과 같지만, 메시징 메커니즘이 아닌 바운디드 컨텍스트가 소유하고 제어함.
 
-개인적으로는 [<스프링 마이크로서비스> 책](https://github.com/codehumane/what-i-learned/blob/master/spring-ms/README.md)의 [Handling Exception](https://github.com/codehumane/what-i-learned/blob/master/spring-ms/README.md#handling-exception) 내용이 더 좋은 가이드라고 생각함.
+개인적으로는 [<스프링 마이크로서비스> 책](/book/spring-ms/README.md)의 [Handling Exception](/book/spring-ms/README.md#handling-exception) 내용이 더 좋은 가이드라고 생각함.
 
 ### 자치 서비스와 시스템
 

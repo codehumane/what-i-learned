@@ -804,7 +804,7 @@
 # CH5. Growing Pains
 
 - MSA 가면서 마주할 문제들 소개.
-- 이전에 [Building Microservices 2판 정리](https://github.com/codehumane/what-i-learned/blob/master/book/building-microservices-2e/README.md)했었는데 여기 좀 더 자세한 내용 있으니 함께 참고하라고.
+- 이전에 [Building Microservices 2판 정리](/book/building-microservices-2e/README.md)했었는데 여기 좀 더 자세한 내용 있으니 함께 참고하라고.
 
 ## More Services, More Pain
 

@@ -557,7 +557,7 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 
 #### 3.3.2 리더십의 영원한 세 가지 원칙
 
-[SEAG의 6장](https://github.com/codehumane/what-i-learned/blob/master/book/seag/seag-culture.md#6-leading-at-scale) 이야기라고 함.
+[SEAG의 6장](/book/seag/seag-culture.md#6-leading-at-scale) 이야기라고 함.
 
 늘 결정하라
 

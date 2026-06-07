@@ -281,7 +281,7 @@ data class Tree<T>(val root: Node<T>) {
 - complete binary tree
 - 모든 높이에서 노드가 꽉 차 있는 이진 트리.
 - 다만, 마지막 레벨은 꽉 차 있지 않아도 되나, 왼쪽부터 채워져 있어야 함.
-- 생각하는 프로그래밍에 나온 [힙에 대한 정리](https://github.com/codehumane/what-i-learned/blob/master/book/pp/README.md#%ED%9E%99heaps)도 참고하면 좋을 듯. 다만, 위에서 아래로 오름차순인지 내림차순인지의 특성이 더해질 뿐.
+- 생각하는 프로그래밍에 나온 [힙에 대한 정리](/book/pp/README.md#%ED%9E%99heaps)도 참고하면 좋을 듯. 다만, 위에서 아래로 오름차순인지 내림차순인지의 특성이 더해질 뿐.
 
 #### 전 이진 트리
 
