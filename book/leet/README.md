@@ -966,3 +966,12 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
 | **Deploy to Production** | I | C | **A** / **R** | I | I | I | I |
 | **Security Audit / Vulnerability Fix**| I | I | R | R | **A** | I | I |
 | **Release Notes / Changelog** | **A** | R | I | I | I | I | **I** |
+
+#### 4.2.4 의미
+
+- 여기서의 의미는 목적의식, 성취감, 발전을 경험하는 것
+- 사람마다 다른 의미를 가짐 - 단순 코딩, 문제 해결 경험, 재정적 안정, 사회 변화, 가족 부양, ...
+- 자신의 일에 의미와 목적 느낄 때 최선
+- 그리고 자신의 기여가 중요함을 깨달았을 때 의미 찾기 쉬움
+- 긍정적 피드백과 인정은 보통 도움이 됨
+- 강력한 지원 역시 가치 인정과 존중의 또 다른 표현
