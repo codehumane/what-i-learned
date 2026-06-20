@@ -943,3 +943,26 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
   - 상위 X명의 사용자를 파악하여 직접 연락하기
   - 사용자가 제보한 오류에 대한 응답 시간을 XX퍼센트 줄이기
 ```
+
+##### RACI 차트
+
+- 책임 할당 매트릭스
+- 체계와 명확성을 가져오기 위함
+- 간단한 격자로 이뤄진 표
+- 사람들의 책임을 명확히 밝히고 팀에서 챙겨야 하는 모든 일들이 제대로 관리되는지 확인
+- **R**esponsible: 실무 담당자 — 실제 업무를 수행하는 사람
+- **A**ccountable: 의사결정권자 — 업무 완료를 점검하는 사람
+- **C**onsuited: 업무 수행 조언자 — 업무를 검토하고 피드백을 주는 사람
+- **I**nformed: 결과 통보 대상자 — 업무 진행 상황에 대해 계속 보고를 받는 사람
+
+| GitHub Activity / Task | Product Owner | Tech Lead | Core DevOps | Frontend / Backend Devs | Security / Compliance | QA Teams | External Stakeholders |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Define Product Requirements** | **A** | C | I | C | I | I | I |
+| **Write Application Code** | I | C | I | **R** | I | I | I |
+| **Review Pull Requests (PRs)** | I | **A** | I | **R** | C | I | I |
+| **Approve Code & Branch Rules** | I | **A** | R | I | C | I | I |
+| **Manage CI/CD Pipelines** | I | I | **A** / **R** | I | C | I | I |
+| **Run QA & Regression Tests** | I | I | I | I | I | **A** / **R** | I |
+| **Deploy to Production** | I | C | **A** / **R** | I | I | I | I |
+| **Security Audit / Vulnerability Fix**| I | I | R | R | **A** | I | I |
+| **Release Notes / Changelog** | **A** | R | I | I | I | I | **I** |
