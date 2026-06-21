@@ -989,3 +989,10 @@ https://agilealliance.org/resources/experience-reports/actionable-metrics-siemen
   - 주인의식과 일체감, 팀워크에 도움
 - ③ 고객과 사용자에게 미치는 영향 이해
 - ④ 실적과 성과 연결하기
+
+## CH 05. 일반적인 효율성 안티패턴
+
+- 엔지니어링 팀에서 발생하는 효율성 안티 패턴
+- 개인적, 관행적, 구조적, 리더십 관련 안티 패턴 다룰 예정
+- 가볍게 기록
+
