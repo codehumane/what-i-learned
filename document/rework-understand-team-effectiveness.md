@@ -28,3 +28,13 @@ https://rework.withgoogle.com/intl/en/guides/understand-team-effectiveness
 - 코드량, 버그 수정 수로는 한계가 있었음
 - 그래서 정성과 정량 지표를 모두 활용
 - 또한, 정성 평가에는 경영진·팀장·팀원의 관점을 함께 녹임
+
+## Collect data and measure effectiveness
+
+- 엔지니어링 115개, 영업 65개 팀을 조사
+- 인터뷰와 설문 등을 통해 팀 구성·협업 방식에 관한 자료를 수집
+
+## Identify dynamics of effective teams
+## Help teams determine their own needs
+## Foster effective team behaviors
+## Help teams take action
