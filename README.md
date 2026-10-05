@@ -133,3 +133,4 @@
 - [RabbitMQ Channels](/document/rabbitmq-channels.md)
 - [GitHub Developer Productivity at 30 Billion Messages per Day](/document/github-developer-productivity.md)
 - [DORA’s software delivery performance metrics](/document/dora-metrics.md)
+- [re:Work — Understand team effectiveness](/document/rework-understand-team-effectiveness.md)
