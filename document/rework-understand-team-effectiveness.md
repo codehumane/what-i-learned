@@ -77,5 +77,15 @@ https://rework.withgoogle.com/intl/en/guides/understand-team-effectiveness
 - 근속 기간
 
 ## Help teams determine their own needs
+
+연구 결과를 기반으로, 각 팀들이 스스로 개선할 수 있도록, 설문을 만들어 논의하게 했다고 함. 아래 내용은 효과성 요인을 좀 더 잘 이해하는 데 도움이 되어서 간단히 기록.
+
+- 심리적 안전감: "팀에 대한 실수가 나에 대한 비난으로 이어지지 않는다."
+   - 어떤 실수인지에 따라 다르겠지만 맥락 이해에는 충분
+- 신뢰성: "팀원들은 뭔가를 하겠다고 하면 실제로 해낸다."
+- 구조와 명확성: "우리 팀에는 효과적인 의사결정 절차가 있다."
+- 의미: "내가 팀을 위해 하는 일은 나에게 의미가 있다."
+- 영향: "나는 우리 팀의 일이 조직의 목표에 어떻게 연결되는지 이해한다."
+
 ## Foster effective team behaviors
 ## Help teams take action
